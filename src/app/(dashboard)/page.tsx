@@ -25,8 +25,8 @@ import { CenterStatusBadge } from '@/components/ui/status-badge';
 import { useFormat } from '@/hooks/use-format';
 import { useT } from '@/i18n/provider';
 import { getSystemStatistics } from '@/services/api/statistics';
-import type { AccessRole, EducationCenterStatus } from '@/types/api';
-import { Buildings11, User2, UserMultiple1, Wallet2 } from '@tailgrids/icons';
+import type { AccessRole, EducationStatus } from '@/types/api';
+import { Buildings11, Shop, UserMultiple1, Wallet2 } from '@tailgrids/icons';
 import { useQuery } from '@tanstack/react-query';
 
 /*
@@ -36,12 +36,12 @@ import { useQuery } from '@tanstack/react-query';
  *
  * Ranglar `--chart-*` tokenlaridan: ular dataviz validatoridan o'tgan
  * (CVD ajralishi, yorqinlik oralig'i, yuzaga nisbatan kontrast).
- * Markaz holati esa alohida — u status palitrasi, u hech qachon
+ * Tashkilot holati esa alohida — u status palitrasi, u hech qachon
  * seriya rangi sifatida ishlatilmaydi.
  */
 const CAT = ['var(--chart-cat-1)', 'var(--chart-cat-2)', 'var(--chart-cat-3)'];
 
-const CENTER_STATUS_COLOR: Record<EducationCenterStatus, string> = {
+const STATUS_COLOR: Record<EducationStatus, string> = {
     active: 'var(--status-good)',
     suspended: 'var(--status-warning)',
     inactive: 'var(--chart-neutral)',
@@ -67,25 +67,30 @@ function StatisticsView() {
     if (isPending) return <TableSkeleton rows={6} columns={4} />;
     if (error) return <ErrorState error={error} />;
 
-    const centers: Datum[] = (
-        ['active', 'suspended', 'inactive'] as EducationCenterStatus[]
+    const educations: Datum[] = (
+        ['active', 'suspended', 'inactive'] as EducationStatus[]
     ).map((status) => ({
         key: status,
         label: t(`centerStatus.${status}`),
-        value: data.education_centers[status],
-        color: CENTER_STATUS_COLOR[status],
+        value: data.educations[status],
+        color: STATUS_COLOR[status],
     }));
 
+    /*
+     * Rollar qat'iy tartibda va faqat uchtasi seriya rangini oladi: to'rtinchi
+     * rol paydo bo'lsa u neytral rangga tushadi, chunki kategorik palitra
+     * aylanmaydi.
+     */
     const staff: Datum[] = Object.entries(data.users.by_role).map(
         ([role, count], index) => ({
             key: role,
             label: t(`role.${role as AccessRole}`),
             value: count,
-            color: CAT[index % CAT.length],
+            color: CAT[index] ?? 'var(--chart-neutral)',
         }),
     );
 
-    const tariffs: Datum[] = [...data.centers_by_tariff]
+    const tariffs: Datum[] = [...data.educations_by_tariff]
         .sort((a, b) => b.count - a.count)
         .map((row) => ({
             key: row.tariff_name,
@@ -108,16 +113,24 @@ function StatisticsView() {
 
             <div className='grid gap-4 px-5 sm:grid-cols-2 xl:grid-cols-4'>
                 <StatCard
+                    label={t('dashboard.educations')}
+                    value={data.educations.total}
+                    hint={t('dashboard.educationsHint', {
+                        active: formatNumber(data.educations.active),
+                        suspended: formatNumber(data.educations.suspended),
+                        inactive: formatNumber(data.educations.inactive),
+                    })}
+                    icon={<Buildings11 className='size-5' />}
+                />
+                <StatCard
                     label={t('dashboard.centers')}
                     value={data.education_centers.total}
                     hint={t('dashboard.centersHint', {
-                        active: formatNumber(data.education_centers.active),
-                        suspended: formatNumber(
-                            data.education_centers.suspended,
+                        average: formatNumber(
+                            data.education_centers.average_per_education,
                         ),
-                        inactive: formatNumber(data.education_centers.inactive),
                     })}
-                    icon={<Buildings11 className='size-5' />}
+                    icon={<Shop className='size-5' />}
                 />
                 <StatCard
                     label={t('dashboard.tariffs')}
@@ -127,11 +140,6 @@ function StatisticsView() {
                         inactive: formatNumber(data.tariffs.inactive),
                     })}
                     icon={<Wallet2 className='size-5' />}
-                />
-                <StatCard
-                    label={t('dashboard.users')}
-                    value={data.users.total}
-                    icon={<User2 className='size-5' />}
                 />
                 <StatCard
                     label={t('dashboard.students')}
@@ -159,22 +167,22 @@ function StatisticsView() {
             )}
 
             <div className='mt-5 grid gap-5 px-5 lg:grid-cols-2 xl:grid-cols-3'>
-                <ChartCard title={t('dashboard.centersChart')}>
-                    {data.education_centers.total === 0 ? (
+                <ChartCard title={t('dashboard.educationsChart')}>
+                    {data.educations.total === 0 ? (
                         <ChartEmpty message={t('dashboard.noData')} />
                     ) : (
                         <>
                             <DonutChart
-                                data={centers}
-                                total={data.education_centers.total}
+                                data={educations}
+                                total={data.educations.total}
                                 centerValue={formatNumber(
-                                    data.education_centers.total,
+                                    data.educations.total,
                                 )}
-                                centerLabel={t('dashboard.centers')}
+                                centerLabel={t('dashboard.educations')}
                             />
                             <ChartLegend
-                                items={centers}
-                                total={data.education_centers.total}
+                                items={educations}
+                                total={data.educations.total}
                                 formatValue={formatNumber}
                             />
                         </>
@@ -182,7 +190,7 @@ function StatisticsView() {
                 </ChartCard>
 
                 <ChartCard title={t('dashboard.staffChart')}>
-                    {staff.length === 0 ? (
+                    {data.users.total === 0 ? (
                         <ChartEmpty message={t('dashboard.noData')} />
                     ) : (
                         <>
@@ -201,9 +209,9 @@ function StatisticsView() {
                     )}
                 </ChartCard>
 
-                <ChartCard title={t('dashboard.recentCenters')}>
-                    {data.recent_centers.length === 0 ? (
-                        <ChartEmpty message={t('dashboard.noCenters')} />
+                <ChartCard title={t('dashboard.recentEducations')}>
+                    {data.recent_educations.length === 0 ? (
+                        <ChartEmpty message={t('dashboard.noEducations')} />
                     ) : (
                         <TableRoot fullBleed className='border-0'>
                             <TableHeader>
@@ -213,15 +221,15 @@ function StatisticsView() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {data.recent_centers.map((center) => (
-                                    <TableRow key={center.id}>
+                                {data.recent_educations.map((education) => (
+                                    <TableRow key={education.id}>
                                         <TableCell primary>
-                                            {center.name}
+                                            {education.name}
                                         </TableCell>
                                         <TableCell>
                                             <CenterStatusBadge
                                                 status={
-                                                    center.status as EducationCenterStatus
+                                                    education.status as EducationStatus
                                                 }
                                             />
                                         </TableCell>
@@ -231,6 +239,7 @@ function StatisticsView() {
                         </TableRoot>
                     )}
                 </ChartCard>
+
                 <ChartCard
                     title={t('dashboard.byTariff')}
                     className='lg:col-span-2'

@@ -5,22 +5,24 @@ import { SelectInput } from '@/components/ui/form-field';
 import { Modal } from '@/components/ui/modal';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useT } from '@/i18n/provider';
-import { assignTariff } from '@/services/api/education-centers';
+import { assignEducationTariff } from '@/services/api/educations';
 import { listTariffs } from '@/services/api/tariffs';
-import type { EducationCenter } from '@/types/api';
+import type { Education } from '@/types/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 
 /** Faqat ochilganda mount qilinadi. */
 export function AssignTariffModal({
-    center,
+    education,
     onClose,
 }: {
-    center: EducationCenter;
+    education: Education;
     onClose: () => void;
 }) {
-    const [tariffId, setTariffId] = useState(center.tariff_id ?? '');
+    const [tariffId, setTariffId] = useState(
+        education.current_subscription?.tariff_id ?? '',
+    );
     const queryClient = useQueryClient();
     const t = useT();
     const toastError = useApiErrorToast();
@@ -31,14 +33,17 @@ export function AssignTariffModal({
     });
 
     const mutation = useMutation({
-        // Bo'sh tanlov = tarifni uzish (backend null qabul qiladi).
-        mutationFn: () => assignTariff(center.id, tariffId || null),
+        // Bo'sh tanlov = obunani bekor qilish (backend null qabul qiladi).
+        mutationFn: () => assignEducationTariff(education.id, tariffId || null),
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: ['education-center', center.id],
+                queryKey: ['education', education.id],
             });
-            queryClient.invalidateQueries({ queryKey: ['education-centers'] });
-            toast.success(t('centers.tariffAssigned'));
+            queryClient.invalidateQueries({
+                queryKey: ['education-subscriptions', education.id],
+            });
+            queryClient.invalidateQueries({ queryKey: ['educations'] });
+            toast.success(t('educations.tariffAssigned'));
             onClose();
         },
         onError: (error) => toastError(error),
@@ -50,15 +55,15 @@ export function AssignTariffModal({
     }
 
     return (
-        <Modal open onClose={onClose} title={t('centers.assignTariff')}>
+        <Modal open onClose={onClose} title={t('educations.assignTariff')}>
             <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
                 <SelectInput
-                    label={t('centers.tariff')}
-                    placeholder={t('centers.leaveWithoutTariff')}
-                    hint={t('centers.assignTariffHint')}
+                    label={t('educations.tariff')}
+                    placeholder={t('educations.leaveWithoutTariff')}
+                    hint={t('educations.assignTariffHint')}
                     options={(tariffsQuery.data?.data ?? []).map((tariff) => ({
                         value: tariff.id,
-                        label: t('centers.tariffOption', {
+                        label: t('educations.tariffOption', {
                             name: tariff.name,
                             days: tariff.duration_days,
                         }),
@@ -85,7 +90,7 @@ export function AssignTariffModal({
                     >
                         {mutation.isPending
                             ? t('common.saving')
-                            : t('centers.assignTariffAction')}
+                            : t('educations.assignTariffAction')}
                     </Button>
                 </div>
             </form>

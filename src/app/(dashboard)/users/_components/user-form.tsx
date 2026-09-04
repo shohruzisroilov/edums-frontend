@@ -7,10 +7,12 @@ import {
     TextInput,
 } from '@/components/ui/form-field';
 import { PhoneInput } from '@/components/ui/formatted-input';
+import { ImageUploadField } from '@/components/ui/image-upload';
 import { Modal } from '@/components/ui/modal';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useT } from '@/i18n/provider';
 import { listEducationCenters } from '@/services/api/education-centers';
+import { listEducations } from '@/services/api/educations';
 import { createUser, updateUser } from '@/services/api/users';
 import type { User, UserRole } from '@/types/api';
 import { USER_ROLES } from '@/types/api';
@@ -24,7 +26,10 @@ interface FormState {
     phone_number: string;
     password: string;
     role: UserRole;
-    education_center_id: string;
+    education_id: string;
+    education_center_ids: string[];
+    avatar_id: string | null;
+    avatar_url: string | null;
     is_active: boolean;
 }
 
@@ -33,8 +38,11 @@ const EMPTY: FormState = {
     last_name: '',
     phone_number: '',
     password: '',
-    role: 'manager',
-    education_center_id: '',
+    role: 'owner',
+    education_id: '',
+    education_center_ids: [],
+    avatar_id: null,
+    avatar_url: null,
     is_active: true,
 };
 
@@ -56,7 +64,12 @@ export function UserFormModal({
                   phone_number: user.phone_number,
                   password: '',
                   role: user.role,
-                  education_center_id: user.education_center_id ?? '',
+                  education_id: user.education_id ?? '',
+                  education_center_ids: user.education_centers.map(
+                      (center) => center.id,
+                  ),
+                  avatar_id: user.avatar_id,
+                  avatar_url: user.avatar?.url ?? null,
                   is_active: user.is_active,
               }
             : EMPTY,
@@ -65,21 +78,38 @@ export function UserFormModal({
     const t = useT();
     const toastError = useApiErrorToast();
 
-    const centersQuery = useQuery({
-        queryKey: ['education-centers', 'options'],
-        queryFn: () => listEducationCenters({ limit: 200 }),
+    // Owner butun tashkilotga biriktiriladi, qolganlari aniq filiallarga.
+    const isOwner = form.role === 'owner';
+
+    const educationsQuery = useQuery({
+        queryKey: ['educations', 'options'],
+        queryFn: () => listEducations({ limit: 200 }),
         enabled: !isEdit,
     });
+
+    const centersQuery = useQuery({
+        queryKey: ['education-centers', 'options', form.education_id],
+        queryFn: () =>
+            listEducationCenters({
+                education_id: form.education_id,
+                limit: 200,
+            }),
+        enabled: !isEdit && !isOwner && form.education_id !== '',
+    });
+
+    const centers = centersQuery.data?.data ?? [];
 
     const mutation = useMutation({
         mutationFn: () => {
             if (user) {
-                // Backend PATCH /users/:id da role va markazni qabul qilmaydi.
+                // Backend PATCH /users/:id da role, tashkilot va filiallarni
+                // qabul qilmaydi — ular boshqa endpointlar orqali yuritiladi.
                 return updateUser(user.id, {
                     first_name: form.first_name.trim(),
                     last_name: form.last_name.trim(),
                     phone_number: form.phone_number.trim(),
                     password: form.password || undefined,
+                    avatar_id: form.avatar_id,
                     is_active: form.is_active,
                 });
             }
@@ -90,7 +120,11 @@ export function UserFormModal({
                 phone_number: form.phone_number.trim(),
                 password: form.password,
                 role: form.role,
-                education_center_id: form.education_center_id || undefined,
+                avatar_id: form.avatar_id,
+                education_id: form.education_id || undefined,
+                education_center_ids: isOwner
+                    ? undefined
+                    : form.education_center_ids,
             });
         },
         onSuccess: () => {
@@ -100,6 +134,15 @@ export function UserFormModal({
         },
         onError: (error) => toastError(error),
     });
+
+    function toggleCenter(id: string) {
+        setForm((prev) => ({
+            ...prev,
+            education_center_ids: prev.education_center_ids.includes(id)
+                ? prev.education_center_ids.filter((item) => item !== id)
+                : [...prev.education_center_ids, id],
+        }));
+    }
 
     function handleSubmit(event: FormEvent) {
         event.preventDefault();
@@ -152,6 +195,7 @@ export function UserFormModal({
                     required={!isEdit}
                     minLength={8}
                     maxLength={72}
+                    autoComplete='new-password'
                     hint={t(
                         isEdit
                             ? 'users.passwordKeepHint'
@@ -164,41 +208,95 @@ export function UserFormModal({
                 />
 
                 {!isEdit && (
-                    <div className='grid gap-4 sm:grid-cols-2'>
-                        <SelectInput
-                            label={t('users.role')}
-                            required
-                            options={USER_ROLES.map((role) => ({
-                                value: role,
-                                label: t(`role.${role}`),
-                            }))}
-                            value={form.role}
-                            onValueChange={(next) =>
-                                setForm({
-                                    ...form,
-                                    role: next as UserRole,
-                                })
-                            }
-                        />
-                        <SelectInput
-                            label={t('students.center')}
-                            placeholder={t('common.notSelected')}
-                            options={(centersQuery.data?.data ?? []).map(
-                                (center) => ({
-                                    value: center.id,
-                                    label: center.name,
-                                }),
-                            )}
-                            value={form.education_center_id}
-                            onValueChange={(next) =>
-                                setForm({
-                                    ...form,
-                                    education_center_id: next,
-                                })
-                            }
-                        />
-                    </div>
+                    <>
+                        <div className='grid gap-4 sm:grid-cols-2'>
+                            <SelectInput
+                                label={t('users.role')}
+                                required
+                                options={USER_ROLES.map((role) => ({
+                                    value: role,
+                                    label: t(`role.${role}`),
+                                }))}
+                                value={form.role}
+                                onValueChange={(next) =>
+                                    setForm({
+                                        ...form,
+                                        role: next as UserRole,
+                                        education_center_ids: [],
+                                    })
+                                }
+                            />
+                            <SelectInput
+                                label={t('users.education')}
+                                required
+                                placeholder={t('users.selectEducation')}
+                                hint={
+                                    isOwner
+                                        ? t('users.educationHint')
+                                        : undefined
+                                }
+                                options={(educationsQuery.data?.data ?? []).map(
+                                    (education) => ({
+                                        value: education.id,
+                                        label: education.name,
+                                    }),
+                                )}
+                                value={form.education_id}
+                                onValueChange={(next) =>
+                                    setForm({
+                                        ...form,
+                                        education_id: next,
+                                        education_center_ids: [],
+                                    })
+                                }
+                            />
+                        </div>
+
+                        {isOwner ? (
+                            <p className='text-text-tertiary text-xs'>
+                                {t('users.ownerCentersHint')}
+                            </p>
+                        ) : (
+                            <fieldset className='flex flex-col gap-2'>
+                                <legend className='text-text-primary mb-1.5 text-sm font-medium'>
+                                    {t('users.centers')}
+                                </legend>
+                                {centers.length === 0 ? (
+                                    <p className='text-text-tertiary text-xs'>
+                                        {t('users.noCenters')}
+                                    </p>
+                                ) : (
+                                    <div className='grid gap-2 sm:grid-cols-2'>
+                                        {centers.map((center) => (
+                                            <CheckboxInput
+                                                key={center.id}
+                                                label={center.name}
+                                                checked={form.education_center_ids.includes(
+                                                    center.id,
+                                                )}
+                                                onChange={() =>
+                                                    toggleCenter(center.id)
+                                                }
+                                            />
+                                        ))}
+                                    </div>
+                                )}
+                                <p className='text-text-tertiary text-xs'>
+                                    {t('users.centersHint')}
+                                </p>
+                            </fieldset>
+                        )}
+                    </>
                 )}
+
+                <ImageUploadField
+                    label={t('common.avatar')}
+                    value={form.avatar_id}
+                    previewUrl={form.avatar_url}
+                    onChange={(avatar_id, avatar_url) =>
+                        setForm({ ...form, avatar_id, avatar_url })
+                    }
+                />
 
                 {isEdit && (
                     <CheckboxInput

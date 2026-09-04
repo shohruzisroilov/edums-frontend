@@ -1,22 +1,25 @@
 'use client';
 
-import { Button } from '@/components/tailgrids/core/button';
 import {
     Avatar,
     AvatarFallback,
     AvatarImage,
 } from '@/components/tailgrids/core/avatar';
+import { Button } from '@/components/tailgrids/core/button';
 import { ErrorState, TableSkeleton } from '@/components/ui/data-state';
 import { PageHeader } from '@/components/ui/page-header';
+import { useFormat } from '@/hooks/use-format';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { getMe } from '@/services/api/auth';
 import { fileUrl } from '@/services/api/client';
+import { listEducationCenters } from '@/services/api/education-centers';
 import { useQuery } from '@tanstack/react-query';
 
 export default function ProfilePage() {
     const { session, signOut } = useSession();
     const t = useT();
+    const { formatNumber } = useFormat();
 
     // Super admin uchun /auth/me yo'q — u alohida jadvalda yashaydi,
     // shuning uchun ma'lumot sessiyadan olinadi.
@@ -25,6 +28,17 @@ export default function ProfilePage() {
     const meQuery = useQuery({
         queryKey: ['me'],
         queryFn: getMe,
+        enabled: !!session && !isSuperAdmin,
+    });
+
+    /*
+     * /auth/me faqat id'larni beradi. Nomlarni GET /education_centers
+     * qaytaradi va u har bir rolga o'z ko'lamini beradi, shuning uchun
+     * qo'shimcha huquq talab qilmaydi.
+     */
+    const centersQuery = useQuery({
+        queryKey: ['education-centers', 'profile'],
+        queryFn: () => listEducationCenters({ limit: 200 }),
         enabled: !!session && !isSuperAdmin,
     });
 
@@ -39,6 +53,7 @@ export default function ProfilePage() {
     }
 
     const profile = meQuery.data;
+    const centers = centersQuery.data?.data ?? [];
 
     const displayName = isSuperAdmin
         ? t('profile.superAdmin')
@@ -52,7 +67,18 @@ export default function ProfilePage() {
 
     const roleKey = isSuperAdmin
         ? ('role.super_admin' as const)
-        : (`role.${profile?.role ?? 'manager'}` as const);
+        : (`role.${profile?.role ?? 'teacher'}` as const);
+
+    // Owner filialga biriktirilmaydi — u tashkilotning hammasini qamraydi.
+    const isOwner = profile?.role === 'owner';
+
+    const centersValue = isSuperAdmin
+        ? t('profile.allCenters')
+        : isOwner
+          ? t('profile.centersCount', { count: formatNumber(centers.length) })
+          : centers.length > 0
+            ? centers.map((center) => center.name).join(', ')
+            : t('profile.notAttached');
 
     const rows: { label: string; value: string }[] = [
         { label: t('profile.nameRow'), value: displayName },
@@ -64,17 +90,12 @@ export default function ProfilePage() {
         },
         { label: t('users.role'), value: t(roleKey) },
         {
-            label: t('profile.center'),
-            // Xodim o'z markazining nomini o'qiy olmaydi —
-            // GET /education_centers/:id faqat super admin uchun ochiq.
+            label: t('profile.education'),
             value: isSuperAdmin
-                ? t('profile.allCenters')
-                : t(
-                      profile?.education_center_id
-                          ? 'profile.attached'
-                          : 'profile.notAttached',
-                  ),
+                ? '—'
+                : (centers[0]?.education?.name ?? t('profile.notAttached')),
         },
+        { label: t('profile.centers'), value: centersValue },
     ];
 
     return (

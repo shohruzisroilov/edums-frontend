@@ -1,6 +1,7 @@
 'use client';
 
 import { AppLogo } from '@/components/common/app-logo';
+import { homeHrefForRole } from '@/components/common/sidebar/data';
 import ThemeToggle from '@/components/common/header/theme-toggle';
 import { LocaleSwitcher } from '@/components/common/locale-switcher';
 import { Button } from '@/components/tailgrids/core/button';
@@ -38,7 +39,8 @@ async function signInWithPhone(
             phone_number: res.user.phone_number,
             first_name: res.user.first_name,
             last_name: res.user.last_name,
-            education_center_id: res.user.education_center_id,
+            education_id: res.user.education_id,
+            education_center_ids: res.user.education_center_ids ?? [],
             avatar_url: res.user.avatar_url,
         };
     } catch (staffError) {
@@ -61,7 +63,8 @@ async function signInWithPhone(
                 phone_number: res.super_admin.phone_number,
                 first_name: 'Super',
                 last_name: 'Admin',
-                education_center_id: null,
+                education_id: null,
+                education_center_ids: [],
                 avatar_url: null,
             };
         } catch {
@@ -86,7 +89,7 @@ export default function LoginPage() {
     // Allaqachon kirgan bo'lsa login sahifasida ushlab turishning ma'nosi yo'q.
     useEffect(() => {
         if (loading || !session) return;
-        router.replace(session.role === 'super_admin' ? '/' : '/students');
+        router.replace(homeHrefForRole(session.role));
     }, [loading, session, router]);
 
     async function handleSubmit(event: FormEvent) {
@@ -97,7 +100,7 @@ export default function LoginPage() {
         try {
             const next = await signInWithPhone(phone, password);
             signIn(next);
-            router.replace(next.role === 'super_admin' ? '/' : '/students');
+            router.replace(homeHrefForRole(next.role));
         } catch (err) {
             setError(
                 err instanceof ApiError

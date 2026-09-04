@@ -6,7 +6,7 @@ import { PhoneInput } from '@/components/ui/formatted-input';
 import { Modal } from '@/components/ui/modal';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useT } from '@/i18n/provider';
-import { createCenterAdmin } from '@/services/api/education-centers';
+import { createEducationOwner } from '@/services/api/educations';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
@@ -19,11 +19,11 @@ const EMPTY = {
 };
 
 /** Faqat ochilganda mount qilinadi — har safar bo'sh forma bilan boshlanadi. */
-export function CenterAdminFormModal({
-    centerId,
+export function OwnerFormModal({
+    educationId,
     onClose,
 }: {
-    centerId: string;
+    educationId: string;
     onClose: () => void;
 }) {
     const [form, setForm] = useState(EMPTY);
@@ -32,12 +32,12 @@ export function CenterAdminFormModal({
     const toastError = useApiErrorToast();
 
     const mutation = useMutation({
-        mutationFn: () => createCenterAdmin(centerId, form),
+        mutationFn: () => createEducationOwner(educationId, form),
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: ['center-admins', centerId],
+                queryKey: ['education-owners', educationId],
             });
-            toast.success(t('centers.adminCreated'));
+            toast.success(t('educations.ownerCreated'));
             onClose();
         },
         onError: (error) => toastError(error),
@@ -52,8 +52,8 @@ export function CenterAdminFormModal({
         <Modal
             open
             onClose={onClose}
-            title={t('centers.addAdminTitle')}
-            description={t('centers.addAdminHint')}
+            title={t('educations.addOwnerTitle')}
+            description={t('educations.addOwnerHint')}
         >
             <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
                 <div className='grid gap-4 sm:grid-cols-2'>
@@ -80,7 +80,7 @@ export function CenterAdminFormModal({
                 <PhoneInput
                     label={t('common.phoneNumber')}
                     required
-                    hint={t('centers.adminPhoneHint')}
+                    hint={t('educations.ownerPhoneHint')}
                     value={form.phone_number}
                     onValueChange={(phone) =>
                         setForm({ ...form, phone_number: phone })

@@ -5,7 +5,7 @@ import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { cn } from '@/utils/cn';
 import Link from 'next/link';
-import { navSectionsForRole } from './data';
+import { homeHrefForRole, navSectionsForRole } from './data';
 import { CloseIcon, SidebarExpandedIcon } from './icon';
 import NavItem from './nav-item';
 
@@ -25,7 +25,7 @@ export default function Sidebar({
 
     const sections = navSectionsForRole(session?.role);
     // Super admin uchun bosh sahifa statistika, xodimlar uchun o'quvchilar ro'yxati.
-    const homeHref = session?.role === 'super_admin' ? '/' : '/students';
+    const homeHref = homeHrefForRole(session?.role);
 
     return (
         <div className='flex h-full flex-col overflow-hidden'>

@@ -1,10 +1,16 @@
 import type { TranslationKey } from '@/i18n/dictionaries/uz';
 import type { AccessRole } from '@/types/api';
+import { ALL_ROLES, CAN_VIEW_STAFF, ORG_ROLES } from '@/utils/access';
 import {
     Buildings11,
     DashboardSquare1,
+    Folder1,
+    IdCard,
+    OpenBook,
+    Shop,
     User2,
     UserMultiple1,
+    UserMultiple4,
     Wallet2,
 } from '@tailgrids/icons';
 import type { ReactNode } from 'react';
@@ -23,13 +29,6 @@ export interface NavSection {
     items: NavLink[];
 }
 
-const ALL_STAFF: AccessRole[] = [
-    'super_admin',
-    'center_admin',
-    'manager',
-    'teacher',
-];
-
 const NAV_DATA: NavSection[] = [
     {
         labelKey: 'nav.main',
@@ -45,7 +44,42 @@ const NAV_DATA: NavSection[] = [
                 titleKey: 'nav.students',
                 url: '/students',
                 icon: <UserMultiple1 className='size-5' />,
-                roles: ALL_STAFF,
+                roles: ALL_ROLES,
+            },
+            {
+                titleKey: 'nav.groups',
+                url: '/groups',
+                icon: <UserMultiple4 className='size-5' />,
+                roles: ALL_ROLES,
+            },
+            {
+                titleKey: 'nav.courses',
+                url: '/courses',
+                icon: <OpenBook className='size-5' />,
+                roles: ALL_ROLES,
+            },
+        ],
+    },
+    {
+        labelKey: 'nav.organization',
+        items: [
+            {
+                titleKey: 'nav.centers',
+                url: '/education-centers',
+                icon: <Shop className='size-5' />,
+                roles: ALL_ROLES,
+            },
+            {
+                titleKey: 'nav.staff',
+                url: '/staff',
+                icon: <IdCard className='size-5' />,
+                roles: CAN_VIEW_STAFF,
+            },
+            {
+                titleKey: 'nav.uploads',
+                url: '/uploads',
+                icon: <Folder1 className='size-5' />,
+                roles: ALL_ROLES,
             },
         ],
     },
@@ -53,8 +87,8 @@ const NAV_DATA: NavSection[] = [
         labelKey: 'nav.superAdmin',
         items: [
             {
-                titleKey: 'nav.centers',
-                url: '/education-centers',
+                titleKey: 'nav.educations',
+                url: '/educations',
                 icon: <Buildings11 className='size-5' />,
                 roles: ['super_admin'],
             },
@@ -82,4 +116,9 @@ export function navSectionsForRole(role: AccessRole | undefined): NavSection[] {
         ...section,
         items: section.items.filter((item) => item.roles.includes(role)),
     })).filter((section) => section.items.length > 0);
+}
+
+/** Tashkilot xodimlari uchun bosh sahifa — o'quvchilar ro'yxati. */
+export function homeHrefForRole(role: AccessRole | undefined): string {
+    return role && ORG_ROLES.includes(role) ? '/students' : '/';
 }

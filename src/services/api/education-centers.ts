@@ -1,6 +1,6 @@
 import { buildQuery, request } from './client';
 import type {
-    CreateCenterAdminPayload,
+    CreateCenterStaffPayload,
     CreateEducationCenterPayload,
     DataResponse,
     EducationCenter,
@@ -49,27 +49,35 @@ export function deleteEducationCenter(id: string) {
     return request<MessageResponse>(`${BASE}/${id}`, { method: 'DELETE' });
 }
 
-/** PATCH /:id/tariff — tarif biriktirish. null yuborilsa tarif uziladi. */
-export async function assignTariff(id: string, tariff_id: string | null) {
-    const res = await request<DataResponse<EducationCenter>>(
-        `${BASE}/${id}/tariff`,
-        { method: 'PATCH', body: { tariff_id } },
-    );
+/** Shu filialga biriktirilgan administrator, manager va teacherlar. */
+export async function listCenterStaff(id: string) {
+    const res = await request<DataResponse<User[]>>(`${BASE}/${id}/staff`);
     return res.data;
 }
 
-export async function listCenterAdmins(id: string) {
-    const res = await request<DataResponse<User[]>>(`${BASE}/${id}/admins`);
-    return res.data;
-}
-
-export async function createCenterAdmin(
+export async function createCenterStaff(
     id: string,
-    payload: CreateCenterAdminPayload,
+    payload: CreateCenterStaffPayload,
 ) {
-    const res = await request<DataResponse<User>>(`${BASE}/${id}/admins`, {
+    const res = await request<DataResponse<User>>(`${BASE}/${id}/staff`, {
         method: 'POST',
         body: payload,
     });
     return res.data;
+}
+
+/** Mavjud xodimni shu filialga ham biriktiradi. */
+export async function attachStaffToCenter(id: string, userId: string) {
+    const res = await request<DataResponse<User>>(
+        `${BASE}/${id}/staff/${userId}`,
+        { method: 'POST' },
+    );
+    return res.data;
+}
+
+/** Hisob o'chirilmaydi — faqat filial biriktiruvi olinadi. */
+export function detachStaffFromCenter(id: string, userId: string) {
+    return request<MessageResponse>(`${BASE}/${id}/staff/${userId}`, {
+        method: 'DELETE',
+    });
 }

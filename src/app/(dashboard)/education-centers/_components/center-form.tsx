@@ -5,18 +5,15 @@ import { SelectInput, TextInput } from '@/components/ui/form-field';
 import { PhoneInput } from '@/components/ui/formatted-input';
 import { Modal } from '@/components/ui/modal';
 import { useApiErrorToast } from '@/hooks/use-api-error';
+import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import {
     createEducationCenter,
     updateEducationCenter,
 } from '@/services/api/education-centers';
-import { listTariffs } from '@/services/api/tariffs';
-import type {
-    CreateEducationCenterPayload,
-    EducationCenter,
-    EducationCenterStatus,
-} from '@/types/api';
-import { EDUCATION_CENTER_STATUSES } from '@/types/api';
+import { listEducations } from '@/services/api/educations';
+import type { EducationCenter, EducationCenterStatus } from '@/types/api';
+import { ENTITY_STATUSES } from '@/types/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
@@ -25,20 +22,18 @@ interface FormState {
     name: string;
     phone_number: string;
     address: string;
-    telegram: string;
-    instagram: string;
+    working_hours: string;
     status: EducationCenterStatus;
-    tariff_id: string;
+    education_id: string;
 }
 
 const EMPTY: FormState = {
     name: '',
     phone_number: '',
     address: '',
-    telegram: '',
-    instagram: '',
+    working_hours: '',
     status: 'active',
-    tariff_id: '',
+    education_id: '',
 };
 
 /** Faqat ochilganda mount qilinadi — boshlang'ich holat bir marta hisoblanadi. */
@@ -49,36 +44,57 @@ export function CenterFormModal({
     center: EducationCenter | null;
     onClose: () => void;
 }) {
+    const { session } = useSession();
+    const t = useT();
+    const toastError = useApiErrorToast();
+    const isEdit = center !== null;
+
+    // Tashkilotni faqat super admin tanlaydi — owner uchun tokendan olinadi.
+    const isSuperAdmin = session?.role === 'super_admin';
+
     const [form, setForm] = useState<FormState>(() =>
         center
             ? {
                   name: center.name,
                   phone_number: center.phone_number,
                   address: center.address ?? '',
-                  telegram: center.telegram ?? '',
-                  instagram: center.instagram ?? '',
+                  working_hours: center.working_hours ?? '',
                   status: center.status,
-                  tariff_id: center.tariff_id ?? '',
+                  education_id: center.education_id,
               }
             : EMPTY,
     );
     const queryClient = useQueryClient();
-    const t = useT();
-    const toastError = useApiErrorToast();
 
-    const tariffsQuery = useQuery({
-        queryKey: ['tariffs', 'options'],
-        queryFn: () => listTariffs({ is_active: true, limit: 200 }),
+    const educationsQuery = useQuery({
+        queryKey: ['educations', 'options'],
+        queryFn: () => listEducations({ limit: 200 }),
+        enabled: isSuperAdmin && !isEdit,
     });
 
     const mutation = useMutation({
-        mutationFn: (payload: CreateEducationCenterPayload) =>
-            center
-                ? updateEducationCenter(center.id, payload)
-                : createEducationCenter(payload),
+        mutationFn: () => {
+            const shared = {
+                name: form.name.trim(),
+                phone_number: form.phone_number.trim(),
+                address: form.address.trim() || undefined,
+                working_hours: form.working_hours.trim() || undefined,
+                status: form.status,
+            };
+
+            if (center) return updateEducationCenter(center.id, shared);
+
+            return createEducationCenter({
+                ...shared,
+                education_id: isSuperAdmin
+                    ? form.education_id || undefined
+                    : undefined,
+            });
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['education-centers'] });
-            toast.success(t(center ? 'centers.updated' : 'centers.created'));
+            queryClient.invalidateQueries({ queryKey: ['educations'] });
+            toast.success(t(isEdit ? 'centers.updated' : 'centers.created'));
             onClose();
         },
         onError: (error) => toastError(error),
@@ -86,23 +102,14 @@ export function CenterFormModal({
 
     function handleSubmit(event: FormEvent) {
         event.preventDefault();
-
-        mutation.mutate({
-            name: form.name.trim(),
-            phone_number: form.phone_number.trim(),
-            address: form.address.trim() || undefined,
-            telegram: form.telegram.trim() || undefined,
-            instagram: form.instagram.trim() || undefined,
-            status: form.status,
-            tariff_id: form.tariff_id || undefined,
-        });
+        mutation.mutate();
     }
 
     return (
         <Modal
             open
             onClose={onClose}
-            title={t(center ? 'centers.edit' : 'centers.new')}
+            title={t(isEdit ? 'centers.edit' : 'centers.new')}
             size='lg'
         >
             <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
@@ -138,29 +145,17 @@ export function CenterFormModal({
 
                 <div className='grid gap-4 sm:grid-cols-2'>
                     <TextInput
-                        label={t('centers.telegram')}
+                        label={t('centers.workingHours')}
                         maxLength={100}
-                        placeholder='@markaz'
-                        value={form.telegram}
+                        placeholder={t('centers.workingHoursPlaceholder')}
+                        value={form.working_hours}
                         onChange={(e) =>
-                            setForm({ ...form, telegram: e.target.value })
+                            setForm({ ...form, working_hours: e.target.value })
                         }
                     />
-                    <TextInput
-                        label={t('centers.instagram')}
-                        maxLength={100}
-                        placeholder='@markaz'
-                        value={form.instagram}
-                        onChange={(e) =>
-                            setForm({ ...form, instagram: e.target.value })
-                        }
-                    />
-                </div>
-
-                <div className='grid gap-4 sm:grid-cols-2'>
                     <SelectInput
                         label={t('common.status')}
-                        options={EDUCATION_CENTER_STATUSES.map((status) => ({
+                        options={ENTITY_STATUSES.map((status) => ({
                             value: status,
                             label: t(`centerStatus.${status}`),
                         }))}
@@ -172,21 +167,26 @@ export function CenterFormModal({
                             })
                         }
                     />
+                </div>
+
+                {isSuperAdmin && !isEdit && (
                     <SelectInput
-                        label={t('centers.tariff')}
-                        placeholder={t('centers.noTariff')}
-                        options={(tariffsQuery.data?.data ?? []).map(
-                            (tariff) => ({
-                                value: tariff.id,
-                                label: tariff.name,
+                        label={t('centers.education')}
+                        required
+                        placeholder={t('centers.selectEducation')}
+                        hint={t('centers.educationRequiredHint')}
+                        options={(educationsQuery.data?.data ?? []).map(
+                            (education) => ({
+                                value: education.id,
+                                label: education.name,
                             }),
                         )}
-                        value={form.tariff_id}
+                        value={form.education_id}
                         onValueChange={(next) =>
-                            setForm({ ...form, tariff_id: next })
+                            setForm({ ...form, education_id: next })
                         }
                     />
-                </div>
+                )}
 
                 <div className='mt-2 flex items-center justify-end gap-2'>
                     <Button

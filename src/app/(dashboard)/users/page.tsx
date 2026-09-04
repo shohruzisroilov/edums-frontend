@@ -20,17 +20,18 @@ import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
 import { RoleGuard } from '@/components/ui/role-guard';
 import { SearchInput } from '@/components/ui/search-input';
-import { ActiveBadge } from '@/components/ui/status-badge';
+import { ActiveBadge, RoleBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useListQuery } from '@/hooks/use-list-query';
 import { useT } from '@/i18n/provider';
 import { listEducationCenters } from '@/services/api/education-centers';
+import { listEducations } from '@/services/api/educations';
 import { deleteUser, listUsers } from '@/services/api/users';
 import type { User, UserRole } from '@/types/api';
 import { USER_ROLES } from '@/types/api';
 import { fullName } from '@/utils/format';
-import { User2, Pencil1, Plus, Trash1 } from '@tailgrids/icons';
+import { Pencil1, Plus, Trash1, User2 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -58,7 +59,12 @@ function UsersView() {
         setLimit,
         offset,
         setOffset,
-    } = useListQuery({ role: '', education_center_id: '', is_active: '' });
+    } = useListQuery({
+        role: '',
+        education_id: '',
+        education_center_id: '',
+        is_active: '',
+    });
 
     const [formOpen, setFormOpen] = useState(false);
     const [editing, setEditing] = useState<User | null>(null);
@@ -72,6 +78,7 @@ function UsersView() {
             listUsers({
                 search: search || undefined,
                 role: (filters.role || undefined) as UserRole | undefined,
+                education_id: filters.education_id || undefined,
                 education_center_id: filters.education_center_id || undefined,
                 is_active:
                     filters.is_active === ''
@@ -82,9 +89,19 @@ function UsersView() {
             }),
     });
 
+    const educationsQuery = useQuery({
+        queryKey: ['educations', 'options'],
+        queryFn: () => listEducations({ limit: 200 }),
+    });
+
+    // Filiallar tanlangan tashkilotga qarab toraytiriladi.
     const centersQuery = useQuery({
-        queryKey: ['education-centers', 'options'],
-        queryFn: () => listEducationCenters({ limit: 200 }),
+        queryKey: ['education-centers', 'options', filters.education_id],
+        queryFn: () =>
+            listEducationCenters({
+                education_id: filters.education_id || undefined,
+                limit: 200,
+            }),
     });
 
     const removeMutation = useMutation({
@@ -119,13 +136,13 @@ function UsersView() {
                 }
             />
 
-            <div className='flex flex-col gap-3 px-5 pb-4 sm:flex-row sm:flex-wrap sm:items-center'>
+            <div className='flex flex-wrap gap-3 px-5 pb-4'>
                 <SearchInput
                     value={search}
                     onChange={setSearch}
                     placeholder={t('users.search')}
                 />
-                <div className='sm:w-44'>
+                <div className='w-full sm:w-44'>
                     <SelectInput
                         options={USER_ROLES.map((role) => ({
                             value: role,
@@ -136,7 +153,23 @@ function UsersView() {
                         onValueChange={(next) => setFilter('role', next)}
                     />
                 </div>
-                <div className='sm:w-52'>
+                <div className='w-full sm:w-52'>
+                    <SelectInput
+                        options={(educationsQuery.data?.data ?? []).map(
+                            (education) => ({
+                                value: education.id,
+                                label: education.name,
+                            }),
+                        )}
+                        placeholder={t('users.allEducations')}
+                        value={filters.education_id}
+                        onValueChange={(next) => {
+                            setFilter('education_id', next);
+                            setFilter('education_center_id', '');
+                        }}
+                    />
+                </div>
+                <div className='w-full sm:w-48'>
                     <SelectInput
                         options={(centersQuery.data?.data ?? []).map(
                             (center) => ({
@@ -144,14 +177,14 @@ function UsersView() {
                                 label: center.name,
                             }),
                         )}
-                        placeholder={t('users.allCenters')}
+                        placeholder={t('users.centers')}
                         value={filters.education_center_id}
                         onValueChange={(next) =>
                             setFilter('education_center_id', next)
                         }
                     />
                 </div>
-                <div className='sm:w-40'>
+                <div className='w-full sm:w-40'>
                     <SelectInput
                         options={[
                             { value: 'true', label: t('common.active') },
@@ -191,7 +224,10 @@ function UsersView() {
                                         </TableHead>
                                         <TableHead>{t('users.role')}</TableHead>
                                         <TableHead>
-                                            {t('users.center')}
+                                            {t('users.education')}
+                                        </TableHead>
+                                        <TableHead>
+                                            {t('users.centers')}
                                         </TableHead>
                                         <TableHead>
                                             {t('common.status')}
@@ -207,21 +243,27 @@ function UsersView() {
                                 <TableBody>
                                     {query.data.data.map((user) => (
                                         <TableRow key={user.id}>
-                                            <TableCell
-                                                primary
-                                                className='whitespace-normal'
-                                            >
+                                            <TableCell primary>
                                                 {fullName(user)}
                                             </TableCell>
                                             <TableCell>
                                                 {user.phone_number}
                                             </TableCell>
                                             <TableCell>
-                                                {t(`role.${user.role}`)}
+                                                <RoleBadge role={user.role} />
                                             </TableCell>
                                             <TableCell>
-                                                {user.education_center?.name ??
-                                                    '—'}
+                                                {user.education?.name ?? '—'}
+                                            </TableCell>
+                                            <TableCell className='whitespace-normal'>
+                                                {user.education_centers?.length
+                                                    ? user.education_centers
+                                                          .map(
+                                                              (center) =>
+                                                                  center.name,
+                                                          )
+                                                          .join(', ')
+                                                    : '—'}
                                             </TableCell>
                                             <TableCell>
                                                 <ActiveBadge

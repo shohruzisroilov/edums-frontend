@@ -22,17 +22,18 @@ import { RoleGuard } from '@/components/ui/role-guard';
 import { SearchInput } from '@/components/ui/search-input';
 import { CenterStatusBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
-import { useFormat } from '@/hooks/use-format';
 import { useListQuery } from '@/hooks/use-list-query';
+import { hasRole, useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import {
     deleteEducationCenter,
     listEducationCenters,
 } from '@/services/api/education-centers';
-import { listTariffs } from '@/services/api/tariffs';
+import { listEducations } from '@/services/api/educations';
 import type { EducationCenter, EducationCenterStatus } from '@/types/api';
-import { EDUCATION_CENTER_STATUSES } from '@/types/api';
-import { Buildings11, Pencil1, Plus, Trash1 } from '@tailgrids/icons';
+import { ENTITY_STATUSES } from '@/types/api';
+import { ALL_ROLES, CAN_MANAGE_CENTERS } from '@/utils/access';
+import { Pencil1, Plus, Shop, Trash1 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -41,7 +42,7 @@ import { CenterFormModal } from './_components/center-form';
 
 export default function EducationCentersPage() {
     return (
-        <RoleGuard allow={['super_admin']}>
+        <RoleGuard allow={ALL_ROLES}>
             <CentersView />
         </RoleGuard>
     );
@@ -50,7 +51,12 @@ export default function EducationCentersPage() {
 function CentersView() {
     const t = useT();
     const toastError = useApiErrorToast();
-    const { formatDate } = useFormat();
+    const { session } = useSession();
+
+    // Backend ro'yxatni rolga qarab o'zi cheklaydi; bu yerda faqat
+    // yozish amallari yashiriladi.
+    const canManage = hasRole(session, ...CAN_MANAGE_CENTERS);
+    const isSuperAdmin = hasRole(session, 'super_admin');
 
     const {
         search,
@@ -61,7 +67,7 @@ function CentersView() {
         setLimit,
         offset,
         setOffset,
-    } = useListQuery({ status: '', tariff_id: '' });
+    } = useListQuery({ status: '', education_id: '' });
 
     const [formOpen, setFormOpen] = useState(false);
     const [editing, setEditing] = useState<EducationCenter | null>(null);
@@ -77,15 +83,18 @@ function CentersView() {
                 status: (filters.status || undefined) as
                     | EducationCenterStatus
                     | undefined,
-                tariff_id: filters.tariff_id || undefined,
+                education_id: isSuperAdmin
+                    ? filters.education_id || undefined
+                    : undefined,
                 limit,
                 offset,
             }),
     });
 
-    const tariffsQuery = useQuery({
-        queryKey: ['tariffs', 'options'],
-        queryFn: () => listTariffs({ limit: 200 }),
+    const educationsQuery = useQuery({
+        queryKey: ['educations', 'options'],
+        queryFn: () => listEducations({ limit: 200 }),
+        enabled: isSuperAdmin,
     });
 
     const removeMutation = useMutation({
@@ -105,18 +114,20 @@ function CentersView() {
                 count={query.data?.count}
                 description={t('centers.subtitle')}
                 actions={
-                    <Button
-                        variant='primary'
-                        appearance='fill'
-                        size='md'
-                        onPress={() => {
-                            setEditing(null);
-                            setFormOpen(true);
-                        }}
-                    >
-                        <Plus />
-                        {t('centers.new')}
-                    </Button>
+                    canManage && (
+                        <Button
+                            variant='primary'
+                            appearance='fill'
+                            size='md'
+                            onPress={() => {
+                                setEditing(null);
+                                setFormOpen(true);
+                            }}
+                        >
+                            <Plus />
+                            {t('centers.new')}
+                        </Button>
+                    )
                 }
             />
 
@@ -128,7 +139,7 @@ function CentersView() {
                 />
                 <div className='sm:w-44'>
                     <SelectInput
-                        options={EDUCATION_CENTER_STATUSES.map((status) => ({
+                        options={ENTITY_STATUSES.map((status) => ({
                             value: status,
                             label: t(`centerStatus.${status}`),
                         }))}
@@ -137,31 +148,35 @@ function CentersView() {
                         onValueChange={(next) => setFilter('status', next)}
                     />
                 </div>
-                <div className='sm:w-52'>
-                    <SelectInput
-                        options={(tariffsQuery.data?.data ?? []).map(
-                            (tariff) => ({
-                                value: tariff.id,
-                                label: tariff.name,
-                            }),
-                        )}
-                        placeholder={t('centers.allTariffs')}
-                        value={filters.tariff_id}
-                        onValueChange={(next) => setFilter('tariff_id', next)}
-                    />
-                </div>
+                {isSuperAdmin && (
+                    <div className='sm:w-56'>
+                        <SelectInput
+                            options={(educationsQuery.data?.data ?? []).map(
+                                (education) => ({
+                                    value: education.id,
+                                    label: education.name,
+                                }),
+                            )}
+                            placeholder={t('centers.allEducations')}
+                            value={filters.education_id}
+                            onValueChange={(next) =>
+                                setFilter('education_id', next)
+                            }
+                        />
+                    </div>
+                )}
             </div>
 
             <div className='px-5'>
                 <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                     {query.isPending ? (
-                        <TableSkeleton columns={6} />
+                        <TableSkeleton columns={5} />
                     ) : query.error ? (
                         <ErrorState error={query.error} />
                     ) : query.data.data.length === 0 ? (
                         <EmptyState
                             message={t('centers.empty')}
-                            icon={<Buildings11 className='size-5' />}
+                            icon={<Shop className='size-5' />}
                         />
                     ) : (
                         <>
@@ -178,17 +193,21 @@ function CentersView() {
                                             {t('common.phone')}
                                         </TableHead>
                                         <TableHead>
-                                            {t('centers.tariff')}
+                                            {t('centers.workingHours')}
                                         </TableHead>
-                                        <TableHead>
-                                            {t('centers.subscriptionEnds')}
-                                        </TableHead>
+                                        {isSuperAdmin && (
+                                            <TableHead>
+                                                {t('centers.education')}
+                                            </TableHead>
+                                        )}
                                         <TableHead>
                                             {t('common.status')}
                                         </TableHead>
-                                        <TableHead className='text-right'>
-                                            {t('common.actions')}
-                                        </TableHead>
+                                        {canManage && (
+                                            <TableHead className='text-right'>
+                                                {t('common.actions')}
+                                            </TableHead>
+                                        )}
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -211,50 +230,59 @@ function CentersView() {
                                                 {center.phone_number}
                                             </TableCell>
                                             <TableCell>
-                                                {center.tariff?.name ?? '—'}
+                                                {center.working_hours ?? '—'}
                                             </TableCell>
-                                            <TableCell>
-                                                {formatDate(
-                                                    center.subscription_ends_at,
-                                                )}
-                                            </TableCell>
+                                            {isSuperAdmin && (
+                                                <TableCell>
+                                                    {center.education?.name ??
+                                                        '—'}
+                                                </TableCell>
+                                            )}
                                             <TableCell>
                                                 <CenterStatusBadge
                                                     status={center.status}
                                                 />
                                             </TableCell>
-                                            <TableCell>
-                                                <div className='flex justify-end gap-2'>
-                                                    <Button
-                                                        appearance='outline'
-                                                        size='md'
-                                                        iconOnly
-                                                        aria-label={t(
-                                                            'common.edit',
-                                                        )}
-                                                        onPress={() => {
-                                                            setEditing(center);
-                                                            setFormOpen(true);
-                                                        }}
-                                                    >
-                                                        <Pencil1 />
-                                                    </Button>
-                                                    <Button
-                                                        variant='danger'
-                                                        appearance='outline'
-                                                        size='md'
-                                                        iconOnly
-                                                        aria-label={t(
-                                                            'common.delete',
-                                                        )}
-                                                        onPress={() =>
-                                                            setDeleting(center)
-                                                        }
-                                                    >
-                                                        <Trash1 />
-                                                    </Button>
-                                                </div>
-                                            </TableCell>
+                                            {canManage && (
+                                                <TableCell>
+                                                    <div className='flex justify-end gap-2'>
+                                                        <Button
+                                                            appearance='outline'
+                                                            size='md'
+                                                            iconOnly
+                                                            aria-label={t(
+                                                                'common.edit',
+                                                            )}
+                                                            onPress={() => {
+                                                                setEditing(
+                                                                    center,
+                                                                );
+                                                                setFormOpen(
+                                                                    true,
+                                                                );
+                                                            }}
+                                                        >
+                                                            <Pencil1 />
+                                                        </Button>
+                                                        <Button
+                                                            variant='danger'
+                                                            appearance='outline'
+                                                            size='md'
+                                                            iconOnly
+                                                            aria-label={t(
+                                                                'common.delete',
+                                                            )}
+                                                            onPress={() =>
+                                                                setDeleting(
+                                                                    center,
+                                                                )
+                                                            }
+                                                        >
+                                                            <Trash1 />
+                                                        </Button>
+                                                    </div>
+                                                </TableCell>
+                                            )}
                                         </TableRow>
                                     ))}
                                 </TableBody>
