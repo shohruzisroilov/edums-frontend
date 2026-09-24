@@ -8,6 +8,7 @@ import {
 import { Button } from '@/components/tailgrids/core/button';
 import { ErrorState, TableSkeleton } from '@/components/ui/data-state';
 import { TextInput } from '@/components/ui/form-field';
+import { PasswordInput } from '@/components/ui/password-input';
 import { ImageUploadField } from '@/components/ui/image-upload';
 import { PageHeader } from '@/components/ui/page-header';
 import { RoleBadge } from '@/components/ui/status-badge';
@@ -246,9 +247,8 @@ function ChangePasswordCard() {
     return (
         <Card title={t('profile.passwordTitle')}>
             <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
-                <TextInput
+                <PasswordInput
                     label={t('profile.currentPassword')}
-                    type='password'
                     required
                     autoComplete='current-password'
                     value={form.current}
@@ -256,9 +256,8 @@ function ChangePasswordCard() {
                         setForm({ ...form, current: e.target.value })
                     }
                 />
-                <TextInput
+                <PasswordInput
                     label={t('users.newPassword')}
-                    type='password'
                     required
                     minLength={8}
                     maxLength={72}
@@ -267,9 +266,8 @@ function ChangePasswordCard() {
                     value={form.next}
                     onChange={(e) => setForm({ ...form, next: e.target.value })}
                 />
-                <TextInput
+                <PasswordInput
                     label={t('profile.repeatPassword')}
-                    type='password'
                     required
                     autoComplete='new-password'
                     error={mismatch ? t('profile.passwordMismatch') : undefined}

@@ -2,7 +2,7 @@
 
 import { AuthHeader } from '@/components/common/auth-header';
 import { Button } from '@/components/tailgrids/core/button';
-import { TextInput } from '@/components/ui/form-field';
+import { PasswordInput } from '@/components/ui/password-input';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { apiErrorMessage } from '@/hooks/use-api-error';
 import { useSession } from '@/hooks/use-session';
@@ -15,7 +15,6 @@ import {
 import { ApiError } from '@/services/api/client';
 import type { Session } from '@/types/api';
 import { homeHref } from '@/utils/access';
-import { Eye, EyeDisabled } from '@tailgrids/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, type FormEvent } from 'react';
@@ -75,7 +74,6 @@ export default function LoginPage() {
 
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [pending, setPending] = useState(false);
 
@@ -131,36 +129,16 @@ export default function LoginPage() {
                             onValueChange={setPhone}
                         />
 
-                        <div className='relative'>
-                            <TextInput
-                                label={t('common.password')}
-                                type={showPassword ? 'text' : 'password'}
-                                required
-                                autoComplete='current-password'
-                                placeholder='••••••••'
-                                className='pr-11'
-                                value={password}
-                                onChange={(event) =>
-                                    setPassword(event.target.value)
-                                }
-                            />
-                            <button
-                                type='button'
-                                onClick={() => setShowPassword((prev) => !prev)}
-                                aria-label={t(
-                                    showPassword
-                                        ? 'auth.hidePassword'
-                                        : 'auth.showPassword',
-                                )}
-                                className='text-text-tertiary hover:text-text-primary focus-visible:ring-input-primary-focus-border/30 absolute top-7.5 right-1.5 flex size-9 items-center justify-center rounded-md transition-colors outline-none focus-visible:ring-4'
-                            >
-                                {showPassword ? (
-                                    <EyeDisabled className='size-5' />
-                                ) : (
-                                    <Eye className='size-5' />
-                                )}
-                            </button>
-                        </div>
+                        <PasswordInput
+                            label={t('common.password')}
+                            required
+                            autoComplete='current-password'
+                            placeholder='••••••••'
+                            value={password}
+                            onChange={(event) =>
+                                setPassword(event.target.value)
+                            }
+                        />
 
                         {error && (
                             <div

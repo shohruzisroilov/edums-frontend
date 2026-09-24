@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/tailgrids/core/button';
 import { CheckboxInput, TextInput } from '@/components/ui/form-field';
+import { PasswordInput } from '@/components/ui/password-input';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { ImageUploadField } from '@/components/ui/image-upload';
 import { Modal } from '@/components/ui/modal';
@@ -165,9 +166,8 @@ export function UserFormModal({
                 />
 
                 {!isEdit && (
-                    <TextInput
+                    <PasswordInput
                         label={t('common.password')}
-                        type='password'
                         required
                         minLength={8}
                         maxLength={72}
