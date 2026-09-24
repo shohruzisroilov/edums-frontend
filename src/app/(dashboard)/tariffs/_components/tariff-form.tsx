@@ -6,76 +6,84 @@ import {
     TextInput,
     TextareaInput,
 } from '@/components/ui/form-field';
-import { MoneyInput, NumberInput } from '@/components/ui/formatted-input';
 import { Modal } from '@/components/ui/modal';
+import { MoneyInput, NumberInput } from '@/components/ui/number-input';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useT } from '@/i18n/provider';
 import { createTariff, updateTariff } from '@/services/api/tariffs';
-import type { CreateTariffPayload, Tariff } from '@/types/api';
+import type { Tariff } from '@/types/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 
+/** Raqamli maydonlar satr sifatida saqlanadi — bo'sh satr "qiymat yo'q". */
 interface FormState {
     name: string;
     description: string;
     price: string;
     duration_days: string;
-    /** '' = cheksiz (backend null kutadi) */
-    max_students: string;
-    max_teachers: string;
+    max_users: string;
+    sort_order: string;
     is_active: boolean;
 }
 
 const EMPTY: FormState = {
     name: '',
     description: '',
-    price: '0',
+    price: '',
     duration_days: '30',
-    max_students: '',
-    max_teachers: '',
+    max_users: '',
+    sort_order: '0',
     is_active: true,
 };
 
-function toFormState(tariff: Tariff): FormState {
-    return {
-        name: tariff.name,
-        description: tariff.description ?? '',
-        price: String(tariff.price),
-        duration_days: String(tariff.duration_days),
-        max_students:
-            tariff.max_students === null ? '' : String(tariff.max_students),
-        max_teachers:
-            tariff.max_teachers === null ? '' : String(tariff.max_teachers),
-        is_active: tariff.is_active,
-    };
-}
-
-/**
- * Faqat ochilganda mount qilinadi (sahifada `{open && <TariffFormModal .../>}`),
- * shuning uchun boshlang'ich holat useState ichida bir marta hisoblanadi.
- */
+/** Faqat ochilganda mount qilinadi — boshlang'ich holat bir marta hisoblanadi. */
 export function TariffFormModal({
     tariff,
     onClose,
 }: {
-    /** null bo'lsa — yangi tarif. */
     tariff: Tariff | null;
     onClose: () => void;
 }) {
-    const [form, setForm] = useState<FormState>(() =>
-        tariff ? toFormState(tariff) : EMPTY,
-    );
-    const queryClient = useQueryClient();
+    const isEdit = tariff !== null;
     const t = useT();
     const toastError = useApiErrorToast();
+    const queryClient = useQueryClient();
+
+    const [form, setForm] = useState<FormState>(() =>
+        tariff
+            ? {
+                  name: tariff.name,
+                  description: tariff.description ?? '',
+                  price: String(Math.round(tariff.price)),
+                  duration_days: String(tariff.duration_days),
+                  max_users:
+                      tariff.max_users === null ? '' : String(tariff.max_users),
+                  sort_order: String(tariff.sort_order),
+                  is_active: tariff.is_active,
+              }
+            : EMPTY,
+    );
 
     const mutation = useMutation({
-        mutationFn: (payload: CreateTariffPayload) =>
-            tariff ? updateTariff(tariff.id, payload) : createTariff(payload),
+        mutationFn: () => {
+            const payload = {
+                name: form.name.trim(),
+                description: form.description.trim() || null,
+                price: Number(form.price || 0),
+                duration_days: Number(form.duration_days),
+                max_users: form.max_users ? Number(form.max_users) : null,
+                sort_order: Number(form.sort_order || 0),
+                is_active: form.is_active,
+            };
+
+            return tariff
+                ? updateTariff(tariff.id, payload)
+                : createTariff(payload);
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tariffs'] });
-            toast.success(t(tariff ? 'tariffs.updated' : 'tariffs.created'));
+            toast.success(t(isEdit ? 'tariffs.updated' : 'tariffs.created'));
             onClose();
         },
         onError: (error) => toastError(error),
@@ -83,26 +91,15 @@ export function TariffFormModal({
 
     function handleSubmit(event: FormEvent) {
         event.preventDefault();
-
-        mutation.mutate({
-            name: form.name.trim(),
-            description: form.description.trim() || undefined,
-            price: Number(form.price) || 0,
-            duration_days: Number(form.duration_days) || 30,
-            // Bo'sh maydon = cheksiz. Backend null'ni shunday tushunadi.
-            max_students:
-                form.max_students === '' ? null : Number(form.max_students),
-            max_teachers:
-                form.max_teachers === '' ? null : Number(form.max_teachers),
-            is_active: form.is_active,
-        });
+        mutation.mutate();
     }
 
     return (
         <Modal
             open
             onClose={onClose}
-            title={t(tariff ? 'tariffs.edit' : 'tariffs.new')}
+            title={t(isEdit ? 'tariffs.edit' : 'tariffs.new')}
+            description={isEdit ? t('tariffs.editHint') : undefined}
             size='lg'
         >
             <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
@@ -110,61 +107,55 @@ export function TariffFormModal({
                     label={t('common.name')}
                     required
                     maxLength={100}
+                    placeholder={t('tariffs.namePlaceholder')}
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                 />
-
                 <TextareaInput
                     label={t('common.description')}
+                    maxLength={1000}
+                    rows={2}
                     value={form.description}
                     onChange={(e) =>
                         setForm({ ...form, description: e.target.value })
                     }
                 />
-
                 <div className='grid gap-4 sm:grid-cols-2'>
                     <MoneyInput
                         label={t('tariffs.price')}
+                        required
                         currency={t('common.som')}
                         value={form.price}
                         onValueChange={(price) => setForm({ ...form, price })}
                     />
                     <NumberInput
                         label={t('tariffs.duration')}
+                        required
                         unit={t('tariffs.dayUnit')}
-                        min={1}
-                        max={3650}
                         value={form.duration_days}
                         onValueChange={(duration_days) =>
                             setForm({ ...form, duration_days })
                         }
                     />
                     <NumberInput
-                        label={t('tariffs.maxStudentsLabel')}
-                        min={1}
-                        max={100000}
-                        placeholder={t('common.unlimited')}
+                        label={t('tariffs.maxUsers')}
                         hint={t('tariffs.unlimitedHint')}
-                        value={form.max_students}
-                        onValueChange={(max_students) =>
-                            setForm({ ...form, max_students })
+                        value={form.max_users}
+                        onValueChange={(max_users) =>
+                            setForm({ ...form, max_users })
                         }
                     />
                     <NumberInput
-                        label={t('tariffs.maxTeachersLabel')}
-                        min={1}
-                        max={10000}
-                        placeholder={t('common.unlimited')}
-                        hint={t('tariffs.unlimitedHint')}
-                        value={form.max_teachers}
-                        onValueChange={(max_teachers) =>
-                            setForm({ ...form, max_teachers })
+                        label={t('tariffs.sortOrder')}
+                        hint={t('tariffs.sortOrderHint')}
+                        value={form.sort_order}
+                        onValueChange={(sort_order) =>
+                            setForm({ ...form, sort_order })
                         }
                     />
                 </div>
-
                 <CheckboxInput
-                    label={t('common.active')}
+                    label={t('tariffs.activeLabel')}
                     checked={form.is_active}
                     onChange={(e) =>
                         setForm({ ...form, is_active: e.target.checked })
@@ -185,7 +176,7 @@ export function TariffFormModal({
                         variant='primary'
                         appearance='fill'
                         size='md'
-                        isDisabled={mutation.isPending}
+                        isDisabled={mutation.isPending || !form.duration_days}
                     >
                         {t(
                             mutation.isPending

@@ -81,7 +81,7 @@ export function createFormatters(locale: Locale) {
                 : formatInteger(value);
         },
 
-        /** Tarif narxi. Valyuta nomi tarjimadan keladi. */
+        /** Narx. Valyuta nomi tarjimadan keladi. */
         formatPrice(
             value: number | null | undefined,
             currency: string,
@@ -90,26 +90,8 @@ export function createFormatters(locale: Locale) {
                 ? '—'
                 : `${formatInteger(value)} ${currency}`;
         },
-
-        formatFileSize(bytes: number): string {
-            if (!bytes) return '0 B';
-            const units = ['B', 'KB', 'MB', 'GB'];
-            const index = Math.min(
-                Math.floor(Math.log(bytes) / Math.log(1024)),
-                units.length - 1,
-            );
-            const size = bytes / 1024 ** index;
-            return `${size.toFixed(index === 0 ? 0 : 1)} ${units[index]}`;
-        },
-
-        /** null = cheksiz (backend shartnomasi). */
-        formatLimit(value: number | null, unlimited: string): string {
-            return value === null ? unlimited : formatInteger(value);
-        },
     };
 }
-
-export type Formatters = ReturnType<typeof createFormatters>;
 
 /** Til bilan bog'liq emas — hamma joyda "Familiya Ism" tartibida. */
 export function fullName(person: {

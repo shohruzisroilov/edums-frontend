@@ -1,6 +1,6 @@
 'use client';
 
-import { Logo, LogoWithText, LogoWithTextDark } from '@/utils/icon';
+import { Logo, LogoWithText, LogoWithTextDark } from './logo-icons';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 

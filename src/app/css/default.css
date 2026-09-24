@@ -508,28 +508,6 @@
    */
   --brand-accent: #5750f1;
 
-  /* ── Chart palitrasi ─────────────────────────────────────────────────
-   * dataviz validatoridan o'tgan (kategorik, yorug' yuza #ffffff):
-   * yorqinlik oralig'i, xroma, CVD ajralishi va kontrast — hammasi PASS.
-   * Tartib qat'iy: seriya qo'shilganda ranglar aylanmaydi.
-   */
-  --chart-cat-1: #5750f1;
-  --chart-cat-2: #d95926;
-  --chart-cat-3: #0f8f63;
-  /* Magnitudani taqqoslash uchun bitta ohang. */
-  --chart-accent: #5750f1;
-  /* 'Holatsiz' seriya uchun: yo'lak rangidan farq qilishi kerak,
-     aks holda bo'lak fonga qo'shilib ko'rinmay qoladi. */
-  --chart-neutral: #9aa0ae;
-  --chart-track: #eceaf7;
-  --chart-grid: #e8e8e8;
-
-  /* Holat ranglari mavzuga bog'liq emas — ular doim yorliq va belgi bilan
-     birga keladi, hech qachon yolg'iz rang orqali ma'no tashimaydi. */
-  --status-good: #0ca30c;
-  --status-warning: #fab219;
-  --status-serious: #ec835a;
-  --status-critical: #d03b3b;
   --brand-600: #3c35d8;
   --base-white: #ffffff;
   --green-600: #16a34a;

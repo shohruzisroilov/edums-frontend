@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/tailgrids/core/button';
 import { TextInput } from '@/components/ui/form-field';
-import { PhoneInput } from '@/components/ui/formatted-input';
+import { PhoneInput } from '@/components/ui/phone-input';
 import { Modal } from '@/components/ui/modal';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useT } from '@/i18n/provider';

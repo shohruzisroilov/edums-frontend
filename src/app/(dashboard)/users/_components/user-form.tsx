@@ -1,22 +1,17 @@
 'use client';
 
 import { Button } from '@/components/tailgrids/core/button';
-import {
-    CheckboxInput,
-    SelectInput,
-    TextInput,
-} from '@/components/ui/form-field';
-import { PhoneInput } from '@/components/ui/formatted-input';
+import { CheckboxInput, TextInput } from '@/components/ui/form-field';
+import { PhoneInput } from '@/components/ui/phone-input';
 import { ImageUploadField } from '@/components/ui/image-upload';
 import { Modal } from '@/components/ui/modal';
 import { useApiErrorToast } from '@/hooks/use-api-error';
+import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
-import { listEducationCenters } from '@/services/api/education-centers';
-import { listEducations } from '@/services/api/educations';
 import { createUser, updateUser } from '@/services/api/users';
-import type { User, UserRole } from '@/types/api';
-import { USER_ROLES } from '@/types/api';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { Role, User } from '@/types/api';
+import { canGrantRole } from '@/utils/access';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 
@@ -25,9 +20,7 @@ interface FormState {
     last_name: string;
     phone_number: string;
     password: string;
-    role: UserRole;
-    education_id: string;
-    education_center_ids: string[];
+    role_ids: string[];
     avatar_id: string | null;
     avatar_url: string | null;
     is_active: boolean;
@@ -38,9 +31,7 @@ const EMPTY: FormState = {
     last_name: '',
     phone_number: '',
     password: '',
-    role: 'owner',
-    education_id: '',
-    education_center_ids: [],
+    role_ids: [],
     avatar_id: null,
     avatar_url: null,
     is_active: true,
@@ -49,12 +40,18 @@ const EMPTY: FormState = {
 /** Faqat ochilganda mount qilinadi — boshlang'ich holat bir marta hisoblanadi. */
 export function UserFormModal({
     user,
+    roles,
     onClose,
 }: {
     user: User | null;
+    /** Markazning barcha rollari — sahifa allaqachon yuklagan. */
+    roles: Role[];
     onClose: () => void;
 }) {
     const isEdit = user !== null;
+    const { session } = useSession();
+    // O'z rollari va holatini o'zgartirib bo'lmaydi — backend rad etadi.
+    const isSelf = user?.id === session?.id;
 
     const [form, setForm] = useState<FormState>(() =>
         user
@@ -63,11 +60,7 @@ export function UserFormModal({
                   last_name: user.last_name,
                   phone_number: user.phone_number,
                   password: '',
-                  role: user.role,
-                  education_id: user.education_id ?? '',
-                  education_center_ids: user.education_centers.map(
-                      (center) => center.id,
-                  ),
+                  role_ids: user.roles.map((role) => role.id),
                   avatar_id: user.avatar_id,
                   avatar_url: user.avatar?.url ?? null,
                   is_active: user.is_active,
@@ -78,69 +71,49 @@ export function UserFormModal({
     const t = useT();
     const toastError = useApiErrorToast();
 
-    // Owner butun tashkilotga biriktiriladi, qolganlari aniq filiallarga.
-    const isOwner = form.role === 'owner';
-
-    const educationsQuery = useQuery({
-        queryKey: ['educations', 'options'],
-        queryFn: () => listEducations({ limit: 200 }),
-        enabled: !isEdit,
-    });
-
-    const centersQuery = useQuery({
-        queryKey: ['education-centers', 'options', form.education_id],
-        queryFn: () =>
-            listEducationCenters({
-                education_id: form.education_id,
-                limit: 200,
-            }),
-        enabled: !isEdit && !isOwner && form.education_id !== '',
-    });
-
-    const centers = centersQuery.data?.data ?? [];
-
     const mutation = useMutation({
         mutationFn: () => {
-            if (user) {
-                // Backend PATCH /users/:id da role, tashkilot va filiallarni
-                // qabul qilmaydi — ular boshqa endpointlar orqali yuritiladi.
-                return updateUser(user.id, {
-                    first_name: form.first_name.trim(),
-                    last_name: form.last_name.trim(),
-                    phone_number: form.phone_number.trim(),
-                    password: form.password || undefined,
-                    avatar_id: form.avatar_id,
-                    is_active: form.is_active,
-                });
-            }
-
-            return createUser({
+            const profile = {
                 first_name: form.first_name.trim(),
                 last_name: form.last_name.trim(),
                 phone_number: form.phone_number.trim(),
-                password: form.password,
-                role: form.role,
                 avatar_id: form.avatar_id,
-                education_id: form.education_id || undefined,
-                education_center_ids: isOwner
-                    ? undefined
-                    : form.education_center_ids,
+            };
+
+            if (user) {
+                return updateUser(
+                    user.id,
+                    isSelf
+                        ? profile
+                        : {
+                              ...profile,
+                              role_ids: form.role_ids,
+                              is_active: form.is_active,
+                          },
+                );
+            }
+
+            return createUser({
+                ...profile,
+                password: form.password,
+                role_ids: form.role_ids,
             });
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['users'] });
+            queryClient.invalidateQueries({ queryKey: ['roles'] });
             toast.success(t(isEdit ? 'users.updated' : 'users.created'));
             onClose();
         },
         onError: (error) => toastError(error),
     });
 
-    function toggleCenter(id: string) {
+    function toggleRole(id: string) {
         setForm((prev) => ({
             ...prev,
-            education_center_ids: prev.education_center_ids.includes(id)
-                ? prev.education_center_ids.filter((item) => item !== id)
-                : [...prev.education_center_ids, id],
+            role_ids: prev.role_ids.includes(id)
+                ? prev.role_ids.filter((item) => item !== id)
+                : [...prev.role_ids, id],
         }));
     }
 
@@ -149,12 +122,14 @@ export function UserFormModal({
         mutation.mutate();
     }
 
+    const noRoleSelected = !isSelf && form.role_ids.length === 0;
+
     return (
         <Modal
             open
             onClose={onClose}
             title={t(isEdit ? 'users.edit' : 'users.new')}
-            description={isEdit ? t('users.editHint') : undefined}
+            description={isSelf ? t('users.selfEditHint') : undefined}
             size='lg'
         >
             <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
@@ -189,104 +164,62 @@ export function UserFormModal({
                     }
                 />
 
-                <TextInput
-                    label={t('common.password')}
-                    type='password'
-                    required={!isEdit}
-                    minLength={8}
-                    maxLength={72}
-                    autoComplete='new-password'
-                    hint={t(
-                        isEdit
-                            ? 'users.passwordKeepHint'
-                            : 'users.passwordHint',
-                    )}
-                    value={form.password}
-                    onChange={(e) =>
-                        setForm({ ...form, password: e.target.value })
-                    }
-                />
-
                 {!isEdit && (
-                    <>
-                        <div className='grid gap-4 sm:grid-cols-2'>
-                            <SelectInput
-                                label={t('users.role')}
-                                required
-                                options={USER_ROLES.map((role) => ({
-                                    value: role,
-                                    label: t(`role.${role}`),
-                                }))}
-                                value={form.role}
-                                onValueChange={(next) =>
-                                    setForm({
-                                        ...form,
-                                        role: next as UserRole,
-                                        education_center_ids: [],
-                                    })
-                                }
-                            />
-                            <SelectInput
-                                label={t('users.education')}
-                                required
-                                placeholder={t('users.selectEducation')}
-                                hint={
-                                    isOwner
-                                        ? t('users.educationHint')
-                                        : undefined
-                                }
-                                options={(educationsQuery.data?.data ?? []).map(
-                                    (education) => ({
-                                        value: education.id,
-                                        label: education.name,
-                                    }),
-                                )}
-                                value={form.education_id}
-                                onValueChange={(next) =>
-                                    setForm({
-                                        ...form,
-                                        education_id: next,
-                                        education_center_ids: [],
-                                    })
-                                }
-                            />
-                        </div>
+                    <TextInput
+                        label={t('common.password')}
+                        type='password'
+                        required
+                        minLength={8}
+                        maxLength={72}
+                        autoComplete='new-password'
+                        hint={t('users.passwordHint')}
+                        value={form.password}
+                        onChange={(e) =>
+                            setForm({ ...form, password: e.target.value })
+                        }
+                    />
+                )}
 
-                        {isOwner ? (
+                {!isSelf && (
+                    <fieldset className='flex flex-col gap-2'>
+                        <legend className='text-text-primary mb-1.5 text-sm font-medium'>
+                            {t('users.roles')}
+                            <span className='text-red-500'> *</span>
+                        </legend>
+                        {roles.length === 0 ? (
                             <p className='text-text-tertiary text-xs'>
-                                {t('users.ownerCentersHint')}
+                                {t('users.noRoles')}
                             </p>
                         ) : (
-                            <fieldset className='flex flex-col gap-2'>
-                                <legend className='text-text-primary mb-1.5 text-sm font-medium'>
-                                    {t('users.centers')}
-                                </legend>
-                                {centers.length === 0 ? (
-                                    <p className='text-text-tertiary text-xs'>
-                                        {t('users.noCenters')}
-                                    </p>
-                                ) : (
-                                    <div className='grid gap-2 sm:grid-cols-2'>
-                                        {centers.map((center) => (
-                                            <CheckboxInput
-                                                key={center.id}
-                                                label={center.name}
-                                                checked={form.education_center_ids.includes(
-                                                    center.id,
-                                                )}
-                                                onChange={() =>
-                                                    toggleCenter(center.id)
-                                                }
-                                            />
-                                        ))}
-                                    </div>
-                                )}
-                                <p className='text-text-tertiary text-xs'>
-                                    {t('users.centersHint')}
-                                </p>
-                            </fieldset>
+                            <div className='grid gap-2 sm:grid-cols-2'>
+                                {roles.map((role) => {
+                                    const checked = form.role_ids.includes(
+                                        role.id,
+                                    );
+                                    // Allaqachon biriktirilgan rolni olib
+                                    // tashlashga ruxsat beriladi, yangisini
+                                    // qo'shishga esa yo'q.
+                                    const grantable = canGrantRole(
+                                        session,
+                                        role,
+                                    );
+
+                                    return (
+                                        <CheckboxInput
+                                            key={role.id}
+                                            label={role.name}
+                                            checked={checked}
+                                            disabled={!grantable && !checked}
+                                            onChange={() => toggleRole(role.id)}
+                                        />
+                                    );
+                                })}
+                            </div>
                         )}
-                    </>
+                        <p className='text-text-tertiary text-xs'>
+                            {t('users.rolesHint')}
+                        </p>
+                    </fieldset>
                 )}
 
                 <ImageUploadField
@@ -298,9 +231,9 @@ export function UserFormModal({
                     }
                 />
 
-                {isEdit && (
+                {isEdit && !isSelf && (
                     <CheckboxInput
-                        label={t('common.active')}
+                        label={t('users.activeLabel')}
                         checked={form.is_active}
                         onChange={(e) =>
                             setForm({ ...form, is_active: e.target.checked })
@@ -322,7 +255,7 @@ export function UserFormModal({
                         variant='primary'
                         appearance='fill'
                         size='md'
-                        isDisabled={mutation.isPending}
+                        isDisabled={mutation.isPending || noRoleSelected}
                     >
                         {t(
                             mutation.isPending
