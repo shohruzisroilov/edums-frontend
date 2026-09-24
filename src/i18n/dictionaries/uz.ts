@@ -358,6 +358,37 @@ export const uz = {
         "Tariflar tez orada e'lon qilinadi. Hozir bepul sinab ko'rishingiz mumkin.",
     'landing.ctaTitle': 'Bugun boshlang',
     'landing.ctaText': "7 kun davomida hech qanday to'lovsiz sinab ko'ring.",
+
+    /* ── SMS settings ── */
+    'nav.smsSettings': 'SMS sozlamalari',
+    'smsSettings.title': 'SMS sozlamalari',
+    'smsSettings.subtitle':
+        "Ro'yxatdan o'tish kodlari yuboriladigan Eskiz.uz ulanishi",
+    'smsSettings.connectionTitle': 'Eskiz ulanishi',
+    'smsSettings.driver': 'Rejim',
+    'smsSettings.driverEskiz': 'Eskiz — haqiqiy SMS',
+    'smsSettings.driverConsole': 'Console — faqat server logi (test)',
+    'smsSettings.driverEskizHint':
+        'Kodlar Eskiz.uz orqali telefonga yuboriladi',
+    'smsSettings.driverConsoleHint':
+        'SMS yuborilmaydi, kod backend terminalida chiqadi. Productionda taqiqlangan',
+    'smsSettings.email': 'Eskiz email',
+    'smsSettings.password': 'Eskiz paroli',
+    'smsSettings.passwordHint': 'Eskiz kabinetiga kirish paroli',
+    'smsSettings.passwordSavedHint':
+        "Parol saqlangan. O'zgartirish uchun yangisini kiriting, aks holda bo'sh qoldiring",
+    'smsSettings.from': "Jo'natuvchi (from)",
+    'smsSettings.fromHint': 'Eskiz bergan nik yoki raqam, masalan 4546',
+    'smsSettings.template': 'SMS shabloni',
+    'smsSettings.templateHint':
+        "{code} — kod o'rni. Matn Eskiz kabinetida tasdiqlangan shablon bilan aynan bir xil bo'lishi shart",
+    'smsSettings.templateMissingCode': "Shablonda {code} bo'lishi shart",
+    'smsSettings.saved': 'SMS sozlamalari saqlandi',
+    'smsSettings.testTitle': 'Sinov SMS',
+    'smsSettings.testText':
+        "Saqlangan sozlamalar bilan shablon bo'yicha 123456 kodini yuboradi. Avval o'zgarishlarni saqlang.",
+    'smsSettings.testSend': 'Yuborish',
+    'smsSettings.testSending': 'Yuborilmoqda…',
 } as const;
 
 export type TranslationKey = keyof typeof uz;

@@ -1,0 +1,275 @@
+'use client';
+
+import { Button } from '@/components/tailgrids/core/button';
+import { AccessGuard } from '@/components/ui/access-guard';
+import { ErrorState, TableSkeleton } from '@/components/ui/data-state';
+import {
+    SelectInput,
+    TextareaInput,
+    TextInput,
+} from '@/components/ui/form-field';
+import { PageHeader } from '@/components/ui/page-header';
+import { PasswordInput } from '@/components/ui/password-input';
+import { PhoneInput } from '@/components/ui/phone-input';
+import { useApiErrorToast } from '@/hooks/use-api-error';
+import { useT } from '@/i18n/provider';
+import {
+    getSmsSettings,
+    sendTestSms,
+    updateSmsSettings,
+} from '@/services/api/sms-settings';
+import type { SmsDriver, SmsSettings } from '@/types/api';
+import { isSuperAdmin } from '@/utils/access';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState, type FormEvent, type ReactNode } from 'react';
+import { toast } from 'sonner';
+
+export default function SmsSettingsPage() {
+    return (
+        <AccessGuard allow={isSuperAdmin}>
+            <SmsSettingsView />
+        </AccessGuard>
+    );
+}
+
+function SmsSettingsView() {
+    const t = useT();
+
+    const query = useQuery({
+        queryKey: ['sms-settings'],
+        queryFn: getSmsSettings,
+    });
+
+    return (
+        <>
+            <PageHeader
+                title={t('smsSettings.title')}
+                description={t('smsSettings.subtitle')}
+            />
+
+            <div className='px-5'>
+                {query.isPending ? (
+                    <TableSkeleton rows={5} columns={2} />
+                ) : query.error ? (
+                    <ErrorState error={query.error} />
+                ) : (
+                    <div className='grid items-start gap-5 lg:grid-cols-[3fr_2fr]'>
+                        {/*
+                            Saqlangandan keyin forma yangi qiymatlardan qayta
+                            boshlanadi: kiritilgan parol maydonda qolib ketmaydi.
+                        */}
+                        <SettingsForm
+                            key={query.data.updated_at}
+                            settings={query.data}
+                        />
+                        <TestSmsCard />
+                    </div>
+                )}
+            </div>
+        </>
+    );
+}
+
+function SettingsForm({ settings }: { settings: SmsSettings }) {
+    const t = useT();
+    const toastError = useApiErrorToast();
+    const queryClient = useQueryClient();
+
+    const [form, setForm] = useState({
+        driver: settings.driver,
+        eskiz_email: settings.eskiz_email ?? '',
+        eskiz_password: '',
+        eskiz_from: settings.eskiz_from,
+        template: settings.template,
+    });
+
+    const isEskiz = form.driver === 'eskiz';
+
+    const mutation = useMutation({
+        mutationFn: () =>
+            updateSmsSettings({
+                driver: form.driver,
+                eskiz_email: form.eskiz_email.trim() || null,
+                // Bo'sh qoldirilsa backend saqlangan parolni o'zgartirmaydi.
+                eskiz_password: form.eskiz_password || undefined,
+                eskiz_from: form.eskiz_from.trim(),
+                template: form.template.trim(),
+            }),
+        onSuccess: (data) => {
+            queryClient.setQueryData(['sms-settings'], data);
+            toast.success(t('smsSettings.saved'));
+        },
+        onError: (error) => toastError(error),
+    });
+
+    function handleSubmit(event: FormEvent) {
+        event.preventDefault();
+        mutation.mutate();
+    }
+
+    return (
+        <Card title={t('smsSettings.connectionTitle')}>
+            <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+                <SelectInput
+                    label={t('smsSettings.driver')}
+                    required
+                    options={[
+                        {
+                            value: 'eskiz',
+                            label: t('smsSettings.driverEskiz'),
+                        },
+                        {
+                            value: 'console',
+                            label: t('smsSettings.driverConsole'),
+                        },
+                    ]}
+                    hint={t(
+                        isEskiz
+                            ? 'smsSettings.driverEskizHint'
+                            : 'smsSettings.driverConsoleHint',
+                    )}
+                    value={form.driver}
+                    onValueChange={(driver) =>
+                        setForm({ ...form, driver: driver as SmsDriver })
+                    }
+                />
+
+                <TextInput
+                    label={t('smsSettings.email')}
+                    type='email'
+                    required={isEskiz}
+                    autoComplete='off'
+                    placeholder='info@example.uz'
+                    value={form.eskiz_email}
+                    onChange={(e) =>
+                        setForm({ ...form, eskiz_email: e.target.value })
+                    }
+                />
+
+                <PasswordInput
+                    label={t('smsSettings.password')}
+                    // Saqlangan parol bo'lsa, maydon bo'sh qolishi mumkin.
+                    required={isEskiz && !settings.has_eskiz_password}
+                    autoComplete='new-password'
+                    placeholder={
+                        settings.has_eskiz_password ? '••••••••' : undefined
+                    }
+                    hint={t(
+                        settings.has_eskiz_password
+                            ? 'smsSettings.passwordSavedHint'
+                            : 'smsSettings.passwordHint',
+                    )}
+                    value={form.eskiz_password}
+                    onChange={(e) =>
+                        setForm({ ...form, eskiz_password: e.target.value })
+                    }
+                />
+
+                <TextInput
+                    label={t('smsSettings.from')}
+                    required
+                    maxLength={20}
+                    hint={t('smsSettings.fromHint')}
+                    value={form.eskiz_from}
+                    onChange={(e) =>
+                        setForm({ ...form, eskiz_from: e.target.value })
+                    }
+                />
+
+                <TextareaInput
+                    label={t('smsSettings.template')}
+                    required
+                    maxLength={500}
+                    hint={t('smsSettings.templateHint')}
+                    error={
+                        form.template.includes('{code}')
+                            ? undefined
+                            : t('smsSettings.templateMissingCode')
+                    }
+                    value={form.template}
+                    onChange={(e) =>
+                        setForm({ ...form, template: e.target.value })
+                    }
+                />
+
+                <div className='flex justify-end'>
+                    <Button
+                        type='submit'
+                        variant='primary'
+                        appearance='fill'
+                        size='md'
+                        isDisabled={
+                            mutation.isPending ||
+                            !form.template.includes('{code}')
+                        }
+                    >
+                        {t(
+                            mutation.isPending
+                                ? 'common.saving'
+                                : 'common.save',
+                        )}
+                    </Button>
+                </div>
+            </form>
+        </Card>
+    );
+}
+
+function TestSmsCard() {
+    const t = useT();
+    const toastError = useApiErrorToast();
+    const [phone, setPhone] = useState('');
+
+    const mutation = useMutation({
+        mutationFn: () => sendTestSms(phone),
+        onSuccess: (res) => toast.success(res.message),
+        onError: (error) => toastError(error),
+    });
+
+    function handleSubmit(event: FormEvent) {
+        event.preventDefault();
+        mutation.mutate();
+    }
+
+    return (
+        <Card title={t('smsSettings.testTitle')}>
+            <p className='text-text-tertiary mb-4 text-sm'>
+                {t('smsSettings.testText')}
+            </p>
+            <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+                <PhoneInput
+                    label={t('common.phoneNumber')}
+                    required
+                    value={phone}
+                    onValueChange={setPhone}
+                />
+                <div className='flex justify-end'>
+                    <Button
+                        type='submit'
+                        variant='primary'
+                        appearance='outline'
+                        size='md'
+                        isDisabled={mutation.isPending || phone.length < 13}
+                    >
+                        {t(
+                            mutation.isPending
+                                ? 'smsSettings.testSending'
+                                : 'smsSettings.testSend',
+                        )}
+                    </Button>
+                </div>
+            </form>
+        </Card>
+    );
+}
+
+function Card({ title, children }: { title: string; children: ReactNode }) {
+    return (
+        <div className='border-card-border bg-card-background rounded-xl border p-6'>
+            <h2 className='text-text-primary font-display mb-4 text-base font-semibold'>
+                {title}
+            </h2>
+            {children}
+        </div>
+    );
+}

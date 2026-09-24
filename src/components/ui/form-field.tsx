@@ -105,6 +105,7 @@ export function TextInput({
     hint,
     prefix,
     suffix,
+    action,
     className,
     id,
     ...props
@@ -114,6 +115,8 @@ export function TextInput({
         prefix?: string;
         /** Maydon ichida, o'ng tomonda turadigan birlik: "so'm", "kun". */
         suffix?: string;
+        /** Maydon ichida, o'ng chetda turadigan tugma: parolni ko'rsatish. */
+        action?: ReactNode;
     }) {
     const { inputId, hintId, errorId } = useFieldIds(id);
 
@@ -126,6 +129,7 @@ export function TextInput({
                 controlClasses,
                 prefix && 'pl-14',
                 suffix && 'pr-16',
+                action && 'pr-11',
                 error &&
                     'border-red-500 focus:border-red-500 focus:ring-red-500/20',
                 className,
@@ -144,7 +148,7 @@ export function TextInput({
             hintId={hintId}
             errorId={errorId}
         >
-            {prefix || suffix ? (
+            {prefix || suffix || action ? (
                 <div className='relative'>
                     {/*
                         Prefiks va birlik maydon ichida turadi, lekin
@@ -167,6 +171,11 @@ export function TextInput({
                         >
                             {suffix}
                         </span>
+                    )}
+                    {action && (
+                        <div className='absolute top-1/2 right-1.5 -translate-y-1/2'>
+                            {action}
+                        </div>
                     )}
                 </div>
             ) : (

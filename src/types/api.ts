@@ -162,6 +162,29 @@ export interface BillingOverview {
     payment_instructions: string;
 }
 
+/* ── SMS sozlamalari ──────────────────────────────────────────────────── */
+
+export type SmsDriver = 'eskiz' | 'console';
+
+/** GET /sms-settings — parolning o'zi hech qachon kelmaydi. */
+export interface SmsSettings {
+    driver: SmsDriver;
+    eskiz_email: string | null;
+    has_eskiz_password: boolean;
+    eskiz_from: string;
+    template: string;
+    updated_at: string;
+}
+
+export interface SmsSettingsPayload {
+    driver: SmsDriver;
+    eskiz_email: string | null;
+    /** Bo'sh yoki yo'q bo'lsa — saqlangan parol o'zgarmaydi. */
+    eskiz_password?: string;
+    eskiz_from: string;
+    template: string;
+}
+
 /* ── Uploads ──────────────────────────────────────────────────────────── */
 
 export interface Upload {
@@ -336,6 +359,8 @@ export interface SendCodeResponse {
     expires_in: number;
     /** Qayta yuborish uchun kutish (soniya). */
     resend_in: number;
+    /** Kod uzunligi: odatda 6, test raqami uchun 4. */
+    code_length: number;
 }
 
 export interface UpdateOwnProfilePayload {

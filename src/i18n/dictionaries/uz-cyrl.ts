@@ -356,4 +356,34 @@ export const uzCyrl: Dictionary = {
         'Тарифлар тез орада эълон қилинади. Ҳозир бепул синаб кўришингиз мумкин.',
     'landing.ctaTitle': 'Бугун бошланг',
     'landing.ctaText': '7 кун давомида ҳеч қандай тўловсиз синаб кўринг.',
+
+    /* ── SMS settings ── */
+    'nav.smsSettings': 'SMS созламалари',
+    'smsSettings.title': 'SMS созламалари',
+    'smsSettings.subtitle':
+        'Рўйхатдан ўтиш кодлари юбориладиган Eskiz.uz уланиши',
+    'smsSettings.connectionTitle': 'Eskiz уланиши',
+    'smsSettings.driver': 'Режим',
+    'smsSettings.driverEskiz': 'Eskiz — ҳақиқий SMS',
+    'smsSettings.driverConsole': 'Console — фақат сервер логи (тест)',
+    'smsSettings.driverEskizHint': 'Кодлар Eskiz.uz орқали телефонга юборилади',
+    'smsSettings.driverConsoleHint':
+        'SMS юборилмайди, код бэкенд терминалида чиқади. Productionда тақиқланган',
+    'smsSettings.email': 'Eskiz email',
+    'smsSettings.password': 'Eskiz пароли',
+    'smsSettings.passwordHint': 'Eskiz кабинетига кириш пароли',
+    'smsSettings.passwordSavedHint':
+        'Пароль сақланган. Ўзгартириш учун янгисини киритинг, акс ҳолда бўш қолдиринг',
+    'smsSettings.from': 'Жўнатувчи (from)',
+    'smsSettings.fromHint': 'Eskiz берган ник ёки рақам, масалан 4546',
+    'smsSettings.template': 'SMS шаблони',
+    'smsSettings.templateHint':
+        '{code} — код ўрни. Матн Eskiz кабинетида тасдиқланган шаблон билан айнан бир хил бўлиши шарт',
+    'smsSettings.templateMissingCode': 'Шаблонда {code} бўлиши шарт',
+    'smsSettings.saved': 'SMS созламалари сақланди',
+    'smsSettings.testTitle': 'Синов SMS',
+    'smsSettings.testText':
+        'Сақланган созламалар билан шаблон бўйича 123456 кодини юборади. Аввал ўзгаришларни сақланг.',
+    'smsSettings.testSend': 'Юбориш',
+    'smsSettings.testSending': 'Юборилмоқда…',
 };

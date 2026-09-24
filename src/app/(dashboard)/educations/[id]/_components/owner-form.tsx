@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/tailgrids/core/button';
 import { TextInput } from '@/components/ui/form-field';
+import { PasswordInput } from '@/components/ui/password-input';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { Modal } from '@/components/ui/modal';
 import { useApiErrorToast } from '@/hooks/use-api-error';
@@ -87,10 +88,9 @@ export function OwnerFormModal({
                     }
                 />
 
-                <TextInput
+                <PasswordInput
                     label={t('common.password')}
                     required
-                    type='password'
                     minLength={8}
                     maxLength={72}
                     hint={t('users.passwordHint')}

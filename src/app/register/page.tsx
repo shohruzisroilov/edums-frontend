@@ -3,6 +3,7 @@
 import { AuthHeader } from '@/components/common/auth-header';
 import { Button } from '@/components/tailgrids/core/button';
 import { TextInput } from '@/components/ui/form-field';
+import { PasswordInput } from '@/components/ui/password-input';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { apiErrorMessage } from '@/hooks/use-api-error';
 import { useSession } from '@/hooks/use-session';
@@ -47,6 +48,7 @@ export default function RegisterPage() {
     const [form, setForm] = useState<FormState>(EMPTY);
     const [step, setStep] = useState<'details' | 'code'>('details');
     const [code, setCode] = useState('');
+    const [codeLength, setCodeLength] = useState(6);
     const [resendIn, setResendIn] = useState(0);
     const [error, setError] = useState<string | null>(null);
     const [pending, setPending] = useState(false);
@@ -77,6 +79,7 @@ export default function RegisterPage() {
         try {
             const res = await sendRegistrationCode(form.phone_number);
             setResendIn(res.resend_in);
+            setCodeLength(res.code_length);
             setStep('code');
         } catch (err) {
             showError(err);
@@ -183,9 +186,8 @@ export default function RegisterPage() {
                                     setForm({ ...form, phone_number })
                                 }
                             />
-                            <TextInput
+                            <PasswordInput
                                 label={t('common.password')}
-                                type='password'
                                 required
                                 minLength={8}
                                 maxLength={72}
@@ -227,8 +229,8 @@ export default function RegisterPage() {
                                 required
                                 inputMode='numeric'
                                 autoComplete='one-time-code'
-                                maxLength={6}
-                                placeholder='••••••'
+                                maxLength={codeLength}
+                                placeholder={'•'.repeat(codeLength)}
                                 className='text-center text-lg tracking-[0.5em]'
                                 value={code}
                                 onChange={(e) =>
@@ -243,7 +245,9 @@ export default function RegisterPage() {
                                 variant='primary'
                                 appearance='fill'
                                 size='lg'
-                                isDisabled={pending || code.length !== 6}
+                                isDisabled={
+                                    pending || code.length !== codeLength
+                                }
                                 className='w-full'
                             >
                                 {pending

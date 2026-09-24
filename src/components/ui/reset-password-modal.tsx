@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/tailgrids/core/button';
-import { TextInput } from '@/components/ui/form-field';
+import { PasswordInput } from '@/components/ui/password-input';
 import { Modal } from '@/components/ui/modal';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useT } from '@/i18n/provider';
@@ -51,10 +51,9 @@ export function ResetPasswordModal({
             description={fullName(user)}
         >
             <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
-                <TextInput
+                <PasswordInput
                     label={t('users.newPassword')}
                     required
-                    type='password'
                     minLength={8}
                     maxLength={72}
                     autoComplete='new-password'
