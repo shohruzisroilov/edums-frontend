@@ -356,4 +356,34 @@ export const en: Dictionary = {
         'Pricing is coming soon. You can start a free trial now.',
     'landing.ctaTitle': 'Start today',
     'landing.ctaText': 'Try it for 7 days without paying anything.',
+
+    /* ── SMS settings ── */
+    'nav.smsSettings': 'SMS settings',
+    'smsSettings.title': 'SMS settings',
+    'smsSettings.subtitle':
+        'Eskiz.uz connection used to send registration codes',
+    'smsSettings.connectionTitle': 'Eskiz connection',
+    'smsSettings.driver': 'Mode',
+    'smsSettings.driverEskiz': 'Eskiz — real SMS',
+    'smsSettings.driverConsole': 'Console — server log only (testing)',
+    'smsSettings.driverEskizHint': 'Codes are sent to the phone via Eskiz.uz',
+    'smsSettings.driverConsoleHint':
+        'No SMS is sent; the code is printed in the backend terminal. Not allowed in production',
+    'smsSettings.email': 'Eskiz email',
+    'smsSettings.password': 'Eskiz password',
+    'smsSettings.passwordHint': 'Password of the Eskiz cabinet',
+    'smsSettings.passwordSavedHint':
+        'A password is saved. Enter a new one to change it, or leave empty',
+    'smsSettings.from': 'Sender (from)',
+    'smsSettings.fromHint': 'Nickname or number given by Eskiz, e.g. 4546',
+    'smsSettings.template': 'SMS template',
+    'smsSettings.templateHint':
+        '{code} is replaced by the code. Must match the template approved in the Eskiz cabinet exactly',
+    'smsSettings.templateMissingCode': 'The template must contain {code}',
+    'smsSettings.saved': 'SMS settings saved',
+    'smsSettings.testTitle': 'Test SMS',
+    'smsSettings.testText':
+        'Sends code 123456 using the template and the saved settings. Save your changes first.',
+    'smsSettings.testSend': 'Send',
+    'smsSettings.testSending': 'Sending…',
 };

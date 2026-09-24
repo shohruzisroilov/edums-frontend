@@ -355,4 +355,35 @@ export const ru: Dictionary = {
         'Тарифы скоро появятся. А пока можно попробовать бесплатно.',
     'landing.ctaTitle': 'Начните сегодня',
     'landing.ctaText': 'Пробуйте 7 дней без какой-либо оплаты.',
+
+    /* ── SMS settings ── */
+    'nav.smsSettings': 'Настройки SMS',
+    'smsSettings.title': 'Настройки SMS',
+    'smsSettings.subtitle':
+        'Подключение Eskiz.uz для отправки кодов регистрации',
+    'smsSettings.connectionTitle': 'Подключение Eskiz',
+    'smsSettings.driver': 'Режим',
+    'smsSettings.driverEskiz': 'Eskiz — реальные SMS',
+    'smsSettings.driverConsole': 'Console — только лог сервера (тест)',
+    'smsSettings.driverEskizHint':
+        'Коды отправляются на телефон через Eskiz.uz',
+    'smsSettings.driverConsoleHint':
+        'SMS не отправляются, код выводится в терминал бэкенда. Запрещено в production',
+    'smsSettings.email': 'Email Eskiz',
+    'smsSettings.password': 'Пароль Eskiz',
+    'smsSettings.passwordHint': 'Пароль от кабинета Eskiz',
+    'smsSettings.passwordSavedHint':
+        'Пароль сохранён. Чтобы изменить, введите новый, иначе оставьте пустым',
+    'smsSettings.from': 'Отправитель (from)',
+    'smsSettings.fromHint': 'Ник или номер от Eskiz, например 4546',
+    'smsSettings.template': 'Шаблон SMS',
+    'smsSettings.templateHint':
+        '{code} — место кода. Текст должен точно совпадать с шаблоном, утверждённым в кабинете Eskiz',
+    'smsSettings.templateMissingCode': 'В шаблоне должен быть {code}',
+    'smsSettings.saved': 'Настройки SMS сохранены',
+    'smsSettings.testTitle': 'Тестовое SMS',
+    'smsSettings.testText':
+        'Отправляет код 123456 по шаблону с сохранёнными настройками. Сначала сохраните изменения.',
+    'smsSettings.testSend': 'Отправить',
+    'smsSettings.testSending': 'Отправка…',
 };
