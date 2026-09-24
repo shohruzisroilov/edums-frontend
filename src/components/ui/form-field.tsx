@@ -125,7 +125,7 @@ export function TextInput({
             className={cn(
                 controlClasses,
                 prefix && 'pl-14',
-                suffix && 'pr-14',
+                suffix && 'pr-16',
                 error &&
                     'border-red-500 focus:border-red-500 focus:ring-red-500/20',
                 className,
@@ -149,8 +149,7 @@ export function TextInput({
                     {/*
                         Prefiks va birlik maydon ichida turadi, lekin
                         kiritiladigan qiymatning bir qismi emas: shuning uchun
-                        bosishga javob bermaydi va ekran o'quvchidan
-                        yashiriladi (ular qiymatda allaqachon bor).
+                        bosishga javob bermaydi va ekran o'quvchidan yashiriladi.
                     */}
                     {prefix && (
                         <span
@@ -215,7 +214,7 @@ export function TextareaInput({
     );
 }
 
-export interface SelectOption {
+interface SelectOption {
     value: string;
     label: string;
 }

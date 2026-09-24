@@ -1,19 +1,22 @@
 'use client';
 
-import { AppLogo } from '@/components/common/app-logo';
-import { homeHrefForRole } from '@/components/common/sidebar/data';
-import ThemeToggle from '@/components/common/header/theme-toggle';
-import { LocaleSwitcher } from '@/components/common/locale-switcher';
+import { AuthHeader } from '@/components/common/auth-header';
 import { Button } from '@/components/tailgrids/core/button';
 import { TextInput } from '@/components/ui/form-field';
-import { PhoneInput } from '@/components/ui/formatted-input';
+import { PhoneInput } from '@/components/ui/phone-input';
 import { apiErrorMessage } from '@/hooks/use-api-error';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
-import { loginStaff, loginSuperAdmin } from '@/services/api/auth';
+import {
+    loginSuperAdmin,
+    loginUser,
+    sessionFromAuthUser,
+} from '@/services/api/auth';
 import { ApiError } from '@/services/api/client';
 import type { Session } from '@/types/api';
+import { homeHref } from '@/utils/access';
 import { Eye, EyeDisabled } from '@tailgrids/icons';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, type FormEvent } from 'react';
 
@@ -21,36 +24,23 @@ import { useEffect, useState, type FormEvent } from 'react';
 const SUPPORT_TELEGRAM = 'https://t.me/edumsuz';
 
 /**
- * Backendda ikkita login endpointi bor: xodimlar uchun /auth/login va
+ * Backendda ikkita login endpointi bor: markaz foydalanuvchilari uchun /auth/login va
  * super admin uchun /super_admin/login. Foydalanuvchidan turini so'ramaymiz —
- * avval xodim sifatida urinib ko'ramiz, 401 kelsa super admin sifatida.
+ * avval foydalanuvchi sifatida urinib ko'ramiz, 401 kelsa super admin sifatida.
  */
 async function signInWithPhone(
     phone_number: string,
     password: string,
 ): Promise<Session> {
     try {
-        const res = await loginStaff({ phone_number, password });
+        const res = await loginUser({ phone_number, password });
 
-        return {
-            token: res.token,
-            role: res.user.role,
-            id: res.user.id,
-            phone_number: res.user.phone_number,
-            first_name: res.user.first_name,
-            last_name: res.user.last_name,
-            education_id: res.user.education_id,
-            education_center_ids: res.user.education_center_ids ?? [],
-            avatar_url: res.user.avatar_url,
-        };
-    } catch (staffError) {
+        return sessionFromAuthUser(res.token, res.user);
+    } catch (userError) {
         // Faqat "hisob topilmadi / parol xato" holatida ikkinchi endpointga
         // o'tamiz; tarmoq yoki validatsiya xatosi bo'lsa darhol qaytaramiz.
-        if (
-            !(staffError instanceof ApiError) ||
-            staffError.statusCode !== 401
-        ) {
-            throw staffError;
+        if (!(userError instanceof ApiError) || userError.statusCode !== 401) {
+            throw userError;
         }
 
         try {
@@ -58,19 +48,22 @@ async function signInWithPhone(
 
             return {
                 token: res.token,
-                role: 'super_admin',
+                kind: 'super_admin',
                 id: res.super_admin.id,
                 phone_number: res.super_admin.phone_number,
                 first_name: 'Super',
                 last_name: 'Admin',
-                education_id: null,
-                education_center_ids: [],
                 avatar_url: null,
+                education: null,
+                roles: [],
+                is_owner: false,
+                permissions: [],
+                subscription: null,
             };
         } catch {
-            // Ikkalasi ham rad etdi. Xodim endpointining xabari to'liqroq
+            // Ikkalasi ham rad etdi. Foydalanuvchi endpointining xabari to'liqroq
             // (nofaol hisob haqida ham aytadi), shuning uchun o'shani beramiz.
-            throw staffError;
+            throw userError;
         }
     }
 }
@@ -89,7 +82,7 @@ export default function LoginPage() {
     // Allaqachon kirgan bo'lsa login sahifasida ushlab turishning ma'nosi yo'q.
     useEffect(() => {
         if (loading || !session) return;
-        router.replace(homeHrefForRole(session.role));
+        router.replace(homeHref(session));
     }, [loading, session, router]);
 
     async function handleSubmit(event: FormEvent) {
@@ -100,7 +93,7 @@ export default function LoginPage() {
         try {
             const next = await signInWithPhone(phone, password);
             signIn(next);
-            router.replace(homeHrefForRole(next.role));
+            router.replace(homeHref(next));
         } catch (err) {
             setError(
                 err instanceof ApiError
@@ -113,16 +106,15 @@ export default function LoginPage() {
     }
 
     return (
-        <div className='bg-background-gray-secondary_alt_2 flex h-full flex-col overflow-y-auto p-4'>
-            <div className='flex justify-end gap-2.5 pb-2'>
-                <LocaleSwitcher />
-                <ThemeToggle />
-            </div>
+        <div className='bg-background-gray-secondary_alt_2 flex h-full flex-col overflow-y-auto'>
+            <AuthHeader />
 
-            <div className='flex flex-1 items-center justify-center'>
+            <div className='flex flex-1 items-center justify-center p-4 py-8'>
                 <div className='border-card-border bg-card-surface-area w-full max-w-md rounded-2xl border p-8 shadow-sm'>
                     <div className='mb-7 flex flex-col items-center gap-3 text-center'>
-                        <AppLogo />
+                        <h1 className='text-text-primary font-display text-xl font-semibold'>
+                            {t('auth.title')}
+                        </h1>
                         <p className='text-text-tertiary text-sm'>
                             {t('auth.subtitle')}
                         </p>
@@ -191,7 +183,17 @@ export default function LoginPage() {
                         </Button>
                     </form>
 
-                    <p className='text-text-tertiary mt-6 text-center text-xs'>
+                    <p className='text-text-secondary mt-6 text-center text-sm'>
+                        {t('auth.noAccount')}{' '}
+                        <Link
+                            href='/register'
+                            className='text-brand-accent font-medium hover:underline'
+                        >
+                            {t('auth.tryFree')}
+                        </Link>
+                    </p>
+
+                    <p className='text-text-tertiary mt-3 text-center text-xs'>
                         {t('auth.contact')}{' '}
                         <a
                             href={SUPPORT_TELEGRAM}

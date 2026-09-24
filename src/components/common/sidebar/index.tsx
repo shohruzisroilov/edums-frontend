@@ -5,7 +5,8 @@ import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { cn } from '@/utils/cn';
 import Link from 'next/link';
-import { homeHrefForRole, navSectionsForRole } from './data';
+import { homeHref } from '@/utils/access';
+import { navSectionsFor } from './data';
 import { CloseIcon, SidebarExpandedIcon } from './icon';
 import NavItem from './nav-item';
 
@@ -23,9 +24,8 @@ export default function Sidebar({
     const { session } = useSession();
     const t = useT();
 
-    const sections = navSectionsForRole(session?.role);
-    // Super admin uchun bosh sahifa statistika, xodimlar uchun o'quvchilar ro'yxati.
-    const homeHref = homeHrefForRole(session?.role);
+    const sections = navSectionsFor(session);
+    const home = homeHref(session);
 
     return (
         <div className='flex h-full flex-col overflow-hidden'>
@@ -37,7 +37,7 @@ export default function Sidebar({
                         : 'flex-col justify-center gap-4',
                 )}
             >
-                <Link href={homeHref} aria-label={t('nav.home')}>
+                <Link href={home} aria-label={t('nav.home')}>
                     <AppLogo collapsed={!isSidebarOpen} />
                 </Link>
 

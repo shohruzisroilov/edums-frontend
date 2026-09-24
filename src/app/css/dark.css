@@ -499,26 +499,6 @@
      uchun aksent yorug'roq: barcha yuzalarda 3.0 dan yuqori. */
   --brand-accent: #7b7cf5;
 
-  /* ── Chart palitrasi ─────────────────────────────────────────────────
-   * Avtomatik "teskari" emas, qorong'i yuza (#272934) uchun alohida
-   * tanlangan qadamlar; validator: barcha tekshiruvlar PASS.
-   */
-  --chart-cat-1: #6a6bef;
-  --chart-cat-2: #d95926;
-  --chart-cat-3: #199e70;
-  --chart-accent: #7b7cf5;
-  /* 'Holatsiz' seriya uchun: yo'lak rangidan farq qilishi kerak,
-     aks holda bo'lak fonga qo'shilib ko'rinmay qoladi. */
-  --chart-neutral: #8b8f9e;
-  --chart-track: #343646;
-  --chart-grid: #383a47;
-
-  /* Holat ranglari mavzuga bog'liq emas — ular doim yorliq va belgi bilan
-     birga keladi, hech qachon yolg'iz rang orqali ma'no tashimaydi. */
-  --status-good: #0ca30c;
-  --status-warning: #fab219;
-  --status-serious: #ec835a;
-  --status-critical: #d03b3b;
   --brand-600: #3c35d8;
   --base-white: #ffffff;
   --green-600: #16a34a;

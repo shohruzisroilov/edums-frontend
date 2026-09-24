@@ -2,16 +2,15 @@
 
 import { Button } from '@/components/tailgrids/core/button';
 import { SelectInput, TextInput } from '@/components/ui/form-field';
-import { PhoneInput } from '@/components/ui/formatted-input';
+import { PhoneInput } from '@/components/ui/phone-input';
 import { ImageUploadField } from '@/components/ui/image-upload';
 import { Modal } from '@/components/ui/modal';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useT } from '@/i18n/provider';
 import { createEducation, updateEducation } from '@/services/api/educations';
-import { listTariffs } from '@/services/api/tariffs';
 import type { Education, EducationStatus } from '@/types/api';
-import { ENTITY_STATUSES } from '@/types/api';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { EDUCATION_STATUSES } from '@/types/api';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 
@@ -21,8 +20,6 @@ interface FormState {
     status: EducationStatus;
     logo_id: string | null;
     logo_url: string | null;
-    /** Faqat yaratishda: obuna shu zahoti boshlanadi. */
-    tariff_id: string;
 }
 
 const EMPTY: FormState = {
@@ -31,7 +28,6 @@ const EMPTY: FormState = {
     status: 'active',
     logo_id: null,
     logo_url: null,
-    tariff_id: '',
 };
 
 /** Faqat ochilganda mount qilinadi — boshlang'ich holat bir marta hisoblanadi. */
@@ -52,21 +48,12 @@ export function EducationFormModal({
                   status: education.status,
                   logo_id: education.logo_id,
                   logo_url: education.logo?.url ?? null,
-                  tariff_id: '',
               }
             : EMPTY,
     );
     const queryClient = useQueryClient();
     const t = useT();
     const toastError = useApiErrorToast();
-
-    // Tarif faqat yangi tashkilotda tanlanadi — keyin u alohida
-    // PATCH /educations/:id/tariff orqali almashtiriladi.
-    const tariffsQuery = useQuery({
-        queryKey: ['tariffs', 'options'],
-        queryFn: () => listTariffs({ is_active: true, limit: 200 }),
-        enabled: !isEdit,
-    });
 
     const mutation = useMutation({
         mutationFn: () => {
@@ -79,10 +66,7 @@ export function EducationFormModal({
 
             if (education) return updateEducation(education.id, shared);
 
-            return createEducation({
-                ...shared,
-                tariff_id: form.tariff_id || undefined,
-            });
+            return createEducation(shared);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['educations'] });
@@ -120,7 +104,6 @@ export function EducationFormModal({
                     <PhoneInput
                         label={t('common.phoneNumber')}
                         required
-                        hint={t('educations.phoneHint')}
                         value={form.phone_number}
                         onValueChange={(phone) =>
                             setForm({ ...form, phone_number: phone })
@@ -140,9 +123,9 @@ export function EducationFormModal({
                 <div className='grid gap-4 sm:grid-cols-2'>
                     <SelectInput
                         label={t('common.status')}
-                        options={ENTITY_STATUSES.map((status) => ({
+                        options={EDUCATION_STATUSES.map((status) => ({
                             value: status,
-                            label: t(`centerStatus.${status}`),
+                            label: t(`educationStatus.${status}`),
                         }))}
                         value={form.status}
                         onValueChange={(next) =>
@@ -152,26 +135,6 @@ export function EducationFormModal({
                             })
                         }
                     />
-
-                    {!isEdit && (
-                        <SelectInput
-                            label={t('educations.tariff')}
-                            placeholder={t('educations.noTariff')}
-                            options={(tariffsQuery.data?.data ?? []).map(
-                                (tariff) => ({
-                                    value: tariff.id,
-                                    label: t('educations.tariffOption', {
-                                        name: tariff.name,
-                                        days: tariff.duration_days,
-                                    }),
-                                }),
-                            )}
-                            value={form.tariff_id}
-                            onValueChange={(next) =>
-                                setForm({ ...form, tariff_id: next })
-                            }
-                        />
-                    )}
                 </div>
 
                 <div className='mt-2 flex items-center justify-end gap-2'>

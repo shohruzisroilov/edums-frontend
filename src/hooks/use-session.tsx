@@ -1,7 +1,7 @@
 'use client';
 
 import { SESSION_STORAGE_KEY, TOKEN_STORAGE_KEY } from '@/services/api/client';
-import type { AccessRole, Session } from '@/types/api';
+import type { Session } from '@/types/api';
 import { useRouter } from 'next/navigation';
 import {
     createContext,
@@ -29,6 +29,10 @@ function readStoredSession(): Session | null {
         const raw = window.localStorage.getItem(SESSION_STORAGE_KEY);
         if (!token || !raw) return null;
         const parsed = JSON.parse(raw) as Session;
+        // Eski versiyadan qolgan (rol asosidagi) sessiya — qayta kirish kerak.
+        if (parsed.kind !== 'super_admin' && parsed.kind !== 'user') {
+            return null;
+        }
         return { ...parsed, token };
     } catch {
         return null;
@@ -91,12 +95,4 @@ export function useSession() {
         throw new Error('useSession faqat SessionProvider ichida ishlaydi');
     }
     return context;
-}
-
-/** Rol tekshiruvi — sahifa va menyu ko'rinishini boshqarish uchun. */
-export function hasRole(
-    session: Session | null,
-    ...roles: AccessRole[]
-): boolean {
-    return session !== null && roles.includes(session.role);
 }

@@ -2,12 +2,12 @@ import type { TranslationKey } from '@/i18n/dictionaries/uz';
 import type { ErrorResponse } from '@/types/api';
 
 /**
- * Manzillar `.env` dan olinadi. Zaxira qiymat — production backend, shunda
- * `.env` yo'q bo'lsa ham ilova jim turib qolmaydi, balki ishlayveradi.
+ * Manzillar `.env` dan olinadi. Zaxira qiymat — lokal backend: `.env`
+ * unutilsa ham ilova production'ga emas, o'z kompyuteringizdagi API'ga ulanadi.
  */
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.edums.uz/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api';
 
-const FILES_URL = process.env.NEXT_PUBLIC_FILES_URL ?? 'https://api.edums.uz';
+const FILES_URL = process.env.NEXT_PUBLIC_FILES_URL ?? 'http://localhost:4000';
 
 export const TOKEN_STORAGE_KEY = 'edums_token';
 export const SESSION_STORAGE_KEY = 'edums_session';
@@ -66,6 +66,17 @@ function handleUnauthorized() {
     }
     if (!window.location.pathname.startsWith('/login')) {
         window.location.href = '/login';
+    }
+}
+
+/**
+ * 402 — obuna muddati tugagan. Foydalanuvchi tarif tanlash sahifasiga
+ * yuboriladi: u yerdagi so'rovlar backendda 402 bermaydi.
+ */
+function handlePaymentRequired() {
+    if (typeof window === 'undefined') return;
+    if (!window.location.pathname.startsWith('/billing')) {
+        window.location.href = '/billing';
     }
 }
 
@@ -133,6 +144,7 @@ export async function request<T>(
 
     if (!response.ok) {
         if (response.status === 401 && !skipAuth) handleUnauthorized();
+        if (response.status === 402) handlePaymentRequired();
 
         const error = payload as ErrorResponse | null;
 

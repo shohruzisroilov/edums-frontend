@@ -1,61 +1,89 @@
-import type { AccessRole } from '@/types/api';
+import type { PermissionKey, Role, Session, User } from '@/types/api';
 
 /**
- * Interfeys darajasidagi rol to'plamlari — menyu va sahifa tugmalari shularga
- * qaraydi. Haqiqiy tekshiruv backend guard'larida; bu yerdagi ro'yxatlar
- * Swagger tavsiflaridan olingan:
+ * Interfeys darajasidagi ruxsat tekshiruvi — menyu, sahifa va tugmalar shunga
+ * qaraydi. Haqiqiy tekshiruv backenddagi PermissionsGuard'da; bu yerda faqat
+ * foydalanuvchi bajara olmaydigan amallar yashiriladi.
  *
- * - filial ochish — owner huquqida, `education_id` ni faqat super admin yuboradi;
- * - filialga xodim qo'shish — owner va manager;
- * - o'quvchi qo'shish — administrator, manager va teacher (super admin qo'sha olmaydi);
- * - kurs va guruh uchun backend rol ro'yxatini e'lon qilmagan, shuning uchun
- *   faqat aniq vakolatli rollar ko'rsatiladi.
+ * Ruxsatlar sessiyada `/auth/me` dan olinadi va har kirishda yangilanadi.
+ * Super admin markaz ichida ishlamaydi, shuning uchun unda ruxsat yo'q.
  */
+export function can(
+    session: Session | null,
+    ...permissions: PermissionKey[]
+): boolean {
+    if (session?.kind !== 'user') return false;
+    if (session.is_owner) return true;
+    return permissions.every((permission) =>
+        session.permissions.includes(permission),
+    );
+}
 
-export const ALL_ROLES: AccessRole[] = [
-    'super_admin',
-    'owner',
-    'administrator',
-    'manager',
-    'teacher',
-];
+export function isSuperAdmin(session: Session | null): boolean {
+    return session?.kind === 'super_admin';
+}
 
-/** Tashkilot ichidagi rollar — super admin bundan tashqarida. */
-export const ORG_ROLES: AccessRole[] = [
-    'owner',
-    'administrator',
-    'manager',
-    'teacher',
-];
+/**
+ * Markaz obunasi amaldami. Tugagan bo'lsa backend profil va /billing dan
+ * boshqa hamma joyda 402 qaytaradi — interfeys ham shu ikkisini qoldiradi.
+ */
+export function hasActiveSubscription(session: Session | null): boolean {
+    return session?.kind === 'user' && session.subscription?.active === true;
+}
 
-export const CAN_MANAGE_CENTERS: AccessRole[] = ['super_admin', 'owner'];
+/** Obuna tugaganda ham ochiq qoladigan sahifalar. */
+export const PAGES_WITHOUT_SUBSCRIPTION = ['/billing', '/profile'];
 
-export const CAN_MANAGE_CENTER_STAFF: AccessRole[] = [
-    'super_admin',
-    'owner',
-    'manager',
-];
+/**
+ * Sessiya egasining bosh sahifasi: super admin — markazlar, foydalanuvchi —
+ * ruxsati yetadigan birinchi bo'lim, hech biri bo'lmasa profil.
+ */
+export function homeHref(session: Session | null): string {
+    if (isSuperAdmin(session)) return '/educations';
+    if (!hasActiveSubscription(session)) return '/billing';
+    if (can(session, 'users.view')) return '/users';
+    if (can(session, 'roles.view')) return '/roles';
+    return '/profile';
+}
 
-export const CAN_MANAGE_COURSES: AccessRole[] = [
-    'super_admin',
-    'owner',
-    'administrator',
-];
+/**
+ * Backenddagi huquqni oshirishdan himoya qoidasining nusxasi: owner hamma
+ * narsani qila oladi, qolganlar faqat o'zida bor ruxsatlar bilan ishlaydi.
+ */
+function coversAll(session: Session, permissions: PermissionKey[]): boolean {
+    return (
+        session.is_owner ||
+        permissions.every((permission) =>
+            session.permissions.includes(permission),
+        )
+    );
+}
 
-export const CAN_MANAGE_GROUPS: AccessRole[] = [
-    'super_admin',
-    'owner',
-    'administrator',
-    'manager',
-];
+/** Rolni boshqa odamga biriktira oladimi (yoki rolni tahrirlay oladimi). */
+export function canGrantRole(
+    session: Session | null,
+    role: Pick<Role, 'is_system' | 'permissions'>,
+): boolean {
+    if (session?.kind !== 'user') return false;
+    if (role.is_system) return session.is_owner;
+    return coversAll(session, role.permissions);
+}
 
-/** Super admin o'quvchi qo'sha olmaydi — uni filialning o'zi ro'yxatga oladi. */
-export const CAN_MANAGE_STUDENTS: AccessRole[] = [
-    'owner',
-    'administrator',
-    'manager',
-    'teacher',
-];
+/**
+ * Foydalanuvchini tahrirlay/o'chira oladimi: uning ruxsatlari sessiya
+ * egasinikidan keng bo'lmasligi kerak. Foydalanuvchidagi rollarning
+ * ruxsatlari to'liq rollar ro'yxatidan olinadi.
+ */
+export function canManageUser(
+    session: Session | null,
+    user: Pick<User, 'roles'>,
+    allRoles: Role[],
+): boolean {
+    if (session?.kind !== 'user') return false;
+    if (session.is_owner) return true;
 
-/** GET /staff — owner butun tashkilotni, manager o'z filiallarini ko'radi. */
-export const CAN_VIEW_STAFF: AccessRole[] = ['owner', 'manager'];
+    return user.roles.every((summary) => {
+        const role = allRoles.find((item) => item.id === summary.id);
+        return role !== undefined && canGrantRole(session, role);
+    });
+}

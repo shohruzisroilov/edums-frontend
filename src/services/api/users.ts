@@ -11,6 +11,7 @@ import type {
 
 const BASE = '/users';
 
+/** Faqat joriy foydalanuvchining markazidagilar — backend o'zi cheklaydi. */
 export function listUsers(query: ListUsersQuery = {}) {
     return request<PaginatedResponse<User>>(
         `${BASE}${buildQuery({ ...query })}`,
@@ -29,6 +30,15 @@ export async function updateUser(id: string, payload: UpdateUserPayload) {
     const res = await request<DataResponse<User>>(`${BASE}/${id}`, {
         method: 'PATCH',
         body: payload,
+    });
+    return res.data;
+}
+
+/** Eski parolni ko'rish mumkin emas — faqat yangisini o'rnatish. */
+export async function resetUserPassword(id: string, password: string) {
+    const res = await request<DataResponse<User>>(`${BASE}/${id}/password`, {
+        method: 'PATCH',
+        body: { password },
     });
     return res.data;
 }

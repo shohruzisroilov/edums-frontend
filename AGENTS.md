@@ -3,11 +3,8 @@
 > Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · TanStack Query
 
 Bu frontend NestJS backend API'siga to‘liq mos qilib yozilgan. Backend
-production'da ishlaydi — uni lokal ko‘tarish shart emas:
-
-- API: `https://api.edums.uz/api`
-- Swagger: `https://api.edums.uz/api-docs` (endpointlarni shu yerdan tekshiring)
-- Manba kodi: `../edums-backend`
+manba kodi va TZ: `../edums-backend` (lokal: `http://localhost:4000/api`,
+Swagger: `http://localhost:4000/api-docs`).
 
 **Asosiy qoida: backendda yo‘q narsani frontendda yaratmang.** Har bir sahifa,
 maydon va filtr backenddagi aniq endpoint yoki DTO'ga tayanadi.
@@ -19,33 +16,35 @@ src/
   app/
     layout.tsx            # root layout, uz lokali, ThemeProvider + Providers
     providers.tsx         # QueryClientProvider + SessionProvider
-    login/                # /login — xodim va super admin logini
+    page.tsx              # / — landing page (ochiq)
+    register/             # /register — ro'yxatdan o'tish (SMS kod)
+    login/                # /login — foydalanuvchi va super admin logini
     (dashboard)/          # himoyalangan qism (sessiya talab qilinadi)
-      layout.tsx          # sidebar + header shell, sessiya tekshiruvi
-      page.tsx            # / — tizim statistikasi (faqat super admin)
-      students/           # /students
-      education-centers/  # /education-centers va /[id]
-      tariffs/            # /tariffs
-      users/              # /users
-      uploads/            # /uploads
-      profile/            # /profile
+      layout.tsx          # sidebar + header shell, sessiyani yangilash, obuna bloklash
+      users/              # /users — markaz foydalanuvchilari (users.*)
+      roles/              # /roles — dinamik rollar (roles.*)
+      billing/            # /billing — tarif tanlash va to'lov (billing.manage)
+      educations/         # /educations va /[id] — o'quv markazlar (super admin)
+      tariffs/            # /tariffs — tariflar (super admin)
+      payments/           # /payments — to'lov so'rovlari (super admin)
+      profile/            # /profile — o'z ma'lumotlari va paroli
     not-found.tsx
   components/
     tailgrids/core/       # dizayn tizimi primitivlari (faqat ishlatilganlari)
-    common/               # sidebar, header
+    common/               # sidebar, header, logotip
     ui/                   # ilova darajasidagi komponentlar (forma, modal, jadval holati)
   services/api/           # har bir backend moduli uchun bitta fayl
   hooks/                  # use-session, use-list-query, use-api-error
   types/api.ts            # backend entity/DTO'larining nusxasi
-  utils/                  # cn, format, labels, icon
+  utils/                  # access (ruxsatlar), cn, format
 ```
 
 ## Backend bilan shartnoma
 
-- Bazaviy manzil: `NEXT_PUBLIC_API_URL` — `.env` da `https://api.edums.uz/api`.
-- Fayllar: `NEXT_PUBLIC_FILES_URL` — `https://api.edums.uz` (static `/uploads`).
-- Ikkalasining zaxira qiymati `src/services/api/client.ts` da ham production'ga
-  qaraydi, shuning uchun `.env` bo‘lmasa ham ilova ishlaydi.
+- Bazaviy manzil: `NEXT_PUBLIC_API_URL` — lokal `http://localhost:4000/api`.
+- Fayllar: `NEXT_PUBLIC_FILES_URL` — lokal `http://localhost:4000` (static `/uploads`).
+- Ikkalasining zaxira qiymati `src/services/api/client.ts` da lokal backendga
+  qaraydi. Production'da `.env` da haqiqiy manzil beriladi.
 - Barcha so'rovlar `src/services/api/client.ts` orqali ketadi — token, xato
   konverti va 401'da chiqarish shu yerda.
 - Javob konvertlari: `{ success, data }`, `{ success, data, count, limit, offset }`,
@@ -53,83 +52,69 @@ src/
 - Ro'yxatlar **limit/offset** bilan sahifalanadi (sahifa raqami emas).
 - Telefon formati hamma joyda `+998XXXXXXXXX`.
 
-## Rollar
+## Ruxsatlar
 
-| Rol | Kirish endpointi | Ko'radigan bo'limlar |
-| --- | --- | --- |
-| `super_admin` | `POST /super_admin/login` | Barchasi |
-| `center_admin` | `POST /auth/login` | O'quvchilar, Fayllar, Profil |
-| `manager` | `POST /auth/login` | O'quvchilar, Fayllar, Profil |
-| `teacher` | `POST /auth/login` | O'quvchilar (faqat ko'rish), Fayllar, Profil |
+Batafsil qoidalar: `../edums-backend/README.md` (TZ bo'limi).
+
+- **Super admin** (`POST /super_admin/login`) — faqat `/educations`: markaz
+  yaratadi va unga owner qo'shadi. Markaz ichidagi ma'lumotlarga kirmaydi.
+- **Markaz foydalanuvchisi** (`POST /auth/login`) — nima ko'rishi rollariga
+  bog'liq. Rollar dinamik: markaz ularni o'zi yaratadi va ruxsat beradi.
+  Bir foydalanuvchida bir nechta rol bo'lishi mumkin; **Owner** roli barcha
+  ruxsatlarga ega.
 
 Login formasi bitta: `signInWithPhone()` avval `/auth/login` ga, 401 kelsa
-`/super_admin/login` ga murojaat qiladi. Foydalanuvchidan hisob turi
-so'ralmaydi.
+`/super_admin/login` ga murojaat qiladi.
 
-Menyu `src/components/common/sidebar/data.tsx` da rolga qarab filtrlanadi,
-sahifalar esa `RoleGuard` bilan yopiladi. Bu faqat interfeys to'sig'i —
-haqiqiy tekshiruv backend guard'larida.
+Sessiyada `permissions` (barcha rollar birlashmasi) va `is_owner` saqlanadi.
+Ular har kirishda `(dashboard)/layout.tsx` da `/auth/me` dan yangilanadi.
+Interfeysdagi hamma tekshiruvlar `src/utils/access.ts` orqali:
 
-## O'rnatilgan dizayn skillari
-
-`.claude/skills/` da ikkita skill turadi — UI ustida ishlashdan oldin
-tegishlisini yuklang:
-
-| Skill | Nima uchun |
+| Funksiya | Nima uchun |
 | --- | --- |
-| `frontend-design` | Vizual yo'nalish, tipografika, shablonga o'xshamaydigan qarorlar |
-| `ui-ux-pro-max` | 119 ta UX qoidasi, palitralar, accessibility tekshiruvlari. Qidiruv: `python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<so'rov>" --domain ux` |
+| `can(session, 'users.create')` | Menyu bandi, tugma, sahifa |
+| `isSuperAdmin(session)` | Super admin bo'limlari |
+| `canGrantRole(session, role)` | Rolni biriktirish/tahrirlash mumkinmi |
+| `canManageUser(session, user, roles)` | Foydalanuvchini tahrirlash/o'chirish mumkinmi |
+| `hasActiveSubscription(session)` | Markaz obunasi amaldami (tugagan bo'lsa faqat `/billing`, `/profile`) |
 
-`.agents/skills/react-aria` — shablondan qolgan, `react-aria-components`
-primitivlariga tegishli, hali ham foydali.
+Sessiyada `subscription` ham bor. Obuna tugaganda backend `402` qaytaradi —
+`client.ts` uni ushlab foydalanuvchini `/billing` ga yuboradi, layout esa
+boshqa sahifalarni ochmaydi. `SubscriptionBanner` sinov muddati va tugash
+haqida eslatadi.
+
+Sahifalar `<AccessGuard allow={(s) => can(s, '...')}>` bilan yopiladi, menyu
+`src/components/common/sidebar/data.tsx` da `visible` orqali filtrlanadi. Bu
+faqat interfeys to'sig'i — haqiqiy tekshiruv backenddagi `PermissionsGuard`da.
+Backend huquqni oshirishga yo'l qo'ymaydi (o'zida yo'q ruxsatni berib
+bo'lmaydi); `canGrantRole`/`canManageUser` shu qoidaning nusxasi, rad
+etiladigan tugmalarni oldindan yashirish uchun.
+
+### Yangi ruxsat qo'shilganda
+
+1. Backend: `src/permissions/permissions.catalog.ts`.
+2. `src/types/api.ts` dagi `PERMISSION_KEYS` (yangi modul bo'lsa
+   `PermissionModule` tipi ham).
+3. Lug'atlarga `permission.<kalit>` (yangi modul uchun
+   `permissionModule.<modul>`) — to'rttala tilda.
+
+## Dizayn
 
 **Brend rangi ko'k (`--primary-500: #3758f9`) — o'zgartirilmaydi.**
 
-## Diagrammalar
-
-`src/components/charts/` — donut, gorizontal bar va meter. Kutubxona yo'q:
-barcha shakllar oddiy va dizayn tokenlariga to'g'ridan-to'g'ri bog'lanadi.
-
-**Backend tarixiy ma'lumot bermaydi** (faqat joriy kesim), shuning uchun
-trend chizig'i yo'q — bo'lmagan ma'lumotni chizmang.
-
-Ranglar `--chart-*` tokenlaridan olinadi; ular `dataviz` skillining
-validatoridan o'tgan (CVD ajralishi, yorqinlik oralig'i, yuzaga nisbatan
-kontrast) — ikkala mavzu uchun alohida tanlangan, avtomatik "teskari" emas.
-Yangi rang qo'shsangiz avval validatordan o'tkazing:
-
-```bash
-node <dataviz>/scripts/validate_palette.js "#hex,#hex,#hex" --mode dark --surface "#272934"
-```
-
-Qoidalar:
-
-- Kategorik ranglar qat'iy tartibda, aylanmaydi. 3 tadan ortiq seriya kerak
-  bo'lsa — "Boshqa" ga yig'ing yoki jadvalga o'ting.
-- Holat ranglari (`--status-*`) faqat holat uchun; ular hech qachon seriya
-  rangi bo'lmaydi va doim yorliq bilan birga keladi.
-- 2 va undan ortiq seriyada legenda majburiy — ma'noni faqat rang tashimasin.
-  Qiymat legendada turadi, shuning uchun tooltip yagona o'qish yo'li emas.
-- Katta yakka raqamda (hero, stat karta) `font-display` ham, `tabular-nums`
-  ham ishlatilmaydi — ikkalasi ham anti-pattern.
-
 ## Formatlanadigan maydonlar
 
-`src/components/ui/formatted-input.tsx` — pul, son va telefon uchun.
-Umumiy qoida: **foydalanuvchi formatlangan ko'rinishni ko'radi, backend xom
-qiymatni oladi.**
+Foydalanuvchi o'qishga qulay ko'rinishni ko'radi, backendga xom qiymat ketadi.
 
 | Komponent | Ko'rinish | Yuboriladi |
 | --- | --- | --- |
-| `MoneyInput` | `1 250 000 so'm` | `1250000` |
-| `NumberInput` | `12 000` | `12000` |
-| `PhoneInput` | `+998` (o'zgarmas) + `90 123 45 67` | `+998901234567` |
+| `PhoneInput` (`ui/phone-input.tsx`) | `+998` (o'zgarmas) + `90 123 45 67` | `+998901234567` |
+| `MoneyInput` (`ui/number-input.tsx`) | `300 000 so'm` | `300000` |
+| `NumberInput` (`ui/number-input.tsx`) | `12 000 kun` | `12000` |
 
-Telefonda `+998` maydonning tahrirlanmaydigan qismi — aks holda kursor
-prefiksdan oldin qolib, raqamlar noto'g'ri joyga tushardi.
-
-Raqamli maydonga oddiy `type='number'` qo'ymang: minglik ajratgichini
-ko'rsatmaydi va tilga bog'lanmaydi.
+`+998` maydonning tahrirlanmaydigan qismi — aks holda kursor prefiksdan oldin
+qolib, raqamlar noto'g'ri joyga tushardi. Raqamli maydonga oddiy
+`type='number'` qo'ymang: minglik ajratgichini ko'rsatmaydi.
 
 ## Select komponenti
 
@@ -152,16 +137,16 @@ bo'sh qiymatni qabul qilmaydi.
 - Fayl nomlari kebab-case, komponent eksportlari PascalCase.
 - Hook yoki brauzer API ishlatilsa `'use client'` qo'shiladi.
 - **Hech qachon matnni to'g'ridan-to'g'ri yozmang.** Har bir ko'rinadigan satr
-  `useT()` orqali keladi: `const t = useT(); t('tariffs.title')`.
+  `useT()` orqali keladi: `const t = useT(); t('roles.title')`.
   Yangi matn kerak bo'lsa avval `src/i18n/dictionaries/uz.ts` ga kalit qo'shing,
   keyin `uz-cyrl.ts`, `ru.ts`, `en.ts` ga tarjimasini yozing — `Dictionary`
   tipi to'liqlikni majburlaydi.
 - O'rinbosarlar: `t('pagination.summary', { count, from, to })` — lug'atda `{count}`.
-- Sana/son formatlari `useFormat()` hookidan olinadi (til bilan bog'langan).
-  `formatPrice` va `formatLimit` ga valyuta/`cheksiz` matni argument sifatida
-  uzatiladi, chunki ular ham tarjima qilinadi.
-- Enum yorliqlari kalit shablonlari orqali: `t(\`role.\${user.role}\`)`,
-  `t(\`centerStatus.\${status}\`)`, `t(\`studentStatus.\${status}\`)`.
+- Sana/son formatlari `useFormat()` hookidan olinadi (til bilan bog'langan):
+  `formatDate`, `formatDateTime`, `formatNumber`, `formatPrice(value, t('common.som'))`.
+- Enum yorliqlari kalit shablonlari orqali: `t(\`educationStatus.\${status}\`)`,
+  `t(\`permission.\${key}\`)`. Rol nomlari tarjima qilinmaydi — ularni markaz
+  o'zi yozadi.
 - **Tipografika:** sarlavhalar `font-display` (Golos Text), qolgan hamma joy
   Inter. Ikkalasi ham `latin, latin-ext, cyrillic, cyrillic-ext` subsetlari
   bilan yuklanadi — `cyrillic-ext` bo'lmasa o'zbek kirillidagi Ў, Қ, Ғ, Ҳ
@@ -210,8 +195,8 @@ boshqa yo'l bilan qoplaydi:
 
 | Endpoint | Sabab |
 | --- | --- |
-| `GET /tariffs/:id`, `/students/:id`, `/users/:id`, `/uploads/:id` | Tahrirlash oynasi ro'yxatdagi yozuvni ishlatadi — qayta so'rovga hojat yo'q |
-| `DELETE /uploads` (path bo'yicha) | `DELETE /uploads/:id` bilan bir xil natija beradi |
+| `GET /users/:id`, `/roles/:id`, `/uploads/:id` | Tahrirlash oynasi ro'yxatdagi yozuvni ishlatadi — qayta so'rovga hojat yo'q |
+| `GET /uploads`, `DELETE /uploads` | Fayl menejeri hozircha yo'q — faqat rasm yuklash (`uploadFile`) ishlatiladi |
 | `GET /uploads/exists` | Interfeysda foydalanuvchi ssenariysi yo'q |
 | `GET /health` | Foydalanuvchiga server holatini ko'rsatish talab qilinmagan |
 
@@ -222,7 +207,8 @@ Agar kerak bo'lsa, ularni servis fayliga qo'shish oson — tip `types/api.ts` da
 1. `src/types/api.ts` ga entity va DTO tiplarini qo'shing.
 2. `src/services/api/<modul>.ts` da funksiya yozing.
 3. Sahifani `(dashboard)` ichida yarating va menyuga qo'shing.
-4. Rolni `RoleGuard` va `data.tsx` da backend guard'iga mos belgilang.
+4. Ruxsatni `AccessGuard` va `data.tsx` da backenddagi `@RequirePermissions` ga
+   mos belgilang.
 
 ## Man etiladi
 

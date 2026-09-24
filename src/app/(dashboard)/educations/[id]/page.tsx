@@ -9,17 +9,18 @@ import {
     TableRoot,
     TableRow,
 } from '@/components/tailgrids/core/table';
+import { AccessGuard } from '@/components/ui/access-guard';
 import {
     EmptyState,
     ErrorState,
     TableSkeleton,
 } from '@/components/ui/data-state';
 import { PageHeader } from '@/components/ui/page-header';
-import { RoleGuard } from '@/components/ui/role-guard';
+import { ResetPasswordModal } from '@/components/ui/reset-password-modal';
 import {
     ActiveBadge,
-    CenterStatusBadge,
-    SubscriptionStatusBadge,
+    EducationStatusBadge,
+    SubscriptionBadge,
 } from '@/components/ui/status-badge';
 import { useFormat } from '@/hooks/use-format';
 import { useT } from '@/i18n/provider';
@@ -27,33 +28,34 @@ import {
     getEducation,
     listEducationOwners,
     listEducationSubscriptions,
+    resetEducationOwnerPassword,
 } from '@/services/api/educations';
+import type { User } from '@/types/api';
+import { isSuperAdmin } from '@/utils/access';
 import { fullName } from '@/utils/format';
 import { ArrowLeft, Plus } from '@tailgrids/icons';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState, type ReactNode } from 'react';
-import { AssignTariffModal } from './_components/assign-tariff';
 import { OwnerFormModal } from './_components/owner-form';
 
 export default function EducationDetailPage() {
     return (
-        <RoleGuard allow={['super_admin']}>
+        <AccessGuard allow={isSuperAdmin}>
             <EducationDetailView />
-        </RoleGuard>
+        </AccessGuard>
     );
 }
 
 function EducationDetailView() {
     const t = useT();
-    const { formatDate, formatDateTime, formatLimit, formatPrice } =
-        useFormat();
+    const { formatDate, formatDateTime, formatPrice } = useFormat();
     const params = useParams<{ id: string }>();
     const educationId = params.id;
 
-    const [tariffOpen, setTariffOpen] = useState(false);
     const [ownerOpen, setOwnerOpen] = useState(false);
+    const [resetting, setResetting] = useState<User | null>(null);
 
     const educationQuery = useQuery({
         queryKey: ['education', educationId],
@@ -75,7 +77,6 @@ function EducationDetailView() {
         return <ErrorState error={educationQuery.error} />;
 
     const education = educationQuery.data;
-    const subscription = education.current_subscription;
 
     return (
         <>
@@ -92,49 +93,19 @@ function EducationDetailView() {
             <PageHeader
                 title={education.name}
                 description={education.phone_number}
-                actions={
-                    <Button
-                        appearance='outline'
-                        size='md'
-                        onPress={() => setTariffOpen(true)}
-                    >
-                        {t('educations.assignTariff')}
-                    </Button>
-                }
             />
 
             <div className='grid gap-4 px-5 sm:grid-cols-2 xl:grid-cols-3'>
                 <InfoCard
                     label={t('common.status')}
-                    value={<CenterStatusBadge status={education.status} />}
+                    value={<EducationStatusBadge status={education.status} />}
                 />
                 <InfoCard
-                    label={t('educations.tariff')}
+                    label={t('billing.subscription')}
                     value={
-                        subscription?.tariff_name ?? t('educations.noTariff')
-                    }
-                />
-                <InfoCard
-                    label={t('educations.subscriptionEnds')}
-                    value={formatDate(subscription?.ends_at)}
-                />
-                <InfoCard
-                    label={t('tariffs.price')}
-                    value={
-                        subscription
-                            ? formatPrice(subscription.price, t('common.som'))
-                            : '—'
-                    }
-                />
-                <InfoCard
-                    label={t('tariffs.maxStudents')}
-                    value={
-                        subscription
-                            ? formatLimit(
-                                  subscription.max_students,
-                                  t('common.unlimited'),
-                              )
-                            : '—'
+                        <SubscriptionBadge
+                            subscription={education.subscription}
+                        />
                     }
                 />
                 <InfoCard
@@ -145,6 +116,7 @@ function EducationDetailView() {
 
             <Section
                 title={t('educations.owners')}
+                description={t('educations.ownersHint')}
                 action={
                     <Button
                         variant='primary'
@@ -171,6 +143,9 @@ function EducationDetailView() {
                                 <TableHead>{t('common.phone')}</TableHead>
                                 <TableHead>{t('common.status')}</TableHead>
                                 <TableHead>{t('common.createdAt')}</TableHead>
+                                <TableHead className='text-right'>
+                                    {t('common.actions')}
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -186,55 +161,18 @@ function EducationDetailView() {
                                     <TableCell>
                                         {formatDate(owner.created_at)}
                                     </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </TableRoot>
-                )}
-            </Section>
-
-            <Section
-                title={t('educations.centers')}
-                action={
-                    <Link
-                        href='/education-centers'
-                        className='text-brand-accent text-sm font-medium hover:underline'
-                    >
-                        {t('common.details')}
-                    </Link>
-                }
-            >
-                {education.centers.length === 0 ? (
-                    <EmptyState message={t('educations.noCenters')} />
-                ) : (
-                    <TableRoot fullBleed className='border-x-0 border-t-0'>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>{t('common.name')}</TableHead>
-                                <TableHead>{t('common.phone')}</TableHead>
-                                <TableHead>{t('common.address')}</TableHead>
-                                <TableHead>{t('common.status')}</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {education.centers.map((center) => (
-                                <TableRow key={center.id}>
                                     <TableCell>
-                                        <Link
-                                            href={`/education-centers/${center.id}`}
-                                            className='text-brand-accent font-medium hover:underline'
-                                        >
-                                            {center.name}
-                                        </Link>
-                                    </TableCell>
-                                    <TableCell>{center.phone_number}</TableCell>
-                                    <TableCell>
-                                        {center.address ?? '—'}
-                                    </TableCell>
-                                    <TableCell>
-                                        <CenterStatusBadge
-                                            status={center.status}
-                                        />
+                                        <div className='flex justify-end'>
+                                            <Button
+                                                appearance='outline'
+                                                size='md'
+                                                onPress={() =>
+                                                    setResetting(owner)
+                                                }
+                                            >
+                                                {t('users.resetPassword')}
+                                            </Button>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -243,39 +181,35 @@ function EducationDetailView() {
                 )}
             </Section>
 
-            <Section title={t('educations.subscriptions')}>
+            <Section title={t('billing.history')}>
                 {subscriptionsQuery.isPending ? (
-                    <TableSkeleton rows={2} columns={4} />
+                    <TableSkeleton rows={2} columns={3} />
                 ) : subscriptionsQuery.error ? (
                     <ErrorState error={subscriptionsQuery.error} />
                 ) : subscriptionsQuery.data.length === 0 ? (
-                    <EmptyState message={t('educations.noSubscriptions')} />
+                    <EmptyState message={t('billing.noHistory')} />
                 ) : (
                     <TableRoot fullBleed className='border-x-0 border-t-0'>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>{t('educations.tariff')}</TableHead>
-                                <TableHead>{t('educations.period')}</TableHead>
+                                <TableHead>{t('billing.tariff')}</TableHead>
+                                <TableHead>{t('billing.period')}</TableHead>
                                 <TableHead numeric>
                                     {t('tariffs.price')}
                                 </TableHead>
-                                <TableHead numeric>
-                                    {t('tariffs.maxStudents')}
-                                </TableHead>
-                                <TableHead>{t('common.status')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {subscriptionsQuery.data.map((item) => (
                                 <TableRow key={item.id}>
                                     <TableCell primary>
-                                        {item.tariff_name}
+                                        {item.kind === 'trial'
+                                            ? t('billing.trial')
+                                            : item.tariff_name}
                                     </TableCell>
                                     <TableCell>
-                                        {t('educations.periodValue', {
-                                            from: formatDate(item.starts_at),
-                                            to: formatDate(item.ends_at),
-                                        })}
+                                        {formatDate(item.starts_at)} —{' '}
+                                        {formatDate(item.ends_at)}
                                     </TableCell>
                                     <TableCell numeric>
                                         {formatPrice(
@@ -283,17 +217,6 @@ function EducationDetailView() {
                                             t('common.som'),
                                         )}
                                     </TableCell>
-                                    <TableCell numeric>
-                                        {formatLimit(
-                                            item.max_students,
-                                            t('common.unlimited'),
-                                        )}
-                                    </TableCell>
-                                    <TableCell>
-                                        <SubscriptionStatusBadge
-                                            status={item.status}
-                                        />
-                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -301,17 +224,24 @@ function EducationDetailView() {
                 )}
             </Section>
 
-            {tariffOpen && (
-                <AssignTariffModal
-                    education={education}
-                    onClose={() => setTariffOpen(false)}
-                />
-            )}
-
             {ownerOpen && (
                 <OwnerFormModal
                     educationId={educationId}
                     onClose={() => setOwnerOpen(false)}
+                />
+            )}
+
+            {resetting && (
+                <ResetPasswordModal
+                    user={resetting}
+                    reset={(password) =>
+                        resetEducationOwnerPassword(
+                            educationId,
+                            resetting.id,
+                            password,
+                        )
+                    }
+                    onClose={() => setResetting(null)}
                 />
             )}
         </>
@@ -331,19 +261,28 @@ function InfoCard({ label, value }: { label: string; value: ReactNode }) {
 
 function Section({
     title,
+    description,
     action,
     children,
 }: {
     title: string;
+    description?: string;
     action?: ReactNode;
     children: ReactNode;
 }) {
     return (
         <section className='mt-8 px-5'>
             <div className='mb-4 flex items-center justify-between gap-3'>
-                <h2 className='text-text-primary font-display text-base font-semibold'>
-                    {title}
-                </h2>
+                <div>
+                    <h2 className='text-text-primary font-display text-base font-semibold'>
+                        {title}
+                    </h2>
+                    {description && (
+                        <p className='text-text-tertiary mt-1 text-sm'>
+                            {description}
+                        </p>
+                    )}
+                </div>
                 {action}
             </div>
             <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>

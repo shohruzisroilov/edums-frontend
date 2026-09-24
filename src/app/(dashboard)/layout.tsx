@@ -8,31 +8,48 @@ import {
     SheetOverlay,
     SheetTitle,
 } from '@/components/tailgrids/core/sheet';
+import { SubscriptionBanner } from '@/components/common/subscription-banner';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
-import { getMe, verifySuperAdminToken } from '@/services/api/auth';
+import {
+    getMe,
+    sessionFromAuthUser,
+    verifySuperAdminToken,
+} from '@/services/api/auth';
+import {
+    PAGES_WITHOUT_SUBSCRIPTION,
+    hasActiveSubscription,
+} from '@/utils/access';
 import { cn } from '@/utils/cn';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState, type ReactNode } from 'react';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
-    const { session, loading } = useSession();
+    const { session, loading, signIn } = useSession();
     const router = useRouter();
+    const pathname = usePathname();
     const t = useT();
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [isMobileSheetOpen, setIsMobileSheetOpen] = useState(false);
 
     // Saqlangan token eskirgan bo'lishi mumkin. Uni bir marta serverda
-    // tekshiramiz: super admin uchun /super_admin/verify_token, xodimlar
+    // tekshiramiz: super admin uchun /super_admin/verify_token, foydalanuvchi
     // uchun /auth/me. Muvaffaqiyatsiz bo'lsa client 401'ni ushlab, sessiyani
     // tozalaydi va login sahifasiga qaytaradi.
+    //
+    // /auth/me javobi sessiyaga yoziladi: rollar yoki ruxsatlar oxirgi
+    // kirishdan beri o'zgargan bo'lsa, menyu va tugmalar shunga moslashadi.
     useQuery({
         queryKey: ['session-check', session?.id],
         queryFn: async () => {
-            if (session?.role === 'super_admin') await verifySuperAdminToken();
-            else await getMe();
+            if (!session) return false;
+            if (session.kind === 'super_admin') {
+                await verifySuperAdminToken();
+            } else {
+                signIn(sessionFromAuthUser(session.token, await getMe()));
+            }
             return true;
         },
         enabled: !!session,
@@ -46,7 +63,18 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         if (!loading && !session) router.replace('/login');
     }, [loading, session, router]);
 
-    if (loading || !session) {
+    // Obuna tugagan markaz foydalanuvchisi faqat tarif tanlash va profilda
+    // qoladi — boshqa sahifalar backendda baribir 402 beradi.
+    const blocked =
+        session?.kind === 'user' &&
+        !hasActiveSubscription(session) &&
+        !PAGES_WITHOUT_SUBSCRIPTION.some((page) => pathname.startsWith(page));
+
+    useEffect(() => {
+        if (blocked) router.replace('/billing');
+    }, [blocked, router]);
+
+    if (loading || !session || blocked) {
         return (
             <div className='flex h-full items-center justify-center'>
                 <Spinner />
@@ -105,6 +133,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
                     <main className='min-h-0 flex-1 scrollbar-thin overflow-y-auto'>
                         <div className='mx-auto w-full max-w-384 pb-6'>
+                            <SubscriptionBanner />
                             {children}
                         </div>
                     </main>

@@ -1,125 +1,79 @@
-# EDU MS — Frontend
+# EduMS — Frontend
 
-Ta'lim boshqaruv tizimi (Education Management System) admin paneli.
+O'quv markazlari uchun CRM interfeysi. Backend: `../edums-backend`
+(API va to'liq texnik topshiriq o'sha yerdagi `README.md` da).
+
+Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · TanStack Query
 
 ## Ishga tushirish
 
-1. Loyiha ildizida `.env` fayl yarating va backend manzilini yozing:
-
-```env
-NEXT_PUBLIC_API_URL=https://api.edums.uz/api
-NEXT_PUBLIC_FILES_URL=https://api.edums.uz
-```
-
-Namuna `.env.example` faylida turibdi.
-
-2. Paketlarni o‘rnating va serverni ishga tushiring:
+Avval backend ishga tushgan bo'lsin (`http://localhost:4000`).
 
 ```bash
+cp .env.example .env    # API manzili: http://localhost:4000/api
 npm install
-npm run dev
+npm run dev             # http://localhost:3000
 ```
 
-Ilova `http://localhost:3000` da ochiladi.
-
-> `NEXT_PUBLIC_*` qiymatlari build paytida kodga yoziladi — `.env` ni
-> o‘zgartirgandan keyin dev serverni qayta ishga tushiring yoki qaytadan
-> build qiling.
-
-## Skriptlar
-
-| Buyruq | Vazifasi |
+| Buyruq | Nima qiladi |
 | --- | --- |
-| `npm run dev` | Development server |
-| `npm run build` | Production build |
-| `npm run start` | Production serverni ishga tushirish |
-| `npm run lint` | ESLint tekshiruvi |
-| `npm run lint:fix` | ESLint xatolarini avtomatik tuzatish |
-| `npm run format` | Prettier bilan formatlash |
-| `npm run format:check` | Formatlashni tekshirish (o‘zgartirmaydi) |
-| `npm run typecheck` | TypeScript tekshiruvi |
+| `npm run dev` | Dev server |
+| `npm run build` / `npm start` | Production build va ishga tushirish |
+| `npm run lint` · `format` · `typecheck` | Kod sifati |
 
-## Texnologiyalar
+## Sahifalar
 
-| Qatlam | Kutubxona |
-| --- | --- |
-| Framework | Next.js 16 (App Router), React 19, TypeScript 5 |
-| Shriftlar | Golos Text (sarlavha) + Inter (matn) — kirill bilan |
-| Styling | Tailwind CSS 4 |
-| Server holati | TanStack Query |
-| UI primitivlari | React Aria Components, Base UI (Avatar) |
-| Ikonkalar | `@tailgrids/icons` |
-| Bildirishnoma | `sonner` |
-| Theme | `next-themes` (kunduzgi/tungi) |
-| Kod sifati | ESLint + Prettier |
-
-## Sahifalar va rollar
-
-| Sahifa | Manzil | Kim ko‘radi |
+| Sahifa | Manzil | Kim ko'radi |
 | --- | --- | --- |
+| Landing page | `/` | Hamma |
+| Ro'yxatdan o'tish | `/register` | Hamma (SMS kod bilan, 7 kun bepul) |
 | Kirish | `/login` | Hamma |
-| Boshqaruv paneli | `/` | Super admin |
-| O‘quv markazlari | `/education-centers` va `/[id]` | Super admin |
+| O'quv markazlar | `/educations`, `/educations/[id]` | Super admin |
 | Tariflar | `/tariffs` | Super admin |
-| Xodimlar | `/users` | Super admin |
-| O‘quvchilar | `/students` | Barcha rollar |
-| Fayllar | `/uploads` | Barcha rollar |
-| Profil | `/profile` | Barcha rollar |
+| To'lovlar | `/payments` | Super admin |
+| Foydalanuvchilar | `/users` | `users.view` ruxsati borlar |
+| Rollar | `/roles` | `roles.view` ruxsati borlar |
+| Tarif va to'lov | `/billing` | `billing.manage` ruxsati borlar |
+| Profil | `/profile` | Kirgan har bir kishi |
 
-Rollar: `super_admin`, `center_admin`, `manager`, `teacher`.
-Hisoblarni faqat super admin yaratadi — ro‘yxatdan o‘tish yo‘q.
-O‘quvchilar tizimga kirmaydi.
+Obuna tugagan markaz foydalanuvchisi faqat `/billing` va `/profile` da qoladi
+(backend boshqa hamma joyda `402` qaytaradi).
 
-Ruxsatlar:
+Rollar dinamik: har bir markaz o'z rollarini yaratadi, ularga ruxsat beradi va
+foydalanuvchiga bir nechta rol biriktiradi. Owner roli barcha ruxsatlarga ega.
+Menyu va tugmalar sessiyadagi `permissions` ga qarab ko'rsatiladi
+(`src/utils/access.ts`).
 
-- O‘quvchi qo‘shish/tahrirlash — super admin, markaz admini, menejer.
-- O‘quvchini o‘chirish — super admin va markaz admini.
-- O‘qituvchi faqat ro‘yxatni ko‘radi.
-- Markaz xodimlari faqat o‘z markazining o‘quvchilarini ko‘radi.
-
-## Loyiha tuzilishi
+## Papka tuzilishi
 
 ```
 src/
-  app/            # sahifalar (App Router), login va (dashboard) guruhlari
+  app/
+    page.tsx              # / — landing page (ochiq)
+    register/             # /register — ro'yxatdan o'tish (SMS kod)
+    login/                # /login
+    (dashboard)/          # sessiya talab qilinadigan qism
+      layout.tsx          # sidebar + header, sessiyani yangilash, obuna tugasa /billing ga
+      educations/         # super admin: markazlar, ownerlar, obunalar tarixi
+      tariffs/            # super admin: tariflar
+      payments/           # super admin: to'lov so'rovlari
+      billing/            # markaz: tarif tanlash va to'lov
+      users/              # foydalanuvchilar
+      roles/              # rollar va ruxsatlar
+      profile/            # o'z profili va paroli
+    css/, globals.css     # dizayn tokenlari (kunduzgi/tungi mavzu)
   components/
-    tailgrids/core/  # dizayn tizimi primitivlari
-    common/          # sidebar, header
-    ui/              # forma, modal, jadval holati komponentlari
-  services/api/   # API funksiyalari
-  hooks/          # sessiya, ro'yxat holati, xato hooklari
-  types/api.ts    # API tiplari
-  utils/          # cn, format, labels, icon
+    common/               # sidebar, header, logotip, til tanlash
+    tailgrids/core/       # dizayn tizimi primitivlari (tugma, jadval, badge...)
+    ui/                   # forma maydonlari, modal, jadval holatlari, AccessGuard
+  services/api/           # backend bilan ishlash — har bir modul uchun bitta fayl
+  hooks/                  # use-session, use-list-query, use-api-error, use-format
+  i18n/                   # 4 til: uz, uz-cyrl, ru, en
+  types/api.ts            # backend javoblarining tiplari
+  utils/                  # access (ruxsatlar), cn, format
 ```
 
-## Tillar
+Har bir sahifa papkasida sahifaning o'zi (`page.tsx`) va faqat shu sahifaga
+tegishli komponentlar (`_components/`) turadi.
 
-Interfeys to‘rt tilda ishlaydi. Til tanlovi header'dagi (va login sahifasidagi)
-tanlagich orqali almashadi va brauzerda saqlanadi.
-
-| Kod | Til |
-| --- | --- |
-| `uz` | O‘zbekcha (lotin) — standart |
-| `uz-cyrl` | Ўзбекча (кирилл) |
-| `ru` | Русский |
-| `en` | English |
-
-Tarjimalar `src/i18n/dictionaries/` da, har bir til uchun bitta fayl.
-Lotin lug‘ati (`uz.ts`) kalitlar manbai — boshqa tillarda kalit unutilsa
-TypeScript xato beradi. Sana va son formatlari tanlangan tilga qarab tuziladi
-(`src/utils/format.ts` + `useFormat()` hooki).
-
-## Mavzu
-
-Kunduzgi va tungi mavzu `next-themes` orqali, `<html data-theme="...">`
-belgisi bilan boshqariladi. Tanlov brauzerda saqlanadi; birinchi kirishda
-tizim sozlamasi hisobga olinadi. Tugma header va login sahifasida.
-
-Tungi mavzu sof qora emas — iliq (malla) tusli qatlamli palitra:
-sahifa `#1c1a17`, panel `#242119`, karta `#2b2721`. Ranglar
-`src/app/css/dark.css` da, kunduzgisi `src/app/css/default.css` da.
-
-## Kod uslubi
-
-Ishtirokchilar va AI agentlar uchun qoidalar [AGENTS.md](AGENTS.md) faylida
-(`CLAUDE.md` shu faylga ishora qiladi).
+Kod yozish qoidalari: `AGENTS.md`.

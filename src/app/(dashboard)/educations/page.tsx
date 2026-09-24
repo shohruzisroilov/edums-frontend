@@ -18,17 +18,20 @@ import {
 import { SelectInput } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
-import { RoleGuard } from '@/components/ui/role-guard';
+import { AccessGuard } from '@/components/ui/access-guard';
 import { SearchInput } from '@/components/ui/search-input';
-import { CenterStatusBadge } from '@/components/ui/status-badge';
+import {
+    EducationStatusBadge,
+    SubscriptionBadge,
+} from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useListQuery } from '@/hooks/use-list-query';
 import { useT } from '@/i18n/provider';
 import { deleteEducation, listEducations } from '@/services/api/educations';
-import { listTariffs } from '@/services/api/tariffs';
 import type { Education, EducationStatus } from '@/types/api';
-import { ENTITY_STATUSES } from '@/types/api';
+import { EDUCATION_STATUSES } from '@/types/api';
+import { isSuperAdmin } from '@/utils/access';
 import { Buildings11, Pencil1, Plus, Trash1 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
@@ -38,16 +41,16 @@ import { EducationFormModal } from './_components/education-form';
 
 export default function EducationsPage() {
     return (
-        <RoleGuard allow={['super_admin']}>
+        <AccessGuard allow={isSuperAdmin}>
             <EducationsView />
-        </RoleGuard>
+        </AccessGuard>
     );
 }
 
 function EducationsView() {
     const t = useT();
     const toastError = useApiErrorToast();
-    const { formatDate, formatNumber } = useFormat();
+    const { formatDate } = useFormat();
 
     const {
         search,
@@ -58,7 +61,7 @@ function EducationsView() {
         setLimit,
         offset,
         setOffset,
-    } = useListQuery({ status: '', tariff_id: '' });
+    } = useListQuery({ status: '' });
 
     const [formOpen, setFormOpen] = useState(false);
     const [editing, setEditing] = useState<Education | null>(null);
@@ -74,15 +77,9 @@ function EducationsView() {
                 status: (filters.status || undefined) as
                     | EducationStatus
                     | undefined,
-                tariff_id: filters.tariff_id || undefined,
                 limit,
                 offset,
             }),
-    });
-
-    const tariffsQuery = useQuery({
-        queryKey: ['tariffs', 'options'],
-        queryFn: () => listTariffs({ limit: 200 }),
     });
 
     const removeMutation = useMutation({
@@ -125,26 +122,13 @@ function EducationsView() {
                 />
                 <div className='sm:w-44'>
                     <SelectInput
-                        options={ENTITY_STATUSES.map((status) => ({
+                        options={EDUCATION_STATUSES.map((status) => ({
                             value: status,
-                            label: t(`centerStatus.${status}`),
+                            label: t(`educationStatus.${status}`),
                         }))}
                         placeholder={t('common.allStatuses')}
                         value={filters.status}
                         onValueChange={(next) => setFilter('status', next)}
-                    />
-                </div>
-                <div className='sm:w-52'>
-                    <SelectInput
-                        options={(tariffsQuery.data?.data ?? []).map(
-                            (tariff) => ({
-                                value: tariff.id,
-                                label: tariff.name,
-                            }),
-                        )}
-                        placeholder={t('educations.allTariffs')}
-                        value={filters.tariff_id}
-                        onValueChange={(next) => setFilter('tariff_id', next)}
                     />
                 </div>
             </div>
@@ -174,17 +158,14 @@ function EducationsView() {
                                         <TableHead>
                                             {t('common.phone')}
                                         </TableHead>
-                                        <TableHead numeric>
-                                            {t('educations.centersCount')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('educations.tariff')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('educations.subscriptionEnds')}
-                                        </TableHead>
                                         <TableHead>
                                             {t('common.status')}
+                                        </TableHead>
+                                        <TableHead>
+                                            {t('billing.subscription')}
+                                        </TableHead>
+                                        <TableHead>
+                                            {t('common.createdAt')}
                                         </TableHead>
                                         <TableHead className='text-right'>
                                             {t('common.actions')}
@@ -205,27 +186,22 @@ function EducationsView() {
                                             <TableCell>
                                                 {education.phone_number}
                                             </TableCell>
-                                            <TableCell numeric>
-                                                {formatNumber(
-                                                    education.centers?.length ??
-                                                        0,
-                                                )}
+                                            <TableCell>
+                                                <EducationStatusBadge
+                                                    status={education.status}
+                                                />
                                             </TableCell>
                                             <TableCell>
-                                                {education.current_subscription
-                                                    ?.tariff_name ?? '—'}
+                                                <SubscriptionBadge
+                                                    subscription={
+                                                        education.subscription
+                                                    }
+                                                />
                                             </TableCell>
                                             <TableCell>
                                                 {formatDate(
-                                                    education
-                                                        .current_subscription
-                                                        ?.ends_at,
+                                                    education.created_at,
                                                 )}
-                                            </TableCell>
-                                            <TableCell>
-                                                <CenterStatusBadge
-                                                    status={education.status}
-                                                />
                                             </TableCell>
                                             <TableCell>
                                                 <div className='flex justify-end gap-2'>

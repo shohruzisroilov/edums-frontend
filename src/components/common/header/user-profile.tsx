@@ -26,15 +26,15 @@ export function UserProfileButton() {
 
     if (!session) return null;
 
-    const displayName =
-        session.role === 'super_admin'
-            ? t('profile.superAdmin')
-            : `${session.last_name} ${session.first_name}`.trim();
+    const superAdmin = session.kind === 'super_admin';
 
-    const initials =
-        session.role === 'super_admin'
-            ? 'SA'
-            : `${session.last_name[0] ?? ''}${session.first_name[0] ?? ''}`.toUpperCase();
+    const displayName = superAdmin
+        ? t('profile.superAdmin')
+        : `${session.last_name} ${session.first_name}`.trim();
+
+    const initials = superAdmin
+        ? 'SA'
+        : `${session.last_name[0] ?? ''}${session.first_name[0] ?? ''}`.toUpperCase();
 
     const avatar = fileUrl(session.avatar_url);
 
@@ -53,7 +53,9 @@ export function UserProfileButton() {
                         {displayName}
                     </span>
                     <span className='text-text-tertiary block text-xs'>
-                        {t(`role.${session.role}`)}
+                        {superAdmin
+                            ? t('profile.superAdmin')
+                            : (session.education?.name ?? '')}
                     </span>
                 </span>
             </DropdownMenuTrigger>

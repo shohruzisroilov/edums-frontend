@@ -3,110 +3,35 @@
 import { Badge } from '@/components/tailgrids/core/badge';
 import { useT } from '@/i18n/provider';
 import type {
-    CourseStatus,
-    EducationCenterStatus,
-    GroupStatus,
-    StudentStatus,
+    EducationStatus,
+    PaymentRequestStatus,
+    RoleSummary,
     SubscriptionStatus,
 } from '@/types/api';
 
 type BadgeColor = 'success' | 'warning' | 'gray' | 'error' | 'primary';
 
-/** Tashkilot va filial bir xil holat to'plamiga ega. */
-const CENTER_COLORS: Record<EducationCenterStatus, BadgeColor> = {
+const EDUCATION_COLORS: Record<EducationStatus, BadgeColor> = {
     active: 'success',
     suspended: 'warning',
     inactive: 'gray',
 };
 
-const COURSE_COLORS: Record<CourseStatus, BadgeColor> = {
-    active: 'success',
-    inactive: 'gray',
-};
-
-const GROUP_COLORS: Record<GroupStatus, BadgeColor> = {
-    active: 'success',
-    finished: 'primary',
-    archived: 'gray',
-};
-
-const STUDENT_COLORS: Record<StudentStatus, BadgeColor> = {
-    active: 'success',
-    frozen: 'warning',
-    graduated: 'primary',
-    left: 'gray',
-};
-
-const SUBSCRIPTION_COLORS: Record<SubscriptionStatus, BadgeColor> = {
-    active: 'success',
-    replaced: 'gray',
-    cancelled: 'error',
-};
-
-export function CenterStatusBadge({
-    status,
-}: {
-    status: EducationCenterStatus;
-}) {
+export function EducationStatusBadge({ status }: { status: EducationStatus }) {
     const t = useT();
 
     return (
-        <Badge size='sm' color={CENTER_COLORS[status]}>
-            {t(`centerStatus.${status}`)}
+        <Badge size='sm' color={EDUCATION_COLORS[status]}>
+            {t(`educationStatus.${status}`)}
         </Badge>
     );
 }
 
-export function CourseStatusBadge({ status }: { status: CourseStatus }) {
-    const t = useT();
-
+/** Rol nomi markaz o'zi bergan nom — tarjima qilinmaydi. Owner ajratib ko'rsatiladi. */
+export function RoleBadge({ role }: { role: RoleSummary }) {
     return (
-        <Badge size='sm' color={COURSE_COLORS[status]}>
-            {t(`courseStatus.${status}`)}
-        </Badge>
-    );
-}
-
-export function GroupStatusBadge({ status }: { status: GroupStatus }) {
-    const t = useT();
-
-    return (
-        <Badge size='sm' color={GROUP_COLORS[status]}>
-            {t(`groupStatus.${status}`)}
-        </Badge>
-    );
-}
-
-export function StudentStatusBadge({ status }: { status: StudentStatus }) {
-    const t = useT();
-
-    return (
-        <Badge size='sm' color={STUDENT_COLORS[status]}>
-            {t(`studentStatus.${status}`)}
-        </Badge>
-    );
-}
-
-export function SubscriptionStatusBadge({
-    status,
-}: {
-    status: SubscriptionStatus;
-}) {
-    const t = useT();
-
-    return (
-        <Badge size='sm' color={SUBSCRIPTION_COLORS[status]}>
-            {t(`subscriptionStatus.${status}`)}
-        </Badge>
-    );
-}
-
-export function RoleBadge({ role }: { role: string }) {
-    const t = useT();
-
-    return (
-        <Badge size='sm' color={role === 'owner' ? 'primary' : 'gray'}>
-            {t(`role.${role as 'owner'}`)}
+        <Badge size='sm' color={role.is_system ? 'primary' : 'gray'}>
+            {role.name}
         </Badge>
     );
 }
@@ -117,6 +42,58 @@ export function ActiveBadge({ active }: { active: boolean }) {
     return (
         <Badge size='sm' color={active ? 'success' : 'gray'}>
             {t(active ? 'common.active' : 'common.inactive')}
+        </Badge>
+    );
+}
+
+const PAYMENT_COLORS: Record<PaymentRequestStatus, BadgeColor> = {
+    pending: 'warning',
+    approved: 'success',
+    rejected: 'error',
+    cancelled: 'gray',
+};
+
+export function PaymentStatusBadge({
+    status,
+}: {
+    status: PaymentRequestStatus;
+}) {
+    const t = useT();
+
+    return (
+        <Badge size='sm' color={PAYMENT_COLORS[status]}>
+            {t(`paymentStatus.${status}`)}
+        </Badge>
+    );
+}
+
+/** Super admin uchun: markaz sinovdami, pulli tarifdami yoki muddati tugaganmi. */
+export function SubscriptionBadge({
+    subscription,
+}: {
+    subscription: SubscriptionStatus | undefined;
+}) {
+    const t = useT();
+
+    if (!subscription?.active) {
+        return (
+            <Badge size='sm' color='error'>
+                {t('billing.expired')}
+            </Badge>
+        );
+    }
+
+    return (
+        <Badge
+            size='sm'
+            color={subscription.kind === 'trial' ? 'warning' : 'success'}
+        >
+            {subscription.kind === 'trial'
+                ? t('billing.trialDays', { days: subscription.days_left })
+                : t('billing.paidDays', {
+                      name: subscription.tariff_name ?? '',
+                      days: subscription.days_left,
+                  })}
         </Badge>
     );
 }
