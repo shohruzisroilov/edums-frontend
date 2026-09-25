@@ -4,11 +4,13 @@ import { Button } from '@/components/tailgrids/core/button';
 import { AccessGuard } from '@/components/ui/access-guard';
 import { ErrorState, TableSkeleton } from '@/components/ui/data-state';
 import {
+    CheckboxInput,
     SelectInput,
     TextareaInput,
     TextInput,
 } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
+import { SectionCard } from '@/components/ui/section-card';
 import { PasswordInput } from '@/components/ui/password-input';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { useApiErrorToast } from '@/hooks/use-api-error';
@@ -21,7 +23,7 @@ import {
 import type { SmsDriver, SmsSettings } from '@/types/api';
 import { isSuperAdmin } from '@/utils/access';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState, type FormEvent, type ReactNode } from 'react';
+import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 
 export default function SmsSettingsPage() {
@@ -63,6 +65,12 @@ function SmsSettingsView() {
                             settings={query.data}
                         />
                         <TestSmsCard />
+                        <div className='lg:col-span-2'>
+                            <NotificationsForm
+                                key={query.data.updated_at}
+                                settings={query.data}
+                            />
+                        </div>
                     </div>
                 )}
             </div>
@@ -108,7 +116,7 @@ function SettingsForm({ settings }: { settings: SmsSettings }) {
     }
 
     return (
-        <Card title={t('smsSettings.connectionTitle')}>
+        <SectionCard title={t('smsSettings.connectionTitle')}>
             <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
                 <SelectInput
                     label={t('smsSettings.driver')}
@@ -211,7 +219,117 @@ function SettingsForm({ settings }: { settings: SmsSettings }) {
                     </Button>
                 </div>
             </form>
-        </Card>
+        </SectionCard>
+    );
+}
+
+/** Avtomatik xabarlar: umumiy kalit va uchta shablon. */
+function NotificationsForm({ settings }: { settings: SmsSettings }) {
+    const t = useT();
+    const toastError = useApiErrorToast();
+    const queryClient = useQueryClient();
+
+    const [form, setForm] = useState({
+        notifications_enabled: settings.notifications_enabled,
+        subscription_template: settings.subscription_template,
+        debt_template: settings.debt_template,
+        absence_template: settings.absence_template,
+    });
+
+    const mutation = useMutation({
+        mutationFn: () =>
+            updateSmsSettings({
+                notifications_enabled: form.notifications_enabled,
+                subscription_template: form.subscription_template.trim(),
+                debt_template: form.debt_template.trim(),
+                absence_template: form.absence_template.trim(),
+            }),
+        onSuccess: (data) => {
+            queryClient.setQueryData(['sms-settings'], data);
+            toast.success(t('smsSettings.saved'));
+        },
+        onError: (error) => toastError(error),
+    });
+
+    function handleSubmit(event: FormEvent) {
+        event.preventDefault();
+        mutation.mutate();
+    }
+
+    const templates = [
+        {
+            key: 'subscription_template',
+            label: t('smsSettings.subscriptionTemplate'),
+            placeholders: '{education}, {days}',
+        },
+        {
+            key: 'debt_template',
+            label: t('smsSettings.debtTemplate'),
+            placeholders: '{education}, {student}, {group}, {amount}',
+        },
+        {
+            key: 'absence_template',
+            label: t('smsSettings.absenceTemplate'),
+            placeholders: '{education}, {student}, {group}, {date}',
+        },
+    ] as const;
+
+    return (
+        <SectionCard title={t('smsSettings.notificationsTitle')}>
+            <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+                <CheckboxInput
+                    label={t('smsSettings.notificationsEnabled')}
+                    checked={form.notifications_enabled}
+                    onChange={(e) =>
+                        setForm({
+                            ...form,
+                            notifications_enabled: e.target.checked,
+                        })
+                    }
+                />
+                <p className='text-text-tertiary -mt-2 text-xs'>
+                    {t('smsSettings.notificationsHint')}
+                </p>
+
+                <div className='grid gap-4 lg:grid-cols-3'>
+                    {templates.map((template) => (
+                        <TextareaInput
+                            key={template.key}
+                            label={template.label}
+                            required
+                            maxLength={500}
+                            rows={4}
+                            hint={t('smsSettings.placeholders', {
+                                list: template.placeholders,
+                            })}
+                            value={form[template.key]}
+                            onChange={(e) =>
+                                setForm({
+                                    ...form,
+                                    [template.key]: e.target.value,
+                                })
+                            }
+                        />
+                    ))}
+                </div>
+
+                <div className='flex justify-end'>
+                    <Button
+                        type='submit'
+                        variant='primary'
+                        appearance='fill'
+                        size='md'
+                        isDisabled={mutation.isPending}
+                    >
+                        {t(
+                            mutation.isPending
+                                ? 'common.saving'
+                                : 'common.save',
+                        )}
+                    </Button>
+                </div>
+            </form>
+        </SectionCard>
     );
 }
 
@@ -232,7 +350,7 @@ function TestSmsCard() {
     }
 
     return (
-        <Card title={t('smsSettings.testTitle')}>
+        <SectionCard title={t('smsSettings.testTitle')}>
             <p className='text-text-tertiary mb-4 text-sm'>
                 {t('smsSettings.testText')}
             </p>
@@ -259,17 +377,6 @@ function TestSmsCard() {
                     </Button>
                 </div>
             </form>
-        </Card>
-    );
-}
-
-function Card({ title, children }: { title: string; children: ReactNode }) {
-    return (
-        <div className='border-card-border bg-card-background rounded-xl border p-6'>
-            <h2 className='text-text-primary font-display mb-4 text-base font-semibold'>
-                {title}
-            </h2>
-            {children}
-        </div>
+        </SectionCard>
     );
 }

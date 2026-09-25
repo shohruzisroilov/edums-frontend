@@ -3,10 +3,24 @@ import type { Session } from '@/types/api';
 import { can, isSuperAdmin } from '@/utils/access';
 import {
     Buildings11,
+    CalendarTime,
     CreditCard,
+    DashboardSquare1,
+    FileText,
+    Funnel1,
+    Gear1,
+    HandTakingCoins,
+    MapMarker5,
     Message1,
+    OpenBook,
+    SackDollar,
     Shield1Check,
+    TrendUp2,
+    SlidersDoubleHorizontal,
     User2,
+    UserCircle1,
+    UserMultiple1,
+    UserPencil,
     Wallet2,
 } from '@tailgrids/icons';
 import type { ReactNode } from 'react';
@@ -27,6 +41,81 @@ interface NavSection {
 
 const NAV_DATA: NavSection[] = [
     {
+        labelKey: 'nav.main',
+        items: [
+            {
+                titleKey: 'nav.dashboard',
+                url: '/dashboard',
+                icon: <DashboardSquare1 className='size-5' />,
+                visible: (session) => can(session, 'reports.view'),
+            },
+        ],
+    },
+    {
+        labelKey: 'nav.learning',
+        items: [
+            {
+                titleKey: 'nav.students',
+                url: '/students',
+                icon: <UserCircle1 className='size-5' />,
+                visible: (session) => can(session, 'students.view'),
+            },
+            {
+                titleKey: 'nav.groups',
+                url: '/groups',
+                icon: <UserMultiple1 className='size-5' />,
+                visible: (session) => can(session, 'groups.view'),
+            },
+            {
+                titleKey: 'nav.schedule',
+                url: '/schedule',
+                icon: <CalendarTime className='size-5' />,
+                visible: (session) => can(session, 'groups.view'),
+            },
+            {
+                titleKey: 'nav.leads',
+                url: '/leads',
+                icon: <Funnel1 className='size-5' />,
+                visible: (session) => can(session, 'leads.view'),
+            },
+            {
+                titleKey: 'nav.courses',
+                url: '/courses',
+                icon: <OpenBook className='size-5' />,
+                visible: (session) => can(session, 'courses.view'),
+            },
+        ],
+    },
+    {
+        labelKey: 'nav.finance',
+        items: [
+            {
+                titleKey: 'nav.cashbox',
+                url: '/cashbox',
+                icon: <HandTakingCoins className='size-5' />,
+                visible: (session) => can(session, 'payments.view'),
+            },
+            {
+                titleKey: 'nav.debtors',
+                url: '/debtors',
+                icon: <SackDollar className='size-5' />,
+                visible: (session) => can(session, 'payments.view'),
+            },
+            {
+                titleKey: 'nav.expenses',
+                url: '/expenses',
+                icon: <Wallet2 className='size-5' />,
+                visible: (session) => can(session, 'expenses.view'),
+            },
+            {
+                titleKey: 'nav.salaries',
+                url: '/salaries',
+                icon: <UserPencil className='size-5' />,
+                visible: (session) => can(session, 'salaries.view'),
+            },
+        ],
+    },
+    {
         labelKey: 'nav.management',
         items: [
             {
@@ -42,6 +131,24 @@ const NAV_DATA: NavSection[] = [
                 visible: (session) => can(session, 'roles.view'),
             },
             {
+                titleKey: 'nav.branches',
+                url: '/branches',
+                icon: <MapMarker5 className='size-5' />,
+                visible: (session) => can(session, 'branches.view'),
+            },
+            {
+                titleKey: 'nav.audit',
+                url: '/audit',
+                icon: <FileText className='size-5' />,
+                visible: (session) => can(session, 'audit.view'),
+            },
+            {
+                titleKey: 'nav.settings',
+                url: '/settings',
+                icon: <SlidersDoubleHorizontal className='size-5' />,
+                visible: (session) => can(session, 'settings.manage'),
+            },
+            {
                 titleKey: 'nav.billing',
                 url: '/billing',
                 icon: <Wallet2 className='size-5' />,
@@ -52,6 +159,12 @@ const NAV_DATA: NavSection[] = [
     {
         labelKey: 'nav.superAdmin',
         items: [
+            {
+                titleKey: 'nav.overview',
+                url: '/overview',
+                icon: <TrendUp2 className='size-5' />,
+                visible: isSuperAdmin,
+            },
             {
                 titleKey: 'nav.educations',
                 url: '/educations',
@@ -74,6 +187,12 @@ const NAV_DATA: NavSection[] = [
                 titleKey: 'nav.smsSettings',
                 url: '/sms-settings',
                 icon: <Message1 className='size-5' />,
+                visible: isSuperAdmin,
+            },
+            {
+                titleKey: 'nav.platformSettings',
+                url: '/platform-settings',
+                icon: <Gear1 className='size-5' />,
                 visible: isSuperAdmin,
             },
         ],

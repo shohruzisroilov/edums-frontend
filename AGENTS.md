@@ -19,14 +19,31 @@ src/
     page.tsx              # / — landing page (ochiq)
     register/             # /register — ro'yxatdan o'tish (SMS kod)
     login/                # /login — foydalanuvchi va super admin logini
+    forgot-password/      # /forgot-password — parolni SMS kod bilan tiklash
     (dashboard)/          # himoyalangan qism (sessiya talab qilinadi)
       layout.tsx          # sidebar + header shell, sessiyani yangilash, obuna bloklash
+      dashboard/          # /dashboard — markaz bosh sahifasi (reports.view)
+      overview/           # /overview — platforma ko'rsatkichlari (super admin)
       users/              # /users — markaz foydalanuvchilari (users.*)
       roles/              # /roles — dinamik rollar (roles.*)
+      branches/           # /branches — filiallar va xonalar (branches.*)
+      courses/            # /courses — kurslar (courses.*)
+      groups/             # /groups — guruhlar (groups.*)
+      schedule/           # /schedule — haftalik dars jadvali (groups.view)
+      students/           # /students va /[id] — o'quvchilar (students.*)
+      leads/              # /leads — lidlar voronkasi (leads.*)
+      cashbox/            # /cashbox — o'quvchi to'lovlari (payments.*); /payments — super admin'niki
+      debtors/            # /debtors — qarzdorlar (payments.view)
+      audit/              # /audit — harakatlar tarixi (audit.view)
+      settings/           # /settings — markaz sozlamalari va saytdagi forma (settings.manage)
+      expenses/           # /expenses — xarajatlar (expenses.*)
+      salaries/           # /salaries — oyliklar (salaries.*)
       billing/            # /billing — tarif tanlash va to'lov (billing.manage)
       educations/         # /educations va /[id] — o'quv markazlar (super admin)
       tariffs/            # /tariffs — tariflar (super admin)
       payments/           # /payments — to'lov so'rovlari (super admin)
+      sms-settings/       # /sms-settings — Eskiz ulanishi (super admin)
+      platform-settings/  # /platform-settings — sinov muddati, to'lov ko'rsatmasi (super admin)
       profile/            # /profile — o'z ma'lumotlari va paroli
     not-found.tsx
   components/
@@ -116,6 +133,25 @@ Foydalanuvchi o'qishga qulay ko'rinishni ko'radi, backendga xom qiymat ketadi.
 qolib, raqamlar noto'g'ri joyga tushardi. Raqamli maydonga oddiy
 `type='number'` qo'ymang: minglik ajratgichini ko'rsatmaydi.
 
+## Grafiklar
+
+`src/components/ui/charts.tsx` — kutubxonasiz HTML grafiklar: `StatTile`,
+`Meter`, `ColumnChart` (vaqt bo'yicha bitta seriya), `HorizontalBars`.
+Bitta seriya — bitta rang (`brand-accent`), legenda yo'q (sarlavha aytadi);
+ustun ≤ 24px, uchi yumaloq; faqat oxirgi qiymat yozib qo'yiladi, qolgani —
+hover/fokus tooltip va ekran o'quvchi uchun `sr-only` jadvalda. Matn doim
+`text-*` tokenlarida, seriya rangida emas. Ikki o'qli (dual-axis) grafik
+chizilmaydi.
+
+## Kod namunalari
+
+Markaz saytiga qo'yiladigan kod (`settings/lead-form-section.tsx`)
+`CodeBlock` (`ui/code-block.tsx`) bilan ko'rsatiladi — nusxa olish tugmasi
+bilan. Namunadagi ko'rinadigan matnlar (placeholder, tugma, xabar) ham
+`t()` dan olinadi, JS satriga `JSON.stringify` bilan qo'yiladi. Vidjetning
+o'zi backendda: `../edums-backend/src/lead_forms/widget/lead-form.js` —
+uning 4 tildagi matnlari shu faylda.
+
 ## Select komponenti
 
 Barcha ochiladigan ro'yxatlar `src/components/ui/shadcn/select.tsx` orqali —
@@ -187,6 +223,8 @@ bo'sh qiymatni qabul qilmaydi.
 - Formatlash — Prettier (`.prettierrc`: 4 probel, single quote, 80 belgi).
   ESLint formatlashga aralashmaydi (`eslint-config-prettier` o'chirib qo'ygan).
   Yozib bo'lgach: `npm run lint && npm run format && npm run typecheck`.
+  CI (`.github/workflows/ci.yml`) lint'ni `--max-warnings=0` bilan
+  ishlatadi — bitta ogohlantirish ham tekshiruvni yiqitadi.
 
 ## Ataylab o'ralmagan endpointlar
 
@@ -199,6 +237,7 @@ boshqa yo'l bilan qoplaydi:
 | `GET /uploads`, `DELETE /uploads` | Fayl menejeri hozircha yo'q — faqat rasm yuklash (`uploadFile`) ishlatiladi |
 | `GET /uploads/exists` | Interfeysda foydalanuvchi ssenariysi yo'q |
 | `GET /health` | Foydalanuvchiga server holatini ko'rsatish talab qilinmagan |
+| `GET /public/lead-forms/:key`, `POST /public/lead-forms/:key/leads` | Markaz saytidan chaqiriladi — interfeys faqat ularning manzilini ko'rsatadi (`leadFormSubmitUrl` va h.k.) |
 
 Agar kerak bo'lsa, ularni servis fayliga qo'shish oson — tip `types/api.ts` da tayyor.
 

@@ -2,10 +2,12 @@
 
 import { AuthHeader } from '@/components/common/auth-header';
 import { Button } from '@/components/tailgrids/core/button';
+import { FormError } from '@/components/ui/form-error';
 import { PasswordInput } from '@/components/ui/password-input';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { apiErrorMessage } from '@/hooks/use-api-error';
 import { useSession } from '@/hooks/use-session';
+import { useTrialDays } from '@/hooks/use-trial-days';
 import { useT } from '@/i18n/provider';
 import {
     loginSuperAdmin,
@@ -59,7 +61,15 @@ async function signInWithPhone(
                 permissions: [],
                 subscription: null,
             };
-        } catch {
+        } catch (superAdminError) {
+            // 429 — shu raqam uchun urinishlar limiti tugagan: kutish kerakligini
+            // aytmasak, odam to'g'ri parolni ham "xato" deb o'ylab qoladi.
+            if (
+                superAdminError instanceof ApiError &&
+                superAdminError.statusCode === 429
+            ) {
+                throw superAdminError;
+            }
             // Ikkalasi ham rad etdi. Foydalanuvchi endpointining xabari to'liqroq
             // (nofaol hisob haqida ham aytadi), shuning uchun o'shani beramiz.
             throw userError;
@@ -71,6 +81,7 @@ export default function LoginPage() {
     const router = useRouter();
     const { session, loading, signIn } = useSession();
     const t = useT();
+    const trialDays = useTrialDays();
 
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
@@ -140,14 +151,14 @@ export default function LoginPage() {
                             }
                         />
 
-                        {error && (
-                            <div
-                                role='alert'
-                                className='rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300'
-                            >
-                                {error}
-                            </div>
-                        )}
+                        {error && <FormError message={error} />}
+
+                        <Link
+                            href='/forgot-password'
+                            className='text-brand-accent -mt-1 self-end text-sm font-medium hover:underline'
+                        >
+                            {t('auth.forgotPassword')}
+                        </Link>
 
                         <Button
                             type='submit'
@@ -167,7 +178,7 @@ export default function LoginPage() {
                             href='/register'
                             className='text-brand-accent font-medium hover:underline'
                         >
-                            {t('auth.tryFree')}
+                            {t('auth.tryFree', { days: trialDays })}
                         </Link>
                     </p>
 

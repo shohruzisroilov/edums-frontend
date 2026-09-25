@@ -56,10 +56,57 @@ export const PERMISSION_KEYS = [
     'roles.update',
     'roles.delete',
     'billing.manage',
+    'branches.view',
+    'branches.create',
+    'branches.update',
+    'branches.delete',
+    'courses.view',
+    'courses.create',
+    'courses.update',
+    'courses.delete',
+    'groups.view',
+    'groups.create',
+    'groups.update',
+    'groups.delete',
+    'students.view',
+    'students.create',
+    'students.update',
+    'students.delete',
+    'leads.view',
+    'leads.create',
+    'leads.update',
+    'leads.delete',
+    'payments.view',
+    'payments.create',
+    'payments.delete',
+    'attendance.view',
+    'attendance.mark',
+    'audit.view',
+    'settings.manage',
+    'reports.view',
+    'expenses.view',
+    'expenses.manage',
+    'salaries.view',
+    'salaries.manage',
 ] as const;
 export type PermissionKey = (typeof PERMISSION_KEYS)[number];
 
-export type PermissionModule = 'users' | 'roles' | 'billing';
+export type PermissionModule =
+    | 'users'
+    | 'roles'
+    | 'billing'
+    | 'branches'
+    | 'courses'
+    | 'groups'
+    | 'students'
+    | 'leads'
+    | 'payments'
+    | 'attendance'
+    | 'audit'
+    | 'settings'
+    | 'reports'
+    | 'expenses'
+    | 'salaries';
 
 /** GET /permissions — modul bo'yicha guruhlangan katalog. */
 export interface PermissionGroup {
@@ -173,6 +220,14 @@ export interface SmsSettings {
     has_eskiz_password: boolean;
     eskiz_from: string;
     template: string;
+    /** Avtomatik xabarlarning umumiy kaliti (eslatmalar, kelmaganlik). */
+    notifications_enabled: boolean;
+    /** {education}, {days} */
+    subscription_template: string;
+    /** {education}, {student}, {group}, {amount} */
+    debt_template: string;
+    /** {education}, {student}, {group}, {date} */
+    absence_template: string;
     updated_at: string;
 }
 
@@ -183,6 +238,55 @@ export interface SmsSettingsPayload {
     eskiz_password?: string;
     eskiz_from: string;
     template: string;
+    notifications_enabled?: boolean;
+    subscription_template?: string;
+    debt_template?: string;
+    absence_template?: string;
+}
+
+/* ── Markaz sozlamalari ───────────────────────────────────────────────── */
+
+export interface EducationSettings {
+    /** Bugun kelmagan o'quvchining ota-onasiga SMS. */
+    notify_absence: boolean;
+    /** Har oyning 5-kuni qarzdorlarning ota-onasiga SMS. */
+    notify_debtors: boolean;
+    /** Super admin avtomatik xabarlarni o'chirib qo'ygan bo'lsa false. */
+    notifications_available: boolean;
+    updated_at: string;
+}
+
+export type EducationSettingsPayload = Partial<
+    Pick<EducationSettings, 'notify_absence' | 'notify_debtors'>
+>;
+
+/** Markaz saytidagi forma. `null` — o'chirilgan, saytdan lid kelmaydi. */
+export interface LeadForm {
+    /** Saytga qo'yiladigan kalit — sir emas, faqat lid qo'sha oladi. */
+    key: string;
+    created_at: string;
+    /** Joriy kalit berilgan vaqt. */
+    updated_at: string;
+}
+
+/* ── Platforma sozlamalari (super admin) ──────────────────────────────── */
+
+export interface PlatformSettings {
+    /** Yangi markazning bepul sinov muddati (kun). */
+    trial_days: number;
+    /** Tarif tanlash sahifasida ko'rsatiladi. */
+    payment_instructions: string;
+    updated_at: string;
+}
+
+export interface PlatformSettingsPayload {
+    trial_days: number;
+    payment_instructions: string;
+}
+
+/** GET /platform-settings/public — login talab qilinmaydi. */
+export interface PublicPlatformSettings {
+    trial_days: number;
 }
 
 /* ── Uploads ──────────────────────────────────────────────────────────── */
@@ -245,6 +349,667 @@ export interface CreateEducationOwnerPayload {
     last_name: string;
     phone_number: string;
     password: string;
+}
+
+/* ── Filiallar ────────────────────────────────────────────────────────── */
+
+export interface Branch {
+    id: string;
+    education_id: string;
+    name: string;
+    address: string | null;
+    phone_number: string | null;
+    /** Nofaol filial yangi guruh va o'quvchilar uchun tanlanmaydi. */
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface BranchPayload {
+    name: string;
+    address?: string | null;
+    phone_number?: string | null;
+    is_active?: boolean;
+}
+
+/* ── Xonalar ──────────────────────────────────────────────────────────── */
+
+export interface Room {
+    id: string;
+    education_id: string;
+    branch_id: string;
+    name: string;
+    capacity: number | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface CreateRoomPayload {
+    branch_id: string;
+    name: string;
+    capacity?: number | null;
+    is_active?: boolean;
+}
+
+/** Xona filialini o'zgartirib bo'lmaydi. */
+export type UpdateRoomPayload = Partial<Omit<CreateRoomPayload, 'branch_id'>>;
+
+/* ── Kurslar ──────────────────────────────────────────────────────────── */
+
+export interface Course {
+    id: string;
+    education_id: string;
+    name: string;
+    description: string | null;
+    /** Oylik narx (so'm) — yangi guruh uchun standart. */
+    price: number;
+    duration_months: number | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface CoursePayload {
+    name: string;
+    description?: string | null;
+    price: number;
+    duration_months?: number | null;
+    is_active?: boolean;
+}
+
+/* ── Guruhlar ─────────────────────────────────────────────────────────── */
+
+export const GROUP_STATUSES = ['active', 'finished'] as const;
+export type GroupStatus = (typeof GROUP_STATUSES)[number];
+
+/** ISO hafta kunlari: 1 — dushanba … 7 — yakshanba. */
+export const WEEKDAYS = [1, 2, 3, 4, 5, 6, 7] as const;
+export type Weekday = (typeof WEEKDAYS)[number];
+
+export interface Ref {
+    id: string;
+    name: string;
+}
+
+export interface PersonRef {
+    id: string;
+    first_name: string;
+    last_name: string;
+}
+
+export interface Group {
+    id: string;
+    name: string;
+    course: Ref;
+    branch: Ref;
+    teacher: PersonRef | null;
+    room: Ref | null;
+    /** Oylik narx (so'm). */
+    price: number;
+    /** YYYY-MM-DD */
+    start_date: string;
+    end_date: string | null;
+    lesson_days: Weekday[];
+    /** HH:MM */
+    lesson_start: string;
+    lesson_end: string;
+    status: GroupStatus;
+    /** Hozir o'qiyotgan o'quvchilar soni. */
+    students_count: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface GroupPayload {
+    name: string;
+    course_id: string;
+    branch_id: string;
+    teacher_id?: string | null;
+    room_id?: string | null;
+    /** Berilmasa — kurs narxi. */
+    price?: number;
+    start_date: string;
+    end_date?: string | null;
+    lesson_days: Weekday[];
+    lesson_start: string;
+    lesson_end: string;
+    status?: GroupStatus;
+}
+
+export interface ListGroupsQuery extends PaginationQuery {
+    search?: string;
+    branch_id?: string;
+    course_id?: string;
+    teacher_id?: string;
+    status?: GroupStatus;
+}
+
+export interface ScheduleQuery {
+    branch_id?: string;
+    teacher_id?: string;
+    room_id?: string;
+}
+
+/* ── O'quvchilar ──────────────────────────────────────────────────────── */
+
+export const STUDENT_STATUSES = ['active', 'archived'] as const;
+export type StudentStatus = (typeof STUDENT_STATUSES)[number];
+
+export interface Student {
+    id: string;
+    branch: Ref;
+    first_name: string;
+    last_name: string;
+    /** O'quvchi yoki ota-ona telefonidan kamida bittasi bor. */
+    phone_number: string | null;
+    parent_name: string | null;
+    parent_phone: string | null;
+    /** YYYY-MM-DD */
+    birth_date: string | null;
+    note: string | null;
+    status: StudentStatus;
+    /** Hozir o'qiyotgan guruhlari. */
+    groups: Ref[];
+    created_at: string;
+    updated_at: string;
+}
+
+export interface StudentPayload {
+    branch_id: string;
+    first_name: string;
+    last_name: string;
+    phone_number?: string | null;
+    parent_name?: string | null;
+    parent_phone?: string | null;
+    birth_date?: string | null;
+    note?: string | null;
+    status?: StudentStatus;
+}
+
+export interface ListStudentsQuery extends PaginationQuery {
+    search?: string;
+    branch_id?: string;
+    /** Shu guruhda hozir o'qiyotganlar. */
+    group_id?: string;
+    status?: StudentStatus;
+}
+
+/** O'quvchining guruhdagi bitta davri: qo'shilgan kundan chiqqan kungacha. */
+export interface Enrollment {
+    id: string;
+    group: Ref & { status: GroupStatus };
+    student: PersonRef & {
+        phone_number: string | null;
+        parent_phone: string | null;
+    };
+    /** YYYY-MM-DD */
+    joined_at: string;
+    left_at: string | null;
+    /** Shu o'quvchi uchun oylik narx (chegirma bilan). */
+    monthly_price: number;
+}
+
+export interface EnrollPayload {
+    student_id: string;
+    joined_at?: string;
+    monthly_price?: number;
+}
+
+export interface UpdateEnrollmentPayload {
+    joined_at?: string;
+    left_at?: string;
+    monthly_price?: number;
+}
+
+/* ── Lidlar ───────────────────────────────────────────────────────────── */
+
+export const LEAD_STATUSES = [
+    'new',
+    'contacted',
+    'trial',
+    'won',
+    'lost',
+] as const;
+export type LeadStatus = (typeof LEAD_STATUSES)[number];
+
+/** `won` faqat o'quvchiga aylantirilganda qo'yiladi. */
+export const EDITABLE_LEAD_STATUSES = [
+    'new',
+    'contacted',
+    'trial',
+    'lost',
+] as const satisfies readonly LeadStatus[];
+
+export const LEAD_SOURCES = [
+    'instagram',
+    'telegram',
+    'facebook',
+    'website',
+    'referral',
+    'walk_in',
+    'call',
+    'other',
+] as const;
+export type LeadSource = (typeof LEAD_SOURCES)[number];
+
+export interface Lead {
+    id: string;
+    first_name: string;
+    last_name: string | null;
+    phone_number: string;
+    source: LeadSource;
+    status: LeadStatus;
+    branch: Ref | null;
+    /** Qiziqqan kursi. */
+    course: Ref | null;
+    note: string | null;
+    /** Aylantirilgan o'quvchi. */
+    student: PersonRef | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface LeadPayload {
+    first_name: string;
+    last_name?: string | null;
+    phone_number: string;
+    source?: LeadSource;
+    status?: Exclude<LeadStatus, 'won'>;
+    branch_id?: string | null;
+    course_id?: string | null;
+    note?: string | null;
+}
+
+export interface ListLeadsQuery extends PaginationQuery {
+    search?: string;
+    status?: LeadStatus;
+    source?: LeadSource;
+    branch_id?: string;
+    course_id?: string;
+}
+
+export type LeadStats = Record<LeadStatus, number>;
+
+export interface ConvertLeadPayload {
+    branch_id: string;
+    first_name?: string;
+    last_name: string;
+    phone_number?: string;
+    parent_name?: string | null;
+    parent_phone?: string | null;
+    /** Darhol shu guruhga (students.update ruxsati kerak). */
+    group_id?: string;
+    monthly_price?: number;
+}
+
+/* ── O'quvchi to'lovlari va balans ────────────────────────────────────── */
+
+export const PAYMENT_METHODS = ['cash', 'card', 'transfer', 'other'] as const;
+export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
+
+export interface StudentPayment {
+    id: string;
+    student: PersonRef;
+    group: Ref;
+    amount: number;
+    method: PaymentMethod;
+    /** YYYY-MM-DD */
+    paid_at: string;
+    note: string | null;
+    received_by: PersonRef | null;
+    created_at: string;
+}
+
+export interface CreateStudentPaymentPayload {
+    student_id: string;
+    group_id: string;
+    amount: number;
+    method?: PaymentMethod;
+    paid_at?: string;
+    note?: string | null;
+}
+
+export interface ListStudentPaymentsQuery extends PaginationQuery {
+    search?: string;
+    student_id?: string;
+    group_id?: string;
+    branch_id?: string;
+    method?: PaymentMethod;
+    from?: string;
+    to?: string;
+}
+
+/** GET /payments — sahifa va barcha mos to'lovlar yig'indisi. */
+export interface StudentPaymentsResponse extends PaginatedResponse<StudentPayment> {
+    sum: number;
+}
+
+export interface GroupBalance {
+    group: Ref & { status: GroupStatus };
+    /** Ochiq davr narxi; guruhdan chiqqan bo'lsa null. */
+    monthly_price: number | null;
+    /** Davr oylari × oylik narx. */
+    charged: number;
+    paid: number;
+    /** paid − charged; manfiy — qarz. */
+    balance: number;
+}
+
+export interface StudentBalance {
+    groups: GroupBalance[];
+    charged: number;
+    paid: number;
+    balance: number;
+}
+
+export interface Debtor {
+    student: PersonRef & {
+        phone_number: string | null;
+        parent_phone: string | null;
+    };
+    group: Ref;
+    monthly_price: number | null;
+    charged: number;
+    paid: number;
+    /** Musbat son. */
+    debt: number;
+}
+
+export interface ListDebtorsQuery extends PaginationQuery {
+    search?: string;
+    branch_id?: string;
+    group_id?: string;
+}
+
+/** GET /debtors — sahifa va barcha mos qarzlar yig'indisi. */
+export interface DebtorsResponse extends PaginatedResponse<Debtor> {
+    total_debt: number;
+}
+
+/* ── Davomat ──────────────────────────────────────────────────────────── */
+
+export const ATTENDANCE_STATUSES = [
+    'present',
+    'absent',
+    'late',
+    'excused',
+] as const;
+export type AttendanceStatus = (typeof ATTENDANCE_STATUSES)[number];
+
+export interface GroupAttendance {
+    /** YYYY-MM */
+    month: string;
+    /** Oydagi dars kunlari. */
+    lesson_dates: string[];
+    /** Shu oyda guruhda bo'lganlar; belgilanmagan kunlar `records` da yo'q. */
+    students: {
+        student: PersonRef;
+        records: Record<string, AttendanceStatus>;
+    }[];
+}
+
+export interface MarkAttendancePayload {
+    /** Bugun yoki o'tgan kun. */
+    date: string;
+    records: { student_id: string; status: AttendanceStatus }[];
+}
+
+export interface StudentAttendance {
+    month: string;
+    records: { date: string; group: Ref; status: AttendanceStatus }[];
+    summary: Record<AttendanceStatus, number>;
+}
+
+/* ── Harakatlar tarixi ────────────────────────────────────────────────── */
+
+/** Backenddagi `AUDIT_ACTIONS` nusxasi — `<obyekt>.<amal>`. */
+export const AUDIT_ACTIONS = [
+    'user.create',
+    'user.update',
+    'user.delete',
+    'user.password_reset',
+    'role.create',
+    'role.update',
+    'role.delete',
+    'branch.create',
+    'branch.update',
+    'branch.delete',
+    'room.create',
+    'room.update',
+    'room.delete',
+    'course.create',
+    'course.update',
+    'course.delete',
+    'group.create',
+    'group.update',
+    'group.delete',
+    'student.create',
+    'student.update',
+    'student.delete',
+    'enrollment.create',
+    'enrollment.update',
+    'lead.create',
+    'lead.update',
+    'lead.convert',
+    'lead.delete',
+    'lead_form.create',
+    'lead_form.update',
+    'lead_form.delete',
+    'payment.create',
+    'payment.delete',
+    'attendance.mark',
+    'billing.request',
+    'billing.cancel',
+    'billing.approve',
+    'billing.reject',
+    'settings.update',
+    'expense.create',
+    'expense.delete',
+    'salary.rate',
+    'salary.pay',
+    'salary.cancel',
+] as const;
+export type AuditAction = (typeof AUDIT_ACTIONS)[number];
+
+export const AUDIT_ENTITY_TYPES = [
+    'user',
+    'role',
+    'branch',
+    'room',
+    'course',
+    'group',
+    'student',
+    'enrollment',
+    'lead',
+    'lead_form',
+    'payment',
+    'attendance',
+    'billing',
+    'settings',
+    'expense',
+    'salary',
+] as const;
+export type AuditEntityType = (typeof AUDIT_ENTITY_TYPES)[number];
+
+export interface AuditLog {
+    id: string;
+    actor: { type: 'user' | 'super_admin'; id: string; name: string };
+    action: AuditAction;
+    entity_type: AuditEntityType;
+    entity_id: string | null;
+    /** Yozuvning o'sha paytdagi nomi — ism, guruh, tarif. */
+    summary: string;
+    /** So'rov maydonlari (parolsiz), summa, soni. */
+    details: Record<string, unknown> | null;
+    created_at: string;
+}
+
+export interface ListAuditLogsQuery extends PaginationQuery {
+    entity_type?: AuditEntityType;
+    action?: AuditAction;
+    entity_id?: string;
+    actor_id?: string;
+    from?: string;
+    to?: string;
+}
+
+/* ── Xarajatlar va oyliklar ───────────────────────────────────────────── */
+
+export const EXPENSE_CATEGORIES = [
+    'rent',
+    'salary',
+    'utilities',
+    'marketing',
+    'supplies',
+    'tax',
+    'other',
+] as const;
+export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number];
+
+/** Qo'lda kiritiladiganlari — "oylik" oyliklar sahifasidan yoziladi. */
+export const MANUAL_EXPENSE_CATEGORIES = EXPENSE_CATEGORIES.filter(
+    (category) => category !== 'salary',
+);
+
+export interface Expense {
+    id: string;
+    category: ExpenseCategory;
+    amount: number;
+    /** YYYY-MM-DD */
+    spent_at: string;
+    branch: Ref | null;
+    note: string | null;
+    /** Oylik to'lovidan yaratilgan — alohida o'chirilmaydi. */
+    is_salary_payout: boolean;
+    created_by: PersonRef | null;
+    created_at: string;
+}
+
+export interface CreateExpensePayload {
+    category: ExpenseCategory;
+    amount: number;
+    spent_at?: string;
+    branch_id?: string | null;
+    note?: string | null;
+}
+
+export interface ListExpensesQuery extends PaginationQuery {
+    category?: ExpenseCategory;
+    branch_id?: string;
+    from?: string;
+    to?: string;
+}
+
+export interface ExpensesResponse extends PaginatedResponse<Expense> {
+    sum: number;
+}
+
+export const SALARY_RATE_TYPES = ['fixed', 'percent', 'per_student'] as const;
+export type SalaryRateType = (typeof SALARY_RATE_TYPES)[number];
+
+export interface SalaryRate {
+    type: SalaryRateType;
+    /** fixed va per_student — so'm; percent — 0–100. */
+    value: number;
+}
+
+export interface SalarySheetRow {
+    user: PersonRef;
+    rate: SalaryRate | null;
+    groups_count: number;
+    students_count: number;
+    /** Guruhlaridan shu oy tushgan to'lovlar. */
+    revenue: number;
+    accrued: number;
+    paid: number;
+    /** accrued − paid */
+    balance: number;
+}
+
+export interface SalarySheet {
+    month: string;
+    rows: SalarySheetRow[];
+    totals: { accrued: number; paid: number; balance: number };
+}
+
+export interface SalaryPayout {
+    id: string;
+    user: PersonRef;
+    /** YYYY-MM — qaysi oy uchun. */
+    month: string;
+    amount: number;
+    paid_at: string;
+    note: string | null;
+    created_by: PersonRef | null;
+    created_at: string;
+}
+
+export interface CreateSalaryPayoutPayload {
+    user_id: string;
+    month: string;
+    amount: number;
+    paid_at?: string;
+    note?: string | null;
+}
+
+/* ── Hisobotlar ───────────────────────────────────────────────────────── */
+
+export interface MonthAmount {
+    /** YYYY-MM */
+    month: string;
+    amount: number;
+}
+
+/** GET /dashboard — markaz bosh sahifasi uchun hammasi bitta javobda. */
+export interface Dashboard {
+    students: {
+        active: number;
+        joined_this_month: number;
+        left_this_month: number;
+    };
+    active_groups: number;
+    leads: LeadStats;
+    new_leads_this_month: number;
+    revenue: {
+        this_month: number;
+        last_month: number;
+        /** Oxirgi 6 oy, eskisi birinchi. */
+        by_month: MonthAmount[];
+    };
+    expenses: { this_month: number; by_month: MonthAmount[] };
+    /** Shu oy: tushum − xarajat. */
+    profit_this_month: number;
+    debt: { total: number; debtors: number };
+    /** Oxirgi 30 kun; `rate` — (keldi + kechikdi) / belgilar, belgi yo'q — null. */
+    attendance: {
+        rate: number | null;
+        marked: number;
+    } & Record<AttendanceStatus, number>;
+    today: {
+        group: Ref;
+        lesson_start: string;
+        lesson_end: string;
+        room: string | null;
+        teacher: string | null;
+        students_count: number;
+    }[];
+}
+
+/** GET /platform-stats — super admin. */
+export interface PlatformStats {
+    educations: {
+        total: number;
+        active: number;
+        suspended: number;
+        inactive: number;
+    };
+    subscriptions: { trial: number; paid: number; expired: number };
+    /** Oylik takroriy daromad bahosi. */
+    mrr: number;
+    revenue: { this_month: number; by_month: MonthAmount[] };
+    registrations_by_month: { month: string; count: number }[];
+    pending_requests: number;
 }
 
 /* ── Rollar ───────────────────────────────────────────────────────────── */
@@ -313,6 +1078,9 @@ export interface UpdateUserPayload {
     is_active?: boolean;
 }
 
+/** GET /users/options — faol foydalanuvchilar, faqat ism (tanlash uchun). */
+export type UserOption = PersonRef;
+
 export interface ListUsersQuery extends PaginationQuery {
     search?: string;
     role_id?: string;
@@ -359,8 +1127,15 @@ export interface SendCodeResponse {
     expires_in: number;
     /** Qayta yuborish uchun kutish (soniya). */
     resend_in: number;
-    /** Kod uzunligi: odatda 6, test raqami uchun 4. */
+    /** Kod uzunligi (hozir doim 6). */
     code_length: number;
+}
+
+export interface ResetForgottenPasswordPayload {
+    phone_number: string;
+    /** SMS dagi 6 xonali kod. */
+    code: string;
+    new_password: string;
 }
 
 export interface UpdateOwnProfilePayload {

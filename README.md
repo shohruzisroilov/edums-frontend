@@ -21,18 +21,52 @@ npm run dev             # http://localhost:3000
 | `npm run build` / `npm start` | Production build va ishga tushirish |
 | `npm run lint` · `format` · `typecheck` | Kod sifati |
 
+**Docker.** `Dockerfile` Next.js standalone serverini yig'adi (`next.config.ts`
+dagi `output` faqat `NEXT_OUTPUT=standalone` bo'lganda yoqiladi, lokal
+`npm start` o'zgarmaydi). API manzili build vaqtida kodga yoziladi:
+
+```bash
+docker build -t edums-frontend \
+    --build-arg NEXT_PUBLIC_API_URL=https://api.example.uz/api \
+    --build-arg NEXT_PUBLIC_FILES_URL=https://api.example.uz .
+docker run -p 3000:3000 edums-frontend
+```
+
+Butun tizimni (baza + backend + frontend) bitta buyruq bilan ko'tarish —
+`../edums-backend/docker-compose.yml` (backend README, "Docker").
+
+**CI** — `.github/workflows/ci.yml`: `main`/`dev` ga push va pull request'da
+lint (ogohlantirishsiz), format, typecheck, build va Docker image.
+
 ## Sahifalar
 
 | Sahifa | Manzil | Kim ko'radi |
 | --- | --- | --- |
 | Landing page | `/` | Hamma |
+| Bosh sahifa | `/dashboard` | `reports.view` ruxsati borlar |
+| Umumiy ko'rinish | `/overview` | Super admin |
 | Ro'yxatdan o'tish | `/register` | Hamma (SMS kod bilan, 7 kun bepul) |
 | Kirish | `/login` | Hamma |
+| Parolni tiklash | `/forgot-password` | Hamma (SMS kod bilan) |
 | O'quv markazlar | `/educations`, `/educations/[id]` | Super admin |
 | Tariflar | `/tariffs` | Super admin |
 | To'lovlar | `/payments` | Super admin |
+| Platforma sozlamalari | `/platform-settings` | Super admin |
 | Foydalanuvchilar | `/users` | `users.view` ruxsati borlar |
 | Rollar | `/roles` | `roles.view` ruxsati borlar |
+| Filiallar va xonalar | `/branches` | `branches.view` ruxsati borlar |
+| Kurslar | `/courses` | `courses.view` ruxsati borlar |
+| Guruhlar | `/groups` | `groups.view` ruxsati borlar |
+| Dars jadvali | `/schedule` | `groups.view` ruxsati borlar |
+| Guruh | `/groups/[id]` | `groups.view` ruxsati borlar |
+| O'quvchilar | `/students`, `/students/[id]` | `students.view` ruxsati borlar |
+| Lidlar | `/leads` | `leads.view` ruxsati borlar |
+| Kassa | `/cashbox` | `payments.view` ruxsati borlar |
+| Qarzdorlar | `/debtors` | `payments.view` ruxsati borlar |
+| Harakatlar tarixi | `/audit` | `audit.view` ruxsati borlar |
+| Markaz sozlamalari va saytdan lid qabul qilish | `/settings` | `settings.manage` ruxsati borlar |
+| Xarajatlar | `/expenses` | `expenses.view` ruxsati borlar |
+| Oyliklar | `/salaries` | `salaries.view` ruxsati borlar |
 | Tarif va to'lov | `/billing` | `billing.manage` ruxsati borlar |
 | Profil | `/profile` | Kirgan har bir kishi |
 
@@ -52,7 +86,10 @@ src/
     page.tsx              # / — landing page (ochiq)
     register/             # /register — ro'yxatdan o'tish (SMS kod)
     login/                # /login
+    forgot-password/      # /forgot-password — parolni SMS kod bilan tiklash
     (dashboard)/          # sessiya talab qilinadigan qism
+      dashboard/          # markaz bosh sahifasi (ko'rsatkichlar, grafiklar)
+      overview/           # super admin: platforma ko'rsatkichlari
       layout.tsx          # sidebar + header, sessiyani yangilash, obuna tugasa /billing ga
       educations/         # super admin: markazlar, ownerlar, obunalar tarixi
       tariffs/            # super admin: tariflar
@@ -60,6 +97,18 @@ src/
       billing/            # markaz: tarif tanlash va to'lov
       users/              # foydalanuvchilar
       roles/              # rollar va ruxsatlar
+      branches/           # filiallar va ularning xonalari
+      courses/            # kurslar
+      groups/             # guruhlar
+      schedule/           # haftalik dars jadvali
+      students/           # o'quvchilar va o'quvchi sahifasi
+      leads/              # lidlar voronkasi
+      cashbox/            # o'quvchi to'lovlari (kassa)
+      debtors/            # qarzdorlar
+      audit/              # harakatlar tarixi
+      settings/           # markaz sozlamalari (ota-onalarga SMS)
+      expenses/           # xarajatlar
+      salaries/           # oylik varaqasi va to'lovlari
       profile/            # o'z profili va paroli
     css/, globals.css     # dizayn tokenlari (kunduzgi/tungi mavzu)
   components/

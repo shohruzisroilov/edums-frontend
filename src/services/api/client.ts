@@ -94,7 +94,7 @@ export function buildQuery(params?: Record<string, QueryValue>): string {
 }
 
 interface RequestOptions {
-    method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
+    method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
     body?: unknown;
     /** FormData yuborilganda Content-Type brauzer tomonidan qo'yiladi. */
     formData?: FormData;
@@ -163,6 +163,11 @@ export async function request<T>(
     }
 
     return payload as T;
+}
+
+/** API'ning to'liq manzili — markaz saytiga beriladigan kod namunalari uchun. */
+export function apiUrl(path: string): string {
+    return `${API_URL}${path}`;
 }
 
 /** Yuklangan fayl uchun to'liq URL. Backend nisbiy `/uploads/...` qaytaradi. */
