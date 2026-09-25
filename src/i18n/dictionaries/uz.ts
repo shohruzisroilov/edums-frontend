@@ -322,7 +322,6 @@ export const uz = {
     'landing.navTariffs': 'Tariflar',
     'landing.openCabinet': "Kabinetga o'tish",
     'landing.startFree': 'Bepul boshlash',
-    'landing.badge': '{days} kun bepul — karta talab qilinmaydi',
     'landing.heroTitle': "O'quv markazingizni bitta tizimda boshqaring",
     'landing.heroText':
         "Guruhlar, davomat, to'lovlar, qarzdorlar, lidlar va o'qituvchi oyligi — hammasi bir joyda. Kim to'lamaganini, qaysi guruh to'lganini va oy oxirida qancha foyda qolganini bir qarashda ko'rasiz.",

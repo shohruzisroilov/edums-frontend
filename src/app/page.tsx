@@ -37,7 +37,7 @@ export default function LandingPage() {
             <LandingHeader signedIn={Boolean(session)} onStart={start} />
 
             <main>
-                <Hero trialDays={trialDays} onStart={start} />
+                <Hero onStart={start} />
                 <PainPoints />
                 <Showcases />
                 <FeatureGrid />

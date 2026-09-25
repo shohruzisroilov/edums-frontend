@@ -10,7 +10,6 @@ import {
     EmojiSmile,
     Globe2,
     Hat1,
-    Rocket1,
 } from '@tailgrids/icons';
 import type { ReactNode } from 'react';
 import { ImageSlot } from './image-slot';
@@ -35,13 +34,7 @@ const AUDIENCE: { icon: ReactNode; label: TranslationKey }[] = [
     },
 ];
 
-export function Hero({
-    trialDays,
-    onStart,
-}: {
-    trialDays: number;
-    onStart: () => void;
-}) {
+export function Hero({ onStart }: { onStart: () => void }) {
     const t = useT();
 
     return (
@@ -55,11 +48,7 @@ export function Hero({
             </div>
 
             <div className='relative mx-auto max-w-4xl px-5 pt-16 pb-12 text-center sm:pt-24'>
-                <span className='border-card-border bg-card-background text-text-secondary inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium'>
-                    <Rocket1 className='text-brand-accent size-4' />
-                    {t('landing.badge', { days: trialDays })}
-                </span>
-                <h1 className='text-text-primary font-display mt-6 text-4xl leading-tight font-semibold sm:text-5xl lg:text-6xl'>
+                <h1 className='text-text-primary font-display text-4xl leading-tight font-semibold sm:text-5xl lg:text-6xl'>
                     {t('landing.heroTitle')}
                     <span className='text-brand-accent block'>
                         {t('landing.heroAccent')}

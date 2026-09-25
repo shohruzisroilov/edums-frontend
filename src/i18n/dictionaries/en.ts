@@ -321,7 +321,6 @@ export const en: Dictionary = {
     'landing.navTariffs': 'Pricing',
     'landing.openCabinet': 'Open dashboard',
     'landing.startFree': 'Start free',
-    'landing.badge': '{days} days free — no card required',
     'landing.heroTitle': 'Run your learning centre in one system',
     'landing.heroText':
         "Groups, attendance, payments, debtors, leads and teacher pay — all in one place. See at a glance who hasn't paid, which group is full and how much profit is left at the end of the month.",
