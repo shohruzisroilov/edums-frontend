@@ -2,6 +2,7 @@
 
 import { AuthHeader } from '@/components/common/auth-header';
 import { Button } from '@/components/tailgrids/core/button';
+import { FormError } from '@/components/ui/form-error';
 import { TextInput } from '@/components/ui/form-field';
 import { PasswordInput } from '@/components/ui/password-input';
 import { PhoneInput } from '@/components/ui/phone-input';
@@ -202,7 +203,7 @@ export default function RegisterPage() {
                                 }
                             />
 
-                            {error && <ErrorBox message={error} />}
+                            {error && <FormError message={error} />}
 
                             <Button
                                 type='submit'
@@ -238,7 +239,7 @@ export default function RegisterPage() {
                                 }
                             />
 
-                            {error && <ErrorBox message={error} />}
+                            {error && <FormError message={error} />}
 
                             <Button
                                 type='submit'
@@ -294,17 +295,6 @@ export default function RegisterPage() {
                     </p>
                 </div>
             </div>
-        </div>
-    );
-}
-
-function ErrorBox({ message }: { message: string }) {
-    return (
-        <div
-            role='alert'
-            className='rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300'
-        >
-            {message}
         </div>
     );
 }

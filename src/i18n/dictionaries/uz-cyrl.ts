@@ -386,4 +386,13 @@ export const uzCyrl: Dictionary = {
         'Сақланган созламалар билан шаблон бўйича 123456 кодини юборади. Аввал ўзгаришларни сақланг.',
     'smsSettings.testSend': 'Юбориш',
     'smsSettings.testSending': 'Юборилмоқда…',
+
+    /* ── Parolni tiklash ── */
+    'auth.forgotPassword': 'Паролни унутдингизми?',
+    'forgot.title': 'Паролни тиклаш',
+    'forgot.subtitle': 'Логин телефонингизга SMS код юборамиз',
+    'forgot.phoneHint': 'Тизимга кирадиган телефон рақамингиз',
+    'forgot.submit': 'Сақлаш ва кириш',
+    'forgot.changePhone': '← Рақамни ўзгартириш',
+    'forgot.backToLogin': 'Кириш саҳифасига қайтиш',
 };

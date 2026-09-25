@@ -389,6 +389,15 @@ export const uz = {
         "Saqlangan sozlamalar bilan shablon bo'yicha 123456 kodini yuboradi. Avval o'zgarishlarni saqlang.",
     'smsSettings.testSend': 'Yuborish',
     'smsSettings.testSending': 'Yuborilmoqda…',
+
+    /* ── Parolni tiklash ── */
+    'auth.forgotPassword': 'Parolni unutdingizmi?',
+    'forgot.title': 'Parolni tiklash',
+    'forgot.subtitle': 'Login telefoningizga SMS kod yuboramiz',
+    'forgot.phoneHint': 'Tizimga kiradigan telefon raqamingiz',
+    'forgot.submit': 'Saqlash va kirish',
+    'forgot.changePhone': "← Raqamni o'zgartirish",
+    'forgot.backToLogin': 'Kirish sahifasiga qaytish',
 } as const;
 
 export type TranslationKey = keyof typeof uz;

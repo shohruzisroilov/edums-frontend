@@ -19,6 +19,7 @@ src/
     page.tsx              # / — landing page (ochiq)
     register/             # /register — ro'yxatdan o'tish (SMS kod)
     login/                # /login — foydalanuvchi va super admin logini
+    forgot-password/      # /forgot-password — parolni SMS kod bilan tiklash
     (dashboard)/          # himoyalangan qism (sessiya talab qilinadi)
       layout.tsx          # sidebar + header shell, sessiyani yangilash, obuna bloklash
       users/              # /users — markaz foydalanuvchilari (users.*)

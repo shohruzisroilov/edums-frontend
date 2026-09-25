@@ -386,4 +386,13 @@ export const en: Dictionary = {
         'Sends code 123456 using the template and the saved settings. Save your changes first.',
     'smsSettings.testSend': 'Send',
     'smsSettings.testSending': 'Sending…',
+
+    /* ── Parolni tiklash ── */
+    'auth.forgotPassword': 'Forgot password?',
+    'forgot.title': 'Reset password',
+    'forgot.subtitle': "We'll text a code to your login phone",
+    'forgot.phoneHint': 'The phone number you sign in with',
+    'forgot.submit': 'Save and sign in',
+    'forgot.changePhone': '← Change number',
+    'forgot.backToLogin': 'Back to sign in',
 };

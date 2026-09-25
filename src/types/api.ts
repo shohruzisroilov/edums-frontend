@@ -359,8 +359,15 @@ export interface SendCodeResponse {
     expires_in: number;
     /** Qayta yuborish uchun kutish (soniya). */
     resend_in: number;
-    /** Kod uzunligi: odatda 6, test raqami uchun 4. */
+    /** Kod uzunligi (hozir doim 6). */
     code_length: number;
+}
+
+export interface ResetForgottenPasswordPayload {
+    phone_number: string;
+    /** SMS dagi 6 xonali kod. */
+    code: string;
+    new_password: string;
 }
 
 export interface UpdateOwnProfilePayload {

@@ -28,6 +28,7 @@ npm run dev             # http://localhost:3000
 | Landing page | `/` | Hamma |
 | Ro'yxatdan o'tish | `/register` | Hamma (SMS kod bilan, 7 kun bepul) |
 | Kirish | `/login` | Hamma |
+| Parolni tiklash | `/forgot-password` | Hamma (SMS kod bilan) |
 | O'quv markazlar | `/educations`, `/educations/[id]` | Super admin |
 | Tariflar | `/tariffs` | Super admin |
 | To'lovlar | `/payments` | Super admin |
@@ -52,6 +53,7 @@ src/
     page.tsx              # / — landing page (ochiq)
     register/             # /register — ro'yxatdan o'tish (SMS kod)
     login/                # /login
+    forgot-password/      # /forgot-password — parolni SMS kod bilan tiklash
     (dashboard)/          # sessiya talab qilinadigan qism
       layout.tsx          # sidebar + header, sessiyani yangilash, obuna tugasa /billing ga
       educations/         # super admin: markazlar, ownerlar, obunalar tarixi

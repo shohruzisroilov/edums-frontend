@@ -2,6 +2,7 @@
 
 import { AuthHeader } from '@/components/common/auth-header';
 import { Button } from '@/components/tailgrids/core/button';
+import { FormError } from '@/components/ui/form-error';
 import { PasswordInput } from '@/components/ui/password-input';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { apiErrorMessage } from '@/hooks/use-api-error';
@@ -148,14 +149,14 @@ export default function LoginPage() {
                             }
                         />
 
-                        {error && (
-                            <div
-                                role='alert'
-                                className='rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300'
-                            >
-                                {error}
-                            </div>
-                        )}
+                        {error && <FormError message={error} />}
+
+                        <Link
+                            href='/forgot-password'
+                            className='text-brand-accent -mt-1 self-end text-sm font-medium hover:underline'
+                        >
+                            {t('auth.forgotPassword')}
+                        </Link>
 
                         <Button
                             type='submit'

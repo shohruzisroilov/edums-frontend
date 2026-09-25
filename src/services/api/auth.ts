@@ -5,6 +5,7 @@ import type {
     LoginResponse,
     MessageResponse,
     RegisterPayload,
+    ResetForgottenPasswordPayload,
     SendCodeResponse,
     Session,
     SuperAdminLoginResponse,
@@ -33,6 +34,24 @@ export function sendRegistrationCode(phone_number: string) {
 /** POST /api/auth/register — markaz + owner + sinov muddati; javob login bilan bir xil. */
 export function register(payload: RegisterPayload) {
     return request<LoginResponse>('/auth/register', {
+        method: 'POST',
+        body: payload,
+        skipAuth: true,
+    });
+}
+
+/** POST /api/auth/password/send-code — "parolni unutdim": login telefoniga kod. */
+export function sendPasswordResetCode(phone_number: string) {
+    return request<SendCodeResponse>('/auth/password/send-code', {
+        method: 'POST',
+        body: { phone_number },
+        skipAuth: true,
+    });
+}
+
+/** POST /api/auth/password/reset — yangi parol; javob login bilan bir xil. */
+export function resetForgottenPassword(payload: ResetForgottenPasswordPayload) {
+    return request<LoginResponse>('/auth/password/reset', {
         method: 'POST',
         body: payload,
         skipAuth: true,

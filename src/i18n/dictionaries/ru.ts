@@ -386,4 +386,13 @@ export const ru: Dictionary = {
         'Отправляет код 123456 по шаблону с сохранёнными настройками. Сначала сохраните изменения.',
     'smsSettings.testSend': 'Отправить',
     'smsSettings.testSending': 'Отправка…',
+
+    /* ── Parolni tiklash ── */
+    'auth.forgotPassword': 'Забыли пароль?',
+    'forgot.title': 'Восстановление пароля',
+    'forgot.subtitle': 'Отправим SMS-код на ваш номер для входа',
+    'forgot.phoneHint': 'Номер, с которым вы входите в систему',
+    'forgot.submit': 'Сохранить и войти',
+    'forgot.changePhone': '← Изменить номер',
+    'forgot.backToLogin': 'Вернуться ко входу',
 };
