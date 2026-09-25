@@ -20,6 +20,7 @@ import { SelectInput } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
 import { ResetPasswordModal } from '@/components/ui/reset-password-modal';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { SearchInput } from '@/components/ui/search-input';
 import { ActiveBadge, RoleBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
@@ -184,6 +185,7 @@ function UsersView() {
                             >
                                 <TableHeader>
                                     <TableRow>
+                                        <RowNumberHead />
                                         <TableHead>
                                             {t('common.fullName')}
                                         </TableHead>
@@ -205,7 +207,7 @@ function UsersView() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {query.data.data.map((user) => {
+                                    {query.data.data.map((user, index) => {
                                         const isSelf = user.id === session?.id;
                                         // Ruxsatlari kengroq odamni backend
                                         // baribir rad etadi — tugmani ko'rsatmaymiz.
@@ -215,6 +217,10 @@ function UsersView() {
 
                                         return (
                                             <TableRow key={user.id}>
+                                                <RowNumberCell
+                                                    index={index}
+                                                    offset={offset}
+                                                />
                                                 <TableCell primary>
                                                     {fullName(user)}
                                                     {isSelf && (

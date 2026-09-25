@@ -20,7 +20,9 @@ import { SelectInput, TextInput } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
 import { PaymentModal } from '@/components/ui/payment-modal';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { SearchInput } from '@/components/ui/search-input';
+import { PaymentMethodBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useListQuery } from '@/hooks/use-list-query';
@@ -36,7 +38,9 @@ import {
     type StudentPayment,
 } from '@/types/api';
 import { can } from '@/utils/access';
+import { cn } from '@/utils/cn';
 import { fullName } from '@/utils/format';
+import { TONE_TEXT } from '@/utils/tone';
 import { HandTakingCoins, Plus, Trash1 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
@@ -198,6 +202,7 @@ function CashboxView() {
                             >
                                 <TableHeader>
                                     <TableRow>
+                                        <RowNumberHead />
                                         <TableHead>
                                             {t('cashbox.paidAt')}
                                         </TableHead>
@@ -221,8 +226,12 @@ function CashboxView() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {query.data.data.map((payment) => (
+                                    {query.data.data.map((payment, index) => (
                                         <TableRow key={payment.id}>
+                                            <RowNumberCell
+                                                index={index}
+                                                offset={offset}
+                                            />
                                             <TableCell>
                                                 {formatDate(payment.paid_at)}
                                             </TableCell>
@@ -245,16 +254,22 @@ function CashboxView() {
                                                         ` · ${payment.note}`}
                                                 </p>
                                             </TableCell>
-                                            <TableCell numeric>
+                                            <TableCell
+                                                numeric
+                                                className={cn(
+                                                    TONE_TEXT.success,
+                                                    'font-medium',
+                                                )}
+                                            >
                                                 {formatPrice(
                                                     payment.amount,
                                                     t('common.som'),
                                                 )}
                                             </TableCell>
                                             <TableCell>
-                                                {t(
-                                                    `paymentMethod.${payment.method}`,
-                                                )}
+                                                <PaymentMethodBadge
+                                                    method={payment.method}
+                                                />
                                             </TableCell>
                                             <TableCell>
                                                 {payment.received_by

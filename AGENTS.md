@@ -49,6 +49,7 @@ src/
   components/
     tailgrids/core/       # dizayn tizimi primitivlari (faqat ishlatilganlari)
     common/               # sidebar, header, logotip
+    landing/              # landing page bo'limlari; rasmlar — landing/images.ts
     ui/                   # ilova darajasidagi komponentlar (forma, modal, jadval holati)
   services/api/           # har bir backend moduli uchun bitta fayl
   hooks/                  # use-session, use-list-query, use-api-error
@@ -133,6 +134,23 @@ Foydalanuvchi o'qishga qulay ko'rinishni ko'radi, backendga xom qiymat ketadi.
 qolib, raqamlar noto'g'ri joyga tushardi. Raqamli maydonga oddiy
 `type='number'` qo'ymang: minglik ajratgichini ko'rsatmaydi.
 
+## Jadvallar
+
+- **Tartib raqami** — har bir jadvalning birinchi ustuni:
+  `<RowNumberHead />` va `<RowNumberCell index={index} offset={offset} />`
+  (`ui/row-number.tsx`). Sahifalangan ro'yxatda `offset` beriladi, aks holda
+  ikkinchi sahifa yana 1 dan boshlanadi. "Jami" qatorida — bo'sh `<TableCell />`.
+- **Holat va toifalar** matn bilan emas, badge bilan: `ui/status-badge.tsx`
+  (`LeadStatusBadge`, `PaymentMethodBadge`, `ExpenseCategoryBadge`,
+  `LeadSourceBadge`, `AuditActionBadge` va h.k.). Har bir qiymatning o'z
+  rangi bor; yangi enum qo'shilsa, rang xaritasiga ham qo'shiladi.
+- **Muhim summalar** rangi `utils/tone.ts` dan — badge tokenlari, ikkala
+  mavzuda o'qiladi: qarz — `error`, to'lanmagan oylik — `warning`,
+  tushum va to'liq to'langan — `success` (`balanceTone()` balans uchun).
+  `text-red-600` kabi palitra ranglari yozilmaydi.
+- Rang faqat yordamchi: ma'no matnda ham bo'lishi kerak (yorliq, ishora,
+  `title`).
+
 ## Grafiklar
 
 `src/components/ui/charts.tsx` — kutubxonasiz HTML grafiklar: `StatTile`,
@@ -142,6 +160,19 @@ ustun ≤ 24px, uchi yumaloq; faqat oxirgi qiymat yozib qo'yiladi, qolgani —
 hover/fokus tooltip va ekran o'quvchi uchun `sr-only` jadvalda. Matn doim
 `text-*` tokenlarida, seriya rangida emas. Ikki o'qli (dual-axis) grafik
 chizilmaydi.
+
+## Landing page
+
+`src/app/page.tsx` bo'limlarni `src/components/landing/` dan yig'adi: hero,
+"Tanish holatmi?", 4 ta katta bo'lim (rasm + matn), imkoniyatlar, qadamlar,
+tariflar (bazadan), FAQ, CTA. Qoidalar:
+
+- Faqat tizimda **haqiqatan bor** imkoniyatlar yoziladi. To'qima raqamlar
+  ("500+ markaz") va mijoz fikrlari qo'shilmaydi — haqiqiylari bo'lganda.
+- FAQ javoblari backend qoidalariga mos (obuna tugashi, `max_users`,
+  filiallar soni cheklanmagan). Qoida o'zgarsa, javob ham o'zgaradi.
+- Rasmlar `public/landing/` da, yo'li `components/landing/images.ts` da.
+  `null` bo'lsa `ImageSlot` rasm uchun ramka ko'rsatadi.
 
 ## Kod namunalari
 

@@ -16,6 +16,7 @@ import {
     TableSkeleton,
 } from '@/components/ui/data-state';
 import { PageHeader } from '@/components/ui/page-header';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { PaymentStatusBadge } from '@/components/ui/status-badge';
 import { TariffCard } from '@/components/ui/tariff-card';
 import { useApiErrorToast } from '@/hooks/use-api-error';
@@ -225,6 +226,7 @@ function BillingView() {
                             >
                                 <TableHeader>
                                     <TableRow>
+                                        <RowNumberHead />
                                         <TableHead>
                                             {t('billing.tariff')}
                                         </TableHead>
@@ -240,8 +242,9 @@ function BillingView() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {requests.map((item) => (
+                                    {requests.map((item, index) => (
                                         <TableRow key={item.id}>
+                                            <RowNumberCell index={index} />
                                             <TableCell primary>
                                                 {item.tariff_name}
                                             </TableCell>
@@ -280,6 +283,7 @@ function BillingView() {
                         <TableRoot fullBleed className='border-x-0 border-t-0'>
                             <TableHeader>
                                 <TableRow>
+                                    <RowNumberHead />
                                     <TableHead>{t('billing.tariff')}</TableHead>
                                     <TableHead>{t('billing.period')}</TableHead>
                                     <TableHead numeric>
@@ -288,8 +292,9 @@ function BillingView() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {history.map((item) => (
+                                {history.map((item, index) => (
                                     <TableRow key={item.id}>
+                                        <RowNumberCell index={index} />
                                         <TableCell primary>
                                             {item.kind === 'trial'
                                                 ? t('billing.trial')

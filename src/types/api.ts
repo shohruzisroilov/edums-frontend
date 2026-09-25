@@ -444,7 +444,8 @@ export interface Group {
     course: Ref;
     branch: Ref;
     teacher: PersonRef | null;
-    room: Ref | null;
+    /** `capacity` — xona sig'imi; guruh to'lganini ko'rsatish uchun. */
+    room: (Ref & { capacity: number | null }) | null;
     /** Oylik narx (so'm). */
     price: number;
     /** YYYY-MM-DD */

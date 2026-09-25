@@ -322,33 +322,23 @@ export const uz = {
     'landing.navTariffs': 'Tariflar',
     'landing.openCabinet': "Kabinetga o'tish",
     'landing.startFree': 'Bepul boshlash',
-    'landing.seeTariffs': "Tariflarni ko'rish",
-    'landing.badge': '{days} kun bepul — karta talab qilinmaydi',
     'landing.heroTitle': "O'quv markazingizni bitta tizimda boshqaring",
     'landing.heroText':
-        "EduMS — o'quv markazlar uchun CRM. O'quvchilar, guruhlar, dars jadvali, to'lovlar va davomat bir joyda — har bir xodimga o'z vazifasiga mos ruxsat bilan.",
-    'landing.noCard':
-        "Ro'yxatdan o'tish 1 daqiqa — telefon raqam va SMS kod kifoya",
-    'landing.featuresTitle': 'Nimalar bor',
-    'landing.featureUsersTitle': 'Xodimlar',
-    'landing.featureUsersText':
-        "Har bir xodimga alohida login. Kerak bo'lmasa — bir bosishda faolsizlantiring.",
+        "Guruhlar, davomat, to'lovlar, qarzdorlar, lidlar va o'qituvchi oyligi — hammasi bir joyda. Kim to'lamaganini, qaysi guruh to'lganini va oy oxirida qancha foyda qolganini bir qarashda ko'rasiz.",
+    'landing.featuresTitle': 'Hammasi bitta tizimda',
     'landing.featureRolesTitle': 'Dinamik rollar',
     'landing.featureRolesText':
         "Administrator, o'qituvchi, kassir — rollarni o'zingiz yarating va ruxsatlarini belgilang.",
     'landing.featureSecurityTitle': 'Xavfsizlik',
     'landing.featureSecurityText':
         "Har bir markaz ma'lumoti alohida. Xodim o'zidan katta huquqni hech kimga bera olmaydi.",
-    'landing.featureLanguagesTitle': '4 til',
-    'landing.featureLanguagesText':
-        "O'zbek (lotin va kirill), rus va ingliz tillarida. Kunduzgi va tungi mavzu.",
     'landing.stepsTitle': 'Qanday boshlanadi',
     'landing.step1Title': "Ro'yxatdan o'ting",
     'landing.step1Text':
         'Markaz nomi va telefon raqamingiz — SMS kod bilan tasdiqlaysiz.',
     'landing.step2Title': '{days} kun bepul ishlating',
     'landing.step2Text':
-        "Barcha imkoniyatlar ochiq: xodimlar qo'shing, rollarni sozlang.",
+        "Barcha imkoniyatlar ochiq: filial va guruh oching, o'quvchi qo'shing, to'lov qabul qiling.",
     'landing.step3Title': 'Tarif tanlang',
     'landing.step3Text':
         "Sinov tugagach, markazingizga mos tarifni tanlab davom eting. Ma'lumotlar saqlanadi.",
@@ -356,9 +346,9 @@ export const uz = {
     'landing.tariffsText': 'Har biri {days} kunlik bepul sinovdan keyin',
     'landing.tariffsSoon':
         "Tariflar tez orada e'lon qilinadi. Hozir bepul sinab ko'rishingiz mumkin.",
-    'landing.ctaTitle': 'Bugun boshlang',
+    'landing.ctaTitle': 'Markazingizni bugunoq tartibga soling',
     'landing.ctaText':
-        "{days} kun davomida hech qanday to'lovsiz sinab ko'ring.",
+        "{days} kun bepul — barcha imkoniyatlar ochiq, bank kartasi so'ralmaydi. Savolingiz bo'lsa, Telegram'da yozing.",
 
     /* ── SMS settings ── */
     'nav.smsSettings': 'SMS sozlamalari',
@@ -755,7 +745,7 @@ export const uz = {
         "Oylik jurnal: dars kunlari guruh jadvalidan o'zi chiqadi, belgilash bir bosishda.",
     'landing.featureLeadsTitle': 'Lidlar',
     'landing.featureLeadsText':
-        "Qo'ng'iroq qilgan va yozganlarni yo'qotmang: voronka va bir bosishda o'quvchiga aylantirish.",
+        "Qo'ng'iroq qilgan va yozganlarni yo'qotmang: har bir lid qaysi bosqichdaligini ko'ring va bir bosishda o'quvchiga aylantiring.",
 
     /* ── Harakatlar tarixi ── */
     'nav.audit': 'Harakatlar tarixi',
@@ -909,7 +899,7 @@ export const uz = {
     'dashboard.todayLessons': 'Bugungi darslar',
     'dashboard.noLessonsToday': "Bugun dars yo'q",
     'dashboard.studentsCount': "{count} o'quvchi",
-    'dashboard.leadFunnel': 'Lidlar voronkasi',
+    'dashboard.leadFunnel': "Lidlar bosqichlar bo'yicha",
     'dashboard.newLeads': 'Shu oy yangi lidlar: {count}',
     'overview.title': "Umumiy ko'rinish",
     'overview.subtitle': "Platformadagi markazlar, obunalar va to'lovlar",
@@ -1105,6 +1095,138 @@ export const uz = {
         "Tilda faqat HTTPS manzilga yuboradi — backend SSL sertifikatli domenda bo'lishi kerak.",
     'leadForm.tilda.other':
         "Boshqa konstruktor va xizmatlar (Make, Zapier, n8n va h.k.) ham shu manzilga webhook yuborsa bo'ldi — maydon nomlari «O'z formangiz» bo'limidagidek.",
+
+    /* ── Landing page ── */
+    'landing.navLabel': "Sahifa bo'limlari",
+    'landing.navFeatures': 'Imkoniyatlar',
+    'landing.navHow': 'Qanday boshlanadi',
+    'landing.navFaq': 'Savollar',
+    'landing.heroAccent': "daftar va Excel'siz",
+    'landing.seeFeatures': "Imkoniyatlarni ko'rish",
+    'landing.heroPoint.noCard': 'Bank kartasi shart emas',
+    'landing.heroPoint.languages': "O'zbek, rus va ingliz tilida",
+    'landing.heroPoint.devices': 'Telefon va kompyuterda ishlaydi',
+    'landing.imageSlot': 'Rasm uchun joy',
+    'landing.image.hero': 'Dashboard skrinshoti',
+    'landing.image.finance': 'Kassa yoki qarzdorlar sahifasi',
+    'landing.image.learning': 'Guruh sahifasi yoki dars jadvali',
+    'landing.image.leads': 'Lidlar sahifasi',
+    'landing.image.team': 'Oyliklar yoki rollar sahifasi',
+    'landing.audienceTitle': "Har qanday o'quv markazi uchun",
+    'landing.audience.languages': 'Til markazlari',
+    'landing.audience.it': 'IT akademiyalar',
+    'landing.audience.exam': 'DTM va IELTS tayyorlov',
+    'landing.audience.kids': 'Bolalar markazlari',
+    'landing.audience.studios': "Sport va san'at studiyalari",
+    'landing.painTitle': 'Tanish holatmi?',
+    'landing.painText':
+        "Markaz o'sgani sari daftar va Excel'dagi hisob chalkashib ketadi.",
+    'landing.pain1':
+        "Kim to'lagani, kim qarzdorligi daftarda — oy oxirida hisob chiqmaydi",
+    'landing.fix1':
+        "Har bir o'quvchining balansi va qarzdorlar ro'yxati o'zi hisoblanadi",
+    'landing.pain2':
+        "Instagram va Telegram'da yozganlar javobsiz qolib, boshqa markazga ketadi",
+    'landing.fix2':
+        "Har bir murojaat lid bo'lib tushadi — saytingizdagi formadan ham",
+    'landing.pain3':
+        "O'qituvchilar oyligini hisoblash uchun kechgacha kalkulyator bilan o'tirasiz",
+    'landing.fix3':
+        "Oylik stavka bo'yicha o'zi hisoblanadi: belgilangan summa, foiz yoki o'quvchi boshiga",
+    'landing.pain4': 'Ota-onalar farzandi darsga kelmaganini kech bilib qoladi',
+    'landing.fix4':
+        "Kelmagan o'quvchining ota-onasiga o'sha kuni SMS yuborish mumkin",
+    'landing.showcaseTitle': 'Markazni boshqarish — bir joyda',
+    'landing.showcaseText':
+        "Direktor, administrator, kassir va o'qituvchi — har biri o'z ishini shu yerda qiladi.",
+    'landing.finance.eyebrow': 'Moliya',
+    'landing.finance.title':
+        "Pul qayerdan kelib, qayerga ketayotganini ko'ring",
+    'landing.finance.text':
+        "Kassa, qarzdorlar, xarajatlar va oyliklar bir joyda. Dashboard shu oyning tushumi, xarajati va sof foydasini ko'rsatadi.",
+    'landing.finance.point1': "Naqd, karta va o'tkazma orqali to'lovlar",
+    'landing.finance.point2': "Qarzdorlar ro'yxati o'zi yig'iladi",
+    'landing.finance.point3':
+        'Ijara, reklama, soliq va boshqa xarajatlar hisobi',
+    'landing.learning.eyebrow': "O'quv jarayoni",
+    'landing.learning.title': 'Guruhlar, jadval va davomat — tartib bilan',
+    'landing.learning.text':
+        "Guruh ochayotganda xona yoki o'qituvchi band bo'lsa, tizim darhol ogohlantiradi. Davomat bir bosishda belgilanadi.",
+    'landing.learning.point1':
+        "Haftalik dars jadvali — filial va xonalar bo'yicha",
+    'landing.learning.point2': 'Har bir guruh uchun oylik davomat jurnali',
+    'landing.learning.point3': 'Kelmaganlar haqida ota-onaga SMS',
+    'landing.leads.eyebrow': 'Sotuv',
+    'landing.leads.title': "Bitta ham murojaat yo'qolmaydi",
+    'landing.leads.text':
+        "Qo'ng'iroq qilgan, yozgan yoki saytdagi formani to'ldirgan har kim lid bo'lib tushadi. Har biri qaysi bosqichda ekanini ko'rasiz, sinov darsidan keyin esa bir bosishda o'quvchiga aylantirasiz.",
+    'landing.leads.point1':
+        'Saytga bitta qator kod bilan forma — Tilda ham ulanadi',
+    'landing.leads.point2': 'Manba va reklama belgilari (UTM) saqlanadi',
+    'landing.leads.point3': "Takroriy arizalar bitta lidga yig'iladi",
+    'landing.team.eyebrow': 'Jamoa',
+    'landing.team.title': "Har kim faqat o'z ishini ko'radi",
+    'landing.team.text':
+        "O'qituvchiga — guruhlar va davomat, kassirga — to'lovlar, menejerga — lidlar. Rollarni o'zingiz yaratasiz, har bir harakat tarixda saqlanadi.",
+    'landing.team.point1':
+        "O'qituvchi oyligi — belgilangan, foiz yoki o'quvchi boshiga",
+    'landing.team.point2':
+        "Kim, qachon, nimani o'zgartirgani — harakatlar tarixida",
+    'landing.team.point3': 'Bir nechta filial — bitta hisobda',
+    'landing.featuresText': "Qo'shimcha dastur va jadvallar kerak emas.",
+    'landing.featureSalariesTitle': 'Xarajatlar va oylik',
+    'landing.featureSalariesText':
+        "O'qituvchi oyligi stavka bo'yicha o'zi hisoblanadi, to'langani esa xarajatga yoziladi.",
+    'landing.featureWebsiteTitle': 'Saytdan arizalar',
+    'landing.featureWebsiteText':
+        "Saytingizdagi forma yoki Tilda arizalari to'g'ridan-to'g'ri lidlarga tushadi.",
+    'landing.featureSmsTitle': 'Ota-onalarga SMS',
+    'landing.featureSmsText':
+        "Dars qoldirilganda va qarz bo'lganda ota-onaga avtomatik xabar.",
+    'landing.featureReportsTitle': 'Hisobotlar',
+    'landing.featureReportsText':
+        'Tushum, xarajat, sof foyda, davomat va lidlar — oyma-oy grafiklarda.',
+    'landing.featureBranchesTitle': 'Filiallar va xonalar',
+    'landing.featureBranchesText':
+        'Bir nechta filialni bitta hisobda yuriting — har birining xonalari va guruhlari bilan.',
+    'landing.featureAuditTitle': 'Harakatlar tarixi',
+    'landing.featureAuditText':
+        "Kim qachon to'lov qabul qildi yoki o'chirdi — hammasi yozib boriladi.",
+    'landing.stepsText': 'Uch qadam — va markazingiz tizimda.',
+    'landing.faqTitle': "Ko'p so'raladigan savollar",
+    'landing.faq.trialQ': "{days} kunlik bepul sinovdan keyin nima bo'ladi?",
+    'landing.faq.trialA':
+        "Tariflardan birini tanlab to'laysiz. Tanlamasangiz, kabinetda faqat tarif sahifasi ochiq qoladi — ma'lumotlaringiz o'chmaydi va to'lovdan keyin hammasi joyida bo'ladi.",
+    'landing.faq.signupQ': "Ro'yxatdan o'tish uchun nima kerak?",
+    'landing.faq.signupA':
+        "Faqat telefon raqami: SMS orqali tasdiqlash kodi keladi. Bank kartasi so'ralmaydi.",
+    'landing.faq.paymentQ': "To'lov qanday qilinadi?",
+    'landing.faq.paymentA':
+        "Kabinetda tarifni tanlab so'rov yuborasiz va ko'rsatilgan usulda to'laysiz. To'lov tasdiqlangach, obuna uzayadi.",
+    'landing.faq.limitsQ': "Nechta filial va xodim qo'shsa bo'ladi?",
+    'landing.faq.limitsA':
+        "Filiallar soni cheklanmagan. Xodimlar soni tanlangan tarifga bog'liq.",
+    'landing.faq.securityQ': "Ma'lumotlarim xavfsizmi?",
+    'landing.faq.securityA':
+        "Har bir markazning ma'lumotlari alohida saqlanadi, parollar shifrlangan holda. Xodim faqat ruxsat berilgan bo'limlarni ko'radi, har bir harakat tarixda qoladi.",
+    'landing.faq.websiteQ': "Saytimdagi formani ulasa bo'ladimi?",
+    'landing.faq.websiteA':
+        "Ha. Sozlamalardan tayyor kodni olib saytga qo'yasiz yoki Tilda webhook'ini ulaysiz — arizalar lidlarga o'zi tushadi.",
+    'landing.faq.mobileQ': 'Telefonda ishlaydimi?',
+    'landing.faq.mobileA':
+        "Ha, brauzer orqali telefon, planshet va kompyuterda ishlaydi — hech narsa o'rnatish shart emas.",
+    'landing.askTelegram': "Telegram'da savol berish",
+    'landing.footerText':
+        "O'quv markazlari uchun CRM: guruhlar, to'lovlar, davomat va lidlar bitta tizimda.",
+    'landing.footerProduct': 'Mahsulot',
+    'landing.footerAccount': 'Hisob',
+    'landing.footerTelegram': 'Telegram orqali yozish',
+
+    /* ── Jadval ── */
+    'common.rowNumber': '№',
+
+    /* ── Guruh sig'imi ── */
+    'groups.full': "Guruh to'lgan — xona sig'imiga yetdi",
 } as const;
 
 export type TranslationKey = keyof typeof uz;

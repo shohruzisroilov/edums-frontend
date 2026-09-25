@@ -20,6 +20,7 @@ import { SelectInput } from '@/components/ui/form-field';
 import { LessonSchedule } from '@/components/ui/lesson-schedule';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { SearchInput } from '@/components/ui/search-input';
 import { GroupStatusBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
@@ -33,7 +34,9 @@ import { deleteGroup, listGroups } from '@/services/api/groups';
 import { listUserOptions } from '@/services/api/users';
 import { GROUP_STATUSES, type Group, type GroupStatus } from '@/types/api';
 import { can } from '@/utils/access';
+import { cn } from '@/utils/cn';
 import { fullName } from '@/utils/format';
+import { TONE_TEXT } from '@/utils/tone';
 import { Pencil1, Plus, Trash1, UserMultiple1 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
@@ -221,6 +224,7 @@ function GroupsView() {
                             >
                                 <TableHeader>
                                     <TableRow>
+                                        <RowNumberHead />
                                         <TableHead>
                                             {t('common.name')}
                                         </TableHead>
@@ -250,8 +254,12 @@ function GroupsView() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {query.data.data.map((group) => (
+                                    {query.data.data.map((group, index) => (
                                         <TableRow key={group.id}>
+                                            <RowNumberCell
+                                                index={index}
+                                                offset={offset}
+                                            />
                                             <TableCell primary>
                                                 <Link
                                                     href={`/groups/${group.id}`}
@@ -277,7 +285,7 @@ function GroupsView() {
                                                 {group.room?.name ?? '—'}
                                             </TableCell>
                                             <TableCell numeric>
-                                                {group.students_count}
+                                                <StudentsCount group={group} />
                                             </TableCell>
                                             <TableCell numeric>
                                                 {formatPrice(
@@ -369,5 +377,28 @@ function GroupsView() {
                 onConfirm={() => deleting && removeMutation.mutate(deleting.id)}
             />
         </>
+    );
+}
+
+/**
+ * O'quvchilar soni; xona sig'imi ma'lum bo'lsa "12 / 14" ko'rinishida.
+ * To'lgan guruh ajralib turadi — unga yangi o'quvchi qo'shishdan oldin
+ * boshqa guruh qarash kerak.
+ */
+function StudentsCount({ group }: { group: Group }) {
+    const t = useT();
+    const capacity = group.room?.capacity;
+
+    if (!capacity) return <>{group.students_count}</>;
+
+    const full = group.students_count >= capacity;
+
+    return (
+        <span
+            title={full ? t('groups.full') : undefined}
+            className={cn(full && ['font-semibold', TONE_TEXT.warning])}
+        >
+            {group.students_count} / {capacity}
+        </span>
     );
 }

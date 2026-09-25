@@ -20,6 +20,7 @@ import { SelectInput, TextInput } from '@/components/ui/form-field';
 import { Modal } from '@/components/ui/modal';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { PaymentStatusBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
@@ -124,6 +125,7 @@ function PaymentsView() {
                             >
                                 <TableHeader>
                                     <TableRow>
+                                        <RowNumberHead />
                                         <TableHead>
                                             {t('payments.education')}
                                         </TableHead>
@@ -145,8 +147,12 @@ function PaymentsView() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {query.data.data.map((item) => (
+                                    {query.data.data.map((item, index) => (
                                         <TableRow key={item.id}>
+                                            <RowNumberCell
+                                                index={index}
+                                                offset={offset}
+                                            />
                                             <TableCell>
                                                 <Link
                                                     href={`/educations/${item.education_id}`}

@@ -3,16 +3,33 @@
 import { Badge } from '@/components/tailgrids/core/badge';
 import { useT } from '@/i18n/provider';
 import type {
+    AuditAction,
     EducationStatus,
+    ExpenseCategory,
     GroupStatus,
+    LeadSource,
     LeadStatus,
+    PaymentMethod,
     PaymentRequestStatus,
     StudentStatus,
     RoleSummary,
     SubscriptionStatus,
 } from '@/types/api';
+import { cn } from '@/utils/cn';
 
-type BadgeColor = 'success' | 'warning' | 'gray' | 'error' | 'primary';
+type BadgeColor =
+    | 'success'
+    | 'warning'
+    | 'gray'
+    | 'error'
+    | 'primary'
+    | 'blue'
+    | 'sky'
+    | 'cyan'
+    | 'violet'
+    | 'pink'
+    | 'rose'
+    | 'orange';
 
 const EDUCATION_COLORS: Record<EducationStatus, BadgeColor> = {
     active: 'success',
@@ -62,10 +79,35 @@ export function StudentStatusBadge({ status }: { status: StudentStatus }) {
 const LEAD_COLORS: Record<LeadStatus, BadgeColor> = {
     new: 'primary',
     contacted: 'warning',
-    trial: 'warning',
+    trial: 'cyan',
     won: 'success',
     lost: 'gray',
 };
+
+/** Badge ranglari bilan bir xil — nuqta va badge bir-birini takrorlaydi. */
+const LEAD_DOT_CLASSES: Record<LeadStatus, string> = {
+    new: 'bg-badge-primary-icon-color',
+    contacted: 'bg-badge-warning-icon-color',
+    trial: 'bg-badge-cyan-icon-color',
+    won: 'bg-badge-success-icon-color',
+    lost: 'bg-badge-neutral-icon-color',
+};
+
+/**
+ * Holat rangidagi nuqta — holat select bilan o'zgartiriladigan joyda
+ * (select'ning o'zini bo'yab bo'lmaydi) va voronka kartalarida legend sifatida.
+ */
+export function LeadStatusDot({ status }: { status: LeadStatus }) {
+    return (
+        <span
+            aria-hidden='true'
+            className={cn(
+                'inline-block size-2.5 shrink-0 rounded-full',
+                LEAD_DOT_CLASSES[status],
+            )}
+        />
+    );
+}
 
 export function LeadStatusBadge({ status }: { status: LeadStatus }) {
     const t = useT();
@@ -135,6 +177,100 @@ export function SubscriptionBadge({
                       name: subscription.tariff_name ?? '',
                       days: subscription.days_left,
                   })}
+        </Badge>
+    );
+}
+
+/*
+ * Toifa belgilari: har bir qiymatning o'z rangi bor, shuning uchun jadvalda
+ * ko'z bilan tez ajraladi. Rang faqat yordamchi — yorliq matni ham bor.
+ */
+
+const METHOD_COLORS: Record<PaymentMethod, BadgeColor> = {
+    cash: 'success',
+    card: 'blue',
+    transfer: 'violet',
+    other: 'gray',
+};
+
+export function PaymentMethodBadge({ method }: { method: PaymentMethod }) {
+    const t = useT();
+
+    return (
+        <Badge size='sm' color={METHOD_COLORS[method]}>
+            {t(`paymentMethod.${method}`)}
+        </Badge>
+    );
+}
+
+const EXPENSE_COLORS: Record<ExpenseCategory, BadgeColor> = {
+    rent: 'orange',
+    salary: 'violet',
+    utilities: 'sky',
+    marketing: 'pink',
+    supplies: 'cyan',
+    tax: 'rose',
+    other: 'gray',
+};
+
+export function ExpenseCategoryBadge({
+    category,
+}: {
+    category: ExpenseCategory;
+}) {
+    const t = useT();
+
+    return (
+        <Badge size='sm' color={EXPENSE_COLORS[category]}>
+            {t(`expenseCategory.${category}`)}
+        </Badge>
+    );
+}
+
+const SOURCE_COLORS: Record<LeadSource, BadgeColor> = {
+    instagram: 'pink',
+    telegram: 'sky',
+    facebook: 'blue',
+    website: 'violet',
+    referral: 'cyan',
+    walk_in: 'orange',
+    call: 'primary',
+    other: 'gray',
+};
+
+export function LeadSourceBadge({ source }: { source: LeadSource }) {
+    const t = useT();
+
+    return (
+        <Badge size='sm' color={SOURCE_COLORS[source]}>
+            {t(`leadSource.${source}`)}
+        </Badge>
+    );
+}
+
+/** Amal fe'liga qarab: qo'shish — yashil, o'zgartirish — ko'k, o'chirish — qizil. */
+const ACTION_VERB_COLORS: Record<string, BadgeColor> = {
+    create: 'success',
+    request: 'success',
+    approve: 'success',
+    convert: 'success',
+    pay: 'success',
+    update: 'blue',
+    rate: 'blue',
+    mark: 'blue',
+    password_reset: 'blue',
+    delete: 'error',
+    cancel: 'error',
+    reject: 'error',
+};
+
+export function AuditActionBadge({ action }: { action: AuditAction }) {
+    const t = useT();
+    const verb = action.slice(action.indexOf('.') + 1);
+
+    return (
+        <Badge size='sm' color={ACTION_VERB_COLORS[verb] ?? 'gray'}>
+            {t(`auditAction.${action}`)}
         </Badge>
     );
 }

@@ -86,6 +86,9 @@ export function AttendanceSection({
                                 <thead>
                                     <tr className='border-card-border border-b'>
                                         <th className='bg-card-background text-text-tertiary sticky left-0 px-4 py-2 text-left text-xs font-medium'>
+                                            <span className='inline-block w-7'>
+                                                {t('common.rowNumber')}
+                                            </span>
                                             {t('common.fullName')}
                                         </th>
                                         {query.data.lesson_dates.map((date) => {
@@ -134,12 +137,15 @@ export function AttendanceSection({
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {query.data.students.map((row) => (
+                                    {query.data.students.map((row, index) => (
                                         <tr
                                             key={row.student.id}
                                             className='border-card-border border-b last:border-b-0'
                                         >
                                             <td className='bg-card-background text-text-primary sticky left-0 px-4 py-2 font-medium whitespace-nowrap'>
+                                                <span className='text-text-tertiary inline-block w-7 font-normal tabular-nums'>
+                                                    {index + 1}
+                                                </span>
                                                 {fullName(row.student)}
                                             </td>
                                             {query.data.lesson_dates.map(
