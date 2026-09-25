@@ -838,7 +838,7 @@ export const uzCyrl: Dictionary = {
     'permissionModule.settings': 'Марказ созламалари',
     'permission.settings.manage': 'Марказ созламаларини ўзгартириш',
     'settings.title': 'Марказ созламалари',
-    'settings.subtitle': 'Ота-оналарга автоматик SMS хабарлар',
+    'settings.subtitle': 'Ота-оналарга SMS ва сайтдан лид қабул қилиш',
     'settings.smsTitle': 'SMS хабарлар',
     'settings.smsHint':
         'Хабар ота-она телефонига, у бўлмаса ўқувчининг ўзига юборилади',
@@ -997,4 +997,102 @@ export const uzCyrl: Dictionary = {
     'auditField.category': 'Тоифа',
     'auditField.type': 'Тури',
     'auditField.value': 'Қиймати',
+
+    /* ── Saytdan lid qabul qilish ── */
+    'common.copy': 'Нусха олиш',
+    'common.copied': 'Нусха олинди',
+    'common.copyFailed': 'Нусха олиб бўлмади — қўлда белгиланг',
+    'auditEntity.lead_form': 'Сайт формаси',
+    'auditAction.lead_form.create': 'Сайт формаси ёқилди',
+    'auditAction.lead_form.update': 'Сайт формаси калити янгиланди',
+    'auditAction.lead_form.delete': 'Сайт формаси ўчирилди',
+    'leads.fromWebsite': 'Сайтдан қабул қилиш',
+    'leadForm.title': 'Сайтдан лид қабул қилиш',
+    'leadForm.hint':
+        'Марказингиз сайтидаги формани тизимга уланг: сайтдан юборилган ҳар бир ариза «Лидлар» бўлимига ўзи тушади — қўлда кўчириш шарт эмас.',
+    'leadForm.enable': 'Формани ёқиш',
+    'leadForm.enabled': 'Форма ёқилди — энди кодни сайтга қўйинг',
+    'leadForm.regenerate': 'Калитни янгилаш',
+    'leadForm.regenerated': 'Янги калит берилди — сайтдаги кодни янгиланг',
+    'leadForm.regenerateTitle': 'Калит янгилансинми?',
+    'leadForm.regenerateMessage':
+        'Эски калит дарҳол ишламай қолади: сайтдаги кодни янгисига алмаштирмагунингизча аризалар келмайди. Калит бегона сайтда ишлатилаётган ёки спам келаётган бўлса шундай қилинг.',
+    'leadForm.disable': 'Формани ўчириш',
+    'leadForm.disabled': 'Форма ўчирилди',
+    'leadForm.disableTitle': 'Форма ўчирилсинми?',
+    'leadForm.disableMessage':
+        'Сайтдаги код ишламай қолади ва янги аризалар келмайди. Қайта ёқсангиз, янги калит берилади.',
+    'leadForm.key': 'Калит',
+    'leadForm.keyIssued': '{date} да берилган.',
+    'leadForm.keyHint':
+        'Калит сир эмас — у сайтингиз кодида кўринади ва фақат лид қўша олади.',
+    'leadForm.method': 'Улаш усули',
+    'leadForm.method.widget': 'Тайёр виджет',
+    'leadForm.method.html': 'Ўз формангиз',
+    'leadForm.method.tilda': 'Tilda ва webhook',
+    'leadForm.whereLeads':
+        'Сайтдан келган аризалар «Лидлар» бўлимида «{source}» манбаси ва «{status}» ҳолати билан пайдо бўлади.',
+    'leadForm.openLeads': 'Лидларни очиш',
+    'leadForm.widget.step1': 'Форма тилини ва керак бўлса курсни танланг.',
+    'leadForm.widget.step2':
+        'Кодни нусхалаб, сайтингизда форма чиқиши керак бўлган жойга қўйинг.',
+    'leadForm.widget.step3':
+        'Саҳифани очиб, синов ариза юборинг — у «Лидлар» бўлимида пайдо бўлади.',
+    'leadForm.widget.language': 'Форма тили',
+    'leadForm.widget.course': 'Курс',
+    'leadForm.widget.anyCourse': 'Ташриф буюрувчи ўзи танлайди',
+    'leadForm.widget.preview': 'Кўриниши',
+    'leadForm.widget.previewHint':
+        'Бу ҳақиқий форма: бу ердан юборилган ариза ҳам лид бўлиб тушади.',
+    'leadForm.widget.options': 'Қўшимча атрибутлар',
+    'leadForm.widget.color': 'Тугма ранги, масалан #e11d48',
+    'leadForm.widget.titleAttr':
+        'Сарлавҳа матни; бўш қиймат (data-title="") сарлавҳани яширади',
+    'leadForm.widget.target':
+        'Форма чизиладиган элемент (CSS селектор, масалан #lead). Скрипт <head> ичида бўлса керак',
+    'leadForm.widget.source':
+        'Лид манбаси: website (стандарт), instagram, telegram, facebook…',
+    'leadForm.widget.event':
+        'Ариза юборилгач саҳифада «{event}» ҳодисаси чиқади — реклама пиксели (Facebook, Google) конверсиясини шунга боғланг. Саҳифа манзилидаги UTM белгилар лид изоҳига ёзилади.',
+    'leadForm.html.intro':
+        'Сайтингизда ўз формангиз бўлса, маълумотни шу манзилга юборинг. JSON ҳам, оддий форма (form-urlencoded) ҳам қабул қилинади; логин керак эмас.',
+    'leadForm.html.fields': 'Майдонлар (* — мажбурий)',
+    'leadForm.html.courses': 'Курслар рўйхати (course_id учун)',
+    'leadForm.html.example': 'Намуна: HTML форма',
+    'leadForm.html.responses': 'Жавоблар',
+    'leadForm.html.duplicates':
+        'Шу телефон рақамидан ҳали ёпилмаган лид бўлса, янгиси яратилмайди — такрорий ариза ўша лиднинг изоҳига ёзилади.',
+    'leadForm.html.namePlaceholder': 'Исмингиз',
+    'leadForm.html.submit': 'Юбориш',
+    'leadForm.html.success': 'Раҳмат! Аризангиз қабул қилинди.',
+    'leadForm.html.failed': 'Юбориб бўлмади, қайта уриниб кўринг.',
+    'leadForm.field.firstName':
+        'Исм. Фамилия билан бирга бўлса («Aziz Karimov»), фамилия ўзи ажратилади. name ёки Name ҳам бўлади',
+    'leadForm.field.phone':
+        'Телефон: +998901234567 ёки 90 123 45 67 — пробел, қавс ва тире билан ҳам. phone ёки Phone ҳам бўлади',
+    'leadForm.field.course':
+        'Курс id — рўйхати қуйида. Нотўғри ёки нофаол бўлса, лид курссиз сақланади',
+    'leadForm.field.note': 'Изоҳ (comment ёки message ҳам бўлади)',
+    'leadForm.field.email': 'Email — лид изоҳига ёзилади',
+    'leadForm.field.source':
+        'Манба: website (стандарт), instagram, telegram, facebook, referral, walk_in, call, other',
+    'leadForm.field.utm': 'Реклама белгилари — лид изоҳига ёзилади',
+    'leadForm.field.honeypot':
+        'Ботлардан ҳимоя: майдонни яширинг ва бўш қолдиринг. Тўлдирилган ариза сақланмайди',
+    'leadForm.response.ok': 'Ариза қабул қилинди',
+    'leadForm.response.invalid': 'Исм ёки телефон нотўғри',
+    'leadForm.response.notFound': 'Калит нотўғри ёки форма ўчирилган',
+    'leadForm.response.tooMany':
+        'Жуда кўп сўров: бир манзилдан 10 дақиқада 10 тадан ортиқ',
+    'leadForm.tilda.step1': "Tilda'да: Сайт созламалари → Формалар → Webhook.",
+    'leadForm.tilda.step2':
+        'Қуйидаги манзилни киритинг ва сақланг. Tilda текширув сўровини юборади — тизим уни қабул қилади.',
+    'leadForm.tilda.step3':
+        "Саҳифадаги форма блокининг созламаларида (Контент) шу webhook'ни белгиланг ва саҳифани қайта нашр қилинг.",
+    'leadForm.tilda.step4':
+        "Tilda'нинг стандарт Name ва Phone майдонлари ўзи танилади; Email ва изоҳ (comment) ҳам лидга ёзилади.",
+    'leadForm.tilda.https':
+        'Tilda фақат HTTPS манзилга юборади — backend SSL сертификатли доменда бўлиши керак.',
+    'leadForm.tilda.other':
+        'Бошқа конструктор ва хизматлар (Make, Zapier, n8n ва ҳ.к.) ҳам шу манзилга webhook юборса бўлди — майдон номлари «Ўз формангиз» бўлимидагидек.',
 };

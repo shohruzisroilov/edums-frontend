@@ -165,6 +165,11 @@ export async function request<T>(
     return payload as T;
 }
 
+/** API'ning to'liq manzili — markaz saytiga beriladigan kod namunalari uchun. */
+export function apiUrl(path: string): string {
+    return `${API_URL}${path}`;
+}
+
 /** Yuklangan fayl uchun to'liq URL. Backend nisbiy `/uploads/...` qaytaradi. */
 export function fileUrl(url: string | null | undefined): string | null {
     if (!url) return null;

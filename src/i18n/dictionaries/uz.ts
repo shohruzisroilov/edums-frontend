@@ -846,7 +846,7 @@ export const uz = {
     'permissionModule.settings': 'Markaz sozlamalari',
     'permission.settings.manage': "Markaz sozlamalarini o'zgartirish",
     'settings.title': 'Markaz sozlamalari',
-    'settings.subtitle': 'Ota-onalarga avtomatik SMS xabarlar',
+    'settings.subtitle': 'Ota-onalarga SMS va saytdan lid qabul qilish',
     'settings.smsTitle': 'SMS xabarlar',
     'settings.smsHint':
         "Xabar ota-ona telefoniga, u bo'lmasa o'quvchining o'ziga yuboriladi",
@@ -1007,6 +1007,104 @@ export const uz = {
     'auditField.category': 'Toifa',
     'auditField.type': 'Turi',
     'auditField.value': 'Qiymati',
+
+    /* ── Saytdan lid qabul qilish ── */
+    'common.copy': 'Nusxa olish',
+    'common.copied': 'Nusxa olindi',
+    'common.copyFailed': "Nusxa olib bo'lmadi — qo'lda belgilang",
+    'auditEntity.lead_form': 'Sayt formasi',
+    'auditAction.lead_form.create': 'Sayt formasi yoqildi',
+    'auditAction.lead_form.update': 'Sayt formasi kaliti yangilandi',
+    'auditAction.lead_form.delete': "Sayt formasi o'chirildi",
+    'leads.fromWebsite': 'Saytdan qabul qilish',
+    'leadForm.title': 'Saytdan lid qabul qilish',
+    'leadForm.hint':
+        "Markazingiz saytidagi formani tizimga ulang: saytdan yuborilgan har bir ariza «Lidlar» bo'limiga o'zi tushadi — qo'lda ko'chirish shart emas.",
+    'leadForm.enable': 'Formani yoqish',
+    'leadForm.enabled': "Forma yoqildi — endi kodni saytga qo'ying",
+    'leadForm.regenerate': 'Kalitni yangilash',
+    'leadForm.regenerated': 'Yangi kalit berildi — saytdagi kodni yangilang',
+    'leadForm.regenerateTitle': 'Kalit yangilansinmi?',
+    'leadForm.regenerateMessage':
+        "Eski kalit darhol ishlamay qoladi: saytdagi kodni yangisiga almashtirmaguningizcha arizalar kelmaydi. Kalit begona saytda ishlatilayotgan yoki spam kelayotgan bo'lsa shunday qiling.",
+    'leadForm.disable': "Formani o'chirish",
+    'leadForm.disabled': "Forma o'chirildi",
+    'leadForm.disableTitle': "Forma o'chirilsinmi?",
+    'leadForm.disableMessage':
+        'Saytdagi kod ishlamay qoladi va yangi arizalar kelmaydi. Qayta yoqsangiz, yangi kalit beriladi.',
+    'leadForm.key': 'Kalit',
+    'leadForm.keyIssued': '{date} da berilgan.',
+    'leadForm.keyHint':
+        "Kalit sir emas — u saytingiz kodida ko'rinadi va faqat lid qo'sha oladi.",
+    'leadForm.method': 'Ulash usuli',
+    'leadForm.method.widget': 'Tayyor vidjet',
+    'leadForm.method.html': "O'z formangiz",
+    'leadForm.method.tilda': 'Tilda va webhook',
+    'leadForm.whereLeads':
+        "Saytdan kelgan arizalar «Lidlar» bo'limida «{source}» manbasi va «{status}» holati bilan paydo bo'ladi.",
+    'leadForm.openLeads': 'Lidlarni ochish',
+    'leadForm.widget.step1': "Forma tilini va kerak bo'lsa kursni tanlang.",
+    'leadForm.widget.step2':
+        "Kodni nusxalab, saytingizda forma chiqishi kerak bo'lgan joyga qo'ying.",
+    'leadForm.widget.step3':
+        "Sahifani ochib, sinov ariza yuboring — u «Lidlar» bo'limida paydo bo'ladi.",
+    'leadForm.widget.language': 'Forma tili',
+    'leadForm.widget.course': 'Kurs',
+    'leadForm.widget.anyCourse': "Tashrif buyuruvchi o'zi tanlaydi",
+    'leadForm.widget.preview': "Ko'rinishi",
+    'leadForm.widget.previewHint':
+        "Bu haqiqiy forma: bu yerdan yuborilgan ariza ham lid bo'lib tushadi.",
+    'leadForm.widget.options': "Qo'shimcha atributlar",
+    'leadForm.widget.color': 'Tugma rangi, masalan #e11d48',
+    'leadForm.widget.titleAttr':
+        'Sarlavha matni; bo\'sh qiymat (data-title="") sarlavhani yashiradi',
+    'leadForm.widget.target':
+        "Forma chiziladigan element (CSS selektor, masalan #lead). Skript <head> ichida bo'lsa kerak",
+    'leadForm.widget.source':
+        'Lid manbasi: website (standart), instagram, telegram, facebook…',
+    'leadForm.widget.event':
+        "Ariza yuborilgach sahifada «{event}» hodisasi chiqadi — reklama pikseli (Facebook, Google) konversiyasini shunga bog'lang. Sahifa manzilidagi UTM belgilar lid izohiga yoziladi.",
+    'leadForm.html.intro':
+        "Saytingizda o'z formangiz bo'lsa, ma'lumotni shu manzilga yuboring. JSON ham, oddiy forma (form-urlencoded) ham qabul qilinadi; login kerak emas.",
+    'leadForm.html.fields': 'Maydonlar (* — majburiy)',
+    'leadForm.html.courses': "Kurslar ro'yxati (course_id uchun)",
+    'leadForm.html.example': 'Namuna: HTML forma',
+    'leadForm.html.responses': 'Javoblar',
+    'leadForm.html.duplicates':
+        "Shu telefon raqamidan hali yopilmagan lid bo'lsa, yangisi yaratilmaydi — takroriy ariza o'sha lidning izohiga yoziladi.",
+    'leadForm.html.namePlaceholder': 'Ismingiz',
+    'leadForm.html.submit': 'Yuborish',
+    'leadForm.html.success': 'Rahmat! Arizangiz qabul qilindi.',
+    'leadForm.html.failed': "Yuborib bo'lmadi, qayta urinib ko'ring.",
+    'leadForm.field.firstName':
+        "Ism. Familiya bilan birga bo'lsa («Aziz Karimov»), familiya o'zi ajratiladi. name yoki Name ham bo'ladi",
+    'leadForm.field.phone':
+        "Telefon: +998901234567 yoki 90 123 45 67 — probel, qavs va tire bilan ham. phone yoki Phone ham bo'ladi",
+    'leadForm.field.course':
+        "Kurs id — ro'yxati quyida. Noto'g'ri yoki nofaol bo'lsa, lid kurssiz saqlanadi",
+    'leadForm.field.note': "Izoh (comment yoki message ham bo'ladi)",
+    'leadForm.field.email': 'Email — lid izohiga yoziladi',
+    'leadForm.field.source':
+        'Manba: website (standart), instagram, telegram, facebook, referral, walk_in, call, other',
+    'leadForm.field.utm': 'Reklama belgilari — lid izohiga yoziladi',
+    'leadForm.field.honeypot':
+        "Botlardan himoya: maydonni yashiring va bo'sh qoldiring. To'ldirilgan ariza saqlanmaydi",
+    'leadForm.response.ok': 'Ariza qabul qilindi',
+    'leadForm.response.invalid': "Ism yoki telefon noto'g'ri",
+    'leadForm.response.notFound': "Kalit noto'g'ri yoki forma o'chirilgan",
+    'leadForm.response.tooMany':
+        "Juda ko'p so'rov: bir manzildan 10 daqiqada 10 tadan ortiq",
+    'leadForm.tilda.step1': "Tilda'da: Sayt sozlamalari → Formalar → Webhook.",
+    'leadForm.tilda.step2':
+        "Quyidagi manzilni kiriting va saqlang. Tilda tekshiruv so'rovini yuboradi — tizim uni qabul qiladi.",
+    'leadForm.tilda.step3':
+        "Sahifadagi forma blokining sozlamalarida (Kontent) shu webhook'ni belgilang va sahifani qayta nashr qiling.",
+    'leadForm.tilda.step4':
+        "Tilda'ning standart Name va Phone maydonlari o'zi taniladi; Email va izoh (comment) ham lidga yoziladi.",
+    'leadForm.tilda.https':
+        "Tilda faqat HTTPS manzilga yuboradi — backend SSL sertifikatli domenda bo'lishi kerak.",
+    'leadForm.tilda.other':
+        "Boshqa konstruktor va xizmatlar (Make, Zapier, n8n va h.k.) ham shu manzilga webhook yuborsa bo'ldi — maydon nomlari «O'z formangiz» bo'limidagidek.",
 } as const;
 
 export type TranslationKey = keyof typeof uz;

@@ -64,7 +64,7 @@ lint (ogohlantirishsiz), format, typecheck, build va Docker image.
 | Kassa | `/cashbox` | `payments.view` ruxsati borlar |
 | Qarzdorlar | `/debtors` | `payments.view` ruxsati borlar |
 | Harakatlar tarixi | `/audit` | `audit.view` ruxsati borlar |
-| Markaz sozlamalari | `/settings` | `settings.manage` ruxsati borlar |
+| Markaz sozlamalari va saytdan lid qabul qilish | `/settings` | `settings.manage` ruxsati borlar |
 | Xarajatlar | `/expenses` | `expenses.view` ruxsati borlar |
 | Oyliklar | `/salaries` | `salaries.view` ruxsati borlar |
 | Tarif va to'lov | `/billing` | `billing.manage` ruxsati borlar |

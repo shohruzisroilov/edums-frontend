@@ -17,6 +17,7 @@ import { can } from '@/utils/access';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
+import { LeadFormSection } from './lead-form-section';
 
 export default function SettingsPage() {
     return (
@@ -41,7 +42,7 @@ function SettingsView() {
                 description={t('settings.subtitle')}
             />
 
-            <div className='max-w-3xl px-5'>
+            <div className='flex max-w-3xl flex-col gap-5 px-5 pb-6'>
                 {query.isPending ? (
                     <TableSkeleton rows={3} columns={1} />
                 ) : query.error ? (
@@ -52,6 +53,7 @@ function SettingsView() {
                         settings={query.data}
                     />
                 )}
+                <LeadFormSection />
             </div>
         </>
     );

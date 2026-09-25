@@ -43,9 +43,10 @@ import {
 } from '@/types/api';
 import { can } from '@/utils/access';
 import { cn } from '@/utils/cn';
-import { Funnel1, Pencil1, Plus, Trash1 } from '@tailgrids/icons';
+import { Funnel1, Globe2, Pencil1, Plus, Trash1 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { ConvertLeadModal } from './_components/convert-lead';
@@ -75,6 +76,9 @@ function LeadsView() {
     const canDelete = can(session, 'leads.delete');
     const canConvert = canUpdate && can(session, 'students.create');
     const canOpenStudents = can(session, 'students.view');
+    // Saytdagi forma sozlamalarda yoqiladi.
+    const canManageSettings = can(session, 'settings.manage');
+    const router = useRouter();
 
     const {
         search,
@@ -145,20 +149,32 @@ function LeadsView() {
                 count={query.data?.count}
                 description={t('leads.subtitle')}
                 actions={
-                    canCreate && (
-                        <Button
-                            variant='primary'
-                            appearance='fill'
-                            size='md'
-                            onPress={() => {
-                                setEditing(null);
-                                setFormOpen(true);
-                            }}
-                        >
-                            <Plus />
-                            {t('leads.new')}
-                        </Button>
-                    )
+                    <div className='flex flex-wrap gap-2'>
+                        {canManageSettings && (
+                            <Button
+                                appearance='outline'
+                                size='md'
+                                onPress={() => router.push('/settings')}
+                            >
+                                <Globe2 />
+                                {t('leads.fromWebsite')}
+                            </Button>
+                        )}
+                        {canCreate && (
+                            <Button
+                                variant='primary'
+                                appearance='fill'
+                                size='md'
+                                onPress={() => {
+                                    setEditing(null);
+                                    setFormOpen(true);
+                                }}
+                            >
+                                <Plus />
+                                {t('leads.new')}
+                            </Button>
+                        )}
+                    </div>
                 }
             />
 

@@ -35,7 +35,7 @@ src/
       cashbox/            # /cashbox — o'quvchi to'lovlari (payments.*); /payments — super admin'niki
       debtors/            # /debtors — qarzdorlar (payments.view)
       audit/              # /audit — harakatlar tarixi (audit.view)
-      settings/           # /settings — markaz sozlamalari (settings.manage)
+      settings/           # /settings — markaz sozlamalari va saytdagi forma (settings.manage)
       expenses/           # /expenses — xarajatlar (expenses.*)
       salaries/           # /salaries — oyliklar (salaries.*)
       billing/            # /billing — tarif tanlash va to'lov (billing.manage)
@@ -143,6 +143,15 @@ hover/fokus tooltip va ekran o'quvchi uchun `sr-only` jadvalda. Matn doim
 `text-*` tokenlarida, seriya rangida emas. Ikki o'qli (dual-axis) grafik
 chizilmaydi.
 
+## Kod namunalari
+
+Markaz saytiga qo'yiladigan kod (`settings/lead-form-section.tsx`)
+`CodeBlock` (`ui/code-block.tsx`) bilan ko'rsatiladi — nusxa olish tugmasi
+bilan. Namunadagi ko'rinadigan matnlar (placeholder, tugma, xabar) ham
+`t()` dan olinadi, JS satriga `JSON.stringify` bilan qo'yiladi. Vidjetning
+o'zi backendda: `../edums-backend/src/lead_forms/widget/lead-form.js` —
+uning 4 tildagi matnlari shu faylda.
+
 ## Select komponenti
 
 Barcha ochiladigan ro'yxatlar `src/components/ui/shadcn/select.tsx` orqali —
@@ -228,6 +237,7 @@ boshqa yo'l bilan qoplaydi:
 | `GET /uploads`, `DELETE /uploads` | Fayl menejeri hozircha yo'q — faqat rasm yuklash (`uploadFile`) ishlatiladi |
 | `GET /uploads/exists` | Interfeysda foydalanuvchi ssenariysi yo'q |
 | `GET /health` | Foydalanuvchiga server holatini ko'rsatish talab qilinmagan |
+| `GET /public/lead-forms/:key`, `POST /public/lead-forms/:key/leads` | Markaz saytidan chaqiriladi — interfeys faqat ularning manzilini ko'rsatadi (`leadFormSubmitUrl` va h.k.) |
 
 Agar kerak bo'lsa, ularni servis fayliga qo'shish oson — tip `types/api.ts` da tayyor.
 

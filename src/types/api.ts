@@ -260,6 +260,15 @@ export type EducationSettingsPayload = Partial<
     Pick<EducationSettings, 'notify_absence' | 'notify_debtors'>
 >;
 
+/** Markaz saytidagi forma. `null` — o'chirilgan, saytdan lid kelmaydi. */
+export interface LeadForm {
+    /** Saytga qo'yiladigan kalit — sir emas, faqat lid qo'sha oladi. */
+    key: string;
+    created_at: string;
+    /** Joriy kalit berilgan vaqt. */
+    updated_at: string;
+}
+
 /* ── Platforma sozlamalari (super admin) ──────────────────────────────── */
 
 export interface PlatformSettings {
@@ -784,6 +793,9 @@ export const AUDIT_ACTIONS = [
     'lead.update',
     'lead.convert',
     'lead.delete',
+    'lead_form.create',
+    'lead_form.update',
+    'lead_form.delete',
     'payment.create',
     'payment.delete',
     'attendance.mark',
@@ -810,6 +822,7 @@ export const AUDIT_ENTITY_TYPES = [
     'student',
     'enrollment',
     'lead',
+    'lead_form',
     'payment',
     'attendance',
     'billing',

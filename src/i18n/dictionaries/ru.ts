@@ -839,7 +839,7 @@ export const ru: Dictionary = {
     'permissionModule.settings': 'Настройки центра',
     'permission.settings.manage': 'Изменение настроек центра',
     'settings.title': 'Настройки центра',
-    'settings.subtitle': 'Автоматические SMS родителям',
+    'settings.subtitle': 'SMS родителям и приём заявок с сайта',
     'settings.smsTitle': 'SMS-сообщения',
     'settings.smsHint':
         'Сообщение уходит на телефон родителя, а если его нет — ученику',
@@ -996,4 +996,102 @@ export const ru: Dictionary = {
     'auditField.category': 'Категория',
     'auditField.type': 'Тип',
     'auditField.value': 'Значение',
+
+    /* ── Saytdan lid qabul qilish ── */
+    'common.copy': 'Копировать',
+    'common.copied': 'Скопировано',
+    'common.copyFailed': 'Не удалось скопировать — выделите вручную',
+    'auditEntity.lead_form': 'Форма на сайте',
+    'auditAction.lead_form.create': 'Форма на сайте включена',
+    'auditAction.lead_form.update': 'Ключ формы на сайте сменён',
+    'auditAction.lead_form.delete': 'Форма на сайте отключена',
+    'leads.fromWebsite': 'Заявки с сайта',
+    'leadForm.title': 'Приём заявок с сайта',
+    'leadForm.hint':
+        'Подключите форму на сайте центра: каждая заявка с сайта сама попадёт в раздел «Лиды» — переносить вручную не нужно.',
+    'leadForm.enable': 'Включить форму',
+    'leadForm.enabled': 'Форма включена — теперь добавьте код на сайт',
+    'leadForm.regenerate': 'Сменить ключ',
+    'leadForm.regenerated': 'Выдан новый ключ — обновите код на сайте',
+    'leadForm.regenerateTitle': 'Сменить ключ?',
+    'leadForm.regenerateMessage':
+        'Старый ключ сразу перестанет работать: пока вы не замените код на сайте, заявки поступать не будут. Делайте это, если ключ используют на чужом сайте или идёт спам.',
+    'leadForm.disable': 'Отключить форму',
+    'leadForm.disabled': 'Форма отключена',
+    'leadForm.disableTitle': 'Отключить форму?',
+    'leadForm.disableMessage':
+        'Код на сайте перестанет работать, новые заявки поступать не будут. При повторном включении будет выдан новый ключ.',
+    'leadForm.key': 'Ключ',
+    'leadForm.keyIssued': 'Выдан {date}.',
+    'leadForm.keyHint':
+        'Ключ не секретный — он виден в коде сайта и позволяет только добавлять лиды.',
+    'leadForm.method': 'Способ подключения',
+    'leadForm.method.widget': 'Готовый виджет',
+    'leadForm.method.html': 'Своя форма',
+    'leadForm.method.tilda': 'Tilda и вебхук',
+    'leadForm.whereLeads':
+        'Заявки с сайта появляются в разделе «Лиды» с источником «{source}» и статусом «{status}».',
+    'leadForm.openLeads': 'Открыть лиды',
+    'leadForm.widget.step1': 'Выберите язык формы и, если нужно, курс.',
+    'leadForm.widget.step2':
+        'Скопируйте код и вставьте его туда, где на сайте должна появиться форма.',
+    'leadForm.widget.step3':
+        'Откройте страницу и отправьте тестовую заявку — она появится в «Лидах».',
+    'leadForm.widget.language': 'Язык формы',
+    'leadForm.widget.course': 'Курс',
+    'leadForm.widget.anyCourse': 'Посетитель выберет сам',
+    'leadForm.widget.preview': 'Предпросмотр',
+    'leadForm.widget.previewHint':
+        'Это настоящая форма: заявка, отправленная отсюда, тоже станет лидом.',
+    'leadForm.widget.options': 'Дополнительные атрибуты',
+    'leadForm.widget.color': 'Цвет кнопки, например #e11d48',
+    'leadForm.widget.titleAttr':
+        'Текст заголовка; пустое значение (data-title="") скрывает заголовок',
+    'leadForm.widget.target':
+        'Элемент, в который вставить форму (CSS-селектор, например #lead). Нужен, если скрипт в <head>',
+    'leadForm.widget.source':
+        'Источник лида: website (по умолчанию), instagram, telegram, facebook…',
+    'leadForm.widget.event':
+        'После отправки на странице возникает событие «{event}» — привяжите к нему конверсию рекламного пикселя (Facebook, Google). UTM-метки из адреса страницы записываются в комментарий лида.',
+    'leadForm.html.intro':
+        'Если на сайте своя форма, отправляйте данные на этот адрес. Принимается JSON и обычная форма (form-urlencoded), авторизация не нужна.',
+    'leadForm.html.fields': 'Поля (* — обязательные)',
+    'leadForm.html.courses': 'Список курсов (для course_id)',
+    'leadForm.html.example': 'Пример: HTML-форма',
+    'leadForm.html.responses': 'Ответы',
+    'leadForm.html.duplicates':
+        'Если с этого номера уже есть незакрытый лид, новый не создаётся — повторная заявка дописывается в его комментарий.',
+    'leadForm.html.namePlaceholder': 'Ваше имя',
+    'leadForm.html.submit': 'Отправить',
+    'leadForm.html.success': 'Спасибо! Заявка принята.',
+    'leadForm.html.failed': 'Не удалось отправить, попробуйте ещё раз.',
+    'leadForm.field.firstName':
+        'Имя. Если вместе с фамилией («Aziz Karimov»), фамилия отделится сама. Можно также name или Name',
+    'leadForm.field.phone':
+        'Телефон: +998901234567 или 90 123 45 67 — можно с пробелами, скобками и дефисами. Также phone или Phone',
+    'leadForm.field.course':
+        'ID курса — список ниже. Если неверный или неактивный, лид сохранится без курса',
+    'leadForm.field.note': 'Комментарий (также comment или message)',
+    'leadForm.field.email': 'Email — записывается в комментарий лида',
+    'leadForm.field.source':
+        'Источник: website (по умолчанию), instagram, telegram, facebook, referral, walk_in, call, other',
+    'leadForm.field.utm': 'Рекламные метки — записываются в комментарий лида',
+    'leadForm.field.honeypot':
+        'Защита от ботов: скройте поле и оставьте пустым. Заявка с заполненным полем не сохраняется',
+    'leadForm.response.ok': 'Заявка принята',
+    'leadForm.response.invalid': 'Неверное имя или телефон',
+    'leadForm.response.notFound': 'Неверный ключ или форма отключена',
+    'leadForm.response.tooMany':
+        'Слишком много запросов: больше 10 за 10 минут с одного адреса',
+    'leadForm.tilda.step1': 'В Tilda: Настройки сайта → Формы → Webhook.',
+    'leadForm.tilda.step2':
+        'Вставьте адрес ниже и сохраните. Tilda отправит проверочный запрос — система его примет.',
+    'leadForm.tilda.step3':
+        'В настройках блока формы на странице (Контент) отметьте этот вебхук и переопубликуйте страницу.',
+    'leadForm.tilda.step4':
+        'Стандартные поля Tilda Name и Phone распознаются сами; Email и комментарий (comment) тоже попадут в лид.',
+    'leadForm.tilda.https':
+        'Tilda отправляет только на HTTPS-адрес — бэкенд должен работать на домене с SSL.',
+    'leadForm.tilda.other':
+        'Другие конструкторы и сервисы (Make, Zapier, n8n и т. д.) тоже подойдут — достаточно отправить вебхук на этот адрес; названия полей — как в разделе «Своя форма».',
 };

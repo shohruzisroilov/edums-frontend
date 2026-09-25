@@ -837,7 +837,7 @@ export const en: Dictionary = {
     'permissionModule.settings': 'Center settings',
     'permission.settings.manage': 'Change center settings',
     'settings.title': 'Center settings',
-    'settings.subtitle': 'Automatic texts to parents',
+    'settings.subtitle': 'Texts to parents and leads from your website',
     'settings.smsTitle': 'Text messages',
     'settings.smsHint':
         "Messages go to the parent's phone, or to the student's if there is none",
@@ -994,4 +994,103 @@ export const en: Dictionary = {
     'auditField.category': 'Category',
     'auditField.type': 'Type',
     'auditField.value': 'Value',
+
+    /* ── Saytdan lid qabul qilish ── */
+    'common.copy': 'Copy',
+    'common.copied': 'Copied',
+    'common.copyFailed': 'Could not copy — select it manually',
+    'auditEntity.lead_form': 'Website form',
+    'auditAction.lead_form.create': 'Website form turned on',
+    'auditAction.lead_form.update': 'Website form key replaced',
+    'auditAction.lead_form.delete': 'Website form turned off',
+    'leads.fromWebsite': 'From website',
+    'leadForm.title': 'Leads from your website',
+    'leadForm.hint':
+        'Connect the form on your website: every request sent from it lands in Leads automatically — no copying by hand.',
+    'leadForm.enable': 'Turn on the form',
+    'leadForm.enabled': 'Form is on — now add the code to your website',
+    'leadForm.regenerate': 'Replace key',
+    'leadForm.regenerated': 'New key issued — update the code on your website',
+    'leadForm.regenerateTitle': 'Replace the key?',
+    'leadForm.regenerateMessage':
+        "The old key stops working at once: no requests arrive until you replace the code on your website. Do this if the key is used on someone else's site or spam is coming in.",
+    'leadForm.disable': 'Turn off the form',
+    'leadForm.disabled': 'Form turned off',
+    'leadForm.disableTitle': 'Turn off the form?',
+    'leadForm.disableMessage':
+        'The code on your website stops working and no new requests arrive. Turning it back on issues a new key.',
+    'leadForm.key': 'Key',
+    'leadForm.keyIssued': 'Issued {date}.',
+    'leadForm.keyHint':
+        "The key is not a secret — it is visible in your site's code and can only add leads.",
+    'leadForm.method': 'How to connect',
+    'leadForm.method.widget': 'Ready-made widget',
+    'leadForm.method.html': 'Your own form',
+    'leadForm.method.tilda': 'Tilda and webhooks',
+    'leadForm.whereLeads':
+        'Website requests appear in Leads with the source “{source}” and the status “{status}”.',
+    'leadForm.openLeads': 'Open leads',
+    'leadForm.widget.step1':
+        "Choose the form's language and, if needed, a course.",
+    'leadForm.widget.step2':
+        'Copy the code and paste it where the form should appear on your website.',
+    'leadForm.widget.step3':
+        'Open the page and send a test request — it will appear in Leads.',
+    'leadForm.widget.language': 'Form language',
+    'leadForm.widget.course': 'Course',
+    'leadForm.widget.anyCourse': 'Visitor chooses',
+    'leadForm.widget.preview': 'Preview',
+    'leadForm.widget.previewHint':
+        'This is the real form: a request sent from here becomes a lead too.',
+    'leadForm.widget.options': 'Extra attributes',
+    'leadForm.widget.color': 'Button colour, e.g. #e11d48',
+    'leadForm.widget.titleAttr':
+        'Heading text; an empty value (data-title="") hides the heading',
+    'leadForm.widget.target':
+        'Element to draw the form into (CSS selector, e.g. #lead). Needed if the script is in <head>',
+    'leadForm.widget.source':
+        'Lead source: website (default), instagram, telegram, facebook…',
+    'leadForm.widget.event':
+        "After sending, the page fires the “{event}” event — tie your ad pixel conversion (Facebook, Google) to it. UTM tags from the page address are saved in the lead's note.",
+    'leadForm.html.intro':
+        'If your site has its own form, send the data to this address. Both JSON and a plain form (form-urlencoded) are accepted; no login needed.',
+    'leadForm.html.fields': 'Fields (* — required)',
+    'leadForm.html.courses': 'Course list (for course_id)',
+    'leadForm.html.example': 'Example: HTML form',
+    'leadForm.html.responses': 'Responses',
+    'leadForm.html.duplicates':
+        "If this phone number already has an open lead, no new one is created — the repeat request is added to that lead's note.",
+    'leadForm.html.namePlaceholder': 'Your name',
+    'leadForm.html.submit': 'Send',
+    'leadForm.html.success': 'Thank you! Your request has been received.',
+    'leadForm.html.failed': 'Could not send, please try again.',
+    'leadForm.field.firstName':
+        'Name. If it includes the surname (“Aziz Karimov”), the surname is split off. name or Name also work',
+    'leadForm.field.phone':
+        'Phone: +998901234567 or 90 123 45 67 — spaces, brackets and dashes are fine. phone or Phone also work',
+    'leadForm.field.course':
+        'Course id — list below. If wrong or inactive, the lead is saved without a course',
+    'leadForm.field.note': 'Note (comment or message also work)',
+    'leadForm.field.email': "Email — saved in the lead's note",
+    'leadForm.field.source':
+        'Source: website (default), instagram, telegram, facebook, referral, walk_in, call, other',
+    'leadForm.field.utm': "Ad tags — saved in the lead's note",
+    'leadForm.field.honeypot':
+        'Bot trap: hide the field and leave it empty. A request with it filled is not saved',
+    'leadForm.response.ok': 'Request received',
+    'leadForm.response.invalid': 'Name or phone is invalid',
+    'leadForm.response.notFound': 'Wrong key or the form is turned off',
+    'leadForm.response.tooMany':
+        'Too many requests: more than 10 in 10 minutes from one address',
+    'leadForm.tilda.step1': 'In Tilda: Site Settings → Forms → Webhook.',
+    'leadForm.tilda.step2':
+        'Paste the address below and save. Tilda sends a test request — the system accepts it.',
+    'leadForm.tilda.step3':
+        "In the form block's settings on the page (Content), tick this webhook and republish the page.",
+    'leadForm.tilda.step4':
+        "Tilda's standard Name and Phone fields are recognised automatically; Email and comment also go into the lead.",
+    'leadForm.tilda.https':
+        'Tilda only sends to HTTPS addresses — the backend must run on a domain with SSL.',
+    'leadForm.tilda.other':
+        'Other builders and services (Make, Zapier, n8n, etc.) work too — just send a webhook to this address; field names are as in “Your own form”.',
 };
