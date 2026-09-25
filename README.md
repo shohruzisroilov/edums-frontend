@@ -21,6 +21,12 @@ npm run dev             # http://localhost:3000
 | `npm run build` / `npm start` | Production build va ishga tushirish |
 | `npm run lint` · `format` · `typecheck` | Kod sifati |
 
+**Landing rasmlari.** Bosh sahifada skrinshotlar uchun 5 ta joy bor (hero va
+4 ta bo'lim). Rasmni `public/landing/` ga qo'ying va yo'lini
+`src/components/landing/images.ts` ga yozing, masalan
+`hero: '/landing/dashboard.png'`. Tavsiya: 16:10 (1600×1000), PNG yoki WebP.
+Yozilmagan joyda "Rasm uchun joy" ramkasi ko'rinadi.
+
 **Docker.** `Dockerfile` Next.js standalone serverini yig'adi (`next.config.ts`
 dagi `output` faqat `NEXT_OUTPUT=standalone` bo'lganda yoqiladi, lokal
 `npm start` o'zgarmaydi). API manzili build vaqtida kodga yoziladi:

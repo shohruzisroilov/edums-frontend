@@ -321,32 +321,24 @@ export const en: Dictionary = {
     'landing.navTariffs': 'Pricing',
     'landing.openCabinet': 'Open dashboard',
     'landing.startFree': 'Start free',
-    'landing.seeTariffs': 'See pricing',
     'landing.badge': '{days} days free — no card required',
-    'landing.heroTitle': 'Run your education center in one place',
+    'landing.heroTitle': 'Run your learning centre in one system',
     'landing.heroText':
-        'EduMS is a CRM for education centers. Students, groups, schedule, payments and attendance in one place — with access for each staff member to fit their job.',
-    'landing.noCard':
-        'Sign up in a minute — just a phone number and an SMS code',
-    'landing.featuresTitle': 'What you get',
-    'landing.featureUsersTitle': 'Staff accounts',
-    'landing.featureUsersText':
-        'A separate login for every staff member. Switch anyone off in one click.',
+        "Groups, attendance, payments, debtors, leads and teacher pay — all in one place. See at a glance who hasn't paid, which group is full and how much profit is left at the end of the month.",
+    'landing.featuresTitle': 'Everything in one system',
     'landing.featureRolesTitle': 'Custom roles',
     'landing.featureRolesText':
         'Administrator, teacher, cashier — create roles yourself and choose what each can do.',
     'landing.featureSecurityTitle': 'Security',
     'landing.featureSecurityText':
         "Each center's data is isolated. Nobody can grant more access than they have themselves.",
-    'landing.featureLanguagesTitle': '4 languages',
-    'landing.featureLanguagesText':
-        'Uzbek (Latin and Cyrillic), Russian and English. Light and dark themes.',
-    'landing.stepsTitle': 'How it works',
+    'landing.stepsTitle': 'How to get started',
     'landing.step1Title': 'Sign up',
     'landing.step1Text':
         "Your center's name and your phone number, confirmed by an SMS code.",
     'landing.step2Title': 'Use it free for {days} days',
-    'landing.step2Text': 'Everything is open: add staff and set up roles.',
+    'landing.step2Text':
+        'Everything is unlocked: set up branches and groups, add students, take payments.',
     'landing.step3Title': 'Pick a plan',
     'landing.step3Text':
         'When the trial ends, choose the plan that fits and carry on. Your data stays.',
@@ -354,8 +346,9 @@ export const en: Dictionary = {
     'landing.tariffsText': 'Each one after a {days}-day free trial',
     'landing.tariffsSoon':
         'Pricing is coming soon. You can start a free trial now.',
-    'landing.ctaTitle': 'Start today',
-    'landing.ctaText': 'Try it for {days} days without paying anything.',
+    'landing.ctaTitle': 'Get your centre in order today',
+    'landing.ctaText':
+        '{days} days free — everything unlocked, no bank card required. Questions? Message us on Telegram.',
 
     /* ── SMS settings ── */
     'nav.smsSettings': 'SMS settings',
@@ -1093,4 +1086,124 @@ export const en: Dictionary = {
         'Tilda only sends to HTTPS addresses — the backend must run on a domain with SSL.',
     'leadForm.tilda.other':
         'Other builders and services (Make, Zapier, n8n, etc.) work too — just send a webhook to this address; field names are as in “Your own form”.',
+
+    /* ── Landing page ── */
+    'landing.navLabel': 'Page sections',
+    'landing.navFeatures': 'Features',
+    'landing.navHow': 'Get started',
+    'landing.navFaq': 'FAQ',
+    'landing.heroAccent': 'no notebooks, no spreadsheets',
+    'landing.seeFeatures': 'See the features',
+    'landing.heroPoint.noCard': 'No bank card needed',
+    'landing.heroPoint.languages': 'In Uzbek, Russian and English',
+    'landing.heroPoint.devices': 'Works on phone and computer',
+    'landing.imageSlot': 'Image placeholder',
+    'landing.image.hero': 'Dashboard screenshot',
+    'landing.image.finance': 'Cash desk or debtors page',
+    'landing.image.learning': 'Group page or timetable',
+    'landing.image.leads': 'Leads page',
+    'landing.image.team': 'Salaries or roles page',
+    'landing.audienceTitle': 'For any kind of learning centre',
+    'landing.audience.languages': 'Language schools',
+    'landing.audience.it': 'IT academies',
+    'landing.audience.exam': 'DTM and IELTS prep',
+    'landing.audience.kids': "Kids' centres",
+    'landing.audience.studios': 'Sports and art studios',
+    'landing.painTitle': 'Sound familiar?',
+    'landing.painText':
+        'The bigger the centre, the messier the notebooks and spreadsheets get.',
+    'landing.pain1':
+        'Who paid and who owes lives in a notebook — and the month never adds up',
+    'landing.fix1':
+        "Each student's balance and the debtor list are worked out automatically",
+    'landing.pain2':
+        'People who message on Instagram and Telegram go unanswered and go elsewhere',
+    'landing.fix2':
+        'Every enquiry becomes a lead — including from the form on your website',
+    'landing.pain3':
+        'Working out teacher pay keeps you at the calculator until late',
+    'landing.fix3':
+        'Pay is worked out from each rate: fixed amount, percentage or per student',
+    'landing.pain4': 'Parents find out too late that their child skipped class',
+    'landing.fix4': 'Parents of an absent student can get an SMS the same day',
+    'landing.showcaseTitle': 'Running your centre, all in one place',
+    'landing.showcaseText':
+        'Director, administrator, cashier and teacher — everyone does their job here.',
+    'landing.finance.eyebrow': 'Finance',
+    'landing.finance.title': 'See where the money comes from and where it goes',
+    'landing.finance.text':
+        "Cash desk, debtors, expenses and salaries in one place. The dashboard shows this month's revenue, expenses and net profit.",
+    'landing.finance.point1': 'Payments in cash, by card and by transfer',
+    'landing.finance.point2': 'The debtor list builds itself',
+    'landing.finance.point3': 'Rent, ads, taxes and other expenses tracked',
+    'landing.learning.eyebrow': 'Teaching',
+    'landing.learning.title': 'Groups, timetable and attendance — in order',
+    'landing.learning.text':
+        'If a room or teacher is already booked when you set up a group, the system warns you at once. Attendance takes one click.',
+    'landing.learning.point1': 'Weekly timetable by branch and room',
+    'landing.learning.point2': 'A monthly attendance register for every group',
+    'landing.learning.point3': 'SMS to parents about absences',
+    'landing.leads.eyebrow': 'Sales',
+    'landing.leads.title': 'Not a single enquiry gets lost',
+    'landing.leads.text':
+        'Everyone who calls, messages or fills in the form on your website becomes a lead. You see which stage each one is at and, after a trial lesson, turn them into a student in one click.',
+    'landing.leads.point1':
+        'A website form with one line of code — Tilda works too',
+    'landing.leads.point2': 'Source and ad tags (UTM) are saved',
+    'landing.leads.point3': 'Repeat requests merge into one lead',
+    'landing.team.eyebrow': 'Team',
+    'landing.team.title': 'Everyone sees only their own work',
+    'landing.team.text':
+        'Teachers get groups and attendance, cashiers get payments, managers get leads. You create the roles yourself, and every action is kept in the history.',
+    'landing.team.point1': 'Teacher pay — fixed, percentage or per student',
+    'landing.team.point2': 'Who changed what and when — in the activity log',
+    'landing.team.point3': 'Several branches under one account',
+    'landing.featuresText': 'No extra apps or spreadsheets needed.',
+    'landing.featureSalariesTitle': 'Expenses and salaries',
+    'landing.featureSalariesText':
+        'Pay is worked out from each rate, and payouts go straight into expenses.',
+    'landing.featureWebsiteTitle': 'Website requests',
+    'landing.featureWebsiteText':
+        'Requests from your website form or Tilda land straight in Leads.',
+    'landing.featureSmsTitle': 'SMS to parents',
+    'landing.featureSmsText':
+        'Automatic messages to parents about absences and debts.',
+    'landing.featureReportsTitle': 'Reports',
+    'landing.featureReportsText':
+        'Revenue, expenses, profit, attendance and leads on month-by-month charts.',
+    'landing.featureBranchesTitle': 'Branches and rooms',
+    'landing.featureBranchesText':
+        'Run several branches from one account, each with its rooms and groups.',
+    'landing.featureAuditTitle': 'Activity log',
+    'landing.featureAuditText':
+        'Who took or deleted a payment and when — everything is recorded.',
+    'landing.stepsText': 'Three steps and your centre is up and running.',
+    'landing.faqTitle': 'Frequently asked questions',
+    'landing.faq.trialQ': 'What happens after the {days}-day free trial?',
+    'landing.faq.trialA':
+        "You choose a plan and pay. If you don't, only the plans page stays open in your account — your data is not deleted and everything is there once you pay.",
+    'landing.faq.signupQ': 'What do I need to sign up?',
+    'landing.faq.signupA':
+        'Just a phone number — you get a confirmation code by SMS. No bank card required.',
+    'landing.faq.paymentQ': 'How do I pay?',
+    'landing.faq.paymentA':
+        'Choose a plan in your account, send a request and pay the way shown. Once the payment is confirmed, your subscription is extended.',
+    'landing.faq.limitsQ': 'How many branches and staff can I add?',
+    'landing.faq.limitsA':
+        'Branches are unlimited. The number of staff depends on your plan.',
+    'landing.faq.securityQ': 'Is my data safe?',
+    'landing.faq.securityA':
+        "Each centre's data is kept separately and passwords are stored encrypted. Staff only see the sections they're allowed to, and every action stays in the history.",
+    'landing.faq.websiteQ': 'Can I connect the form on my website?',
+    'landing.faq.websiteA':
+        'Yes. Take the ready-made code from Settings and paste it on your site, or connect a Tilda webhook — requests land in Leads automatically.',
+    'landing.faq.mobileQ': 'Does it work on a phone?',
+    'landing.faq.mobileA':
+        'Yes — in the browser on phone, tablet and computer, with nothing to install.',
+    'landing.askTelegram': 'Ask on Telegram',
+    'landing.footerText':
+        'CRM for learning centres: groups, payments, attendance and leads in one system.',
+    'landing.footerProduct': 'Product',
+    'landing.footerAccount': 'Account',
+    'landing.footerTelegram': 'Message us on Telegram',
 };

@@ -49,6 +49,7 @@ src/
   components/
     tailgrids/core/       # dizayn tizimi primitivlari (faqat ishlatilganlari)
     common/               # sidebar, header, logotip
+    landing/              # landing page bo'limlari; rasmlar — landing/images.ts
     ui/                   # ilova darajasidagi komponentlar (forma, modal, jadval holati)
   services/api/           # har bir backend moduli uchun bitta fayl
   hooks/                  # use-session, use-list-query, use-api-error
@@ -142,6 +143,19 @@ ustun ≤ 24px, uchi yumaloq; faqat oxirgi qiymat yozib qo'yiladi, qolgani —
 hover/fokus tooltip va ekran o'quvchi uchun `sr-only` jadvalda. Matn doim
 `text-*` tokenlarida, seriya rangida emas. Ikki o'qli (dual-axis) grafik
 chizilmaydi.
+
+## Landing page
+
+`src/app/page.tsx` bo'limlarni `src/components/landing/` dan yig'adi: hero,
+"Tanish holatmi?", 4 ta katta bo'lim (rasm + matn), imkoniyatlar, qadamlar,
+tariflar (bazadan), FAQ, CTA. Qoidalar:
+
+- Faqat tizimda **haqiqatan bor** imkoniyatlar yoziladi. To'qima raqamlar
+  ("500+ markaz") va mijoz fikrlari qo'shilmaydi — haqiqiylari bo'lganda.
+- FAQ javoblari backend qoidalariga mos (obuna tugashi, `max_users`,
+  filiallar soni cheklanmagan). Qoida o'zgarsa, javob ham o'zgaradi.
+- Rasmlar `public/landing/` da, yo'li `components/landing/images.ts` da.
+  `null` bo'lsa `ImageSlot` rasm uchun ramka ko'rsatadi.
 
 ## Kod namunalari
 
