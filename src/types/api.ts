@@ -185,6 +185,26 @@ export interface SmsSettingsPayload {
     template: string;
 }
 
+/* ── Platforma sozlamalari (super admin) ──────────────────────────────── */
+
+export interface PlatformSettings {
+    /** Yangi markazning bepul sinov muddati (kun). */
+    trial_days: number;
+    /** Tarif tanlash sahifasida ko'rsatiladi. */
+    payment_instructions: string;
+    updated_at: string;
+}
+
+export interface PlatformSettingsPayload {
+    trial_days: number;
+    payment_instructions: string;
+}
+
+/** GET /platform-settings/public — login talab qilinmaydi. */
+export interface PublicPlatformSettings {
+    trial_days: number;
+}
+
 /* ── Uploads ──────────────────────────────────────────────────────────── */
 
 export interface Upload {

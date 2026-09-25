@@ -8,6 +8,7 @@ import { PasswordInput } from '@/components/ui/password-input';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { apiErrorMessage } from '@/hooks/use-api-error';
 import { useSession } from '@/hooks/use-session';
+import { useTrialDays } from '@/hooks/use-trial-days';
 import { useT } from '@/i18n/provider';
 import {
     register,
@@ -45,6 +46,7 @@ export default function RegisterPage() {
     const router = useRouter();
     const { session, loading, signIn } = useSession();
     const t = useT();
+    const trialDays = useTrialDays();
 
     const [form, setForm] = useState<FormState>(EMPTY);
     const [step, setStep] = useState<'details' | 'code'>('details');
@@ -123,7 +125,7 @@ export default function RegisterPage() {
                 <div className='border-card-border bg-card-surface-area w-full max-w-lg rounded-2xl border p-8 shadow-sm'>
                     <div className='mb-7 flex flex-col items-center gap-3 text-center'>
                         <h1 className='text-text-primary font-display text-xl font-semibold'>
-                            {t('register.title')}
+                            {t('register.title', { days: trialDays })}
                         </h1>
                         <p className='text-text-tertiary text-sm'>
                             {step === 'details'

@@ -32,6 +32,7 @@ npm run dev             # http://localhost:3000
 | O'quv markazlar | `/educations`, `/educations/[id]` | Super admin |
 | Tariflar | `/tariffs` | Super admin |
 | To'lovlar | `/payments` | Super admin |
+| Platforma sozlamalari | `/platform-settings` | Super admin |
 | Foydalanuvchilar | `/users` | `users.view` ruxsati borlar |
 | Rollar | `/roles` | `roles.view` ruxsati borlar |
 | Tarif va to'lov | `/billing` | `billing.manage` ruxsati borlar |

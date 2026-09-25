@@ -7,6 +7,7 @@ import { PasswordInput } from '@/components/ui/password-input';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { apiErrorMessage } from '@/hooks/use-api-error';
 import { useSession } from '@/hooks/use-session';
+import { useTrialDays } from '@/hooks/use-trial-days';
 import { useT } from '@/i18n/provider';
 import {
     loginSuperAdmin,
@@ -80,6 +81,7 @@ export default function LoginPage() {
     const router = useRouter();
     const { session, loading, signIn } = useSession();
     const t = useT();
+    const trialDays = useTrialDays();
 
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
@@ -176,7 +178,7 @@ export default function LoginPage() {
                             href='/register'
                             className='text-brand-accent font-medium hover:underline'
                         >
-                            {t('auth.tryFree')}
+                            {t('auth.tryFree', { days: trialDays })}
                         </Link>
                     </p>
 

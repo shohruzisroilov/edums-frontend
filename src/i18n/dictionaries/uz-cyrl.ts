@@ -205,7 +205,7 @@ export const uzCyrl: Dictionary = {
     'common.som': 'сўм',
     'common.unlimited': 'Чексиз',
     'auth.noAccount': 'Ҳисобингиз йўқми?',
-    'auth.tryFree': '7 кун бепул синаб кўринг',
+    'auth.tryFree': '{days} кун бепул синаб кўринг',
     'nav.billing': 'Тариф ва тўлов',
     'nav.tariffs': 'Тарифлар',
     'nav.payments': 'Тўловлар',
@@ -298,7 +298,7 @@ export const uzCyrl: Dictionary = {
     'payments.rejected': 'Сўров рад этилди',
 
     /* ── Рўйхатдан ўтиш ──────────────────────────────────────────────── */
-    'register.title': '7 кун бепул синаб кўринг',
+    'register.title': '{days} кун бепул синаб кўринг',
     'register.subtitle':
         'Ўқув марказингизни рўйхатдан ўтказинг — карта талаб қилинмайди',
     'register.educationName': 'Ўқув марказ номи',
@@ -321,7 +321,7 @@ export const uzCyrl: Dictionary = {
     'landing.openCabinet': 'Кабинетга ўтиш',
     'landing.startFree': 'Бепул бошлаш',
     'landing.seeTariffs': 'Тарифларни кўриш',
-    'landing.badge': '7 кун бепул — карта талаб қилинмайди',
+    'landing.badge': '{days} кун бепул — карта талаб қилинмайди',
     'landing.heroTitle': 'Ўқув марказингизни битта тизимда бошқаринг',
     'landing.heroText':
         'EduMS — ўқув марказлар учун CRM. Ходимларни қўшинг, ҳар бирига ўз вазифасига мос рухсат беринг ва ҳаммасини бир жойдан назорат қилинг.',
@@ -344,18 +344,18 @@ export const uzCyrl: Dictionary = {
     'landing.step1Title': 'Рўйхатдан ўтинг',
     'landing.step1Text':
         'Марказ номи ва телефон рақамингиз — SMS код билан тасдиқлайсиз.',
-    'landing.step2Title': '7 кун бепул ишлатинг',
+    'landing.step2Title': '{days} кун бепул ишлатинг',
     'landing.step2Text':
         'Барча имкониятлар очиқ: ходимлар қўшинг, ролларни созланг.',
     'landing.step3Title': 'Тариф танланг',
     'landing.step3Text':
         'Синов тугагач, марказингизга мос тарифни танлаб давом этинг. Маълумотлар сақланади.',
     'landing.tariffsTitle': 'Тарифлар',
-    'landing.tariffsText': 'Ҳар бири 7 кунлик бепул синовдан кейин',
+    'landing.tariffsText': 'Ҳар бири {days} кунлик бепул синовдан кейин',
     'landing.tariffsSoon':
         'Тарифлар тез орада эълон қилинади. Ҳозир бепул синаб кўришингиз мумкин.',
     'landing.ctaTitle': 'Бугун бошланг',
-    'landing.ctaText': '7 кун давомида ҳеч қандай тўловсиз синаб кўринг.',
+    'landing.ctaText': '{days} кун давомида ҳеч қандай тўловсиз синаб кўринг.',
 
     /* ── SMS settings ── */
     'nav.smsSettings': 'SMS созламалари',
@@ -395,4 +395,20 @@ export const uzCyrl: Dictionary = {
     'forgot.submit': 'Сақлаш ва кириш',
     'forgot.changePhone': '← Рақамни ўзгартириш',
     'forgot.backToLogin': 'Кириш саҳифасига қайтиш',
+
+    /* ── Platforma sozlamalari ── */
+    'nav.platformSettings': 'Платформа созламалари',
+    'platformSettings.title': 'Платформа созламалари',
+    'platformSettings.subtitle': 'Бепул синов муддати ва тўлов кўрсатмаси',
+    'platformSettings.trialTitle': 'Бепул синов',
+    'platformSettings.trialDays': 'Синов муддати',
+    'platformSettings.trialDaysHint':
+        'Фақат бундан кейин очиладиган марказларга таъсир қилади — бошланган синовлар ўзгармайди. Лендинг саҳифасида ҳам шу сон кўринади',
+    'platformSettings.paymentTitle': 'Тўлов кўрсатмаси',
+    'platformSettings.paymentInstructions': 'Кўрсатма матни',
+    'platformSettings.paymentInstructionsHint':
+        'Марказ тариф танлагач, «Тариф ва тўлов» саҳифасида кўрсатилади: карта рақами, эгаси, изоҳга нима ёзиш кераклиги',
+    'platformSettings.paymentInstructionsPlaceholder':
+        'Карта: 8600 0000 0000 0000 (Ф.И.Ш.). Тўлов изоҳига марказ номини ёзинг.',
+    'platformSettings.saved': 'Созламалар сақланди',
 };

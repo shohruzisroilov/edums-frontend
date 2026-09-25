@@ -4,6 +4,7 @@ import { can, isSuperAdmin } from '@/utils/access';
 import {
     Buildings11,
     CreditCard,
+    Gear1,
     Message1,
     Shield1Check,
     User2,
@@ -74,6 +75,12 @@ const NAV_DATA: NavSection[] = [
                 titleKey: 'nav.smsSettings',
                 url: '/sms-settings',
                 icon: <Message1 className='size-5' />,
+                visible: isSuperAdmin,
+            },
+            {
+                titleKey: 'nav.platformSettings',
+                url: '/platform-settings',
+                icon: <Gear1 className='size-5' />,
                 visible: isSuperAdmin,
             },
         ],

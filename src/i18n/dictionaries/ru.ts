@@ -205,7 +205,7 @@ export const ru: Dictionary = {
     'common.som': 'сум',
     'common.unlimited': 'Без ограничений',
     'auth.noAccount': 'Нет аккаунта?',
-    'auth.tryFree': 'Попробуйте 7 дней бесплатно',
+    'auth.tryFree': 'Бесплатный пробный период — {days} дн.',
     'nav.billing': 'Тариф и оплата',
     'nav.tariffs': 'Тарифы',
     'nav.payments': 'Платежи',
@@ -298,7 +298,7 @@ export const ru: Dictionary = {
     'payments.rejected': 'Заявка отклонена',
 
     /* ── Регистрация ─────────────────────────────────────────────────── */
-    'register.title': '7 дней бесплатно',
+    'register.title': 'Пробный период — {days} дн. бесплатно',
     'register.subtitle': 'Зарегистрируйте свой учебный центр — карта не нужна',
     'register.educationName': 'Название учебного центра',
     'register.educationPlaceholder': 'Например, EDU Group',
@@ -320,7 +320,7 @@ export const ru: Dictionary = {
     'landing.openCabinet': 'Перейти в кабинет',
     'landing.startFree': 'Начать бесплатно',
     'landing.seeTariffs': 'Смотреть тарифы',
-    'landing.badge': '7 дней бесплатно — без карты',
+    'landing.badge': '{days} дн. бесплатно — без карты',
     'landing.heroTitle': 'Управляйте учебным центром в одной системе',
     'landing.heroText':
         'EduMS — CRM для учебных центров. Добавляйте сотрудников, давайте каждому права по его роли и контролируйте всё из одного места.',
@@ -343,18 +343,19 @@ export const ru: Dictionary = {
     'landing.step1Title': 'Зарегистрируйтесь',
     'landing.step1Text':
         'Название центра и номер телефона — подтверждаете SMS-кодом.',
-    'landing.step2Title': '7 дней бесплатно',
+    'landing.step2Title': '{days} дн. бесплатно',
     'landing.step2Text':
         'Доступны все возможности: добавляйте сотрудников, настраивайте роли.',
     'landing.step3Title': 'Выберите тариф',
     'landing.step3Text':
         'После пробного периода выберите подходящий тариф и продолжайте. Данные сохраняются.',
     'landing.tariffsTitle': 'Тарифы',
-    'landing.tariffsText': 'Каждый — после 7-дневного пробного периода',
+    'landing.tariffsText':
+        'Каждый — после бесплатного пробного периода ({days} дн.)',
     'landing.tariffsSoon':
         'Тарифы скоро появятся. А пока можно попробовать бесплатно.',
     'landing.ctaTitle': 'Начните сегодня',
-    'landing.ctaText': 'Пробуйте 7 дней без какой-либо оплаты.',
+    'landing.ctaText': 'Пробуйте {days} дн. без какой-либо оплаты.',
 
     /* ── SMS settings ── */
     'nav.smsSettings': 'Настройки SMS',
@@ -395,4 +396,20 @@ export const ru: Dictionary = {
     'forgot.submit': 'Сохранить и войти',
     'forgot.changePhone': '← Изменить номер',
     'forgot.backToLogin': 'Вернуться ко входу',
+
+    /* ── Platforma sozlamalari ── */
+    'nav.platformSettings': 'Настройки платформы',
+    'platformSettings.title': 'Настройки платформы',
+    'platformSettings.subtitle': 'Пробный период и реквизиты для оплаты',
+    'platformSettings.trialTitle': 'Пробный период',
+    'platformSettings.trialDays': 'Длительность пробного периода',
+    'platformSettings.trialDaysHint':
+        'Влияет только на центры, открытые после сохранения — начатые пробные периоды не меняются. Это же число показывается на лендинге',
+    'platformSettings.paymentTitle': 'Реквизиты для оплаты',
+    'platformSettings.paymentInstructions': 'Текст инструкции',
+    'platformSettings.paymentInstructionsHint':
+        'Показывается на странице «Тариф и оплата» после выбора тарифа: номер карты, владелец, что указать в комментарии',
+    'platformSettings.paymentInstructionsPlaceholder':
+        'Карта: 8600 0000 0000 0000 (Ф.И.О.). В комментарии к платежу укажите название центра.',
+    'platformSettings.saved': 'Настройки сохранены',
 };

@@ -206,7 +206,7 @@ export const en: Dictionary = {
     'common.som': 'UZS',
     'common.unlimited': 'Unlimited',
     'auth.noAccount': 'No account yet?',
-    'auth.tryFree': 'Try it free for 7 days',
+    'auth.tryFree': 'Try it free for {days} days',
     'nav.billing': 'Plan and billing',
     'nav.tariffs': 'Plans',
     'nav.payments': 'Payments',
@@ -299,7 +299,7 @@ export const en: Dictionary = {
     'payments.rejected': 'Request rejected',
 
     /* ── Sign up ─────────────────────────────────────────────────────── */
-    'register.title': 'Try it free for 7 days',
+    'register.title': 'Try it free for {days} days',
     'register.subtitle': 'Register your education center — no card required',
     'register.educationName': 'Education center name',
     'register.educationPlaceholder': 'For example, EDU Group',
@@ -322,7 +322,7 @@ export const en: Dictionary = {
     'landing.openCabinet': 'Open dashboard',
     'landing.startFree': 'Start free',
     'landing.seeTariffs': 'See pricing',
-    'landing.badge': '7 days free — no card required',
+    'landing.badge': '{days} days free — no card required',
     'landing.heroTitle': 'Run your education center in one place',
     'landing.heroText':
         'EduMS is a CRM for education centers. Add your staff, give each person exactly the access their job needs, and keep it all in one place.',
@@ -345,17 +345,17 @@ export const en: Dictionary = {
     'landing.step1Title': 'Sign up',
     'landing.step1Text':
         "Your center's name and your phone number, confirmed by an SMS code.",
-    'landing.step2Title': 'Use it free for 7 days',
+    'landing.step2Title': 'Use it free for {days} days',
     'landing.step2Text': 'Everything is open: add staff and set up roles.',
     'landing.step3Title': 'Pick a plan',
     'landing.step3Text':
         'When the trial ends, choose the plan that fits and carry on. Your data stays.',
     'landing.tariffsTitle': 'Pricing',
-    'landing.tariffsText': 'Each one after a 7-day free trial',
+    'landing.tariffsText': 'Each one after a {days}-day free trial',
     'landing.tariffsSoon':
         'Pricing is coming soon. You can start a free trial now.',
     'landing.ctaTitle': 'Start today',
-    'landing.ctaText': 'Try it for 7 days without paying anything.',
+    'landing.ctaText': 'Try it for {days} days without paying anything.',
 
     /* ── SMS settings ── */
     'nav.smsSettings': 'SMS settings',
@@ -395,4 +395,20 @@ export const en: Dictionary = {
     'forgot.submit': 'Save and sign in',
     'forgot.changePhone': '← Change number',
     'forgot.backToLogin': 'Back to sign in',
+
+    /* ── Platforma sozlamalari ── */
+    'nav.platformSettings': 'Platform settings',
+    'platformSettings.title': 'Platform settings',
+    'platformSettings.subtitle': 'Free trial and payment instructions',
+    'platformSettings.trialTitle': 'Free trial',
+    'platformSettings.trialDays': 'Trial length',
+    'platformSettings.trialDaysHint':
+        "Applies only to centers opened from now on — trials already running don't change. The landing page shows the same number",
+    'platformSettings.paymentTitle': 'Payment instructions',
+    'platformSettings.paymentInstructions': 'Instruction text',
+    'platformSettings.paymentInstructionsHint':
+        'Shown on the Plan & payment page once a center picks a plan: card number, holder, what to write in the note',
+    'platformSettings.paymentInstructionsPlaceholder':
+        "Card: 8600 0000 0000 0000 (Full name). Put the center's name in the payment note.",
+    'platformSettings.saved': 'Settings saved',
 };

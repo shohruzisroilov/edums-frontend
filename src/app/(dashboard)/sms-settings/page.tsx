@@ -9,6 +9,7 @@ import {
     TextInput,
 } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
+import { SectionCard } from '@/components/ui/section-card';
 import { PasswordInput } from '@/components/ui/password-input';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { useApiErrorToast } from '@/hooks/use-api-error';
@@ -21,7 +22,7 @@ import {
 import type { SmsDriver, SmsSettings } from '@/types/api';
 import { isSuperAdmin } from '@/utils/access';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState, type FormEvent, type ReactNode } from 'react';
+import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 
 export default function SmsSettingsPage() {
@@ -108,7 +109,7 @@ function SettingsForm({ settings }: { settings: SmsSettings }) {
     }
 
     return (
-        <Card title={t('smsSettings.connectionTitle')}>
+        <SectionCard title={t('smsSettings.connectionTitle')}>
             <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
                 <SelectInput
                     label={t('smsSettings.driver')}
@@ -211,7 +212,7 @@ function SettingsForm({ settings }: { settings: SmsSettings }) {
                     </Button>
                 </div>
             </form>
-        </Card>
+        </SectionCard>
     );
 }
 
@@ -232,7 +233,7 @@ function TestSmsCard() {
     }
 
     return (
-        <Card title={t('smsSettings.testTitle')}>
+        <SectionCard title={t('smsSettings.testTitle')}>
             <p className='text-text-tertiary mb-4 text-sm'>
                 {t('smsSettings.testText')}
             </p>
@@ -259,17 +260,6 @@ function TestSmsCard() {
                     </Button>
                 </div>
             </form>
-        </Card>
-    );
-}
-
-function Card({ title, children }: { title: string; children: ReactNode }) {
-    return (
-        <div className='border-card-border bg-card-background rounded-xl border p-6'>
-            <h2 className='text-text-primary font-display mb-4 text-base font-semibold'>
-                {title}
-            </h2>
-            {children}
-        </div>
+        </SectionCard>
     );
 }

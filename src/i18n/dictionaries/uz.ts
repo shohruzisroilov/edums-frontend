@@ -207,7 +207,7 @@ export const uz = {
     'common.som': "so'm",
     'common.unlimited': 'Cheksiz',
     'auth.noAccount': "Hisobingiz yo'qmi?",
-    'auth.tryFree': "7 kun bepul sinab ko'ring",
+    'auth.tryFree': "{days} kun bepul sinab ko'ring",
     'nav.billing': "Tarif va to'lov",
     'nav.tariffs': 'Tariflar',
     'nav.payments': "To'lovlar",
@@ -300,7 +300,7 @@ export const uz = {
     'payments.rejected': "So'rov rad etildi",
 
     /* ── Ro'yxatdan o'tish ───────────────────────────────────────────── */
-    'register.title': "7 kun bepul sinab ko'ring",
+    'register.title': "{days} kun bepul sinab ko'ring",
     'register.subtitle':
         "O'quv markazingizni ro'yxatdan o'tkazing — karta talab qilinmaydi",
     'register.educationName': "O'quv markaz nomi",
@@ -323,7 +323,7 @@ export const uz = {
     'landing.openCabinet': "Kabinetga o'tish",
     'landing.startFree': 'Bepul boshlash',
     'landing.seeTariffs': "Tariflarni ko'rish",
-    'landing.badge': '7 kun bepul — karta talab qilinmaydi',
+    'landing.badge': '{days} kun bepul — karta talab qilinmaydi',
     'landing.heroTitle': "O'quv markazingizni bitta tizimda boshqaring",
     'landing.heroText':
         "EduMS — o'quv markazlar uchun CRM. Xodimlarni qo'shing, har biriga o'z vazifasiga mos ruxsat bering va hammasini bir joydan nazorat qiling.",
@@ -346,18 +346,19 @@ export const uz = {
     'landing.step1Title': "Ro'yxatdan o'ting",
     'landing.step1Text':
         'Markaz nomi va telefon raqamingiz — SMS kod bilan tasdiqlaysiz.',
-    'landing.step2Title': '7 kun bepul ishlating',
+    'landing.step2Title': '{days} kun bepul ishlating',
     'landing.step2Text':
         "Barcha imkoniyatlar ochiq: xodimlar qo'shing, rollarni sozlang.",
     'landing.step3Title': 'Tarif tanlang',
     'landing.step3Text':
         "Sinov tugagach, markazingizga mos tarifni tanlab davom eting. Ma'lumotlar saqlanadi.",
     'landing.tariffsTitle': 'Tariflar',
-    'landing.tariffsText': 'Har biri 7 kunlik bepul sinovdan keyin',
+    'landing.tariffsText': 'Har biri {days} kunlik bepul sinovdan keyin',
     'landing.tariffsSoon':
         "Tariflar tez orada e'lon qilinadi. Hozir bepul sinab ko'rishingiz mumkin.",
     'landing.ctaTitle': 'Bugun boshlang',
-    'landing.ctaText': "7 kun davomida hech qanday to'lovsiz sinab ko'ring.",
+    'landing.ctaText':
+        "{days} kun davomida hech qanday to'lovsiz sinab ko'ring.",
 
     /* ── SMS settings ── */
     'nav.smsSettings': 'SMS sozlamalari',
@@ -398,6 +399,22 @@ export const uz = {
     'forgot.submit': 'Saqlash va kirish',
     'forgot.changePhone': "← Raqamni o'zgartirish",
     'forgot.backToLogin': 'Kirish sahifasiga qaytish',
+
+    /* ── Platforma sozlamalari ── */
+    'nav.platformSettings': 'Platforma sozlamalari',
+    'platformSettings.title': 'Platforma sozlamalari',
+    'platformSettings.subtitle': "Bepul sinov muddati va to'lov ko'rsatmasi",
+    'platformSettings.trialTitle': 'Bepul sinov',
+    'platformSettings.trialDays': 'Sinov muddati',
+    'platformSettings.trialDaysHint':
+        "Faqat bundan keyin ochiladigan markazlarga ta'sir qiladi — boshlangan sinovlar o'zgarmaydi. Landing sahifasida ham shu son ko'rinadi",
+    'platformSettings.paymentTitle': "To'lov ko'rsatmasi",
+    'platformSettings.paymentInstructions': "Ko'rsatma matni",
+    'platformSettings.paymentInstructionsHint':
+        "Markaz tarif tanlagach, «Tarif va to'lov» sahifasida ko'rsatiladi: karta raqami, egasi, izohga nima yozish kerakligi",
+    'platformSettings.paymentInstructionsPlaceholder':
+        "Karta: 8600 0000 0000 0000 (F.I.Sh.). To'lov izohiga markaz nomini yozing.",
+    'platformSettings.saved': 'Sozlamalar saqlandi',
 } as const;
 
 export type TranslationKey = keyof typeof uz;

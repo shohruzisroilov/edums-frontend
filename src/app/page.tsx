@@ -6,6 +6,7 @@ import { LocaleSwitcher } from '@/components/common/locale-switcher';
 import { Button } from '@/components/tailgrids/core/button';
 import { TariffCard } from '@/components/ui/tariff-card';
 import { useSession } from '@/hooks/use-session';
+import { useTrialDays } from '@/hooks/use-trial-days';
 import { useT } from '@/i18n/provider';
 import type { TranslationKey } from '@/i18n/dictionaries/uz';
 import { listPublicTariffs } from '@/services/api/tariffs';
@@ -67,6 +68,7 @@ export default function LandingPage() {
     const t = useT();
     const router = useRouter();
     const { session } = useSession();
+    const trialDays = useTrialDays();
 
     const tariffsQuery = useQuery({
         queryKey: ['public-tariffs'],
@@ -121,7 +123,7 @@ export default function LandingPage() {
                 <section className='mx-auto max-w-4xl px-5 pt-20 pb-16 text-center'>
                     <span className='border-card-border bg-card-background text-text-secondary inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium'>
                         <Rocket1 className='text-brand-accent size-4' />
-                        {t('landing.badge')}
+                        {t('landing.badge', { days: trialDays })}
                     </span>
                     <h1 className='text-text-primary font-display mt-6 text-4xl leading-tight font-semibold sm:text-5xl'>
                         {t('landing.heroTitle')}
@@ -188,7 +190,7 @@ export default function LandingPage() {
                                     {index + 1}
                                 </span>
                                 <h3 className='text-text-primary mt-4 font-semibold'>
-                                    {t(step.title)}
+                                    {t(step.title, { days: trialDays })}
                                 </h3>
                                 <p className='text-text-tertiary mt-2 text-sm'>
                                     {t(step.text)}
@@ -206,7 +208,7 @@ export default function LandingPage() {
                         {t('landing.tariffsTitle')}
                     </h2>
                     <p className='text-text-tertiary mt-2 text-center text-sm'>
-                        {t('landing.tariffsText')}
+                        {t('landing.tariffsText', { days: trialDays })}
                     </p>
                     {tariffsQuery.isPending ? (
                         <p className='text-text-tertiary mt-8 text-center text-sm'>
@@ -246,7 +248,7 @@ export default function LandingPage() {
                             {t('landing.ctaTitle')}
                         </h2>
                         <p className='mx-auto mt-3 max-w-xl text-white/85'>
-                            {t('landing.ctaText')}
+                            {t('landing.ctaText', { days: trialDays })}
                         </p>
                         <button
                             type='button'
