@@ -39,8 +39,9 @@ export const PAGES_WITHOUT_SUBSCRIPTION = ['/billing', '/profile'];
  * ruxsati yetadigan birinchi bo'lim, hech biri bo'lmasa profil.
  */
 export function homeHref(session: Session | null): string {
-    if (isSuperAdmin(session)) return '/educations';
+    if (isSuperAdmin(session)) return '/overview';
     if (!hasActiveSubscription(session)) return '/billing';
+    if (can(session, 'reports.view')) return '/dashboard';
     if (can(session, 'students.view')) return '/students';
     if (can(session, 'groups.view')) return '/groups';
     if (can(session, 'leads.view')) return '/leads';

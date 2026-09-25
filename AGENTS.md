@@ -22,6 +22,8 @@ src/
     forgot-password/      # /forgot-password — parolni SMS kod bilan tiklash
     (dashboard)/          # himoyalangan qism (sessiya talab qilinadi)
       layout.tsx          # sidebar + header shell, sessiyani yangilash, obuna bloklash
+      dashboard/          # /dashboard — markaz bosh sahifasi (reports.view)
+      overview/           # /overview — platforma ko'rsatkichlari (super admin)
       users/              # /users — markaz foydalanuvchilari (users.*)
       roles/              # /roles — dinamik rollar (roles.*)
       branches/           # /branches — filiallar va xonalar (branches.*)
@@ -128,6 +130,16 @@ Foydalanuvchi o'qishga qulay ko'rinishni ko'radi, backendga xom qiymat ketadi.
 `+998` maydonning tahrirlanmaydigan qismi — aks holda kursor prefiksdan oldin
 qolib, raqamlar noto'g'ri joyga tushardi. Raqamli maydonga oddiy
 `type='number'` qo'ymang: minglik ajratgichini ko'rsatmaydi.
+
+## Grafiklar
+
+`src/components/ui/charts.tsx` — kutubxonasiz HTML grafiklar: `StatTile`,
+`Meter`, `ColumnChart` (vaqt bo'yicha bitta seriya), `HorizontalBars`.
+Bitta seriya — bitta rang (`brand-accent`), legenda yo'q (sarlavha aytadi);
+ustun ≤ 24px, uchi yumaloq; faqat oxirgi qiymat yozib qo'yiladi, qolgani —
+hover/fokus tooltip va ekran o'quvchi uchun `sr-only` jadvalda. Matn doim
+`text-*` tokenlarida, seriya rangida emas. Ikki o'qli (dual-axis) grafik
+chizilmaydi.
 
 ## Select komponenti
 

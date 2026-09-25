@@ -83,6 +83,7 @@ export const PERMISSION_KEYS = [
     'attendance.mark',
     'audit.view',
     'settings.manage',
+    'reports.view',
 ] as const;
 export type PermissionKey = (typeof PERMISSION_KEYS)[number];
 
@@ -98,7 +99,8 @@ export type PermissionModule =
     | 'payments'
     | 'attendance'
     | 'audit'
-    | 'settings';
+    | 'settings'
+    | 'reports';
 
 /** GET /permissions — modul bo'yicha guruhlangan katalog. */
 export interface PermissionGroup {
@@ -824,6 +826,62 @@ export interface ListAuditLogsQuery extends PaginationQuery {
     actor_id?: string;
     from?: string;
     to?: string;
+}
+
+/* ── Hisobotlar ───────────────────────────────────────────────────────── */
+
+export interface MonthAmount {
+    /** YYYY-MM */
+    month: string;
+    amount: number;
+}
+
+/** GET /dashboard — markaz bosh sahifasi uchun hammasi bitta javobda. */
+export interface Dashboard {
+    students: {
+        active: number;
+        joined_this_month: number;
+        left_this_month: number;
+    };
+    active_groups: number;
+    leads: LeadStats;
+    new_leads_this_month: number;
+    revenue: {
+        this_month: number;
+        last_month: number;
+        /** Oxirgi 6 oy, eskisi birinchi. */
+        by_month: MonthAmount[];
+    };
+    debt: { total: number; debtors: number };
+    /** Oxirgi 30 kun; `rate` — (keldi + kechikdi) / belgilar, belgi yo'q — null. */
+    attendance: {
+        rate: number | null;
+        marked: number;
+    } & Record<AttendanceStatus, number>;
+    today: {
+        group: Ref;
+        lesson_start: string;
+        lesson_end: string;
+        room: string | null;
+        teacher: string | null;
+        students_count: number;
+    }[];
+}
+
+/** GET /platform-stats — super admin. */
+export interface PlatformStats {
+    educations: {
+        total: number;
+        active: number;
+        suspended: number;
+        inactive: number;
+    };
+    subscriptions: { trial: number; paid: number; expired: number };
+    /** Oylik takroriy daromad bahosi. */
+    mrr: number;
+    revenue: { this_month: number; by_month: MonthAmount[] };
+    registrations_by_month: { month: string; count: number }[];
+    pending_requests: number;
 }
 
 /* ── Rollar ───────────────────────────────────────────────────────────── */

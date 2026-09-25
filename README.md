@@ -26,6 +26,8 @@ npm run dev             # http://localhost:3000
 | Sahifa | Manzil | Kim ko'radi |
 | --- | --- | --- |
 | Landing page | `/` | Hamma |
+| Bosh sahifa | `/dashboard` | `reports.view` ruxsati borlar |
+| Umumiy ko'rinish | `/overview` | Super admin |
 | Ro'yxatdan o'tish | `/register` | Hamma (SMS kod bilan, 7 kun bepul) |
 | Kirish | `/login` | Hamma |
 | Parolni tiklash | `/forgot-password` | Hamma (SMS kod bilan) |
@@ -67,6 +69,8 @@ src/
     login/                # /login
     forgot-password/      # /forgot-password — parolni SMS kod bilan tiklash
     (dashboard)/          # sessiya talab qilinadigan qism
+      dashboard/          # markaz bosh sahifasi (ko'rsatkichlar, grafiklar)
+      overview/           # super admin: platforma ko'rsatkichlari
       layout.tsx          # sidebar + header, sessiyani yangilash, obuna tugasa /billing ga
       educations/         # super admin: markazlar, ownerlar, obunalar tarixi
       tariffs/            # super admin: tariflar

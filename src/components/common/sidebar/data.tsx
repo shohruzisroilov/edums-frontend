@@ -5,6 +5,7 @@ import {
     Buildings11,
     CalendarTime,
     CreditCard,
+    DashboardSquare1,
     FileText,
     Funnel1,
     Gear1,
@@ -14,6 +15,7 @@ import {
     OpenBook,
     SackDollar,
     Shield1Check,
+    TrendUp2,
     SlidersDoubleHorizontal,
     User2,
     UserCircle1,
@@ -37,6 +39,17 @@ interface NavSection {
 }
 
 const NAV_DATA: NavSection[] = [
+    {
+        labelKey: 'nav.main',
+        items: [
+            {
+                titleKey: 'nav.dashboard',
+                url: '/dashboard',
+                icon: <DashboardSquare1 className='size-5' />,
+                visible: (session) => can(session, 'reports.view'),
+            },
+        ],
+    },
     {
         labelKey: 'nav.learning',
         items: [
@@ -133,6 +146,12 @@ const NAV_DATA: NavSection[] = [
     {
         labelKey: 'nav.superAdmin',
         items: [
+            {
+                titleKey: 'nav.overview',
+                url: '/overview',
+                icon: <TrendUp2 className='size-5' />,
+                visible: isSuperAdmin,
+            },
             {
                 titleKey: 'nav.educations',
                 url: '/educations',
