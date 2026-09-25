@@ -36,6 +36,8 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { StudentFormModal } from '../_components/student-form';
+import { StudentAttendanceSection } from './_components/attendance-section';
+import { FinanceSection } from './_components/finance-section';
 
 export default function StudentDetailPage() {
     return (
@@ -243,6 +245,17 @@ function StudentDetailView() {
                     </TableRoot>
                 )}
             </DetailSection>
+
+            {can(session, 'payments.view') && (
+                <FinanceSection
+                    student={student}
+                    canPay={can(session, 'payments.create')}
+                />
+            )}
+
+            {can(session, 'attendance.view') && (
+                <StudentAttendanceSection studentId={student.id} />
+            )}
 
             {editOpen && (
                 <StudentFormModal

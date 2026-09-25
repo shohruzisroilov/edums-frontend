@@ -39,6 +39,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { GroupFormModal } from '../_components/group-form';
+import { AttendanceSection } from './_components/attendance-section';
 
 export default function GroupDetailPage() {
     return (
@@ -258,6 +259,13 @@ function GroupDetailView() {
                     </TableRoot>
                 )}
             </DetailSection>
+
+            {can(session, 'attendance.view') && (
+                <AttendanceSection
+                    groupId={group.id}
+                    canMark={can(session, 'attendance.mark')}
+                />
+            )}
 
             {editOpen && (
                 <GroupFormModal

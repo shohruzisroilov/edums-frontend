@@ -94,7 +94,7 @@ export function buildQuery(params?: Record<string, QueryValue>): string {
 }
 
 interface RequestOptions {
-    method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
+    method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
     body?: unknown;
     /** FormData yuborilganda Content-Type brauzer tomonidan qo'yiladi. */
     formData?: FormData;

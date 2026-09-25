@@ -30,6 +30,8 @@ src/
       schedule/           # /schedule — haftalik dars jadvali (groups.view)
       students/           # /students va /[id] — o'quvchilar (students.*)
       leads/              # /leads — lidlar voronkasi (leads.*)
+      cashbox/            # /cashbox — o'quvchi to'lovlari (payments.*); /payments — super admin'niki
+      debtors/            # /debtors — qarzdorlar (payments.view)
       billing/            # /billing — tarif tanlash va to'lov (billing.manage)
       educations/         # /educations va /[id] — o'quv markazlar (super admin)
       tariffs/            # /tariffs — tariflar (super admin)

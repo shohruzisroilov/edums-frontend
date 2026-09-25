@@ -12,7 +12,11 @@ import type { TranslationKey } from '@/i18n/dictionaries/uz';
 import { listPublicTariffs } from '@/services/api/tariffs';
 import { homeHref } from '@/utils/access';
 import {
+    CalendarTime,
+    DoubleCheckMark,
+    Funnel1,
     Globe2,
+    HandTakingCoins,
     Locked3,
     Rocket1,
     Shield1Check,
@@ -36,6 +40,26 @@ const FEATURES: {
     title: TranslationKey;
     text: TranslationKey;
 }[] = [
+    {
+        icon: <CalendarTime className='size-5' />,
+        title: 'landing.featureGroupsTitle',
+        text: 'landing.featureGroupsText',
+    },
+    {
+        icon: <HandTakingCoins className='size-5' />,
+        title: 'landing.featureFinanceTitle',
+        text: 'landing.featureFinanceText',
+    },
+    {
+        icon: <DoubleCheckMark className='size-5' />,
+        title: 'landing.featureAttendanceTitle',
+        text: 'landing.featureAttendanceText',
+    },
+    {
+        icon: <Funnel1 className='size-5' />,
+        title: 'landing.featureLeadsTitle',
+        text: 'landing.featureLeadsText',
+    },
     {
         icon: <UserMultiple4 className='size-5' />,
         title: 'landing.featureUsersTitle',

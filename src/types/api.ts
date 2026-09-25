@@ -76,6 +76,11 @@ export const PERMISSION_KEYS = [
     'leads.create',
     'leads.update',
     'leads.delete',
+    'payments.view',
+    'payments.create',
+    'payments.delete',
+    'attendance.view',
+    'attendance.mark',
 ] as const;
 export type PermissionKey = (typeof PERMISSION_KEYS)[number];
 
@@ -87,7 +92,9 @@ export type PermissionModule =
     | 'courses'
     | 'groups'
     | 'students'
-    | 'leads';
+    | 'leads'
+    | 'payments'
+    | 'attendance';
 
 /** GET /permissions — modul bo'yicha guruhlangan katalog. */
 export interface PermissionGroup {
@@ -585,6 +592,124 @@ export interface ConvertLeadPayload {
     /** Darhol shu guruhga (students.update ruxsati kerak). */
     group_id?: string;
     monthly_price?: number;
+}
+
+/* ── O'quvchi to'lovlari va balans ────────────────────────────────────── */
+
+export const PAYMENT_METHODS = ['cash', 'card', 'transfer', 'other'] as const;
+export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
+
+export interface StudentPayment {
+    id: string;
+    student: PersonRef;
+    group: Ref;
+    amount: number;
+    method: PaymentMethod;
+    /** YYYY-MM-DD */
+    paid_at: string;
+    note: string | null;
+    received_by: PersonRef | null;
+    created_at: string;
+}
+
+export interface CreateStudentPaymentPayload {
+    student_id: string;
+    group_id: string;
+    amount: number;
+    method?: PaymentMethod;
+    paid_at?: string;
+    note?: string | null;
+}
+
+export interface ListStudentPaymentsQuery extends PaginationQuery {
+    search?: string;
+    student_id?: string;
+    group_id?: string;
+    branch_id?: string;
+    method?: PaymentMethod;
+    from?: string;
+    to?: string;
+}
+
+/** GET /payments — sahifa va barcha mos to'lovlar yig'indisi. */
+export interface StudentPaymentsResponse extends PaginatedResponse<StudentPayment> {
+    sum: number;
+}
+
+export interface GroupBalance {
+    group: Ref & { status: GroupStatus };
+    /** Ochiq davr narxi; guruhdan chiqqan bo'lsa null. */
+    monthly_price: number | null;
+    /** Davr oylari × oylik narx. */
+    charged: number;
+    paid: number;
+    /** paid − charged; manfiy — qarz. */
+    balance: number;
+}
+
+export interface StudentBalance {
+    groups: GroupBalance[];
+    charged: number;
+    paid: number;
+    balance: number;
+}
+
+export interface Debtor {
+    student: PersonRef & {
+        phone_number: string | null;
+        parent_phone: string | null;
+    };
+    group: Ref;
+    monthly_price: number | null;
+    charged: number;
+    paid: number;
+    /** Musbat son. */
+    debt: number;
+}
+
+export interface ListDebtorsQuery extends PaginationQuery {
+    search?: string;
+    branch_id?: string;
+    group_id?: string;
+}
+
+/** GET /debtors — sahifa va barcha mos qarzlar yig'indisi. */
+export interface DebtorsResponse extends PaginatedResponse<Debtor> {
+    total_debt: number;
+}
+
+/* ── Davomat ──────────────────────────────────────────────────────────── */
+
+export const ATTENDANCE_STATUSES = [
+    'present',
+    'absent',
+    'late',
+    'excused',
+] as const;
+export type AttendanceStatus = (typeof ATTENDANCE_STATUSES)[number];
+
+export interface GroupAttendance {
+    /** YYYY-MM */
+    month: string;
+    /** Oydagi dars kunlari. */
+    lesson_dates: string[];
+    /** Shu oyda guruhda bo'lganlar; belgilanmagan kunlar `records` da yo'q. */
+    students: {
+        student: PersonRef;
+        records: Record<string, AttendanceStatus>;
+    }[];
+}
+
+export interface MarkAttendancePayload {
+    /** Bugun yoki o'tgan kun. */
+    date: string;
+    records: { student_id: string; status: AttendanceStatus }[];
+}
+
+export interface StudentAttendance {
+    month: string;
+    records: { date: string; group: Ref; status: AttendanceStatus }[];
+    summary: Record<AttendanceStatus, number>;
 }
 
 /* ── Rollar ───────────────────────────────────────────────────────────── */
