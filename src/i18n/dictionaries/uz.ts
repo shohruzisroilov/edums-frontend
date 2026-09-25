@@ -840,6 +840,32 @@ export const uz = {
     'auditField.duration_days': 'Muddat (kun)',
     'auditField.name': 'Nomi',
     'auditField.is_active': 'Faol',
+
+    /* ── Avtomatik xabarlar va markaz sozlamalari ── */
+    'nav.settings': 'Markaz sozlamalari',
+    'permissionModule.settings': 'Markaz sozlamalari',
+    'permission.settings.manage': "Markaz sozlamalarini o'zgartirish",
+    'settings.title': 'Markaz sozlamalari',
+    'settings.subtitle': 'Ota-onalarga avtomatik SMS xabarlar',
+    'settings.smsTitle': 'SMS xabarlar',
+    'settings.smsHint':
+        "Xabar ota-ona telefoniga, u bo'lmasa o'quvchining o'ziga yuboriladi",
+    'settings.notifyAbsence':
+        'Kelmaganlik haqida — davomatda «Kelmadi» belgilanganda (faqat bugungi dars)',
+    'settings.notifyDebtors':
+        'Qarz haqida — har oyning 5-kuni, soat 10:00 dan keyin',
+    'settings.unavailable':
+        "Avtomatik xabarlar hozir platforma tomonidan o'chirilgan — belgilar saqlanadi, lekin SMS ketmaydi",
+    'settings.saved': 'Sozlamalar saqlandi',
+    'smsSettings.notificationsTitle': 'Avtomatik xabarlar',
+    'smsSettings.notificationsEnabled':
+        'Yoqilgan — obuna va qarz eslatmalari, kelmaganlik xabarlari ketadi',
+    'smsSettings.notificationsHint':
+        "Ro'yxatdan o'tish va parol kodlariga ta'sir qilmaydi. Har bir matn Eskiz kabinetida tasdiqlangan shablon bilan aynan bir xil bo'lishi kerak",
+    'smsSettings.subscriptionTemplate': 'Obuna tugashi (markazga)',
+    'smsSettings.debtTemplate': 'Qarz eslatmasi (ota-onaga)',
+    'smsSettings.absenceTemplate': 'Kelmaganlik (ota-onaga)',
+    'smsSettings.placeholders': "O'rinlar: {list}",
 } as const;
 
 export type TranslationKey = keyof typeof uz;

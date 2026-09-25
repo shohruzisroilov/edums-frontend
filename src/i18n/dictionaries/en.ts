@@ -831,4 +831,29 @@ export const en: Dictionary = {
     'auditField.duration_days': 'Days',
     'auditField.name': 'Name',
     'auditField.is_active': 'Active',
+
+    /* ── Avtomatik xabarlar va markaz sozlamalari ── */
+    'nav.settings': 'Center settings',
+    'permissionModule.settings': 'Center settings',
+    'permission.settings.manage': 'Change center settings',
+    'settings.title': 'Center settings',
+    'settings.subtitle': 'Automatic texts to parents',
+    'settings.smsTitle': 'Text messages',
+    'settings.smsHint':
+        "Messages go to the parent's phone, or to the student's if there is none",
+    'settings.notifyAbsence':
+        "Absence — when marked Absent (today's lesson only)",
+    'settings.notifyDebtors': 'Debt — on the 5th of every month, after 10:00',
+    'settings.unavailable':
+        'Automatic messages are switched off by the platform right now — your choices are kept, but no texts go out',
+    'settings.saved': 'Settings saved',
+    'smsSettings.notificationsTitle': 'Automatic messages',
+    'smsSettings.notificationsEnabled':
+        'On — subscription and debt reminders and absence texts go out',
+    'smsSettings.notificationsHint':
+        "Doesn't affect sign-up and password codes. Each text must match a template approved in Eskiz exactly",
+    'smsSettings.subscriptionTemplate': 'Subscription ending (to the center)',
+    'smsSettings.debtTemplate': 'Debt reminder (to the parent)',
+    'smsSettings.absenceTemplate': 'Absence (to the parent)',
+    'smsSettings.placeholders': 'Placeholders: {list}',
 };

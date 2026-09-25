@@ -14,7 +14,8 @@ export async function getSmsSettings() {
     return res.data;
 }
 
-export async function updateSmsSettings(payload: SmsSettingsPayload) {
+/** Qisman ham bo'ladi — masalan, faqat avtomatik xabarlar bo'limi. */
+export async function updateSmsSettings(payload: Partial<SmsSettingsPayload>) {
     const res = await request<DataResponse<SmsSettings>>(BASE, {
         method: 'PATCH',
         body: payload,

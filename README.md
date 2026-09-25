@@ -45,6 +45,7 @@ npm run dev             # http://localhost:3000
 | Kassa | `/cashbox` | `payments.view` ruxsati borlar |
 | Qarzdorlar | `/debtors` | `payments.view` ruxsati borlar |
 | Harakatlar tarixi | `/audit` | `audit.view` ruxsati borlar |
+| Markaz sozlamalari | `/settings` | `settings.manage` ruxsati borlar |
 | Tarif va to'lov | `/billing` | `billing.manage` ruxsati borlar |
 | Profil | `/profile` | Kirgan har bir kishi |
 
@@ -82,6 +83,7 @@ src/
       cashbox/            # o'quvchi to'lovlari (kassa)
       debtors/            # qarzdorlar
       audit/              # harakatlar tarixi
+      settings/           # markaz sozlamalari (ota-onalarga SMS)
       profile/            # o'z profili va paroli
     css/, globals.css     # dizayn tokenlari (kunduzgi/tungi mavzu)
   components/

@@ -82,6 +82,7 @@ export const PERMISSION_KEYS = [
     'attendance.view',
     'attendance.mark',
     'audit.view',
+    'settings.manage',
 ] as const;
 export type PermissionKey = (typeof PERMISSION_KEYS)[number];
 
@@ -96,7 +97,8 @@ export type PermissionModule =
     | 'leads'
     | 'payments'
     | 'attendance'
-    | 'audit';
+    | 'audit'
+    | 'settings';
 
 /** GET /permissions — modul bo'yicha guruhlangan katalog. */
 export interface PermissionGroup {
@@ -210,6 +212,14 @@ export interface SmsSettings {
     has_eskiz_password: boolean;
     eskiz_from: string;
     template: string;
+    /** Avtomatik xabarlarning umumiy kaliti (eslatmalar, kelmaganlik). */
+    notifications_enabled: boolean;
+    /** {education}, {days} */
+    subscription_template: string;
+    /** {education}, {student}, {group}, {amount} */
+    debt_template: string;
+    /** {education}, {student}, {group}, {date} */
+    absence_template: string;
     updated_at: string;
 }
 
@@ -220,7 +230,27 @@ export interface SmsSettingsPayload {
     eskiz_password?: string;
     eskiz_from: string;
     template: string;
+    notifications_enabled?: boolean;
+    subscription_template?: string;
+    debt_template?: string;
+    absence_template?: string;
 }
+
+/* ── Markaz sozlamalari ───────────────────────────────────────────────── */
+
+export interface EducationSettings {
+    /** Bugun kelmagan o'quvchining ota-onasiga SMS. */
+    notify_absence: boolean;
+    /** Har oyning 5-kuni qarzdorlarning ota-onasiga SMS. */
+    notify_debtors: boolean;
+    /** Super admin avtomatik xabarlarni o'chirib qo'ygan bo'lsa false. */
+    notifications_available: boolean;
+    updated_at: string;
+}
+
+export type EducationSettingsPayload = Partial<
+    Pick<EducationSettings, 'notify_absence' | 'notify_debtors'>
+>;
 
 /* ── Platforma sozlamalari (super admin) ──────────────────────────────── */
 

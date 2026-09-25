@@ -14,6 +14,7 @@ import {
     OpenBook,
     SackDollar,
     Shield1Check,
+    SlidersDoubleHorizontal,
     User2,
     UserCircle1,
     UserMultiple1,
@@ -114,6 +115,12 @@ const NAV_DATA: NavSection[] = [
                 url: '/audit',
                 icon: <FileText className='size-5' />,
                 visible: (session) => can(session, 'audit.view'),
+            },
+            {
+                titleKey: 'nav.settings',
+                url: '/settings',
+                icon: <SlidersDoubleHorizontal className='size-5' />,
+                visible: (session) => can(session, 'settings.manage'),
             },
             {
                 titleKey: 'nav.billing',

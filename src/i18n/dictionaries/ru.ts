@@ -833,4 +833,30 @@ export const ru: Dictionary = {
     'auditField.duration_days': 'Срок (дней)',
     'auditField.name': 'Название',
     'auditField.is_active': 'Активен',
+
+    /* ── Avtomatik xabarlar va markaz sozlamalari ── */
+    'nav.settings': 'Настройки центра',
+    'permissionModule.settings': 'Настройки центра',
+    'permission.settings.manage': 'Изменение настроек центра',
+    'settings.title': 'Настройки центра',
+    'settings.subtitle': 'Автоматические SMS родителям',
+    'settings.smsTitle': 'SMS-сообщения',
+    'settings.smsHint':
+        'Сообщение уходит на телефон родителя, а если его нет — ученику',
+    'settings.notifyAbsence':
+        'О пропуске — при отметке «Не был» (только сегодняшнее занятие)',
+    'settings.notifyDebtors':
+        'О долге — 5-го числа каждого месяца, после 10:00',
+    'settings.unavailable':
+        'Автоматические сообщения сейчас отключены платформой — настройки сохранятся, но SMS не уйдут',
+    'settings.saved': 'Настройки сохранены',
+    'smsSettings.notificationsTitle': 'Автоматические сообщения',
+    'smsSettings.notificationsEnabled':
+        'Включено — уходят напоминания о подписке и долге, сообщения о пропусках',
+    'smsSettings.notificationsHint':
+        'Не влияет на коды регистрации и сброса пароля. Каждый текст должен точно совпадать с шаблоном, утверждённым в Eskiz',
+    'smsSettings.subscriptionTemplate': 'Окончание подписки (центру)',
+    'smsSettings.debtTemplate': 'Напоминание о долге (родителю)',
+    'smsSettings.absenceTemplate': 'Пропуск занятия (родителю)',
+    'smsSettings.placeholders': 'Подстановки: {list}',
 };

@@ -832,4 +832,30 @@ export const uzCyrl: Dictionary = {
     'auditField.duration_days': 'Муддат (кун)',
     'auditField.name': 'Номи',
     'auditField.is_active': 'Фаол',
+
+    /* ── Avtomatik xabarlar va markaz sozlamalari ── */
+    'nav.settings': 'Марказ созламалари',
+    'permissionModule.settings': 'Марказ созламалари',
+    'permission.settings.manage': 'Марказ созламаларини ўзгартириш',
+    'settings.title': 'Марказ созламалари',
+    'settings.subtitle': 'Ота-оналарга автоматик SMS хабарлар',
+    'settings.smsTitle': 'SMS хабарлар',
+    'settings.smsHint':
+        'Хабар ота-она телефонига, у бўлмаса ўқувчининг ўзига юборилади',
+    'settings.notifyAbsence':
+        'Келмаганлик ҳақида — давоматда «Келмади» белгиланганда (фақат бугунги дарс)',
+    'settings.notifyDebtors':
+        'Қарз ҳақида — ҳар ойнинг 5-куни, соат 10:00 дан кейин',
+    'settings.unavailable':
+        'Автоматик хабарлар ҳозир платформа томонидан ўчирилган — белгилар сақланади, лекин SMS кетмайди',
+    'settings.saved': 'Созламалар сақланди',
+    'smsSettings.notificationsTitle': 'Автоматик хабарлар',
+    'smsSettings.notificationsEnabled':
+        'Ёқилган — обуна ва қарз эслатмалари, келмаганлик хабарлари кетади',
+    'smsSettings.notificationsHint':
+        'Рўйхатдан ўтиш ва парол кодларига таъсир қилмайди. Ҳар бир матн Eskiz кабинетида тасдиқланган шаблон билан айнан бир хил бўлиши керак',
+    'smsSettings.subscriptionTemplate': 'Обуна тугаши (марказга)',
+    'smsSettings.debtTemplate': 'Қарз эслатмаси (ота-онага)',
+    'smsSettings.absenceTemplate': 'Келмаганлик (ота-онага)',
+    'smsSettings.placeholders': 'Ўринлар: {list}',
 };

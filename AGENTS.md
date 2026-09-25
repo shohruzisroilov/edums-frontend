@@ -33,6 +33,7 @@ src/
       cashbox/            # /cashbox — o'quvchi to'lovlari (payments.*); /payments — super admin'niki
       debtors/            # /debtors — qarzdorlar (payments.view)
       audit/              # /audit — harakatlar tarixi (audit.view)
+      settings/           # /settings — markaz sozlamalari (settings.manage)
       billing/            # /billing — tarif tanlash va to'lov (billing.manage)
       educations/         # /educations va /[id] — o'quv markazlar (super admin)
       tariffs/            # /tariffs — tariflar (super admin)
