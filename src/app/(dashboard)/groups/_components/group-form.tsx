@@ -154,6 +154,7 @@ export function GroupFormModal({
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['groups'] });
+            queryClient.invalidateQueries({ queryKey: ['group'] });
             queryClient.invalidateQueries({ queryKey: ['schedule'] });
             toast.success(t(isEdit ? 'groups.updated' : 'groups.created'));
             onClose();

@@ -41,7 +41,9 @@ export const PAGES_WITHOUT_SUBSCRIPTION = ['/billing', '/profile'];
 export function homeHref(session: Session | null): string {
     if (isSuperAdmin(session)) return '/educations';
     if (!hasActiveSubscription(session)) return '/billing';
+    if (can(session, 'students.view')) return '/students';
     if (can(session, 'groups.view')) return '/groups';
+    if (can(session, 'leads.view')) return '/leads';
     if (can(session, 'users.view')) return '/users';
     if (can(session, 'roles.view')) return '/roles';
     if (can(session, 'branches.view')) return '/branches';

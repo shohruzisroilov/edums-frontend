@@ -5,12 +5,14 @@ import {
     Buildings11,
     CalendarTime,
     CreditCard,
+    Funnel1,
     Gear1,
     MapMarker5,
     Message1,
     OpenBook,
     Shield1Check,
     User2,
+    UserCircle1,
     UserMultiple1,
     Wallet2,
 } from '@tailgrids/icons';
@@ -35,6 +37,12 @@ const NAV_DATA: NavSection[] = [
         labelKey: 'nav.learning',
         items: [
             {
+                titleKey: 'nav.students',
+                url: '/students',
+                icon: <UserCircle1 className='size-5' />,
+                visible: (session) => can(session, 'students.view'),
+            },
+            {
                 titleKey: 'nav.groups',
                 url: '/groups',
                 icon: <UserMultiple1 className='size-5' />,
@@ -45,6 +53,12 @@ const NAV_DATA: NavSection[] = [
                 url: '/schedule',
                 icon: <CalendarTime className='size-5' />,
                 visible: (session) => can(session, 'groups.view'),
+            },
+            {
+                titleKey: 'nav.leads',
+                url: '/leads',
+                icon: <Funnel1 className='size-5' />,
+                visible: (session) => can(session, 'leads.view'),
             },
             {
                 titleKey: 'nav.courses',

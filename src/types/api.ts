@@ -68,6 +68,14 @@ export const PERMISSION_KEYS = [
     'groups.create',
     'groups.update',
     'groups.delete',
+    'students.view',
+    'students.create',
+    'students.update',
+    'students.delete',
+    'leads.view',
+    'leads.create',
+    'leads.update',
+    'leads.delete',
 ] as const;
 export type PermissionKey = (typeof PERMISSION_KEYS)[number];
 
@@ -77,7 +85,9 @@ export type PermissionModule =
     | 'billing'
     | 'branches'
     | 'courses'
-    | 'groups';
+    | 'groups'
+    | 'students'
+    | 'leads';
 
 /** GET /permissions — modul bo'yicha guruhlangan katalog. */
 export interface PermissionGroup {
@@ -389,6 +399,8 @@ export interface Group {
     lesson_start: string;
     lesson_end: string;
     status: GroupStatus;
+    /** Hozir o'qiyotgan o'quvchilar soni. */
+    students_count: number;
     created_at: string;
     updated_at: string;
 }
@@ -421,6 +433,158 @@ export interface ScheduleQuery {
     branch_id?: string;
     teacher_id?: string;
     room_id?: string;
+}
+
+/* ── O'quvchilar ──────────────────────────────────────────────────────── */
+
+export const STUDENT_STATUSES = ['active', 'archived'] as const;
+export type StudentStatus = (typeof STUDENT_STATUSES)[number];
+
+export interface Student {
+    id: string;
+    branch: Ref;
+    first_name: string;
+    last_name: string;
+    /** O'quvchi yoki ota-ona telefonidan kamida bittasi bor. */
+    phone_number: string | null;
+    parent_name: string | null;
+    parent_phone: string | null;
+    /** YYYY-MM-DD */
+    birth_date: string | null;
+    note: string | null;
+    status: StudentStatus;
+    /** Hozir o'qiyotgan guruhlari. */
+    groups: Ref[];
+    created_at: string;
+    updated_at: string;
+}
+
+export interface StudentPayload {
+    branch_id: string;
+    first_name: string;
+    last_name: string;
+    phone_number?: string | null;
+    parent_name?: string | null;
+    parent_phone?: string | null;
+    birth_date?: string | null;
+    note?: string | null;
+    status?: StudentStatus;
+}
+
+export interface ListStudentsQuery extends PaginationQuery {
+    search?: string;
+    branch_id?: string;
+    /** Shu guruhda hozir o'qiyotganlar. */
+    group_id?: string;
+    status?: StudentStatus;
+}
+
+/** O'quvchining guruhdagi bitta davri: qo'shilgan kundan chiqqan kungacha. */
+export interface Enrollment {
+    id: string;
+    group: Ref & { status: GroupStatus };
+    student: PersonRef & {
+        phone_number: string | null;
+        parent_phone: string | null;
+    };
+    /** YYYY-MM-DD */
+    joined_at: string;
+    left_at: string | null;
+    /** Shu o'quvchi uchun oylik narx (chegirma bilan). */
+    monthly_price: number;
+}
+
+export interface EnrollPayload {
+    student_id: string;
+    joined_at?: string;
+    monthly_price?: number;
+}
+
+export interface UpdateEnrollmentPayload {
+    joined_at?: string;
+    left_at?: string;
+    monthly_price?: number;
+}
+
+/* ── Lidlar ───────────────────────────────────────────────────────────── */
+
+export const LEAD_STATUSES = [
+    'new',
+    'contacted',
+    'trial',
+    'won',
+    'lost',
+] as const;
+export type LeadStatus = (typeof LEAD_STATUSES)[number];
+
+/** `won` faqat o'quvchiga aylantirilganda qo'yiladi. */
+export const EDITABLE_LEAD_STATUSES = [
+    'new',
+    'contacted',
+    'trial',
+    'lost',
+] as const satisfies readonly LeadStatus[];
+
+export const LEAD_SOURCES = [
+    'instagram',
+    'telegram',
+    'facebook',
+    'website',
+    'referral',
+    'walk_in',
+    'call',
+    'other',
+] as const;
+export type LeadSource = (typeof LEAD_SOURCES)[number];
+
+export interface Lead {
+    id: string;
+    first_name: string;
+    last_name: string | null;
+    phone_number: string;
+    source: LeadSource;
+    status: LeadStatus;
+    branch: Ref | null;
+    /** Qiziqqan kursi. */
+    course: Ref | null;
+    note: string | null;
+    /** Aylantirilgan o'quvchi. */
+    student: PersonRef | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface LeadPayload {
+    first_name: string;
+    last_name?: string | null;
+    phone_number: string;
+    source?: LeadSource;
+    status?: Exclude<LeadStatus, 'won'>;
+    branch_id?: string | null;
+    course_id?: string | null;
+    note?: string | null;
+}
+
+export interface ListLeadsQuery extends PaginationQuery {
+    search?: string;
+    status?: LeadStatus;
+    source?: LeadSource;
+    branch_id?: string;
+    course_id?: string;
+}
+
+export type LeadStats = Record<LeadStatus, number>;
+
+export interface ConvertLeadPayload {
+    branch_id: string;
+    first_name?: string;
+    last_name: string;
+    phone_number?: string;
+    parent_name?: string | null;
+    parent_phone?: string | null;
+    /** Darhol shu guruhga (students.update ruxsati kerak). */
+    group_id?: string;
+    monthly_price?: number;
 }
 
 /* ── Rollar ───────────────────────────────────────────────────────────── */

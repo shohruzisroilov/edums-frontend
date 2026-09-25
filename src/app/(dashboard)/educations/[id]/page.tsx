@@ -15,6 +15,7 @@ import {
     ErrorState,
     TableSkeleton,
 } from '@/components/ui/data-state';
+import { BackLink, DetailSection, InfoCard } from '@/components/ui/detail';
 import { PageHeader } from '@/components/ui/page-header';
 import { ResetPasswordModal } from '@/components/ui/reset-password-modal';
 import {
@@ -33,11 +34,10 @@ import {
 import type { User } from '@/types/api';
 import { isSuperAdmin } from '@/utils/access';
 import { fullName } from '@/utils/format';
-import { ArrowLeft, Plus } from '@tailgrids/icons';
+import { Plus } from '@tailgrids/icons';
 import { useQuery } from '@tanstack/react-query';
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import { OwnerFormModal } from './_components/owner-form';
 
 export default function EducationDetailPage() {
@@ -80,15 +80,7 @@ function EducationDetailView() {
 
     return (
         <>
-            <div className='px-5 pt-6'>
-                <Link
-                    href='/educations'
-                    className='text-text-tertiary hover:text-text-primary inline-flex items-center gap-1.5 text-sm transition-colors'
-                >
-                    <ArrowLeft className='size-4' />
-                    {t('educations.backToList')}
-                </Link>
-            </div>
+            <BackLink href='/educations' label={t('educations.backToList')} />
 
             <PageHeader
                 title={education.name}
@@ -114,7 +106,7 @@ function EducationDetailView() {
                 />
             </div>
 
-            <Section
+            <DetailSection
                 title={t('educations.owners')}
                 description={t('educations.ownersHint')}
                 action={
@@ -179,9 +171,9 @@ function EducationDetailView() {
                         </TableBody>
                     </TableRoot>
                 )}
-            </Section>
+            </DetailSection>
 
-            <Section title={t('billing.history')}>
+            <DetailSection title={t('billing.history')}>
                 {subscriptionsQuery.isPending ? (
                     <TableSkeleton rows={2} columns={3} />
                 ) : subscriptionsQuery.error ? (
@@ -222,7 +214,7 @@ function EducationDetailView() {
                         </TableBody>
                     </TableRoot>
                 )}
-            </Section>
+            </DetailSection>
 
             {ownerOpen && (
                 <OwnerFormModal
@@ -245,49 +237,5 @@ function EducationDetailView() {
                 />
             )}
         </>
-    );
-}
-
-function InfoCard({ label, value }: { label: string; value: ReactNode }) {
-    return (
-        <div className='border-card-border bg-card-background rounded-xl border p-4'>
-            <p className='text-text-tertiary text-xs'>{label}</p>
-            <div className='text-text-primary mt-1.5 text-sm font-medium tabular-nums'>
-                {value}
-            </div>
-        </div>
-    );
-}
-
-function Section({
-    title,
-    description,
-    action,
-    children,
-}: {
-    title: string;
-    description?: string;
-    action?: ReactNode;
-    children: ReactNode;
-}) {
-    return (
-        <section className='mt-8 px-5'>
-            <div className='mb-4 flex items-center justify-between gap-3'>
-                <div>
-                    <h2 className='text-text-primary font-display text-base font-semibold'>
-                        {title}
-                    </h2>
-                    {description && (
-                        <p className='text-text-tertiary mt-1 text-sm'>
-                            {description}
-                        </p>
-                    )}
-                </div>
-                {action}
-            </div>
-            <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
-                {children}
-            </div>
-        </section>
     );
 }

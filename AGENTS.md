@@ -28,6 +28,8 @@ src/
       courses/            # /courses — kurslar (courses.*)
       groups/             # /groups — guruhlar (groups.*)
       schedule/           # /schedule — haftalik dars jadvali (groups.view)
+      students/           # /students va /[id] — o'quvchilar (students.*)
+      leads/              # /leads — lidlar voronkasi (leads.*)
       billing/            # /billing — tarif tanlash va to'lov (billing.manage)
       educations/         # /educations va /[id] — o'quv markazlar (super admin)
       tariffs/            # /tariffs — tariflar (super admin)

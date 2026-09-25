@@ -36,6 +36,7 @@ import { can } from '@/utils/access';
 import { fullName } from '@/utils/format';
 import { Pencil1, Plus, Trash1, UserMultiple1 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { GroupFormModal } from './_components/group-form';
@@ -204,7 +205,7 @@ function GroupsView() {
             <div className='px-5'>
                 <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                     {query.isPending ? (
-                        <TableSkeleton columns={7} />
+                        <TableSkeleton columns={8} />
                     ) : query.error ? (
                         <ErrorState error={query.error} />
                     ) : query.data.data.length === 0 ? (
@@ -233,6 +234,9 @@ function GroupsView() {
                                             {t('groups.room')}
                                         </TableHead>
                                         <TableHead numeric>
+                                            {t('groups.students')}
+                                        </TableHead>
+                                        <TableHead numeric>
                                             {t('groups.price')}
                                         </TableHead>
                                         <TableHead>
@@ -249,7 +253,12 @@ function GroupsView() {
                                     {query.data.data.map((group) => (
                                         <TableRow key={group.id}>
                                             <TableCell primary>
-                                                {group.name}
+                                                <Link
+                                                    href={`/groups/${group.id}`}
+                                                    className='hover:text-brand-accent hover:underline'
+                                                >
+                                                    {group.name}
+                                                </Link>
                                                 <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
                                                     {group.course.name}
                                                     {branches.length > 1 &&
@@ -266,6 +275,9 @@ function GroupsView() {
                                             </TableCell>
                                             <TableCell>
                                                 {group.room?.name ?? '—'}
+                                            </TableCell>
+                                            <TableCell numeric>
+                                                {group.students_count}
                                             </TableCell>
                                             <TableCell numeric>
                                                 {formatPrice(

@@ -5,7 +5,9 @@ import { useT } from '@/i18n/provider';
 import type {
     EducationStatus,
     GroupStatus,
+    LeadStatus,
     PaymentRequestStatus,
+    StudentStatus,
     RoleSummary,
     SubscriptionStatus,
 } from '@/types/api';
@@ -43,6 +45,34 @@ export function GroupStatusBadge({ status }: { status: GroupStatus }) {
     return (
         <Badge size='sm' color={status === 'active' ? 'success' : 'gray'}>
             {t(`groupStatus.${status}`)}
+        </Badge>
+    );
+}
+
+export function StudentStatusBadge({ status }: { status: StudentStatus }) {
+    const t = useT();
+
+    return (
+        <Badge size='sm' color={status === 'active' ? 'success' : 'gray'}>
+            {t(`studentStatus.${status}`)}
+        </Badge>
+    );
+}
+
+const LEAD_COLORS: Record<LeadStatus, BadgeColor> = {
+    new: 'primary',
+    contacted: 'warning',
+    trial: 'warning',
+    won: 'success',
+    lost: 'gray',
+};
+
+export function LeadStatusBadge({ status }: { status: LeadStatus }) {
+    const t = useT();
+
+    return (
+        <Badge size='sm' color={LEAD_COLORS[status]}>
+            {t(`leadStatus.${status}`)}
         </Badge>
     );
 }

@@ -39,6 +39,9 @@ npm run dev             # http://localhost:3000
 | Kurslar | `/courses` | `courses.view` ruxsati borlar |
 | Guruhlar | `/groups` | `groups.view` ruxsati borlar |
 | Dars jadvali | `/schedule` | `groups.view` ruxsati borlar |
+| Guruh | `/groups/[id]` | `groups.view` ruxsati borlar |
+| O'quvchilar | `/students`, `/students/[id]` | `students.view` ruxsati borlar |
+| Lidlar | `/leads` | `leads.view` ruxsati borlar |
 | Tarif va to'lov | `/billing` | `billing.manage` ruxsati borlar |
 | Profil | `/profile` | Kirgan har bir kishi |
 
@@ -71,6 +74,8 @@ src/
       courses/            # kurslar
       groups/             # guruhlar
       schedule/           # haftalik dars jadvali
+      students/           # o'quvchilar va o'quvchi sahifasi
+      leads/              # lidlar voronkasi
       profile/            # o'z profili va paroli
     css/, globals.css     # dizayn tokenlari (kunduzgi/tungi mavzu)
   components/
