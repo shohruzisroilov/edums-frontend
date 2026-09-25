@@ -32,6 +32,7 @@ src/
       leads/              # /leads — lidlar voronkasi (leads.*)
       cashbox/            # /cashbox — o'quvchi to'lovlari (payments.*); /payments — super admin'niki
       debtors/            # /debtors — qarzdorlar (payments.view)
+      audit/              # /audit — harakatlar tarixi (audit.view)
       billing/            # /billing — tarif tanlash va to'lov (billing.manage)
       educations/         # /educations va /[id] — o'quv markazlar (super admin)
       tariffs/            # /tariffs — tariflar (super admin)

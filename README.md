@@ -44,6 +44,7 @@ npm run dev             # http://localhost:3000
 | Lidlar | `/leads` | `leads.view` ruxsati borlar |
 | Kassa | `/cashbox` | `payments.view` ruxsati borlar |
 | Qarzdorlar | `/debtors` | `payments.view` ruxsati borlar |
+| Harakatlar tarixi | `/audit` | `audit.view` ruxsati borlar |
 | Tarif va to'lov | `/billing` | `billing.manage` ruxsati borlar |
 | Profil | `/profile` | Kirgan har bir kishi |
 
@@ -80,6 +81,7 @@ src/
       leads/              # lidlar voronkasi
       cashbox/            # o'quvchi to'lovlari (kassa)
       debtors/            # qarzdorlar
+      audit/              # harakatlar tarixi
       profile/            # o'z profili va paroli
     css/, globals.css     # dizayn tokenlari (kunduzgi/tungi mavzu)
   components/

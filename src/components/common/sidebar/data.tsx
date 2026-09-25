@@ -5,6 +5,7 @@ import {
     Buildings11,
     CalendarTime,
     CreditCard,
+    FileText,
     Funnel1,
     Gear1,
     HandTakingCoins,
@@ -107,6 +108,12 @@ const NAV_DATA: NavSection[] = [
                 url: '/branches',
                 icon: <MapMarker5 className='size-5' />,
                 visible: (session) => can(session, 'branches.view'),
+            },
+            {
+                titleKey: 'nav.audit',
+                url: '/audit',
+                icon: <FileText className='size-5' />,
+                visible: (session) => can(session, 'audit.view'),
             },
             {
                 titleKey: 'nav.billing',

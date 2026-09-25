@@ -81,6 +81,7 @@ export const PERMISSION_KEYS = [
     'payments.delete',
     'attendance.view',
     'attendance.mark',
+    'audit.view',
 ] as const;
 export type PermissionKey = (typeof PERMISSION_KEYS)[number];
 
@@ -94,7 +95,8 @@ export type PermissionModule =
     | 'students'
     | 'leads'
     | 'payments'
-    | 'attendance';
+    | 'attendance'
+    | 'audit';
 
 /** GET /permissions — modul bo'yicha guruhlangan katalog. */
 export interface PermissionGroup {
@@ -710,6 +712,88 @@ export interface StudentAttendance {
     month: string;
     records: { date: string; group: Ref; status: AttendanceStatus }[];
     summary: Record<AttendanceStatus, number>;
+}
+
+/* ── Harakatlar tarixi ────────────────────────────────────────────────── */
+
+/** Backenddagi `AUDIT_ACTIONS` nusxasi — `<obyekt>.<amal>`. */
+export const AUDIT_ACTIONS = [
+    'user.create',
+    'user.update',
+    'user.delete',
+    'user.password_reset',
+    'role.create',
+    'role.update',
+    'role.delete',
+    'branch.create',
+    'branch.update',
+    'branch.delete',
+    'room.create',
+    'room.update',
+    'room.delete',
+    'course.create',
+    'course.update',
+    'course.delete',
+    'group.create',
+    'group.update',
+    'group.delete',
+    'student.create',
+    'student.update',
+    'student.delete',
+    'enrollment.create',
+    'enrollment.update',
+    'lead.create',
+    'lead.update',
+    'lead.convert',
+    'lead.delete',
+    'payment.create',
+    'payment.delete',
+    'attendance.mark',
+    'billing.request',
+    'billing.cancel',
+    'billing.approve',
+    'billing.reject',
+    'settings.update',
+] as const;
+export type AuditAction = (typeof AUDIT_ACTIONS)[number];
+
+export const AUDIT_ENTITY_TYPES = [
+    'user',
+    'role',
+    'branch',
+    'room',
+    'course',
+    'group',
+    'student',
+    'enrollment',
+    'lead',
+    'payment',
+    'attendance',
+    'billing',
+    'settings',
+] as const;
+export type AuditEntityType = (typeof AUDIT_ENTITY_TYPES)[number];
+
+export interface AuditLog {
+    id: string;
+    actor: { type: 'user' | 'super_admin'; id: string; name: string };
+    action: AuditAction;
+    entity_type: AuditEntityType;
+    entity_id: string | null;
+    /** Yozuvning o'sha paytdagi nomi — ism, guruh, tarif. */
+    summary: string;
+    /** So'rov maydonlari (parolsiz), summa, soni. */
+    details: Record<string, unknown> | null;
+    created_at: string;
+}
+
+export interface ListAuditLogsQuery extends PaginationQuery {
+    entity_type?: AuditEntityType;
+    action?: AuditAction;
+    entity_id?: string;
+    actor_id?: string;
+    from?: string;
+    to?: string;
 }
 
 /* ── Rollar ───────────────────────────────────────────────────────────── */
