@@ -755,7 +755,7 @@ export const uz = {
         "Oylik jurnal: dars kunlari guruh jadvalidan o'zi chiqadi, belgilash bir bosishda.",
     'landing.featureLeadsTitle': 'Lidlar',
     'landing.featureLeadsText':
-        "Qo'ng'iroq qilgan va yozganlarni yo'qotmang: voronka va bir bosishda o'quvchiga aylantirish.",
+        "Qo'ng'iroq qilgan va yozganlarni yo'qotmang: har bir lid qaysi bosqichdaligini ko'ring va bir bosishda o'quvchiga aylantiring.",
 
     /* ── Harakatlar tarixi ── */
     'nav.audit': 'Harakatlar tarixi',
@@ -909,7 +909,7 @@ export const uz = {
     'dashboard.todayLessons': 'Bugungi darslar',
     'dashboard.noLessonsToday': "Bugun dars yo'q",
     'dashboard.studentsCount': "{count} o'quvchi",
-    'dashboard.leadFunnel': 'Lidlar voronkasi',
+    'dashboard.leadFunnel': "Lidlar bosqichlar bo'yicha",
     'dashboard.newLeads': 'Shu oy yangi lidlar: {count}',
     'overview.title': "Umumiy ko'rinish",
     'overview.subtitle': "Platformadagi markazlar, obunalar va to'lovlar",

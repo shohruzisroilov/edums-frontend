@@ -748,7 +748,7 @@ export const ru: Dictionary = {
         'Журнал за месяц: дни занятий берутся из расписания группы, отметка в один клик.',
     'landing.featureLeadsTitle': 'Лиды',
     'landing.featureLeadsText':
-        'Не теряйте тех, кто позвонил или написал: воронка и перевод в ученики в один клик.',
+        'Не теряйте тех, кто позвонил или написал: видно, на каком этапе каждый лид, а перевод в ученики — в один клик.',
 
     /* ── Harakatlar tarixi ── */
     'nav.audit': 'История действий',
@@ -900,7 +900,7 @@ export const ru: Dictionary = {
     'dashboard.todayLessons': 'Занятия сегодня',
     'dashboard.noLessonsToday': 'Сегодня занятий нет',
     'dashboard.studentsCount': 'учеников: {count}',
-    'dashboard.leadFunnel': 'Воронка лидов',
+    'dashboard.leadFunnel': 'Лиды по этапам',
     'dashboard.newLeads': 'Новых лидов за месяц: {count}',
     'overview.title': 'Обзор',
     'overview.subtitle': 'Центры, подписки и оплаты на платформе',

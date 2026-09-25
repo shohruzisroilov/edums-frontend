@@ -747,7 +747,7 @@ export const uzCyrl: Dictionary = {
         'Ойлик журнал: дарс кунлари гуруҳ жадвалидан ўзи чиқади, белгилаш бир босишда.',
     'landing.featureLeadsTitle': 'Лидлар',
     'landing.featureLeadsText':
-        'Қўнғироқ қилган ва ёзганларни йўқотманг: воронка ва бир босишда ўқувчига айлантириш.',
+        'Қўнғироқ қилган ва ёзганларни йўқотманг: ҳар бир лид қайси босқичдалигини кўринг ва бир босишда ўқувчига айлантиринг.',
 
     /* ── Harakatlar tarixi ── */
     'nav.audit': 'Ҳаракатлар тарихи',
@@ -900,7 +900,7 @@ export const uzCyrl: Dictionary = {
     'dashboard.todayLessons': 'Бугунги дарслар',
     'dashboard.noLessonsToday': 'Бугун дарс йўқ',
     'dashboard.studentsCount': '{count} ўқувчи',
-    'dashboard.leadFunnel': 'Лидлар воронкаси',
+    'dashboard.leadFunnel': 'Лидлар босқичлар бўйича',
     'dashboard.newLeads': 'Шу ой янги лидлар: {count}',
     'overview.title': 'Умумий кўриниш',
     'overview.subtitle': 'Платформадаги марказлар, обуналар ва тўловлар',

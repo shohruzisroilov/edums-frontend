@@ -746,7 +746,7 @@ export const en: Dictionary = {
         "A monthly register: lesson days come from the group's schedule, marking takes one click.",
     'landing.featureLeadsTitle': 'Leads',
     'landing.featureLeadsText':
-        "Don't lose those who called or wrote: a funnel and one-click conversion to students.",
+        "Don't lose those who called or wrote: see which stage every lead is at and turn them into students in one click.",
 
     /* ── Harakatlar tarixi ── */
     'nav.audit': 'Activity log',
@@ -897,7 +897,7 @@ export const en: Dictionary = {
     'dashboard.todayLessons': "Today's lessons",
     'dashboard.noLessonsToday': 'No lessons today',
     'dashboard.studentsCount': '{count} students',
-    'dashboard.leadFunnel': 'Lead funnel',
+    'dashboard.leadFunnel': 'Leads by stage',
     'dashboard.newLeads': 'New leads this month: {count}',
     'overview.title': 'Overview',
     'overview.subtitle':
