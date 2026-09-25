@@ -21,6 +21,23 @@ npm run dev             # http://localhost:3000
 | `npm run build` / `npm start` | Production build va ishga tushirish |
 | `npm run lint` · `format` · `typecheck` | Kod sifati |
 
+**Docker.** `Dockerfile` Next.js standalone serverini yig'adi (`next.config.ts`
+dagi `output` faqat `NEXT_OUTPUT=standalone` bo'lganda yoqiladi, lokal
+`npm start` o'zgarmaydi). API manzili build vaqtida kodga yoziladi:
+
+```bash
+docker build -t edums-frontend \
+    --build-arg NEXT_PUBLIC_API_URL=https://api.example.uz/api \
+    --build-arg NEXT_PUBLIC_FILES_URL=https://api.example.uz .
+docker run -p 3000:3000 edums-frontend
+```
+
+Butun tizimni (baza + backend + frontend) bitta buyruq bilan ko'tarish —
+`../edums-backend/docker-compose.yml` (backend README, "Docker").
+
+**CI** — `.github/workflows/ci.yml`: `main`/`dev` ga push va pull request'da
+lint (ogohlantirishsiz), format, typecheck, build va Docker image.
+
 ## Sahifalar
 
 | Sahifa | Manzil | Kim ko'radi |

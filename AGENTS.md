@@ -214,6 +214,8 @@ bo'sh qiymatni qabul qilmaydi.
 - Formatlash — Prettier (`.prettierrc`: 4 probel, single quote, 80 belgi).
   ESLint formatlashga aralashmaydi (`eslint-config-prettier` o'chirib qo'ygan).
   Yozib bo'lgach: `npm run lint && npm run format && npm run typecheck`.
+  CI (`.github/workflows/ci.yml`) lint'ni `--max-warnings=0` bilan
+  ishlatadi — bitta ogohlantirish ham tekshiruvni yiqitadi.
 
 ## Ataylab o'ralmagan endpointlar
 
