@@ -59,7 +59,15 @@ async function signInWithPhone(
                 permissions: [],
                 subscription: null,
             };
-        } catch {
+        } catch (superAdminError) {
+            // 429 — shu raqam uchun urinishlar limiti tugagan: kutish kerakligini
+            // aytmasak, odam to'g'ri parolni ham "xato" deb o'ylab qoladi.
+            if (
+                superAdminError instanceof ApiError &&
+                superAdminError.statusCode === 429
+            ) {
+                throw superAdminError;
+            }
             // Ikkalasi ham rad etdi. Foydalanuvchi endpointining xabari to'liqroq
             // (nofaol hisob haqida ham aytadi), shuning uchun o'shani beramiz.
             throw userError;
