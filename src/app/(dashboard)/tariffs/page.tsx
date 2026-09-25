@@ -17,6 +17,7 @@ import {
     TableSkeleton,
 } from '@/components/ui/data-state';
 import { PageHeader } from '@/components/ui/page-header';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { ActiveBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
@@ -97,6 +98,7 @@ function TariffsView() {
                         <TableRoot fullBleed className='border-x-0 border-t-0'>
                             <TableHeader>
                                 <TableRow>
+                                    <RowNumberHead />
                                     <TableHead>{t('common.name')}</TableHead>
                                     <TableHead numeric>
                                         {t('tariffs.price')}
@@ -114,8 +116,9 @@ function TariffsView() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {query.data.map((tariff) => (
+                                {query.data.map((tariff, index) => (
                                     <TableRow key={tariff.id}>
+                                        <RowNumberCell index={index} />
                                         <TableCell primary>
                                             {tariff.name}
                                         </TableCell>

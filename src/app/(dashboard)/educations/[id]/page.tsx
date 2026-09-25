@@ -18,6 +18,7 @@ import {
 import { BackLink, DetailSection, InfoCard } from '@/components/ui/detail';
 import { PageHeader } from '@/components/ui/page-header';
 import { ResetPasswordModal } from '@/components/ui/reset-password-modal';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import {
     ActiveBadge,
     EducationStatusBadge,
@@ -131,6 +132,7 @@ function EducationDetailView() {
                     <TableRoot fullBleed className='border-x-0 border-t-0'>
                         <TableHeader>
                             <TableRow>
+                                <RowNumberHead />
                                 <TableHead>{t('common.fullName')}</TableHead>
                                 <TableHead>{t('common.phone')}</TableHead>
                                 <TableHead>{t('common.status')}</TableHead>
@@ -141,8 +143,9 @@ function EducationDetailView() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {ownersQuery.data.map((owner) => (
+                            {ownersQuery.data.map((owner, index) => (
                                 <TableRow key={owner.id}>
+                                    <RowNumberCell index={index} />
                                     <TableCell primary>
                                         {fullName(owner)}
                                     </TableCell>
@@ -184,6 +187,7 @@ function EducationDetailView() {
                     <TableRoot fullBleed className='border-x-0 border-t-0'>
                         <TableHeader>
                             <TableRow>
+                                <RowNumberHead />
                                 <TableHead>{t('billing.tariff')}</TableHead>
                                 <TableHead>{t('billing.period')}</TableHead>
                                 <TableHead numeric>
@@ -192,8 +196,9 @@ function EducationDetailView() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {subscriptionsQuery.data.map((item) => (
+                            {subscriptionsQuery.data.map((item, index) => (
                                 <TableRow key={item.id}>
+                                    <RowNumberCell index={index} />
                                     <TableCell primary>
                                         {item.kind === 'trial'
                                             ? t('billing.trial')

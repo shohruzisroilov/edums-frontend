@@ -134,6 +134,23 @@ Foydalanuvchi o'qishga qulay ko'rinishni ko'radi, backendga xom qiymat ketadi.
 qolib, raqamlar noto'g'ri joyga tushardi. Raqamli maydonga oddiy
 `type='number'` qo'ymang: minglik ajratgichini ko'rsatmaydi.
 
+## Jadvallar
+
+- **Tartib raqami** — har bir jadvalning birinchi ustuni:
+  `<RowNumberHead />` va `<RowNumberCell index={index} offset={offset} />`
+  (`ui/row-number.tsx`). Sahifalangan ro'yxatda `offset` beriladi, aks holda
+  ikkinchi sahifa yana 1 dan boshlanadi. "Jami" qatorida — bo'sh `<TableCell />`.
+- **Holat va toifalar** matn bilan emas, badge bilan: `ui/status-badge.tsx`
+  (`LeadStatusBadge`, `PaymentMethodBadge`, `ExpenseCategoryBadge`,
+  `LeadSourceBadge`, `AuditActionBadge` va h.k.). Har bir qiymatning o'z
+  rangi bor; yangi enum qo'shilsa, rang xaritasiga ham qo'shiladi.
+- **Muhim summalar** rangi `utils/tone.ts` dan — badge tokenlari, ikkala
+  mavzuda o'qiladi: qarz — `error`, to'lanmagan oylik — `warning`,
+  tushum va to'liq to'langan — `success` (`balanceTone()` balans uchun).
+  `text-red-600` kabi palitra ranglari yozilmaydi.
+- Rang faqat yordamchi: ma'no matnda ham bo'lishi kerak (yorliq, ishora,
+  `title`).
+
 ## Grafiklar
 
 `src/components/ui/charts.tsx` — kutubxonasiz HTML grafiklar: `StatTile`,

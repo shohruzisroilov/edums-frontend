@@ -1207,4 +1207,10 @@ export const ru: Dictionary = {
     'landing.footerProduct': 'Продукт',
     'landing.footerAccount': 'Аккаунт',
     'landing.footerTelegram': 'Написать в Telegram',
+
+    /* ── Jadval ── */
+    'common.rowNumber': '№',
+
+    /* ── Guruh sig'imi ── */
+    'groups.full': 'Группа заполнена — вместимость кабинета достигнута',
 };

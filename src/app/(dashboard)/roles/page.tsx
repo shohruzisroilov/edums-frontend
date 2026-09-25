@@ -18,6 +18,7 @@ import {
     TableSkeleton,
 } from '@/components/ui/data-state';
 import { PageHeader } from '@/components/ui/page-header';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { SearchInput } from '@/components/ui/search-input';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
@@ -129,6 +130,7 @@ function RolesView() {
                         <TableRoot fullBleed className='border-x-0 border-t-0'>
                             <TableHeader>
                                 <TableRow>
+                                    <RowNumberHead />
                                     <TableHead>{t('common.name')}</TableHead>
                                     <TableHead>
                                         {t('common.description')}
@@ -145,7 +147,7 @@ function RolesView() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {roles.map((role) => {
+                                {roles.map((role, index) => {
                                     // Owner roli va sessiya egasidan keng
                                     // ruxsatli rollar tahrirlanmaydi.
                                     const editable =
@@ -154,6 +156,7 @@ function RolesView() {
 
                                     return (
                                         <TableRow key={role.id}>
+                                            <RowNumberCell index={index} />
                                             <TableCell primary>
                                                 <span className='inline-flex items-center gap-2'>
                                                     {role.name}

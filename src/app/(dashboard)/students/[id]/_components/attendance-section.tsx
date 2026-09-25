@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/data-state';
 import { DetailSection } from '@/components/ui/detail';
 import { currentMonth, MonthSwitcher } from '@/components/ui/month-switcher';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { useFormat } from '@/hooks/use-format';
 import { useT } from '@/i18n/provider';
 import { getStudentAttendance } from '@/services/api/attendance';
@@ -75,16 +76,18 @@ export function StudentAttendanceSection({ studentId }: { studentId: string }) {
                     <TableRoot fullBleed className='border-x-0 border-t-0'>
                         <TableHeader>
                             <TableRow>
+                                <RowNumberHead />
                                 <TableHead>{t('cashbox.paidAt')}</TableHead>
                                 <TableHead>{t('groups.title')}</TableHead>
                                 <TableHead>{t('common.status')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {query.data.records.map((record) => (
+                            {query.data.records.map((record, index) => (
                                 <TableRow
                                     key={`${record.group.id}:${record.date}`}
                                 >
+                                    <RowNumberCell index={index} />
                                     <TableCell>
                                         {formatDate(record.date)}
                                     </TableCell>

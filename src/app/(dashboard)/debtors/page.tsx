@@ -19,6 +19,7 @@ import { SelectInput } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
 import { PaymentModal } from '@/components/ui/payment-modal';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { SearchInput } from '@/components/ui/search-input';
 import { useFormat } from '@/hooks/use-format';
 import { useListQuery } from '@/hooks/use-list-query';
@@ -111,7 +112,7 @@ function DebtorsView() {
                     </div>
                 )}
                 {query.data && query.data.total_debt > 0 && (
-                    <p className='ml-auto text-sm font-semibold text-red-600 tabular-nums dark:text-red-400'>
+                    <p className='text-badge-error-text ml-auto text-sm font-semibold tabular-nums'>
                         {t('debtors.total', {
                             amount: formatPrice(query.data.total_debt, som),
                         })}
@@ -138,6 +139,7 @@ function DebtorsView() {
                             >
                                 <TableHeader>
                                     <TableRow>
+                                        <RowNumberHead />
                                         <TableHead>
                                             {t('common.student')}
                                         </TableHead>
@@ -161,10 +163,14 @@ function DebtorsView() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {query.data.data.map((debtor) => (
+                                    {query.data.data.map((debtor, index) => (
                                         <TableRow
                                             key={`${debtor.student.id}:${debtor.group.id}`}
                                         >
+                                            <RowNumberCell
+                                                index={index}
+                                                offset={offset}
+                                            />
                                             <TableCell primary>
                                                 {canOpenStudents ? (
                                                     <Link
@@ -199,7 +205,7 @@ function DebtorsView() {
                                             </TableCell>
                                             <TableCell
                                                 numeric
-                                                className='font-semibold text-red-600 dark:text-red-400'
+                                                className='text-badge-error-text font-semibold'
                                             >
                                                 {formatPrice(debtor.debt, som)}
                                             </TableCell>

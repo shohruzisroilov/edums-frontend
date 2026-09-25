@@ -20,6 +20,7 @@ import {
 import { SelectInput } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { SearchInput } from '@/components/ui/search-input';
 import { StudentStatusBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
@@ -184,6 +185,7 @@ function StudentsView() {
                             >
                                 <TableHeader>
                                     <TableRow>
+                                        <RowNumberHead />
                                         <TableHead>
                                             {t('common.fullName')}
                                         </TableHead>
@@ -204,8 +206,12 @@ function StudentsView() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {query.data.data.map((student) => (
+                                    {query.data.data.map((student, index) => (
                                         <TableRow key={student.id}>
+                                            <RowNumberCell
+                                                index={index}
+                                                offset={offset}
+                                            />
                                             <TableCell primary>
                                                 <Link
                                                     href={`/students/${student.id}`}

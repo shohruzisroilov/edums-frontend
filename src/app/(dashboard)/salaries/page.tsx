@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/month-switcher';
 import { MoneyInput, NumberInput } from '@/components/ui/number-input';
 import { PageHeader } from '@/components/ui/page-header';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useSession } from '@/hooks/use-session';
@@ -49,10 +50,28 @@ import {
     type SalarySheetRow,
 } from '@/types/api';
 import { can } from '@/utils/access';
+import { cn } from '@/utils/cn';
 import { fullName, toISODate } from '@/utils/format';
+import { TONE_TEXT } from '@/utils/tone';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
+
+/**
+ * Qoldiq — xodimga hali to'lanmagan summa: bor bo'lsa to'q sariq, hisoblangani
+ * to'liq to'langan bo'lsa yashil.
+ */
+function payoutTone({
+    accrued,
+    balance,
+}: {
+    accrued: number;
+    balance: number;
+}): string | undefined {
+    if (balance > 0) return TONE_TEXT.warning;
+    if (accrued > 0) return TONE_TEXT.success;
+    return undefined;
+}
 
 export default function SalariesPage() {
     return (
@@ -136,6 +155,7 @@ function SalariesView() {
                         <TableRoot fullBleed className='border-x-0 border-t-0'>
                             <TableHeader>
                                 <TableRow>
+                                    <RowNumberHead />
                                     <TableHead>{t('salaries.staff')}</TableHead>
                                     <TableHead numeric>
                                         {t('salaries.groupsStudents')}
@@ -160,8 +180,9 @@ function SalariesView() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {sheetQuery.data.rows.map((row) => (
+                                {sheetQuery.data.rows.map((row, index) => (
                                     <TableRow key={row.user.id}>
+                                        <RowNumberCell index={index} />
                                         <TableCell primary>
                                             {fullName(row.user)}
                                             <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
@@ -183,7 +204,10 @@ function SalariesView() {
                                         </TableCell>
                                         <TableCell
                                             numeric
-                                            className='font-semibold'
+                                            className={cn(
+                                                'font-semibold',
+                                                payoutTone(row),
+                                            )}
                                         >
                                             {formatPrice(row.balance, som)}
                                         </TableCell>
@@ -215,6 +239,7 @@ function SalariesView() {
                                     </TableRow>
                                 ))}
                                 <TableRow>
+                                    <TableCell />
                                     <TableCell primary>
                                         {t('common.total')}
                                     </TableCell>
@@ -234,7 +259,10 @@ function SalariesView() {
                                     </TableCell>
                                     <TableCell
                                         numeric
-                                        className='font-semibold'
+                                        className={cn(
+                                            'font-semibold',
+                                            payoutTone(sheetQuery.data.totals),
+                                        )}
                                     >
                                         {formatPrice(
                                             sheetQuery.data.totals.balance,
@@ -260,6 +288,7 @@ function SalariesView() {
                     <TableRoot fullBleed className='border-x-0 border-t-0'>
                         <TableHeader>
                             <TableRow>
+                                <RowNumberHead />
                                 <TableHead>{t('cashbox.paidAt')}</TableHead>
                                 <TableHead>{t('salaries.staff')}</TableHead>
                                 <TableHead numeric>
@@ -274,8 +303,9 @@ function SalariesView() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {payoutsQuery.data.map((payout) => (
+                            {payoutsQuery.data.map((payout, index) => (
                                 <TableRow key={payout.id}>
+                                    <RowNumberCell index={index} />
                                     <TableCell>
                                         {formatDate(payout.paid_at)}
                                     </TableCell>

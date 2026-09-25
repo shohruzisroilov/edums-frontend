@@ -22,6 +22,7 @@ import {
     EnrollToGroupModal,
 } from '@/components/ui/enrollment-modals';
 import { PageHeader } from '@/components/ui/page-header';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { StudentStatusBadge } from '@/components/ui/status-badge';
 import { useFormat } from '@/hooks/use-format';
 import { useSession } from '@/hooks/use-session';
@@ -172,6 +173,7 @@ function StudentDetailView() {
                     <TableRoot fullBleed className='border-x-0 border-t-0'>
                         <TableHeader>
                             <TableRow>
+                                <RowNumberHead />
                                 <TableHead>{t('groups.title')}</TableHead>
                                 <TableHead>{t('students.joinedAt')}</TableHead>
                                 <TableHead>{t('students.leftAt')}</TableHead>
@@ -186,8 +188,9 @@ function StudentDetailView() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {enrollmentsQuery.data.map((enrollment) => (
+                            {enrollmentsQuery.data.map((enrollment, index) => (
                                 <TableRow key={enrollment.id}>
+                                    <RowNumberCell index={index} />
                                     <TableCell primary>
                                         {canOpenGroups ? (
                                             <Link

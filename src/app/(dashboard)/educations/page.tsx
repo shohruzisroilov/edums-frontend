@@ -19,6 +19,7 @@ import { SelectInput } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
 import { AccessGuard } from '@/components/ui/access-guard';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { SearchInput } from '@/components/ui/search-input';
 import {
     EducationStatusBadge,
@@ -152,6 +153,7 @@ function EducationsView() {
                             >
                                 <TableHeader>
                                     <TableRow>
+                                        <RowNumberHead />
                                         <TableHead>
                                             {t('common.name')}
                                         </TableHead>
@@ -173,8 +175,12 @@ function EducationsView() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {query.data.data.map((education) => (
+                                    {query.data.data.map((education, index) => (
                                         <TableRow key={education.id}>
+                                            <RowNumberCell
+                                                index={index}
+                                                offset={offset}
+                                            />
                                             <TableCell>
                                                 <Link
                                                     href={`/educations/${education.id}`}

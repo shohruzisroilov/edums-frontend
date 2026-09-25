@@ -16,6 +16,8 @@ import {
 } from '@/components/ui/data-state';
 import { DetailSection } from '@/components/ui/detail';
 import { PaymentModal } from '@/components/ui/payment-modal';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
+import { PaymentMethodBadge } from '@/components/ui/status-badge';
 import { useFormat } from '@/hooks/use-format';
 import { useT } from '@/i18n/provider';
 import {
@@ -25,17 +27,14 @@ import {
 import type { PersonRef } from '@/types/api';
 import { cn } from '@/utils/cn';
 import { fullName } from '@/utils/format';
+import { balanceTone } from '@/utils/tone';
 import { Plus } from '@tailgrids/icons';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 /** Manfiy balans — qarz (qizil), musbat — oldindan to'langan. */
 function balanceClass(balance: number) {
-    return cn(
-        'font-semibold',
-        balance < 0 && 'text-red-600 dark:text-red-400',
-        balance > 0 && 'text-green-600 dark:text-green-400',
-    );
+    return cn('font-semibold', balanceTone(balance));
 }
 
 /** O'quvchi sahifasida: guruhlar bo'yicha balans va to'lovlar tarixi. */
@@ -90,6 +89,7 @@ export function FinanceSection({
                     <TableRoot fullBleed className='border-x-0 border-t-0'>
                         <TableHeader>
                             <TableRow>
+                                <RowNumberHead />
                                 <TableHead>{t('groups.title')}</TableHead>
                                 <TableHead numeric>
                                     {t('balance.charged')}
@@ -103,8 +103,9 @@ export function FinanceSection({
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {balanceQuery.data.groups.map((item) => (
+                            {balanceQuery.data.groups.map((item, index) => (
                                 <TableRow key={item.group.id}>
+                                    <RowNumberCell index={index} />
                                     <TableCell primary>
                                         {item.group.name}
                                         {item.monthly_price !== null && (
@@ -133,6 +134,7 @@ export function FinanceSection({
                             ))}
                             {balanceQuery.data.groups.length > 1 && (
                                 <TableRow>
+                                    <TableCell />
                                     <TableCell primary>
                                         {t('common.total')}
                                     </TableCell>
@@ -177,6 +179,7 @@ export function FinanceSection({
                     <TableRoot fullBleed className='border-x-0 border-t-0'>
                         <TableHeader>
                             <TableRow>
+                                <RowNumberHead />
                                 <TableHead>{t('cashbox.paidAt')}</TableHead>
                                 <TableHead>{t('groups.title')}</TableHead>
                                 <TableHead numeric>
@@ -187,8 +190,9 @@ export function FinanceSection({
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {paymentsQuery.data.data.map((payment) => (
+                            {paymentsQuery.data.data.map((payment, index) => (
                                 <TableRow key={payment.id}>
+                                    <RowNumberCell index={index} />
                                     <TableCell>
                                         {formatDate(payment.paid_at)}
                                     </TableCell>
@@ -204,7 +208,9 @@ export function FinanceSection({
                                         {formatPrice(payment.amount, som)}
                                     </TableCell>
                                     <TableCell>
-                                        {t(`paymentMethod.${payment.method}`)}
+                                        <PaymentMethodBadge
+                                            method={payment.method}
+                                        />
                                     </TableCell>
                                     <TableCell>
                                         {payment.received_by

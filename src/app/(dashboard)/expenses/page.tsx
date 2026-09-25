@@ -25,6 +25,8 @@ import { Modal } from '@/components/ui/modal';
 import { MoneyInput } from '@/components/ui/number-input';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
+import { ExpenseCategoryBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useListQuery } from '@/hooks/use-list-query';
@@ -183,6 +185,7 @@ function ExpensesView() {
                             >
                                 <TableHeader>
                                     <TableRow>
+                                        <RowNumberHead />
                                         <TableHead>
                                             {t('expenses.date')}
                                         </TableHead>
@@ -203,8 +206,12 @@ function ExpensesView() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {query.data.data.map((expense) => (
+                                    {query.data.data.map((expense, index) => (
                                         <TableRow key={expense.id}>
+                                            <RowNumberCell
+                                                index={index}
+                                                offset={offset}
+                                            />
                                             <TableCell>
                                                 {formatDate(expense.spent_at)}
                                             </TableCell>
@@ -212,12 +219,12 @@ function ExpensesView() {
                                                 primary
                                                 className='whitespace-normal'
                                             >
-                                                {t(
-                                                    `expenseCategory.${expense.category}`,
-                                                )}
+                                                <ExpenseCategoryBadge
+                                                    category={expense.category}
+                                                />
                                                 {(expense.note ||
                                                     expense.branch) && (
-                                                    <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
+                                                    <p className='text-text-tertiary mt-1 text-xs font-normal'>
                                                         {[
                                                             expense.note,
                                                             expense.branch

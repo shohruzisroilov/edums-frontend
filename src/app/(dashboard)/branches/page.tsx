@@ -17,6 +17,7 @@ import {
     TableSkeleton,
 } from '@/components/ui/data-state';
 import { PageHeader } from '@/components/ui/page-header';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { ActiveBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
@@ -107,6 +108,7 @@ function BranchesView() {
                         <TableRoot fullBleed className='border-x-0 border-t-0'>
                             <TableHeader>
                                 <TableRow>
+                                    <RowNumberHead />
                                     <TableHead>{t('common.name')}</TableHead>
                                     <TableHead>
                                         {t('branches.address')}
@@ -122,8 +124,9 @@ function BranchesView() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {query.data.map((branch) => (
+                                {query.data.map((branch, index) => (
                                     <TableRow key={branch.id}>
+                                        <RowNumberCell index={index} />
                                         <TableCell primary>
                                             {branch.name}
                                         </TableCell>

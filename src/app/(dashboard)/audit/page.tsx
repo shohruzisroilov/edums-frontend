@@ -17,6 +17,8 @@ import {
 import { SelectInput, TextInput } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
+import { AuditActionBadge } from '@/components/ui/status-badge';
 import { useFormat } from '@/hooks/use-format';
 import { useListQuery } from '@/hooks/use-list-query';
 import { useT, type Translate } from '@/i18n/provider';
@@ -146,6 +148,7 @@ function AuditView() {
                             >
                                 <TableHeader>
                                     <TableRow>
+                                        <RowNumberHead />
                                         <TableHead>{t('audit.time')}</TableHead>
                                         <TableHead>
                                             {t('audit.actor')}
@@ -162,8 +165,12 @@ function AuditView() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {query.data.data.map((log) => (
+                                    {query.data.data.map((log, index) => (
                                         <TableRow key={log.id}>
+                                            <RowNumberCell
+                                                index={index}
+                                                offset={offset}
+                                            />
                                             <TableCell className='tabular-nums'>
                                                 {formatDateTime(log.created_at)}
                                             </TableCell>
@@ -171,7 +178,9 @@ function AuditView() {
                                                 {log.actor.name}
                                             </TableCell>
                                             <TableCell>
-                                                {t(`auditAction.${log.action}`)}
+                                                <AuditActionBadge
+                                                    action={log.action}
+                                                />
                                             </TableCell>
                                             <TableCell
                                                 primary

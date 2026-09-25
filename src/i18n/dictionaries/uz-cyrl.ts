@@ -1211,4 +1211,10 @@ export const uzCyrl: Dictionary = {
     'landing.footerProduct': 'Маҳсулот',
     'landing.footerAccount': 'Ҳисоб',
     'landing.footerTelegram': 'Telegram орқали ёзиш',
+
+    /* ── Jadval ── */
+    'common.rowNumber': '№',
+
+    /* ── Guruh sig'imi ── */
+    'groups.full': 'Гуруҳ тўлган — хона сиғимига етди',
 };

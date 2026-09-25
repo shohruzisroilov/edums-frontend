@@ -19,8 +19,13 @@ import {
 import { SelectInput } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { SearchInput } from '@/components/ui/search-input';
-import { LeadStatusBadge } from '@/components/ui/status-badge';
+import {
+    LeadSourceBadge,
+    LeadStatusBadge,
+    LeadStatusDot,
+} from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useListQuery } from '@/hooks/use-list-query';
@@ -198,7 +203,8 @@ function LeadsView() {
                                     : 'border-card-border hover:border-text-tertiary',
                             )}
                         >
-                            <p className='text-text-tertiary text-xs'>
+                            <p className='text-text-tertiary flex items-center gap-2 text-xs'>
+                                <LeadStatusDot status={status} />
                                 {t(`leadStatus.${status}`)}
                             </p>
                             <p className='text-text-primary font-display mt-1 text-2xl font-semibold tabular-nums'>
@@ -260,6 +266,7 @@ function LeadsView() {
                             >
                                 <TableHeader>
                                     <TableRow>
+                                        <RowNumberHead />
                                         <TableHead>
                                             {t('common.fullName')}
                                         </TableHead>
@@ -281,8 +288,12 @@ function LeadsView() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {query.data.data.map((lead) => (
+                                    {query.data.data.map((lead, index) => (
                                         <TableRow key={lead.id}>
+                                            <RowNumberCell
+                                                index={index}
+                                                offset={offset}
+                                            />
                                             <TableCell primary>
                                                 {leadName(lead)}
                                                 <p className='text-text-tertiary mt-0.5 text-xs font-normal tabular-nums'>
@@ -290,7 +301,9 @@ function LeadsView() {
                                                 </p>
                                             </TableCell>
                                             <TableCell>
-                                                {t(`leadSource.${lead.source}`)}
+                                                <LeadSourceBadge
+                                                    source={lead.source}
+                                                />
                                             </TableCell>
                                             <TableCell>
                                                 {lead.course?.name ?? '—'}
@@ -298,7 +311,10 @@ function LeadsView() {
                                             <TableCell>
                                                 {canUpdate &&
                                                 lead.status !== 'won' ? (
-                                                    <div className='w-40'>
+                                                    <div className='flex w-44 items-center gap-2'>
+                                                        <LeadStatusDot
+                                                            status={lead.status}
+                                                        />
                                                         <SelectInput
                                                             options={EDITABLE_LEAD_STATUSES.map(
                                                                 (status) => ({

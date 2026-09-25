@@ -24,6 +24,7 @@ import {
 import { CheckboxInput } from '@/components/ui/form-field';
 import { LessonSchedule } from '@/components/ui/lesson-schedule';
 import { PageHeader } from '@/components/ui/page-header';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { GroupStatusBadge } from '@/components/ui/status-badge';
 import { useFormat } from '@/hooks/use-format';
 import { useSession } from '@/hooks/use-session';
@@ -177,6 +178,7 @@ function GroupDetailView() {
                     <TableRoot fullBleed className='border-x-0 border-t-0'>
                         <TableHeader>
                             <TableRow>
+                                <RowNumberHead />
                                 <TableHead>{t('common.fullName')}</TableHead>
                                 <TableHead>{t('common.phone')}</TableHead>
                                 <TableHead>{t('students.joinedAt')}</TableHead>
@@ -192,8 +194,9 @@ function GroupDetailView() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {studentsQuery.data.map((enrollment) => (
+                            {studentsQuery.data.map((enrollment, index) => (
                                 <TableRow key={enrollment.id}>
+                                    <RowNumberCell index={index} />
                                     <TableCell primary>
                                         {canOpenStudents ? (
                                             <Link

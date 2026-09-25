@@ -1221,6 +1221,12 @@ export const uz = {
     'landing.footerProduct': 'Mahsulot',
     'landing.footerAccount': 'Hisob',
     'landing.footerTelegram': 'Telegram orqali yozish',
+
+    /* ── Jadval ── */
+    'common.rowNumber': '№',
+
+    /* ── Guruh sig'imi ── */
+    'groups.full': "Guruh to'lgan — xona sig'imiga yetdi",
 } as const;
 
 export type TranslationKey = keyof typeof uz;

@@ -17,6 +17,7 @@ import {
     TableSkeleton,
 } from '@/components/ui/data-state';
 import { PageHeader } from '@/components/ui/page-header';
+import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { ActiveBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
@@ -105,6 +106,7 @@ function CoursesView() {
                         <TableRoot fullBleed className='border-x-0 border-t-0'>
                             <TableHeader>
                                 <TableRow>
+                                    <RowNumberHead />
                                     <TableHead>{t('common.name')}</TableHead>
                                     <TableHead numeric>
                                         {t('courses.price')}
@@ -121,8 +123,9 @@ function CoursesView() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {query.data.map((course) => (
+                                {query.data.map((course, index) => (
                                     <TableRow key={course.id}>
+                                        <RowNumberCell index={index} />
                                         <TableCell
                                             primary
                                             className='whitespace-normal'

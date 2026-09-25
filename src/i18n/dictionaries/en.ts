@@ -1205,4 +1205,10 @@ export const en: Dictionary = {
     'landing.footerProduct': 'Product',
     'landing.footerAccount': 'Account',
     'landing.footerTelegram': 'Message us on Telegram',
+
+    /* ── Jadval ── */
+    'common.rowNumber': '#',
+
+    /* ── Guruh sig'imi ── */
+    'groups.full': "Group is full — the room's capacity is reached",
 };
