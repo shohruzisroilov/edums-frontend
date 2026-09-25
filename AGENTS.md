@@ -24,6 +24,7 @@ src/
       layout.tsx          # sidebar + header shell, sessiyani yangilash, obuna bloklash
       users/              # /users — markaz foydalanuvchilari (users.*)
       roles/              # /roles — dinamik rollar (roles.*)
+      branches/           # /branches — filiallar (branches.*)
       billing/            # /billing — tarif tanlash va to'lov (billing.manage)
       educations/         # /educations va /[id] — o'quv markazlar (super admin)
       tariffs/            # /tariffs — tariflar (super admin)

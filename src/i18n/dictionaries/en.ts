@@ -411,4 +411,28 @@ export const en: Dictionary = {
     'platformSettings.paymentInstructionsPlaceholder':
         "Card: 8600 0000 0000 0000 (Full name). Put the center's name in the payment note.",
     'platformSettings.saved': 'Settings saved',
+
+    /* ── Filiallar ── */
+    'nav.branches': 'Branches',
+    'permissionModule.branches': 'Branches',
+    'permission.branches.view': 'View the branches page',
+    'permission.branches.create': 'Add branches',
+    'permission.branches.update': 'Edit branches',
+    'permission.branches.delete': 'Delete branches',
+    'branches.title': 'Branches',
+    'branches.subtitle':
+        "Your center's locations. Groups, rooms and students belong to a branch",
+    'branches.new': 'New branch',
+    'branches.edit': 'Edit branch',
+    'branches.empty': 'No branches',
+    'branches.namePlaceholder': 'E.g. Chilonzor branch',
+    'branches.address': 'Address',
+    'branches.activeLabel':
+        'Active — can be picked for new groups and students',
+    'branches.deleteTitle': 'Delete branch',
+    'branches.deleteMessage':
+        "Branch “{name}” will be deleted. A branch with groups or students can't be deleted — deactivate it instead.",
+    'branches.created': 'Branch added',
+    'branches.updated': 'Branch updated',
+    'branches.deleted': 'Branch deleted',
 };

@@ -56,10 +56,14 @@ export const PERMISSION_KEYS = [
     'roles.update',
     'roles.delete',
     'billing.manage',
+    'branches.view',
+    'branches.create',
+    'branches.update',
+    'branches.delete',
 ] as const;
 export type PermissionKey = (typeof PERMISSION_KEYS)[number];
 
-export type PermissionModule = 'users' | 'roles' | 'billing';
+export type PermissionModule = 'users' | 'roles' | 'billing' | 'branches';
 
 /** GET /permissions — modul bo'yicha guruhlangan katalog. */
 export interface PermissionGroup {
@@ -265,6 +269,27 @@ export interface CreateEducationOwnerPayload {
     last_name: string;
     phone_number: string;
     password: string;
+}
+
+/* ── Filiallar ────────────────────────────────────────────────────────── */
+
+export interface Branch {
+    id: string;
+    education_id: string;
+    name: string;
+    address: string | null;
+    phone_number: string | null;
+    /** Nofaol filial yangi guruh va o'quvchilar uchun tanlanmaydi. */
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface BranchPayload {
+    name: string;
+    address?: string | null;
+    phone_number?: string | null;
+    is_active?: boolean;
 }
 
 /* ── Rollar ───────────────────────────────────────────────────────────── */

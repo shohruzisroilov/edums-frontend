@@ -412,4 +412,27 @@ export const ru: Dictionary = {
     'platformSettings.paymentInstructionsPlaceholder':
         'Карта: 8600 0000 0000 0000 (Ф.И.О.). В комментарии к платежу укажите название центра.',
     'platformSettings.saved': 'Настройки сохранены',
+
+    /* ── Filiallar ── */
+    'nav.branches': 'Филиалы',
+    'permissionModule.branches': 'Филиалы',
+    'permission.branches.view': 'Просмотр страницы филиалов',
+    'permission.branches.create': 'Добавление филиала',
+    'permission.branches.update': 'Изменение филиала',
+    'permission.branches.delete': 'Удаление филиала',
+    'branches.title': 'Филиалы',
+    'branches.subtitle':
+        'Адреса вашего центра. Группы, кабинеты и ученики привязываются к филиалу',
+    'branches.new': 'Новый филиал',
+    'branches.edit': 'Изменить филиал',
+    'branches.empty': 'Филиалов нет',
+    'branches.namePlaceholder': 'Например, Филиал Чиланзар',
+    'branches.address': 'Адрес',
+    'branches.activeLabel': 'Активен — доступен для новых групп и учеников',
+    'branches.deleteTitle': 'Удалить филиал',
+    'branches.deleteMessage':
+        'Филиал «{name}» будет удалён. Филиал с группами или учениками удалить нельзя — сделайте его неактивным.',
+    'branches.created': 'Филиал добавлен',
+    'branches.updated': 'Филиал обновлён',
+    'branches.deleted': 'Филиал удалён',
 };

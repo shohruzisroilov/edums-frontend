@@ -415,6 +415,29 @@ export const uz = {
     'platformSettings.paymentInstructionsPlaceholder':
         "Karta: 8600 0000 0000 0000 (F.I.Sh.). To'lov izohiga markaz nomini yozing.",
     'platformSettings.saved': 'Sozlamalar saqlandi',
+
+    /* ── Filiallar ── */
+    'nav.branches': 'Filiallar',
+    'permissionModule.branches': 'Filiallar',
+    'permission.branches.view': "Filiallar sahifasini ko'rish",
+    'permission.branches.create': "Filial qo'shish",
+    'permission.branches.update': 'Filialni tahrirlash',
+    'permission.branches.delete': "Filialni o'chirish",
+    'branches.title': 'Filiallar',
+    'branches.subtitle':
+        "Markazingiz manzillari. Guruhlar, xonalar va o'quvchilar filialga biriktiriladi",
+    'branches.new': 'Yangi filial',
+    'branches.edit': 'Filialni tahrirlash',
+    'branches.empty': "Filial yo'q",
+    'branches.namePlaceholder': 'Masalan, Chilonzor filiali',
+    'branches.address': 'Manzil',
+    'branches.activeLabel': "Faol — yangi guruh va o'quvchilar uchun tanlanadi",
+    'branches.deleteTitle': "Filialni o'chirish",
+    'branches.deleteMessage':
+        "«{name}» filiali o'chiriladi. Guruh yoki o'quvchilari bor filialni o'chirib bo'lmaydi — uni nofaol qiling.",
+    'branches.created': "Filial qo'shildi",
+    'branches.updated': 'Filial yangilandi',
+    'branches.deleted': "Filial o'chirildi",
 } as const;
 
 export type TranslationKey = keyof typeof uz;

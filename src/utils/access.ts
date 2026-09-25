@@ -43,6 +43,7 @@ export function homeHref(session: Session | null): string {
     if (!hasActiveSubscription(session)) return '/billing';
     if (can(session, 'users.view')) return '/users';
     if (can(session, 'roles.view')) return '/roles';
+    if (can(session, 'branches.view')) return '/branches';
     return '/profile';
 }
 

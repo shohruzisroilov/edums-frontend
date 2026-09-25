@@ -5,6 +5,7 @@ import {
     Buildings11,
     CreditCard,
     Gear1,
+    MapMarker5,
     Message1,
     Shield1Check,
     User2,
@@ -41,6 +42,12 @@ const NAV_DATA: NavSection[] = [
                 url: '/roles',
                 icon: <Shield1Check className='size-5' />,
                 visible: (session) => can(session, 'roles.view'),
+            },
+            {
+                titleKey: 'nav.branches',
+                url: '/branches',
+                icon: <MapMarker5 className='size-5' />,
+                visible: (session) => can(session, 'branches.view'),
             },
             {
                 titleKey: 'nav.billing',

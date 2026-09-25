@@ -35,6 +35,7 @@ npm run dev             # http://localhost:3000
 | Platforma sozlamalari | `/platform-settings` | Super admin |
 | Foydalanuvchilar | `/users` | `users.view` ruxsati borlar |
 | Rollar | `/roles` | `roles.view` ruxsati borlar |
+| Filiallar | `/branches` | `branches.view` ruxsati borlar |
 | Tarif va to'lov | `/billing` | `billing.manage` ruxsati borlar |
 | Profil | `/profile` | Kirgan har bir kishi |
 
@@ -63,6 +64,7 @@ src/
       billing/            # markaz: tarif tanlash va to'lov
       users/              # foydalanuvchilar
       roles/              # rollar va ruxsatlar
+      branches/           # filiallar
       profile/            # o'z profili va paroli
     css/, globals.css     # dizayn tokenlari (kunduzgi/tungi mavzu)
   components/

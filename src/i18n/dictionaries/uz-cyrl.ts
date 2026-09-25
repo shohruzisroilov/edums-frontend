@@ -411,4 +411,27 @@ export const uzCyrl: Dictionary = {
     'platformSettings.paymentInstructionsPlaceholder':
         'Карта: 8600 0000 0000 0000 (Ф.И.Ш.). Тўлов изоҳига марказ номини ёзинг.',
     'platformSettings.saved': 'Созламалар сақланди',
+
+    /* ── Filiallar ── */
+    'nav.branches': 'Филиаллар',
+    'permissionModule.branches': 'Филиаллар',
+    'permission.branches.view': 'Филиаллар саҳифасини кўриш',
+    'permission.branches.create': 'Филиал қўшиш',
+    'permission.branches.update': 'Филиални таҳрирлаш',
+    'permission.branches.delete': 'Филиални ўчириш',
+    'branches.title': 'Филиаллар',
+    'branches.subtitle':
+        'Марказингиз манзиллари. Гуруҳлар, хоналар ва ўқувчилар филиалга бириктирилади',
+    'branches.new': 'Янги филиал',
+    'branches.edit': 'Филиални таҳрирлаш',
+    'branches.empty': 'Филиал йўқ',
+    'branches.namePlaceholder': 'Масалан, Чилонзор филиали',
+    'branches.address': 'Манзил',
+    'branches.activeLabel': 'Фаол — янги гуруҳ ва ўқувчилар учун танланади',
+    'branches.deleteTitle': 'Филиални ўчириш',
+    'branches.deleteMessage':
+        '«{name}» филиали ўчирилади. Гуруҳ ёки ўқувчилари бор филиални ўчириб бўлмайди — уни нофаол қилинг.',
+    'branches.created': 'Филиал қўшилди',
+    'branches.updated': 'Филиал янгиланди',
+    'branches.deleted': 'Филиал ўчирилди',
 };
