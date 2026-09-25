@@ -84,6 +84,10 @@ export const PERMISSION_KEYS = [
     'audit.view',
     'settings.manage',
     'reports.view',
+    'expenses.view',
+    'expenses.manage',
+    'salaries.view',
+    'salaries.manage',
 ] as const;
 export type PermissionKey = (typeof PERMISSION_KEYS)[number];
 
@@ -100,7 +104,9 @@ export type PermissionModule =
     | 'attendance'
     | 'audit'
     | 'settings'
-    | 'reports';
+    | 'reports'
+    | 'expenses'
+    | 'salaries';
 
 /** GET /permissions — modul bo'yicha guruhlangan katalog. */
 export interface PermissionGroup {
@@ -786,6 +792,11 @@ export const AUDIT_ACTIONS = [
     'billing.approve',
     'billing.reject',
     'settings.update',
+    'expense.create',
+    'expense.delete',
+    'salary.rate',
+    'salary.pay',
+    'salary.cancel',
 ] as const;
 export type AuditAction = (typeof AUDIT_ACTIONS)[number];
 
@@ -803,6 +814,8 @@ export const AUDIT_ENTITY_TYPES = [
     'attendance',
     'billing',
     'settings',
+    'expense',
+    'salary',
 ] as const;
 export type AuditEntityType = (typeof AUDIT_ENTITY_TYPES)[number];
 
@@ -826,6 +839,105 @@ export interface ListAuditLogsQuery extends PaginationQuery {
     actor_id?: string;
     from?: string;
     to?: string;
+}
+
+/* ── Xarajatlar va oyliklar ───────────────────────────────────────────── */
+
+export const EXPENSE_CATEGORIES = [
+    'rent',
+    'salary',
+    'utilities',
+    'marketing',
+    'supplies',
+    'tax',
+    'other',
+] as const;
+export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number];
+
+/** Qo'lda kiritiladiganlari — "oylik" oyliklar sahifasidan yoziladi. */
+export const MANUAL_EXPENSE_CATEGORIES = EXPENSE_CATEGORIES.filter(
+    (category) => category !== 'salary',
+);
+
+export interface Expense {
+    id: string;
+    category: ExpenseCategory;
+    amount: number;
+    /** YYYY-MM-DD */
+    spent_at: string;
+    branch: Ref | null;
+    note: string | null;
+    /** Oylik to'lovidan yaratilgan — alohida o'chirilmaydi. */
+    is_salary_payout: boolean;
+    created_by: PersonRef | null;
+    created_at: string;
+}
+
+export interface CreateExpensePayload {
+    category: ExpenseCategory;
+    amount: number;
+    spent_at?: string;
+    branch_id?: string | null;
+    note?: string | null;
+}
+
+export interface ListExpensesQuery extends PaginationQuery {
+    category?: ExpenseCategory;
+    branch_id?: string;
+    from?: string;
+    to?: string;
+}
+
+export interface ExpensesResponse extends PaginatedResponse<Expense> {
+    sum: number;
+}
+
+export const SALARY_RATE_TYPES = ['fixed', 'percent', 'per_student'] as const;
+export type SalaryRateType = (typeof SALARY_RATE_TYPES)[number];
+
+export interface SalaryRate {
+    type: SalaryRateType;
+    /** fixed va per_student — so'm; percent — 0–100. */
+    value: number;
+}
+
+export interface SalarySheetRow {
+    user: PersonRef;
+    rate: SalaryRate | null;
+    groups_count: number;
+    students_count: number;
+    /** Guruhlaridan shu oy tushgan to'lovlar. */
+    revenue: number;
+    accrued: number;
+    paid: number;
+    /** accrued − paid */
+    balance: number;
+}
+
+export interface SalarySheet {
+    month: string;
+    rows: SalarySheetRow[];
+    totals: { accrued: number; paid: number; balance: number };
+}
+
+export interface SalaryPayout {
+    id: string;
+    user: PersonRef;
+    /** YYYY-MM — qaysi oy uchun. */
+    month: string;
+    amount: number;
+    paid_at: string;
+    note: string | null;
+    created_by: PersonRef | null;
+    created_at: string;
+}
+
+export interface CreateSalaryPayoutPayload {
+    user_id: string;
+    month: string;
+    amount: number;
+    paid_at?: string;
+    note?: string | null;
 }
 
 /* ── Hisobotlar ───────────────────────────────────────────────────────── */
@@ -852,6 +964,9 @@ export interface Dashboard {
         /** Oxirgi 6 oy, eskisi birinchi. */
         by_month: MonthAmount[];
     };
+    expenses: { this_month: number; by_month: MonthAmount[] };
+    /** Shu oy: tushum − xarajat. */
+    profit_this_month: number;
     debt: { total: number; debtors: number };
     /** Oxirgi 30 kun; `rate` — (keldi + kechikdi) / belgilar, belgi yo'q — null. */
     attendance: {

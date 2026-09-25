@@ -177,10 +177,21 @@ function DashboardView() {
                         formatValue={formatNumber}
                     />
                 </SectionCard>
-                <StatTile
-                    label={t('dashboard.activeGroups')}
-                    value={formatNumber(data.active_groups)}
-                />
+                <div className='grid gap-4'>
+                    <StatTile
+                        label={t('dashboard.expensesThisMonth')}
+                        value={formatPrice(data.expenses.this_month, som)}
+                    />
+                    <StatTile
+                        label={t('dashboard.profit')}
+                        value={formatPrice(data.profit_this_month, som)}
+                        hint={t('dashboard.profitHint')}
+                    />
+                    <StatTile
+                        label={t('dashboard.activeGroups')}
+                        value={formatNumber(data.active_groups)}
+                    />
+                </div>
             </div>
         </>
     );

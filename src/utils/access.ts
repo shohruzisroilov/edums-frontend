@@ -46,6 +46,8 @@ export function homeHref(session: Session | null): string {
     if (can(session, 'groups.view')) return '/groups';
     if (can(session, 'leads.view')) return '/leads';
     if (can(session, 'payments.view')) return '/cashbox';
+    if (can(session, 'expenses.view')) return '/expenses';
+    if (can(session, 'salaries.view')) return '/salaries';
     if (can(session, 'users.view')) return '/users';
     if (can(session, 'roles.view')) return '/roles';
     if (can(session, 'branches.view')) return '/branches';

@@ -20,6 +20,7 @@ import {
     User2,
     UserCircle1,
     UserMultiple1,
+    UserPencil,
     Wallet2,
 } from '@tailgrids/icons';
 import type { ReactNode } from 'react';
@@ -99,6 +100,18 @@ const NAV_DATA: NavSection[] = [
                 url: '/debtors',
                 icon: <SackDollar className='size-5' />,
                 visible: (session) => can(session, 'payments.view'),
+            },
+            {
+                titleKey: 'nav.expenses',
+                url: '/expenses',
+                icon: <Wallet2 className='size-5' />,
+                visible: (session) => can(session, 'expenses.view'),
+            },
+            {
+                titleKey: 'nav.salaries',
+                url: '/salaries',
+                icon: <UserPencil className='size-5' />,
+                visible: (session) => can(session, 'salaries.view'),
             },
         ],
     },
