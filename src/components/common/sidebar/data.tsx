@@ -3,12 +3,15 @@ import type { Session } from '@/types/api';
 import { can, isSuperAdmin } from '@/utils/access';
 import {
     Buildings11,
+    CalendarTime,
     CreditCard,
     Gear1,
     MapMarker5,
     Message1,
+    OpenBook,
     Shield1Check,
     User2,
+    UserMultiple1,
     Wallet2,
 } from '@tailgrids/icons';
 import type { ReactNode } from 'react';
@@ -28,6 +31,29 @@ interface NavSection {
 }
 
 const NAV_DATA: NavSection[] = [
+    {
+        labelKey: 'nav.learning',
+        items: [
+            {
+                titleKey: 'nav.groups',
+                url: '/groups',
+                icon: <UserMultiple1 className='size-5' />,
+                visible: (session) => can(session, 'groups.view'),
+            },
+            {
+                titleKey: 'nav.schedule',
+                url: '/schedule',
+                icon: <CalendarTime className='size-5' />,
+                visible: (session) => can(session, 'groups.view'),
+            },
+            {
+                titleKey: 'nav.courses',
+                url: '/courses',
+                icon: <OpenBook className='size-5' />,
+                visible: (session) => can(session, 'courses.view'),
+            },
+        ],
+    },
     {
         labelKey: 'nav.management',
         items: [

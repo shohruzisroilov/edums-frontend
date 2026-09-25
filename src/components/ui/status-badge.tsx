@@ -4,6 +4,7 @@ import { Badge } from '@/components/tailgrids/core/badge';
 import { useT } from '@/i18n/provider';
 import type {
     EducationStatus,
+    GroupStatus,
     PaymentRequestStatus,
     RoleSummary,
     SubscriptionStatus,
@@ -32,6 +33,16 @@ export function RoleBadge({ role }: { role: RoleSummary }) {
     return (
         <Badge size='sm' color={role.is_system ? 'primary' : 'gray'}>
             {role.name}
+        </Badge>
+    );
+}
+
+export function GroupStatusBadge({ status }: { status: GroupStatus }) {
+    const t = useT();
+
+    return (
+        <Badge size='sm' color={status === 'active' ? 'success' : 'gray'}>
+            {t(`groupStatus.${status}`)}
         </Badge>
     );
 }

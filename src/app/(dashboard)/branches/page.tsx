@@ -30,6 +30,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { BranchFormModal } from './_components/branch-form';
+import { RoomsModal } from './_components/rooms-modal';
 
 export default function BranchesPage() {
     return (
@@ -53,6 +54,7 @@ function BranchesView() {
     const [formOpen, setFormOpen] = useState(false);
     const [editing, setEditing] = useState<Branch | null>(null);
     const [deleting, setDeleting] = useState<Branch | null>(null);
+    const [roomsOf, setRoomsOf] = useState<Branch | null>(null);
 
     const query = useQuery({ queryKey: ['branches'], queryFn: listBranches });
 
@@ -114,11 +116,9 @@ function BranchesView() {
                                     <TableHead>
                                         {t('common.createdAt')}
                                     </TableHead>
-                                    {(canUpdate || canDelete) && (
-                                        <TableHead className='text-right'>
-                                            {t('common.actions')}
-                                        </TableHead>
-                                    )}
+                                    <TableHead className='text-right'>
+                                        {t('common.actions')}
+                                    </TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -141,52 +141,54 @@ function BranchesView() {
                                         <TableCell>
                                             {formatDate(branch.created_at)}
                                         </TableCell>
-                                        {(canUpdate || canDelete) && (
-                                            <TableCell>
-                                                <div className='flex justify-end gap-2'>
-                                                    {canUpdate && (
+                                        <TableCell>
+                                            <div className='flex justify-end gap-2'>
+                                                <Button
+                                                    appearance='outline'
+                                                    size='md'
+                                                    onPress={() =>
+                                                        setRoomsOf(branch)
+                                                    }
+                                                >
+                                                    {t('rooms.manage')}
+                                                </Button>
+                                                {canUpdate && (
+                                                    <Button
+                                                        appearance='outline'
+                                                        size='md'
+                                                        iconOnly
+                                                        aria-label={t(
+                                                            'common.edit',
+                                                        )}
+                                                        onPress={() => {
+                                                            setEditing(branch);
+                                                            setFormOpen(true);
+                                                        }}
+                                                    >
+                                                        <Pencil1 />
+                                                    </Button>
+                                                )}
+                                                {canDelete &&
+                                                    query.data.length > 1 && (
                                                         <Button
+                                                            variant='danger'
                                                             appearance='outline'
                                                             size='md'
                                                             iconOnly
                                                             aria-label={t(
-                                                                'common.edit',
+                                                                'common.delete',
                                                             )}
-                                                            onPress={() => {
-                                                                setEditing(
+                                                            onPress={() =>
+                                                                setDeleting(
                                                                     branch,
-                                                                );
-                                                                setFormOpen(
-                                                                    true,
-                                                                );
-                                                            }}
+                                                                )
+                                                            }
                                                         >
-                                                            <Pencil1 />
+                                                            <Trash1 />
                                                         </Button>
                                                     )}
-                                                    {canDelete &&
-                                                        query.data.length >
-                                                            1 && (
-                                                            <Button
-                                                                variant='danger'
-                                                                appearance='outline'
-                                                                size='md'
-                                                                iconOnly
-                                                                aria-label={t(
-                                                                    'common.delete',
-                                                                )}
-                                                                onPress={() =>
-                                                                    setDeleting(
-                                                                        branch,
-                                                                    )
-                                                                }
-                                                            >
-                                                                <Trash1 />
-                                                            </Button>
-                                                        )}
-                                                </div>
-                                            </TableCell>
-                                        )}
+                                            </div>
+                                        </TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -199,6 +201,14 @@ function BranchesView() {
                 <BranchFormModal
                     branch={editing}
                     onClose={() => setFormOpen(false)}
+                />
+            )}
+
+            {roomsOf && (
+                <RoomsModal
+                    branch={roomsOf}
+                    canManage={canUpdate}
+                    onClose={() => setRoomsOf(null)}
                 />
             )}
 

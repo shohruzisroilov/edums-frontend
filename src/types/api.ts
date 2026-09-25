@@ -60,10 +60,24 @@ export const PERMISSION_KEYS = [
     'branches.create',
     'branches.update',
     'branches.delete',
+    'courses.view',
+    'courses.create',
+    'courses.update',
+    'courses.delete',
+    'groups.view',
+    'groups.create',
+    'groups.update',
+    'groups.delete',
 ] as const;
 export type PermissionKey = (typeof PERMISSION_KEYS)[number];
 
-export type PermissionModule = 'users' | 'roles' | 'billing' | 'branches';
+export type PermissionModule =
+    | 'users'
+    | 'roles'
+    | 'billing'
+    | 'branches'
+    | 'courses'
+    | 'groups';
 
 /** GET /permissions — modul bo'yicha guruhlangan katalog. */
 export interface PermissionGroup {
@@ -292,6 +306,123 @@ export interface BranchPayload {
     is_active?: boolean;
 }
 
+/* ── Xonalar ──────────────────────────────────────────────────────────── */
+
+export interface Room {
+    id: string;
+    education_id: string;
+    branch_id: string;
+    name: string;
+    capacity: number | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface CreateRoomPayload {
+    branch_id: string;
+    name: string;
+    capacity?: number | null;
+    is_active?: boolean;
+}
+
+/** Xona filialini o'zgartirib bo'lmaydi. */
+export type UpdateRoomPayload = Partial<Omit<CreateRoomPayload, 'branch_id'>>;
+
+/* ── Kurslar ──────────────────────────────────────────────────────────── */
+
+export interface Course {
+    id: string;
+    education_id: string;
+    name: string;
+    description: string | null;
+    /** Oylik narx (so'm) — yangi guruh uchun standart. */
+    price: number;
+    duration_months: number | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface CoursePayload {
+    name: string;
+    description?: string | null;
+    price: number;
+    duration_months?: number | null;
+    is_active?: boolean;
+}
+
+/* ── Guruhlar ─────────────────────────────────────────────────────────── */
+
+export const GROUP_STATUSES = ['active', 'finished'] as const;
+export type GroupStatus = (typeof GROUP_STATUSES)[number];
+
+/** ISO hafta kunlari: 1 — dushanba … 7 — yakshanba. */
+export const WEEKDAYS = [1, 2, 3, 4, 5, 6, 7] as const;
+export type Weekday = (typeof WEEKDAYS)[number];
+
+export interface Ref {
+    id: string;
+    name: string;
+}
+
+export interface PersonRef {
+    id: string;
+    first_name: string;
+    last_name: string;
+}
+
+export interface Group {
+    id: string;
+    name: string;
+    course: Ref;
+    branch: Ref;
+    teacher: PersonRef | null;
+    room: Ref | null;
+    /** Oylik narx (so'm). */
+    price: number;
+    /** YYYY-MM-DD */
+    start_date: string;
+    end_date: string | null;
+    lesson_days: Weekday[];
+    /** HH:MM */
+    lesson_start: string;
+    lesson_end: string;
+    status: GroupStatus;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface GroupPayload {
+    name: string;
+    course_id: string;
+    branch_id: string;
+    teacher_id?: string | null;
+    room_id?: string | null;
+    /** Berilmasa — kurs narxi. */
+    price?: number;
+    start_date: string;
+    end_date?: string | null;
+    lesson_days: Weekday[];
+    lesson_start: string;
+    lesson_end: string;
+    status?: GroupStatus;
+}
+
+export interface ListGroupsQuery extends PaginationQuery {
+    search?: string;
+    branch_id?: string;
+    course_id?: string;
+    teacher_id?: string;
+    status?: GroupStatus;
+}
+
+export interface ScheduleQuery {
+    branch_id?: string;
+    teacher_id?: string;
+    room_id?: string;
+}
+
 /* ── Rollar ───────────────────────────────────────────────────────────── */
 
 export interface Role {
@@ -357,6 +488,9 @@ export interface UpdateUserPayload {
     avatar_id?: string | null;
     is_active?: boolean;
 }
+
+/** GET /users/options — faol foydalanuvchilar, faqat ism (tanlash uchun). */
+export type UserOption = PersonRef;
 
 export interface ListUsersQuery extends PaginationQuery {
     search?: string;

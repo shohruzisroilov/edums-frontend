@@ -46,7 +46,7 @@ export function createFormatters(locale: Locale) {
 
     function toDate(value: string | Date | null | undefined): Date | null {
         if (!value) return null;
-        const date = typeof value === 'string' ? new Date(value) : value;
+        const date = typeof value === 'string' ? parseDate(value) : value;
         return Number.isNaN(date.getTime()) ? null : date;
     }
 
@@ -91,6 +91,22 @@ export function createFormatters(locale: Locale) {
                 : `${formatInteger(value)} ${currency}`;
         },
     };
+}
+
+/**
+ * Faqat sanadan iborat qiymat (`2026-10-01`) — kalendar kuni, vaqt zonasi
+ * yo'q. `new Date()` uni UTC yarim tuni deb o'qiydi va g'arbdagi zonalarda bir
+ * kun oldinga siljitardi, shuning uchun u mahalliy sana sifatida yasaladi.
+ */
+function parseDate(value: string): Date {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+    if (!match) return new Date(value);
+    return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+}
+
+/** Mahalliy sana `YYYY-MM-DD` ko'rinishida — sana maydonlari va API uchun. */
+export function toISODate(date: Date): string {
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
 /** Til bilan bog'liq emas — hamma joyda "Familiya Ism" tartibida. */
