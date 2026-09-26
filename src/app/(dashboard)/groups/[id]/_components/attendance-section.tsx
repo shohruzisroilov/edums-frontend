@@ -12,6 +12,7 @@ import { Modal } from '@/components/ui/modal';
 import { currentMonth, MonthSwitcher } from '@/components/ui/month-switcher';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
+import { useUrlParam } from '@/hooks/use-url-state';
 import { useT } from '@/i18n/provider';
 import { getGroupAttendance, markAttendance } from '@/services/api/attendance';
 import {
@@ -54,7 +55,7 @@ export function AttendanceSection({
     canMark: boolean;
 }) {
     const t = useT();
-    const [month, setMonth] = useState(currentMonth);
+    const [month, setMonth] = useUrlParam('month', currentMonth());
     const [marking, setMarking] = useState<string | null>(null);
 
     const query = useQuery({

@@ -18,11 +18,11 @@ import { DetailSection } from '@/components/ui/detail';
 import { currentMonth, MonthSwitcher } from '@/components/ui/month-switcher';
 import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { useFormat } from '@/hooks/use-format';
+import { useUrlParam } from '@/hooks/use-url-state';
 import { useT } from '@/i18n/provider';
 import { getStudentAttendance } from '@/services/api/attendance';
 import { ATTENDANCE_STATUSES, type AttendanceStatus } from '@/types/api';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
 
 const STATUS_COLORS: Record<
     AttendanceStatus,
@@ -38,7 +38,7 @@ const STATUS_COLORS: Record<
 export function StudentAttendanceSection({ studentId }: { studentId: string }) {
     const t = useT();
     const { formatDate, formatNumber } = useFormat();
-    const [month, setMonth] = useState(currentMonth);
+    const [month, setMonth] = useUrlParam('month', currentMonth());
 
     const query = useQuery({
         queryKey: ['student-attendance', studentId, month],

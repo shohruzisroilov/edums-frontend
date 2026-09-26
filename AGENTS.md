@@ -248,6 +248,10 @@ bo'sh qiymatni qabul qilmaydi.
   klass deb skanerlaydi va build yiqiladi.
 - Forma modallari **faqat ochilganda mount qilinadi** (`{open && <Form .../>}`),
   shuning uchun boshlang'ich holat `useState` initializerida hisoblanadi.
+- **Sahifa holati manzilda:** ro'yxat filtrlari, qidiruv (`q`), sahifa
+  (`page`), limit va oy (`month`) `useListQuery` / `useUrlParam`
+  (`hooks/use-url-state.ts`) orqali URL'da saqlanadi — "orqaga" qaytganda
+  va sahifa yangilanganda yo'qolmaydi. Filtr uchun `useState` ishlatmang.
 - **Yaratish oynasiga to'g'ridan-to'g'ri havola:** `withNewParam('/students')`
   → `/students?new=1`. Sahifa `useOpenOnNewParam(open, canCreate)`
   (`hooks/use-new-param.ts`) bilan oynani ochadi va parametrni manzildan

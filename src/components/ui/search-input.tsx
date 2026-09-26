@@ -2,7 +2,7 @@
 
 import { useT } from '@/i18n/provider';
 import { Search1 } from '@tailgrids/icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 /** Qidiruv maydoni — yozishdan 350 ms keyin so'rov yuboriladi. */
 export function SearchInput({
@@ -17,12 +17,25 @@ export function SearchInput({
     const t = useT();
     // Maydon o'z holatini yuritadi, ota komponentga esa debounce bilan uzatiladi.
     const [draft, setDraft] = useState(value);
+    // Oxirgi uzatilgan qiymat. `value` undan farq qilsa, o'zgarish tashqaridan
+    // kelgan (orqaga qaytish, filtrni tozalash) — maydon shunga moslashadi.
+    // Yozish davomida kelgan eski qiymat esa yozilayotgan matnni o'chirmaydi.
+    const sent = useRef(value);
 
     useEffect(() => {
-        if (draft === value) return;
-        const timer = setTimeout(() => onChange(draft), 350);
+        if (value === sent.current) return;
+        sent.current = value;
+        setDraft(value);
+    }, [value]);
+
+    useEffect(() => {
+        if (draft === sent.current) return;
+        const timer = setTimeout(() => {
+            sent.current = draft;
+            onChange(draft);
+        }, 350);
         return () => clearTimeout(timer);
-    }, [draft, value, onChange]);
+    }, [draft, onChange]);
 
     return (
         <div className='relative w-full sm:max-w-64'>
