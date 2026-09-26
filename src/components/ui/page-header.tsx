@@ -12,7 +12,8 @@ export function PageHeader({
     actions,
 }: {
     title: string;
-    description?: string;
+    /** Matn yoki qisqa qator (masalan, filial · holat belgisi). */
+    description?: ReactNode;
     count?: number;
     actions?: ReactNode;
 }) {
@@ -30,9 +31,9 @@ export function PageHeader({
                     )}
                 </div>
                 {description && (
-                    <p className='text-text-tertiary mt-1.5 text-sm'>
+                    <div className='text-text-tertiary mt-1.5 flex flex-wrap items-center gap-2 text-sm'>
                         {description}
-                    </p>
+                    </div>
                 )}
             </div>
             {actions && (

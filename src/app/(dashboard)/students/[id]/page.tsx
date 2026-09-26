@@ -22,6 +22,7 @@ import {
     EnrollToGroupModal,
 } from '@/components/ui/enrollment-modals';
 import { PageHeader } from '@/components/ui/page-header';
+import { PaymentModal } from '@/components/ui/payment-modal';
 import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { StudentStatusBadge } from '@/components/ui/status-badge';
 import { useFormat } from '@/hooks/use-format';
@@ -38,6 +39,7 @@ import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { StudentFormModal } from '../_components/student-form';
 import { StudentAttendanceSection } from './_components/attendance-section';
+import { BalanceCard } from './_components/balance-card';
 import { FinanceSection } from './_components/finance-section';
 
 export default function StudentDetailPage() {
@@ -58,9 +60,12 @@ function StudentDetailView() {
     // Guruh tanlash ro'yxati GET /groups dan keladi.
     const canEnroll = canUpdate && can(session, 'groups.view');
     const canOpenGroups = can(session, 'groups.view');
+    const canViewPayments = can(session, 'payments.view');
+    const canPay = can(session, 'payments.create');
 
     const [editOpen, setEditOpen] = useState(false);
     const [enrollOpen, setEnrollOpen] = useState(false);
+    const [paying, setPaying] = useState(false);
     const [editingEnrollment, setEditingEnrollment] =
         useState<Enrollment | null>(null);
 
@@ -84,22 +89,41 @@ function StudentDetailView() {
 
             <PageHeader
                 title={fullName(student)}
-                description={student.branch.name}
+                description={
+                    <>
+                        <span>{student.branch.name}</span>
+                        <StudentStatusBadge status={student.status} />
+                    </>
+                }
                 actions={
-                    canUpdate && (
-                        <Button
-                            appearance='outline'
-                            size='md'
-                            onPress={() => setEditOpen(true)}
-                        >
-                            <Pencil1 />
-                            {t('common.edit')}
-                        </Button>
-                    )
+                    <>
+                        {canUpdate && (
+                            <Button
+                                appearance='outline'
+                                size='md'
+                                onPress={() => setEditOpen(true)}
+                            >
+                                <Pencil1 />
+                                {t('common.edit')}
+                            </Button>
+                        )}
+                        {canPay && (
+                            <Button
+                                variant='primary'
+                                appearance='fill'
+                                size='md'
+                                onPress={() => setPaying(true)}
+                            >
+                                <Plus />
+                                {t('cashbox.new')}
+                            </Button>
+                        )}
+                    </>
                 }
             />
 
             <div className='grid gap-4 px-5 sm:grid-cols-2 xl:grid-cols-4'>
+                {canViewPayments && <BalanceCard studentId={student.id} />}
                 <InfoCard
                     label={t('students.phone')}
                     value={student.phone_number ?? '—'}
@@ -126,10 +150,6 @@ function StudentDetailView() {
                 <InfoCard
                     label={t('students.birthDate')}
                     value={formatDate(student.birth_date)}
-                />
-                <InfoCard
-                    label={t('common.status')}
-                    value={<StudentStatusBadge status={student.status} />}
                 />
             </div>
 
@@ -174,7 +194,7 @@ function StudentDetailView() {
                         <TableHeader>
                             <TableRow>
                                 <RowNumberHead />
-                                <TableHead>{t('groups.title')}</TableHead>
+                                <TableHead>{t('common.group')}</TableHead>
                                 <TableHead>{t('students.joinedAt')}</TableHead>
                                 <TableHead>{t('students.leftAt')}</TableHead>
                                 <TableHead numeric>
@@ -249,15 +269,17 @@ function StudentDetailView() {
                 )}
             </DetailSection>
 
-            {can(session, 'payments.view') && (
-                <FinanceSection
-                    student={student}
-                    canPay={can(session, 'payments.create')}
-                />
-            )}
+            {canViewPayments && <FinanceSection student={student} />}
 
             {can(session, 'attendance.view') && (
                 <StudentAttendanceSection studentId={student.id} />
+            )}
+
+            {paying && (
+                <PaymentModal
+                    student={student}
+                    onClose={() => setPaying(false)}
+                />
             )}
 
             {editOpen && (

@@ -78,7 +78,7 @@ export function StudentAttendanceSection({ studentId }: { studentId: string }) {
                             <TableRow>
                                 <RowNumberHead />
                                 <TableHead>{t('cashbox.paidAt')}</TableHead>
-                                <TableHead>{t('groups.title')}</TableHead>
+                                <TableHead>{t('common.group')}</TableHead>
                                 <TableHead>{t('common.status')}</TableHead>
                             </TableRow>
                         </TableHeader>

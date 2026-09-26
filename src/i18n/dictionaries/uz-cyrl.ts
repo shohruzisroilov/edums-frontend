@@ -1220,7 +1220,8 @@ export const uzCyrl: Dictionary = {
 
     /* ── Бошлаш қадамлари ── */
     'setup.title': 'Марказни ишга туширинг',
-    'setup.subtitle': 'Шу қадамларни тартиб билан бажаринг — кейин тизим қарз, давомат ва ойликларни ўзи ҳисоблайди.',
+    'setup.subtitle':
+        'Шу қадамларни тартиб билан бажаринг — кейин тизим қарз, давомат ва ойликларни ўзи ҳисоблайди.',
     'setup.hide': 'Яшириш',
     'setup.progress': '{done} / {total} бажарилди',
     'setup.done': 'бажарилди',
@@ -1228,18 +1229,28 @@ export const uzCyrl: Dictionary = {
     'setup.rooms.hint': 'Дарс жадвали ва гуруҳ сиғими хоналарга боғланади.',
     'setup.rooms.action': 'Хона қўшиш',
     'setup.courses.title': 'Курс яратинг',
-    'setup.courses.hint': 'Курс номи ва ойлик нархи — гуруҳ нархи шундан олинади.',
+    'setup.courses.hint':
+        'Курс номи ва ойлик нархи — гуруҳ нархи шундан олинади.',
     'setup.courses.action': 'Курс яратиш',
     'setup.staff.title': 'Ўқитувчи қўшинг',
-    'setup.staff.hint': 'Ҳар бир ходимга рол беринг — у фақат рухсат берилган бўлимларни кўради.',
+    'setup.staff.hint':
+        'Ҳар бир ходимга рол беринг — у фақат рухсат берилган бўлимларни кўради.',
     'setup.staff.action': 'Ходим қўшиш',
     'setup.groups.title': 'Гуруҳ очинг',
     'setup.groups.hint': 'Курс, ўқитувчи, хона ва дарс кунларини танланг.',
     'setup.groups.action': 'Гуруҳ очиш',
     'setup.students.title': 'Ўқувчиларни қўшинг',
-    'setup.students.hint': 'Ўқувчини гуруҳга қўшсангиз, ойлик тўлови ўзи ҳисобланади.',
+    'setup.students.hint':
+        'Ўқувчини гуруҳга қўшсангиз, ойлик тўлови ўзи ҳисобланади.',
     'setup.students.action': 'Ўқувчи қўшиш',
     'setup.payments.title': 'Биринчи тўловни қабул қилинг',
     'setup.payments.hint': 'Баланс ва қарздорлар тўловлардан ҳисобланади.',
     'setup.payments.action': 'Тўлов қабул қилиш',
+
+    /* ── Ўқувчи баланси картаси ── */
+    'balance.statusDebt': 'Қарзи бор',
+    'balance.statusCredit': 'Олдиндан тўланган',
+    'balance.statusClear': 'Қарз йўқ',
+    'balance.details': 'батафсил',
+    'common.group': 'Гуруҳ',
 };

@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@/components/tailgrids/core/button';
 import {
     TableBody,
     TableCell,
@@ -15,7 +14,6 @@ import {
     TableSkeleton,
 } from '@/components/ui/data-state';
 import { DetailSection } from '@/components/ui/detail';
-import { PaymentModal } from '@/components/ui/payment-modal';
 import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { PaymentMethodBadge } from '@/components/ui/status-badge';
 import { useFormat } from '@/hooks/use-format';
@@ -28,27 +26,22 @@ import type { PersonRef } from '@/types/api';
 import { cn } from '@/utils/cn';
 import { fullName } from '@/utils/format';
 import { balanceTone } from '@/utils/tone';
-import { Plus } from '@tailgrids/icons';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
 
 /** Manfiy balans — qarz (qizil), musbat — oldindan to'langan. */
 function balanceClass(balance: number) {
     return cn('font-semibold', balanceTone(balance));
 }
 
-/** O'quvchi sahifasida: guruhlar bo'yicha balans va to'lovlar tarixi. */
-export function FinanceSection({
-    student,
-    canPay,
-}: {
-    student: PersonRef;
-    canPay: boolean;
-}) {
+/**
+ * O'quvchi sahifasida: guruhlar bo'yicha balans va to'lovlar tarixi.
+ * "To'lov qabul qilish" tugmasi sahifa sarlavhasida — kassir uni pastga
+ * aylantirmasdan ko'radi.
+ */
+export function FinanceSection({ student }: { student: PersonRef }) {
     const t = useT();
     const { formatDate, formatPrice } = useFormat();
     const som = t('common.som');
-    const [paying, setPaying] = useState(false);
 
     const balanceQuery = useQuery({
         queryKey: ['student-balance', student.id],
@@ -63,21 +56,9 @@ export function FinanceSection({
     return (
         <>
             <DetailSection
+                id='finance'
                 title={t('balance.title')}
                 description={t('debtors.subtitle')}
-                action={
-                    canPay && (
-                        <Button
-                            variant='primary'
-                            appearance='fill'
-                            size='md'
-                            onPress={() => setPaying(true)}
-                        >
-                            <Plus />
-                            {t('cashbox.new')}
-                        </Button>
-                    )
-                }
             >
                 {balanceQuery.isPending ? (
                     <TableSkeleton rows={2} columns={4} />
@@ -90,7 +71,7 @@ export function FinanceSection({
                         <TableHeader>
                             <TableRow>
                                 <RowNumberHead />
-                                <TableHead>{t('groups.title')}</TableHead>
+                                <TableHead>{t('common.group')}</TableHead>
                                 <TableHead numeric>
                                     {t('balance.charged')}
                                 </TableHead>
@@ -181,7 +162,7 @@ export function FinanceSection({
                             <TableRow>
                                 <RowNumberHead />
                                 <TableHead>{t('cashbox.paidAt')}</TableHead>
-                                <TableHead>{t('groups.title')}</TableHead>
+                                <TableHead>{t('common.group')}</TableHead>
                                 <TableHead numeric>
                                     {t('cashbox.amount')}
                                 </TableHead>
@@ -223,13 +204,6 @@ export function FinanceSection({
                     </TableRoot>
                 )}
             </DetailSection>
-
-            {paying && (
-                <PaymentModal
-                    student={student}
-                    onClose={() => setPaying(false)}
-                />
-            )}
         </>
     );
 }

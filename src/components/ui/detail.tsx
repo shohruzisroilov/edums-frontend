@@ -37,18 +37,21 @@ export function InfoCard({
 
 /** Sarlavha, izoh va o'ng tomonda amal tugmasi bo'lgan jadval bo'limi. */
 export function DetailSection({
+    id,
     title,
     description,
     action,
     children,
 }: {
+    /** Sahifa ichidagi havola uchun (`#finance`). */
+    id?: string;
     title: string;
     description?: string;
     action?: ReactNode;
     children: ReactNode;
 }) {
     return (
-        <section className='mt-8 px-5'>
+        <section id={id} className='mt-8 scroll-mt-4 px-5'>
             <div className='mb-4 flex flex-wrap items-center justify-between gap-3'>
                 <div>
                     <h2 className='text-text-primary font-display text-base font-semibold'>

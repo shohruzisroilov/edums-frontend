@@ -113,6 +113,15 @@ export function PaymentModal({
         }));
     }
 
+    // Guruh bitta bo'lsa, tanlashga hojat yo'q — qarzi bilan darhol to'ladi.
+    // Balans kelgan renderning o'zida bir marta (effekt emas: qo'shimcha
+    // render va summaning bir lahza bo'sh ko'rinishi bo'lmaydi).
+    const [autoPicked, setAutoPicked] = useState(false);
+    if (!autoPicked && groups.length === 1 && !form.group_id) {
+        setAutoPicked(true);
+        selectGroup(groups[0].group.id);
+    }
+
     function handleSubmit(event: FormEvent) {
         event.preventDefault();
         mutation.mutate();
@@ -176,7 +185,7 @@ export function PaymentModal({
             ) : (
                 <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
                     <SelectInput
-                        label={t('groups.title')}
+                        label={t('common.group')}
                         required
                         options={groups.map((item) => ({
                             value: item.group.id,
