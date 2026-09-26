@@ -995,6 +995,17 @@ export interface Dashboard {
         teacher: string | null;
         students_count: number;
     }[];
+    /** Boshlash qadamlari uchun sanoq; `staff` — owner'dan boshqa xodimlar. */
+    setup: DashboardSetup;
+}
+
+export interface DashboardSetup {
+    rooms: number;
+    courses: number;
+    staff: number;
+    groups: number;
+    students: number;
+    payments: number;
 }
 
 /** GET /platform-stats — super admin. */

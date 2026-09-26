@@ -23,7 +23,7 @@ import {
 import { cn } from '@/utils/cn';
 import { useQuery } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState, type ReactNode } from 'react';
+import { Suspense, useEffect, useState, type ReactNode } from 'react';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
     const { session, loading, signIn } = useSession();
@@ -134,7 +134,18 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                     <main className='min-h-0 flex-1 scrollbar-thin overflow-y-auto'>
                         <div className='mx-auto w-full max-w-384 pb-6'>
                             <SubscriptionBanner />
-                            {children}
+                            {/* Sahifalar manzildagi parametrlarni o'qiydi
+                                (filtrlar, ?new=1) — Next buning uchun
+                                Suspense chegarasini talab qiladi. */}
+                            <Suspense
+                                fallback={
+                                    <div className='flex justify-center py-16'>
+                                        <Spinner />
+                                    </div>
+                                }
+                            >
+                                {children}
+                            </Suspense>
                         </div>
                     </main>
                 </div>

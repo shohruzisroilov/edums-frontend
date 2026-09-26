@@ -25,6 +25,7 @@ import { SearchInput } from '@/components/ui/search-input';
 import { StudentStatusBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useListQuery } from '@/hooks/use-list-query';
+import { useOpenOnNewParam } from '@/hooks/use-new-param';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { listBranches } from '@/services/api/branches';
@@ -77,6 +78,11 @@ function StudentsView() {
     const [formOpen, setFormOpen] = useState(false);
     const [editing, setEditing] = useState<Student | null>(null);
     const [deleting, setDeleting] = useState<Student | null>(null);
+
+    useOpenOnNewParam(() => {
+        setEditing(null);
+        setFormOpen(true);
+    }, canCreate);
 
     const query = useQuery({
         queryKey: ['students', { search, ...filters, limit, offset }],

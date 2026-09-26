@@ -26,6 +26,7 @@ import { PaymentMethodBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useListQuery } from '@/hooks/use-list-query';
+import { useOpenOnNewParam } from '@/hooks/use-new-param';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import {
@@ -81,6 +82,8 @@ function CashboxView() {
 
     const [creating, setCreating] = useState(false);
     const [deleting, setDeleting] = useState<StudentPayment | null>(null);
+
+    useOpenOnNewParam(() => setCreating(true), canCreate);
 
     const query = useQuery({
         queryKey: ['student-payments', { search, ...filters, limit, offset }],

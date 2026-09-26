@@ -26,6 +26,7 @@ import { ActiveBadge, RoleBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useListQuery } from '@/hooks/use-list-query';
+import { useOpenOnNewParam } from '@/hooks/use-new-param';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { listRoles } from '@/services/api/roles';
@@ -74,6 +75,11 @@ function UsersView() {
     const [editing, setEditing] = useState<User | null>(null);
     const [resetting, setResetting] = useState<User | null>(null);
     const [deleting, setDeleting] = useState<User | null>(null);
+
+    useOpenOnNewParam(() => {
+        setEditing(null);
+        setFormOpen(true);
+    }, canCreate);
 
     const queryClient = useQueryClient();
 

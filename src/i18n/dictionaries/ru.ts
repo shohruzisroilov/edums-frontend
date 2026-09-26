@@ -1213,4 +1213,29 @@ export const ru: Dictionary = {
 
     /* ── Guruh sig'imi ── */
     'groups.full': 'Группа заполнена — вместимость кабинета достигнута',
+
+    /* ── Первые шаги ── */
+    'setup.title': 'Запустите свой центр',
+    'setup.subtitle': 'Пройдите эти шаги по порядку — дальше система сама посчитает долги, посещаемость и зарплаты.',
+    'setup.hide': 'Скрыть',
+    'setup.progress': 'Выполнено {done} из {total}',
+    'setup.done': 'выполнено',
+    'setup.rooms.title': 'Добавьте кабинеты',
+    'setup.rooms.hint': 'К кабинетам привязаны расписание и вместимость групп.',
+    'setup.rooms.action': 'Добавить кабинет',
+    'setup.courses.title': 'Создайте курс',
+    'setup.courses.hint': 'Название и цена в месяц — из неё берётся цена группы.',
+    'setup.courses.action': 'Создать курс',
+    'setup.staff.title': 'Добавьте преподавателя',
+    'setup.staff.hint': 'Назначьте каждому сотруднику роль — он увидит только разрешённые разделы.',
+    'setup.staff.action': 'Добавить сотрудника',
+    'setup.groups.title': 'Откройте группу',
+    'setup.groups.hint': 'Выберите курс, преподавателя, кабинет и дни занятий.',
+    'setup.groups.action': 'Открыть группу',
+    'setup.students.title': 'Добавьте учеников',
+    'setup.students.hint': 'Добавьте ученика в группу — ежемесячная оплата посчитается сама.',
+    'setup.students.action': 'Добавить ученика',
+    'setup.payments.title': 'Примите первую оплату',
+    'setup.payments.hint': 'Баланс и должники считаются по оплатам.',
+    'setup.payments.action': 'Принять оплату',
 };

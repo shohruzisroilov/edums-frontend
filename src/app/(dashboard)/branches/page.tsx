@@ -21,6 +21,7 @@ import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { ActiveBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
+import { useOpenOnNewParam } from '@/hooks/use-new-param';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { deleteBranch, listBranches } from '@/services/api/branches';
@@ -58,6 +59,14 @@ function BranchesView() {
     const [roomsOf, setRoomsOf] = useState<Branch | null>(null);
 
     const query = useQuery({ queryKey: ['branches'], queryFn: listBranches });
+
+    // Dashboard'dagi "Xonalarni kiriting" qadami: birinchi filial xonalari.
+    const firstBranch = query.data?.[0] ?? null;
+    useOpenOnNewParam(
+        () => setRoomsOf(firstBranch),
+        firstBranch !== null,
+        'rooms',
+    );
 
     const removeMutation = useMutation({
         mutationFn: (id: string) => deleteBranch(id),

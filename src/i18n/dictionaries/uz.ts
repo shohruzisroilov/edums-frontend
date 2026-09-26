@@ -1227,6 +1227,31 @@ export const uz = {
 
     /* ── Guruh sig'imi ── */
     'groups.full': "Guruh to'lgan — xona sig'imiga yetdi",
+
+    /* ── Boshlash qadamlari ── */
+    'setup.title': 'Markazni ishga tushiring',
+    'setup.subtitle': "Shu qadamlarni tartib bilan bajaring — keyin tizim qarz, davomat va oyliklarni o'zi hisoblaydi.",
+    'setup.hide': 'Yashirish',
+    'setup.progress': '{done} / {total} bajarildi',
+    'setup.done': 'bajarildi',
+    'setup.rooms.title': 'Xonalarni kiriting',
+    'setup.rooms.hint': "Dars jadvali va guruh sig'imi xonalarga bog'lanadi.",
+    'setup.rooms.action': "Xona qo'shish",
+    'setup.courses.title': 'Kurs yarating',
+    'setup.courses.hint': 'Kurs nomi va oylik narxi — guruh narxi shundan olinadi.',
+    'setup.courses.action': 'Kurs yaratish',
+    'setup.staff.title': "O'qituvchi qo'shing",
+    'setup.staff.hint': "Har bir xodimga rol bering — u faqat ruxsat berilgan bo'limlarni ko'radi.",
+    'setup.staff.action': "Xodim qo'shish",
+    'setup.groups.title': 'Guruh oching',
+    'setup.groups.hint': "Kurs, o'qituvchi, xona va dars kunlarini tanlang.",
+    'setup.groups.action': 'Guruh ochish',
+    'setup.students.title': "O'quvchilarni qo'shing",
+    'setup.students.hint': "O'quvchini guruhga qo'shsangiz, oylik to'lovi o'zi hisoblanadi.",
+    'setup.students.action': "O'quvchi qo'shish",
+    'setup.payments.title': "Birinchi to'lovni qabul qiling",
+    'setup.payments.hint': "Balans va qarzdorlar to'lovlardan hisoblanadi.",
+    'setup.payments.action': "To'lov qabul qilish",
 } as const;
 
 export type TranslationKey = keyof typeof uz;

@@ -26,6 +26,7 @@ import { GroupStatusBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useListQuery } from '@/hooks/use-list-query';
+import { useOpenOnNewParam } from '@/hooks/use-new-param';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { listBranches } from '@/services/api/branches';
@@ -82,6 +83,11 @@ function GroupsView() {
     const [formOpen, setFormOpen] = useState(false);
     const [editing, setEditing] = useState<Group | null>(null);
     const [deleting, setDeleting] = useState<Group | null>(null);
+
+    useOpenOnNewParam(() => {
+        setEditing(null);
+        setFormOpen(true);
+    }, canCreate);
 
     const query = useQuery({
         queryKey: ['groups', { search, ...filters, limit, offset }],

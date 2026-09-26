@@ -20,6 +20,7 @@ import { LEAD_STATUSES } from '@/types/api';
 import { can } from '@/utils/access';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
+import { GettingStarted } from './_components/getting-started';
 
 export default function DashboardPage() {
     return (
@@ -52,6 +53,8 @@ function DashboardView() {
                     session?.education?.name ?? t('dashboard.subtitle')
                 }
             />
+
+            <GettingStarted setup={data.setup} />
 
             <div className='grid gap-4 px-5 sm:grid-cols-2 xl:grid-cols-4'>
                 <StatTile

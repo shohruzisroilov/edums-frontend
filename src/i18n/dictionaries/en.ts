@@ -1211,4 +1211,29 @@ export const en: Dictionary = {
 
     /* ── Guruh sig'imi ── */
     'groups.full': "Group is full — the room's capacity is reached",
+
+    /* ── Getting started ── */
+    'setup.title': 'Set up your center',
+    'setup.subtitle': 'Go through these steps in order — then the system tracks debts, attendance and salaries for you.',
+    'setup.hide': 'Hide',
+    'setup.progress': '{done} of {total} done',
+    'setup.done': 'done',
+    'setup.rooms.title': 'Add your rooms',
+    'setup.rooms.hint': 'The schedule and group capacity are tied to rooms.',
+    'setup.rooms.action': 'Add a room',
+    'setup.courses.title': 'Create a course',
+    'setup.courses.hint': 'Name and monthly price — groups take their price from it.',
+    'setup.courses.action': 'Create a course',
+    'setup.staff.title': 'Add a teacher',
+    'setup.staff.hint': 'Give each staff member a role — they only see the sections it allows.',
+    'setup.staff.action': 'Add staff',
+    'setup.groups.title': 'Open a group',
+    'setup.groups.hint': 'Pick the course, teacher, room and lesson days.',
+    'setup.groups.action': 'Open a group',
+    'setup.students.title': 'Add students',
+    'setup.students.hint': 'Once a student joins a group, the monthly fee is charged automatically.',
+    'setup.students.action': 'Add a student',
+    'setup.payments.title': 'Take the first payment',
+    'setup.payments.hint': 'Balances and debtors are calculated from payments.',
+    'setup.payments.action': 'Take a payment',
 };
