@@ -20,10 +20,12 @@ import {
 import { SelectInput } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
+import { PaymentModal } from '@/components/ui/payment-modal';
 import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { SearchInput } from '@/components/ui/search-input';
 import { StudentStatusBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
+import { useFormat } from '@/hooks/use-format';
 import { useListQuery } from '@/hooks/use-list-query';
 import { useOpenOnNewParam } from '@/hooks/use-new-param';
 import { useSession } from '@/hooks/use-session';
@@ -36,8 +38,16 @@ import {
     type StudentStatus,
 } from '@/types/api';
 import { can } from '@/utils/access';
+import { cn } from '@/utils/cn';
 import { fullName } from '@/utils/format';
-import { Pencil1, Plus, Trash1, UserCircle1 } from '@tailgrids/icons';
+import { balanceTone } from '@/utils/tone';
+import {
+    HandTakingCoins,
+    Pencil1,
+    Plus,
+    Trash1,
+    UserCircle1,
+} from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -57,12 +67,16 @@ function StudentsView() {
     const t = useT();
     const router = useRouter();
     const toastError = useApiErrorToast();
+    const { formatPrice } = useFormat();
     const { session } = useSession();
     const queryClient = useQueryClient();
 
     const canCreate = can(session, 'students.create');
     const canUpdate = can(session, 'students.update');
     const canDelete = can(session, 'students.delete');
+    const canViewPayments = can(session, 'payments.view');
+    const canPay = can(session, 'payments.create');
+    const hasActions = canUpdate || canDelete || canPay;
 
     const {
         search,
@@ -78,6 +92,7 @@ function StudentsView() {
     const [formOpen, setFormOpen] = useState(false);
     const [editing, setEditing] = useState<Student | null>(null);
     const [deleting, setDeleting] = useState<Student | null>(null);
+    const [paying, setPaying] = useState<Student | null>(null);
 
     useOpenOnNewParam(() => {
         setEditing(null);
@@ -204,7 +219,12 @@ function StudentsView() {
                                         <TableHead>
                                             {t('common.status')}
                                         </TableHead>
-                                        {(canUpdate || canDelete) && (
+                                        {canViewPayments && (
+                                            <TableHead numeric>
+                                                {t('balance.title')}
+                                            </TableHead>
+                                        )}
+                                        {hasActions && (
                                             <TableHead className='text-right'>
                                                 {t('common.actions')}
                                             </TableHead>
@@ -262,9 +282,44 @@ function StudentsView() {
                                                     status={student.status}
                                                 />
                                             </TableCell>
-                                            {(canUpdate || canDelete) && (
+                                            {canViewPayments && (
+                                                <TableCell
+                                                    numeric
+                                                    className={cn(
+                                                        'font-medium',
+                                                        balanceTone(
+                                                            student.balance ??
+                                                                0,
+                                                        ) ??
+                                                            'text-text-tertiary',
+                                                    )}
+                                                >
+                                                    {formatPrice(
+                                                        student.balance ?? 0,
+                                                        t('common.som'),
+                                                    )}
+                                                </TableCell>
+                                            )}
+                                            {hasActions && (
                                                 <TableCell>
                                                     <div className='flex justify-end gap-2'>
+                                                        {canPay && (
+                                                            <Button
+                                                                appearance='outline'
+                                                                size='md'
+                                                                iconOnly
+                                                                aria-label={t(
+                                                                    'cashbox.new',
+                                                                )}
+                                                                onPress={() =>
+                                                                    setPaying(
+                                                                        student,
+                                                                    )
+                                                                }
+                                                            >
+                                                                <HandTakingCoins />
+                                                            </Button>
+                                                        )}
                                                         {canUpdate && (
                                                             <Button
                                                                 appearance='outline'
@@ -330,6 +385,13 @@ function StudentsView() {
                     onCreated={(created) =>
                         router.push(`/students/${created.id}`)
                     }
+                />
+            )}
+
+            {paying && (
+                <PaymentModal
+                    student={paying}
+                    onClose={() => setPaying(null)}
                 />
             )}
 

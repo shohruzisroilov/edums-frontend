@@ -87,6 +87,7 @@ export function PaymentModal({
             }),
         onSuccess: () => {
             for (const key of [
+                'students',
                 'student-payments',
                 'student-balance',
                 'debtors',

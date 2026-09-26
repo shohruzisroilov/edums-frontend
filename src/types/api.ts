@@ -512,6 +512,11 @@ export interface Student {
     status: StudentStatus;
     /** Hozir o'qiyotgan guruhlari. */
     groups: Ref[];
+    /**
+     * Faqat ro'yxatda va `payments.view` bo'lsa: to'langan − hisoblangan,
+     * barcha guruhlar bo'yicha. Manfiy — qarz.
+     */
+    balance?: number;
     created_at: string;
     updated_at: string;
 }
