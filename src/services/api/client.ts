@@ -93,6 +93,15 @@ export function buildQuery(params?: Record<string, QueryValue>): string {
     return qs ? `?${qs}` : '';
 }
 
+function readLocale(): string {
+    if (typeof window === 'undefined') return 'uz';
+    try {
+        return window.localStorage.getItem('edums_locale') ?? 'uz';
+    } catch {
+        return 'uz';
+    }
+}
+
 interface RequestOptions {
     method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
     body?: unknown;
@@ -106,7 +115,9 @@ export async function request<T>(
     path: string,
     { method = 'GET', body, formData, skipAuth }: RequestOptions = {},
 ): Promise<T> {
-    const headers: Record<string, string> = {};
+    const headers: Record<string, string> = {
+        'Accept-Language': readLocale(),
+    };
 
     if (!skipAuth) {
         const token = readToken();
