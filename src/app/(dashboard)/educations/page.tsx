@@ -34,7 +34,7 @@ import type { Education, EducationStatus } from '@/types/api';
 import { EDUCATION_STATUSES } from '@/types/api';
 import { isSuperAdmin } from '@/utils/access';
 import { Buildings11, Pencil1, Plus, Trash1 } from '@tailgrids/icons';
-import { EyeLinkButton } from '@/components/ui/eye-icon';
+import { EyeIcon } from '@/components/ui/eye-icon';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
