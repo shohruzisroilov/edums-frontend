@@ -14,6 +14,7 @@ import {
     ErrorState,
     TableSkeleton,
 } from '@/components/ui/data-state';
+import { DateRangeFilter } from '@/components/ui/date-range-filter';
 import { SelectInput, TextInput } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
@@ -97,7 +98,7 @@ function AuditView() {
                 description={t('audit.subtitle')}
             />
 
-            <div className='flex flex-wrap gap-3 px-5 pb-4'>
+            <div className='flex flex-wrap items-center gap-3 px-5 pb-4'>
                 <div className='w-full sm:w-52'>
                     <SelectInput
                         options={AUDIT_ENTITY_TYPES.map((type) => ({
@@ -120,26 +121,14 @@ function AuditView() {
                         onValueChange={(next) => setFilter('actor_id', next)}
                     />
                 </div>
-                <div className='w-full sm:w-40'>
-                    <TextInput
-                        type='date'
-                        aria-label={t('common.from')}
-                        title={t('common.from')}
-                        value={filters.from}
-                        max={filters.to || undefined}
-                        onChange={(e) => setFilter('from', e.target.value)}
-                    />
-                </div>
-                <div className='w-full sm:w-40'>
-                    <TextInput
-                        type='date'
-                        aria-label={t('common.to')}
-                        title={t('common.to')}
-                        value={filters.to}
-                        min={filters.from || undefined}
-                        onChange={(e) => setFilter('to', e.target.value)}
-                    />
-                </div>
+                <DateRangeFilter
+                    from={filters.from}
+                    to={filters.to}
+                    onDateChange={({ from, to }) => {
+                        setFilter('from', from);
+                        setFilter('to', to);
+                    }}
+                />
             </div>
 
             <div className='px-5'>
