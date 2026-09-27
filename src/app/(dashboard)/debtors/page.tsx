@@ -39,6 +39,8 @@ import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
 
+import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
+
 export default function DebtorsPage() {
     return (
         <AccessGuard allow={(session) => can(session, 'payments.view')}>
@@ -87,6 +89,12 @@ function DebtorsView() {
     });
     const branches = branchesQuery.data ?? [];
     const som = t('common.som');
+
+    const activeBranch = branches.find((b) => b.id === filters.branch_id);
+    const activeCount = filters.branch_id ? 1 : 0;
+    const activeChips = activeBranch
+        ? [{ key: 'branch', label: `Filial: ${activeBranch.name}`, onRemove: () => setFilter('branch_id', '') }]
+        : [];
 
     const allDebtors = query.data?.data ?? [];
     const toggleSelectAll = () => {
@@ -158,28 +166,49 @@ function DebtorsView() {
             />
 
             <div className='flex flex-wrap items-center gap-3 px-4 sm:px-5 pb-4'>
-                <SearchInput
-                    value={search}
-                    onChange={setSearch}
-                    placeholder={t('students.search')}
-                />
+                <div className='flex-1 min-w-[200px]'>
+                    <SearchInput
+                        value={search}
+                        onChange={setSearch}
+                        placeholder={t('students.search')}
+                    />
+                </div>
+
                 {branches.length > 1 && (
-                    <div className='w-full sm:w-48'>
-                        <SelectInput
-                            options={branches.map((branch) => ({
-                                value: branch.id,
-                                label: branch.name,
-                            }))}
-                            placeholder={t('groups.allBranches')}
-                            value={filters.branch_id}
-                            onValueChange={(next) =>
-                                setFilter('branch_id', next)
-                            }
-                        />
-                    </div>
+                    <>
+                        <MobileFilterSheet
+                            activeCount={activeCount}
+                            onClear={() => setFilter('branch_id', '')}
+                            activeChips={activeChips}
+                        >
+                            <SelectInput
+                                label={t('groups.allBranches')}
+                                options={branches.map((branch) => ({
+                                    value: branch.id,
+                                    label: branch.name,
+                                }))}
+                                placeholder={t('groups.allBranches')}
+                                value={filters.branch_id}
+                                onValueChange={(next) => setFilter('branch_id', next)}
+                            />
+                        </MobileFilterSheet>
+
+                        <div className='hidden sm:block w-48'>
+                            <SelectInput
+                                options={branches.map((branch) => ({
+                                    value: branch.id,
+                                    label: branch.name,
+                                }))}
+                                placeholder={t('groups.allBranches')}
+                                value={filters.branch_id}
+                                onValueChange={(next) => setFilter('branch_id', next)}
+                            />
+                        </div>
+                    </>
                 )}
+
                 {query.data && query.data.total_debt > 0 && (
-                    <p className='text-badge-error-text ml-auto text-sm font-semibold tabular-nums'>
+                    <p className='text-badge-error-text ml-auto text-xs sm:text-sm font-semibold tabular-nums'>
                         {t('debtors.total', {
                             amount: formatPrice(query.data.total_debt, som),
                         })}

@@ -22,7 +22,7 @@ type TableRootProps = ComponentProps<'table'> &
 
 export function TableRoot({ className, fullBleed, ...props }: TableRootProps) {
     return (
-        <div className='overflow-x-auto'>
+        <div className='overflow-x-auto scrollbar-thin'>
             <table
                 className={cn(tableRootStyles({ fullBleed }), className)}
                 {...props}
@@ -37,7 +37,7 @@ export function TableRoot({ className, fullBleed, ...props }: TableRootProps) {
  * ko'zga birinchi tashlanadi, ustun nomlari esa fon vazifasini bajaradi.
  */
 const tableHeaderStyles = cva(
-    'bg-background-gray-primary/40 [&_th]:border-border-primary [&_th]:text-text-tertiary [&_th]:border-b [&_th]:text-[0.6875rem] [&_th]:font-semibold [&_th]:tracking-[0.06em] [&_th]:uppercase',
+    'bg-background-gray-primary/40 [&_th]:border-border-primary [&_th]:text-text-tertiary [&_th]:border-b [&_th]:text-[0.65rem] sm:[&_th]:text-[0.6875rem] [&_th]:font-semibold [&_th]:tracking-[0.06em] [&_th]:uppercase',
 );
 
 export function TableHeader({ className, ...props }: ComponentProps<'thead'>) {
@@ -48,7 +48,7 @@ export function TableBody({ className, ...props }: ComponentProps<'tbody'>) {
     return <tbody className={className} {...props} />;
 }
 
-const cellPadding = 'px-5 py-3.5 whitespace-nowrap';
+const cellPadding = 'px-3 sm:px-5 py-2.5 sm:py-3.5 whitespace-nowrap text-xs sm:text-sm';
 
 const tableHeadStyles = cva(cellPadding, {
     variants: {
