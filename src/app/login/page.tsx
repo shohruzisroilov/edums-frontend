@@ -27,20 +27,32 @@ const SUPPORT_TELEGRAM = 'https://t.me/edumsuz';
 
 async function signInWithPhone(phone_number: string, password: string): Promise<Session> {
     try {
-        const res = await loginUser({ phone_number, password });
-        return sessionFromAuthUser(res.token, res.user);
-    } catch (userError) {
-        if (!(userError instanceof ApiError) || userError.statusCode !== 401) throw userError;
+        const res = await loginSuperAdmin({ phone_number, password });
+        return {
+            token: res.token,
+            kind: 'super_admin',
+            id: res.super_admin.id,
+            phone_number: res.super_admin.phone_number,
+            first_name: 'Super',
+            last_name: 'Admin',
+            avatar_url: null,
+            education: null,
+            roles: [],
+            is_owner: false,
+            permissions: [],
+            subscription: null,
+        };
+    } catch (superAdminError) {
+        if (superAdminError instanceof ApiError && superAdminError.statusCode === 429) {
+            throw superAdminError;
+        }
         try {
-            const res = await loginSuperAdmin({ phone_number, password });
-            return {
-                token: res.token, kind: 'super_admin', id: res.super_admin.id,
-                phone_number: res.super_admin.phone_number, first_name: 'Super',
-                last_name: 'Admin', avatar_url: null, education: null,
-                roles: [], is_owner: false, permissions: [], subscription: null,
-            };
-        } catch (superAdminError) {
-            if (superAdminError instanceof ApiError && superAdminError.statusCode === 429) throw superAdminError;
+            const res = await loginUser({ phone_number, password });
+            return sessionFromAuthUser(res.token, res.user);
+        } catch (userError) {
+            if (userError instanceof ApiError && userError.statusCode === 429) {
+                throw userError;
+            }
             throw userError;
         }
     }
