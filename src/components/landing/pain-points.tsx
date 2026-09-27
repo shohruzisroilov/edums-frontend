@@ -42,7 +42,7 @@ export function PainPoints() {
                         {/* Divider */}
                         <div className='my-3.5 sm:my-5 flex items-center gap-2 sm:gap-3'>
                             <div className='border-card-border h-px flex-1 border-t border-dashed' />
-                            <span className='text-brand-500 border-brand-500/20 bg-brand-500/8 rounded-full border px-2.5 sm:px-3 py-0.5 text-[10px] sm:text-[11px] font-semibold whitespace-nowrap'>
+                            <span className='text-brand-500 text-[11px] font-semibold whitespace-nowrap'>
                                 EduMS bilan
                             </span>
                             <div className='border-card-border h-px flex-1 border-t border-dashed' />

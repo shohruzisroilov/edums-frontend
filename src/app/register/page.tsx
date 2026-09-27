@@ -138,14 +138,6 @@ export default function RegisterPage() {
 
                 {/* Asosiy kontent */}
                 <div className='relative space-y-6'>
-                    {/* Pill badge */}
-                    <div className='inline-flex items-center gap-2 rounded-full bg-white/15 px-5 py-2 text-sm font-medium backdrop-blur-sm'>
-                        <svg className='size-4' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
-                            <path d='M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z' />
-                        </svg>
-                        {trialDays} kun mutlaqo bepul
-                    </div>
-
                     <h2 className='font-display text-3xl font-bold leading-tight sm:text-4xl'>
                         Bugun boshlang —<br />
                         <span className='text-white/80'>hisob ochish bepul</span>
@@ -212,17 +204,6 @@ export default function RegisterPage() {
                 {/* Forma */}
                 <div className='flex flex-1 items-center justify-center p-6'>
                     <div className='w-full max-w-md'>
-
-                        {/* Mobil badge */}
-                        <div className='mb-6 flex justify-center lg:hidden'>
-                            <div className='border-brand-500/20 bg-brand-500/8 text-brand-500 inline-flex items-center gap-2 rounded-full border px-5 py-2 text-sm font-medium'>
-                                <svg className='size-4' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
-                                    <path d='M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z' />
-                                </svg>
-                                {trialDays} kun bepul sinov
-                            </div>
-                        </div>
-
                         {/* Step indicator */}
                         <div className='mb-6 flex items-center gap-2'>
                             <div className='bg-brand-500 h-1.5 flex-1 rounded-full' />

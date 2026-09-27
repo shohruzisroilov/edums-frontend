@@ -90,8 +90,8 @@ const tableCellStyles = cva(
     {
         variants: {
             numeric: { true: 'text-right', false: '' },
-            /** Qatorning asosiy ustuni — ismi yoki nomi. */
-            primary: { true: 'text-text-primary font-semibold', false: '' },
+            /** Qatorning asosiy ustuni — ismi yoki nomi. Mobil ekranda matn bir nechta mayda qatorga bo'linib ketmasligi uchun min-w berilgan. */
+            primary: { true: 'text-text-primary font-semibold min-w-[160px] sm:min-w-[200px]', false: '' },
         },
         defaultVariants: { numeric: false, primary: false },
     },
