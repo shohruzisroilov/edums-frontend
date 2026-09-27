@@ -3,13 +3,25 @@ type IconProps = React.SVGProps<SVGSVGElement>;
 const LogoMark = ({
     idPrefix,
     isDark = false,
+    isWhite = false,
 }: {
     idPrefix: string;
     isDark?: boolean;
+    isWhite?: boolean;
 }) => {
-    const leftFaceColor = isDark ? '#3B82F6' : '#0038B8';
-    const rightFaceColor = isDark ? '#38BDF8' : '#0088FF';
-    const capColor = isDark ? '#60A5FA' : '#0055FE';
+    let leftFaceColor = isDark ? '#3B82F6' : '#0038B8';
+    let rightFaceColor = isDark ? '#38BDF8' : '#0088FF';
+    let capColor = isDark ? '#60A5FA' : '#0055FE';
+    let strokeColor = isDark ? '#93C5FD' : '#0038B8';
+    let undersideOpacity = '0.3';
+
+    if (isWhite) {
+        leftFaceColor = '#FFFFFF';
+        rightFaceColor = 'rgba(255, 255, 255, 0.8)';
+        capColor = '#FFFFFF';
+        strokeColor = '#FFFFFF';
+        undersideOpacity = '0.35';
+    }
 
     return (
         <g id={`${idPrefix}_mark`}>
@@ -22,12 +34,12 @@ const LogoMark = ({
             <path
                 d='M 7.5 8.8 L 16 12 L 24.5 8.8 L 27 9.8 L 16 13.8 L 5 9.8 Z'
                 fill={leftFaceColor}
-                opacity='0.3'
+                opacity={undersideOpacity}
             />
             {/* Tassel */}
             <path
                 d='M 25.5 8.2 L 26.5 13.5'
-                stroke={isDark ? '#93C5FD' : '#0038B8'}
+                stroke={strokeColor}
                 strokeWidth='1.2'
                 strokeLinecap='round'
             />
@@ -35,7 +47,7 @@ const LogoMark = ({
                 cx='26.5'
                 cy='14.8'
                 r='1.2'
-                fill={isDark ? '#93C5FD' : '#0038B8'}
+                fill={strokeColor}
             />
 
             {/* Left 3D Face - "E" Shape */}
@@ -53,7 +65,7 @@ const LogoMark = ({
     );
 };
 
-export const Logo = (props: IconProps) => {
+export const Logo = ({ isDark = false, isWhite = false, ...props }: IconProps & { isDark?: boolean; isWhite?: boolean }) => {
     return (
         <svg
             width={38}
@@ -63,7 +75,7 @@ export const Logo = (props: IconProps) => {
             xmlns='http://www.w3.org/2000/svg'
             {...props}
         >
-            <LogoMark idPrefix='logo_collapsed' />
+            <LogoMark idPrefix='logo_collapsed' isDark={isDark} isWhite={isWhite} />
         </svg>
     );
 };
@@ -107,7 +119,7 @@ export const LogoWithTextDark = (props: IconProps) => {
             {...props}
         >
             <g transform='scale(1.18)'>
-                <LogoMark idPrefix='logo_with_text_dark' isDark />
+                <LogoMark idPrefix='logo_with_text_dark' isWhite />
             </g>
             <text
                 x={44}
