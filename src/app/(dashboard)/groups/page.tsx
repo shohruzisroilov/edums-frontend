@@ -209,6 +209,21 @@ function GroupsView() {
                         onValueChange={(next) => setFilter('status', next)}
                     />
                 </div>
+                {session?.kind === 'user' && (
+                    <Button
+                        appearance={filters.teacher_id === session.id ? 'fill' : 'outline'}
+                        variant={filters.teacher_id === session.id ? 'primary' : undefined}
+                        size='md'
+                        onPress={() =>
+                            setFilter(
+                                'teacher_id',
+                                filters.teacher_id === session.id ? '' : session.id,
+                            )
+                        }
+                    >
+                        Mening guruhlarim
+                    </Button>
+                )}
             </div>
 
             <div className='px-5'>
@@ -221,6 +236,42 @@ function GroupsView() {
                         <EmptyState
                             message={t('groups.empty')}
                             icon={<UserMultiple1 className='size-5' />}
+                            action={
+                                Boolean(
+                                    search ||
+                                        filters.branch_id ||
+                                        filters.course_id ||
+                                        filters.teacher_id ||
+                                        (filters.status && filters.status !== 'active'),
+                                ) ? (
+                                    <Button
+                                        appearance='outline'
+                                        size='md'
+                                        onPress={() => {
+                                            setSearch('');
+                                            setFilter('branch_id', '');
+                                            setFilter('course_id', '');
+                                            setFilter('teacher_id', '');
+                                            setFilter('status', 'active');
+                                        }}
+                                    >
+                                        Filtrni tozalash
+                                    </Button>
+                                ) : canCreate ? (
+                                    <Button
+                                        variant='primary'
+                                        appearance='fill'
+                                        size='md'
+                                        onPress={() => {
+                                            setEditing(null);
+                                            setFormOpen(true);
+                                        }}
+                                    >
+                                        <Plus />
+                                        Yangi guruh ochish
+                                    </Button>
+                                ) : null
+                            }
                         />
                     ) : (
                         <>

@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
  * yaratish oynasini ochadi.
  */
 const STEPS: { key: keyof DashboardSetup; href: string }[] = [
+    { key: 'branches', href: withNewParam('/branches') },
     { key: 'rooms', href: '/branches?rooms=1' },
     { key: 'courses', href: withNewParam('/courses') },
     { key: 'staff', href: withNewParam('/users') },

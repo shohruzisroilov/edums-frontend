@@ -34,6 +34,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [isMobileSheetOpen, setIsMobileSheetOpen] = useState(false);
 
+    useEffect(() => {
+        const stored = localStorage.getItem('edums_sidebar_open');
+        if (stored !== null) {
+            setIsSidebarOpen(stored === 'true');
+        }
+    }, []);
+
     // Saqlangan token eskirgan bo'lishi mumkin. Uni bir marta serverda
     // tekshiramiz: super admin uchun /super_admin/verify_token, foydalanuvchi
     // uchun /auth/me. Muvaffaqiyatsiz bo'lsa client 401'ni ushlab, sessiyani
@@ -82,7 +89,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         );
     }
 
-    const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+    const toggleSidebar = () => {
+        setIsSidebarOpen((prev) => {
+            const next = !prev;
+            localStorage.setItem('edums_sidebar_open', String(next));
+            return next;
+        });
+    };
 
     return (
         <div className='flex h-full'>

@@ -28,6 +28,7 @@ import { StudentStatusBadge } from '@/components/ui/status-badge';
 import { useFormat } from '@/hooks/use-format';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
+import { PhoneLink } from '@/components/ui/phone-link';
 import { getStudent, listStudentEnrollments } from '@/services/api/students';
 import type { Enrollment } from '@/types/api';
 import { can } from '@/utils/access';
@@ -126,7 +127,7 @@ function StudentDetailView() {
                 {canViewPayments && <BalanceCard studentId={student.id} />}
                 <InfoCard
                     label={t('students.phone')}
-                    value={student.phone_number ?? '—'}
+                    value={<PhoneLink phone={student.phone_number} />}
                 />
                 <InfoCard
                     label={t('students.parentName')}
@@ -138,7 +139,7 @@ function StudentDetailView() {
                                 )}
                                 {student.parent_phone && (
                                     <p className='text-text-secondary'>
-                                        {student.parent_phone}
+                                        <PhoneLink phone={student.parent_phone} />
                                     </p>
                                 )}
                             </>
@@ -165,6 +166,8 @@ function StudentDetailView() {
                     />
                 </div>
             )}
+
+            {canViewPayments && <FinanceSection student={student} />}
 
             <DetailSection
                 title={t('students.history')}
@@ -268,8 +271,6 @@ function StudentDetailView() {
                     </TableRoot>
                 )}
             </DetailSection>
-
-            {canViewPayments && <FinanceSection student={student} />}
 
             {can(session, 'attendance.view') && (
                 <StudentAttendanceSection studentId={student.id} />

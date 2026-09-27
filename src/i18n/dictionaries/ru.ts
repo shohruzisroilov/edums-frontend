@@ -11,6 +11,7 @@ export const ru: Dictionary = {
     'common.edit': 'Изменить',
     'common.add': 'Добавить',
     'common.close': 'Закрыть',
+    'common.confirmDiscard': 'Есть несохраненные изменения. Отменить?',
     'common.actions': 'Действия',
     'common.status': 'Статус',
     'common.search': 'Поиск…',
@@ -28,6 +29,17 @@ export const ru: Dictionary = {
     'common.createdAt': 'Дата добавления',
     'common.details': 'Подробнее',
     'common.avatar': 'Фото',
+
+    /* ── Header ──────────────────────────────────────────────────────── */
+    'header.searchPlaceholder': 'Поиск…',
+    'header.quickPayment': 'Оплата',
+    'header.quickStudent': 'Студент',
+    'header.quickLead': 'Лид',
+    'header.searchResults': 'Результаты поиска',
+    'header.noResults': 'Ничего не найдено',
+    'header.studentsGroup': 'Студенты',
+    'header.groupsGroup': 'Группы',
+    'header.leadsGroup': 'Лиды',
 
     /* ── Ошибки ──────────────────────────────────────────────────────── */
     'error.unknown': 'Произошла непредвиденная ошибка',
@@ -305,7 +317,7 @@ export const ru: Dictionary = {
     'register.phoneHint': 'На этот номер придёт SMS-код — он станет логином',
     'register.sendCode': 'Получить код',
     'register.sending': 'Отправка…',
-    'register.codeSent': 'На номер {phone} отправлен 6-значный код',
+    'register.codeSent': 'На номер {phone} отправлен 4-значный код',
     'register.code': 'Код из SMS',
     'register.submit': 'Зарегистрироваться',
     'register.creating': 'Создаём центр…',
@@ -719,7 +731,8 @@ export const ru: Dictionary = {
     'balance.empty': 'Ещё не учился в группах — начислений нет',
     'balance.payments': 'История оплат',
     'attendance.title': 'Посещаемость',
-    'attendance.hint': 'Нажмите на дату, чтобы отметить этот день',
+    'attendance.hint':
+        'Нажмите на дату, чтобы отметить любой день. Жёлтая точка — занятие без отметки.',
     'attendance.markTitle': 'Посещаемость — {date}',
     'attendance.allPresent': 'Все были',
     'attendance.noLessons': 'В этом месяце нет занятий',
@@ -824,6 +837,19 @@ export const ru: Dictionary = {
     'auditField.duration_days': 'Срок (дней)',
     'auditField.name': 'Название',
     'auditField.is_active': 'Активен',
+    'auditField.start_date': 'Дата начала',
+    'auditField.end_date': 'Дата окончания',
+    'auditField.lesson_start': 'Начало занятия',
+    'auditField.lesson_end': 'Конец занятия',
+    'auditField.lesson_days': 'Дни занятий',
+    'auditField.duration_months': 'Длительность',
+    'auditField.capacity': 'Вместимость',
+    'auditField.description': 'Описание',
+    'auditField.phone': 'Телефон',
+    'auditField.parent_name': 'Родитель (Ф.И.О.)',
+    'auditField.parent_phone': 'Телефон родителя',
+    'auditField.birth_date': 'Дата рождения',
+    'auditField.notes': 'Заметки',
 
     /* ── Avtomatik xabarlar va markaz sozlamalari ── */
     'nav.settings': 'Настройки центра',
@@ -1221,6 +1247,10 @@ export const ru: Dictionary = {
     'setup.hide': 'Скрыть',
     'setup.progress': 'Выполнено {done} из {total}',
     'setup.done': 'выполнено',
+    'setup.branches.title': 'Настройте филиал',
+    'setup.branches.hint':
+        'Название филиала и адрес — кабинеты и группы привязываются к филиалу.',
+    'setup.branches.action': 'Добавить филиал',
     'setup.rooms.title': 'Добавьте кабинеты',
     'setup.rooms.hint': 'К кабинетам привязаны расписание и вместимость групп.',
     'setup.rooms.action': 'Добавить кабинет',
@@ -1249,4 +1279,12 @@ export const ru: Dictionary = {
     'balance.statusClear': 'Долга нет',
     'balance.details': 'подробнее',
     'common.group': 'Группа',
+
+    /* ── Отметка посещаемости ── */
+    'attendance.markToday': 'Отметить сегодня',
+    'attendance.markDate': 'Отметить {date}',
+    'attendance.take': 'Отметить посещаемость',
+    'attendance.marked': 'Отмечено',
+    'attendance.unmarked': 'Посещаемость не отмечена',
+    'attendance.nothingToMark': 'В этом месяце пока нет занятий для отметки',
 };

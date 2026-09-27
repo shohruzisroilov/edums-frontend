@@ -79,7 +79,10 @@ const SHOWCASES: Showcase[] = [
     },
 ];
 
-/** Asosiy imkoniyatlar: matn va skrinshot, qatorma-qator almashib. */
+/**
+ * Asosiy imkoniyatlar: Scroll qilinganda kartalar bir-birining ustiga ketma-ket
+ * chiroyli chiqadigan Sticky Stacking Cards effekti.
+ */
 export function Showcases() {
     const t = useT();
 
@@ -92,15 +95,17 @@ export function Showcases() {
                 title={t('landing.showcaseTitle')}
                 text={t('landing.showcaseText')}
             />
-            <div className='mt-16 flex flex-col gap-20 lg:gap-28'>
+            <div className='relative mt-16 flex flex-col gap-10 pb-16'>
                 {SHOWCASES.map((item, index) => (
                     <article
                         key={item.image}
-                        className='grid items-center gap-10 lg:grid-cols-2 lg:gap-16'
+                        style={{
+                            top: `${5 + index * 1.5}rem`,
+                            zIndex: 10 + index,
+                        }}
+                        className='sticky border-card-border bg-card-background/95 backdrop-blur-md rounded-3xl border p-6 sm:p-10 lg:p-12 shadow-2xl transition-all duration-300 grid items-center gap-8 lg:grid-cols-2 lg:gap-12'
                     >
-                        <div
-                            className={index % 2 ? 'lg:order-last' : undefined}
-                        >
+                        <div className={index % 2 ? 'lg:order-last' : undefined}>
                             <p className='text-brand-accent inline-flex items-center gap-2 text-sm font-semibold'>
                                 {item.icon}
                                 {t(item.eyebrow)}
@@ -108,7 +113,7 @@ export function Showcases() {
                             <h3 className='text-text-primary font-display mt-3 text-2xl leading-snug font-semibold sm:text-3xl'>
                                 {t(item.title)}
                             </h3>
-                            <p className='text-text-secondary mt-4 leading-7'>
+                            <p className='text-text-secondary mt-4 leading-7 text-sm sm:text-base'>
                                 {t(item.text)}
                             </p>
                             <ul className='mt-6 space-y-3'>
@@ -133,3 +138,4 @@ export function Showcases() {
         </section>
     );
 }
+

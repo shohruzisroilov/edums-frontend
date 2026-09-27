@@ -11,6 +11,7 @@ import { DetailSection } from '@/components/ui/detail';
 import { Modal } from '@/components/ui/modal';
 import { currentMonth, MonthSwitcher } from '@/components/ui/month-switcher';
 import { useApiErrorToast } from '@/hooks/use-api-error';
+import { ATTENDANCE_PARAM, useOpenOnNewParam } from '@/hooks/use-new-param';
 import { useFormat } from '@/hooks/use-format';
 import { useUrlParam } from '@/hooks/use-url-state';
 import { useT } from '@/i18n/provider';
@@ -22,6 +23,7 @@ import {
 } from '@/types/api';
 import { cn } from '@/utils/cn';
 import { fullName, toISODate } from '@/utils/format';
+import { CheckCircle1 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -55,6 +57,7 @@ export function AttendanceSection({
     canMark: boolean;
 }) {
     const t = useT();
+    const { formatDate } = useFormat();
     const [month, setMonth] = useUrlParam('month', currentMonth());
     const [marking, setMarking] = useState<string | null>(null);
 
@@ -64,13 +67,62 @@ export function AttendanceSection({
     });
 
     const today = toISODate(new Date());
+    const isCurrentMonth = month === currentMonth();
+    const lessonDates = query.data?.lesson_dates ?? [];
+    const students = query.data?.students ?? [];
+
+    // Tugma belgilaydigan kun: bugun dars bo'lsa — bugun, bo'lmasa shu
+    // oydagi oxirgi o'tgan dars (o'qituvchi kechroq kiritayotgan bo'lishi
+    // mumkin). Boshqa oylar — faqat sana ustiga bosib.
+    const target = isCurrentMonth
+        ? lessonDates.includes(today)
+            ? today
+            : (lessonDates.findLast((date) => date < today) ?? null)
+        : null;
+
+    // O'tgan, lekin hech kimga belgi qo'yilmagan darslar — jurnalda ajraladi.
+    const unmarked = new Set(
+        lessonDates.filter(
+            (date) =>
+                date <= today && !students.some((row) => row.records[date]),
+        ),
+    );
+
+    // Dashboard va sarlavhadagi "Davomat qilish" — `?attendance=1`.
+    useOpenOnNewParam(
+        () => {
+            if (target) setMarking(target);
+            else toast.info(t('attendance.nothingToMark'));
+        },
+        canMark && query.isSuccess && isCurrentMonth,
+        ATTENDANCE_PARAM,
+    );
 
     return (
         <>
             <DetailSection
                 title={t('attendance.title')}
                 description={canMark ? t('attendance.hint') : undefined}
-                action={<MonthSwitcher month={month} onChange={setMonth} />}
+                action={
+                    <div className='flex flex-wrap items-center gap-2'>
+                        {canMark && target && (
+                            <Button
+                                variant='primary'
+                                appearance='fill'
+                                size='md'
+                                onPress={() => setMarking(target)}
+                            >
+                                <CheckCircle1 />
+                                {target === today
+                                    ? t('attendance.markToday')
+                                    : t('attendance.markDate', {
+                                          date: formatDate(target),
+                                      })}
+                            </Button>
+                        )}
+                        <MonthSwitcher month={month} onChange={setMonth} />
+                    </div>
+                }
             >
                 {query.isPending ? (
                     <TableSkeleton rows={3} columns={6} />
@@ -107,6 +159,20 @@ export function AttendanceSection({
                                                             >[0],
                                                         )}
                                                     </span>
+                                                    {unmarked.has(date) && (
+                                                        <span
+                                                            title={t(
+                                                                'attendance.unmarked',
+                                                            )}
+                                                            className='bg-badge-warning-text mx-auto mt-0.5 block size-1.5 rounded-full'
+                                                        >
+                                                            <span className='sr-only'>
+                                                                {t(
+                                                                    'attendance.unmarked',
+                                                                )}
+                                                            </span>
+                                                        </span>
+                                                    )}
                                                 </>
                                             );
 

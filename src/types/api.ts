@@ -584,6 +584,7 @@ export const EDITABLE_LEAD_STATUSES = [
     'new',
     'contacted',
     'trial',
+    'won',
     'lost',
 ] as const satisfies readonly LeadStatus[];
 
@@ -609,6 +610,7 @@ export interface Lead {
     branch: Ref | null;
     /** Qiziqqan kursi. */
     course: Ref | null;
+    next_call_date: string | null;
     note: string | null;
     /** Aylantirilgan o'quvchi. */
     student: PersonRef | null;
@@ -624,6 +626,7 @@ export interface LeadPayload {
     status?: Exclude<LeadStatus, 'won'>;
     branch_id?: string | null;
     course_id?: string | null;
+    next_call_date?: string | null;
     note?: string | null;
 }
 
@@ -999,12 +1002,15 @@ export interface Dashboard {
         room: string | null;
         teacher: string | null;
         students_count: number;
+        /** Bugungi davomat belgilanganmi. */
+        attendance_marked: boolean;
     }[];
     /** Boshlash qadamlari uchun sanoq; `staff` — owner'dan boshqa xodimlar. */
     setup: DashboardSetup;
 }
 
 export interface DashboardSetup {
+    branches: number;
     rooms: number;
     courses: number;
     staff: number;

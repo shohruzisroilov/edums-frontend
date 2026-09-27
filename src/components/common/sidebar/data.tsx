@@ -2,9 +2,12 @@ import type { TranslationKey } from '@/i18n/dictionaries/uz';
 import type { Session } from '@/types/api';
 import { can, isSuperAdmin } from '@/utils/access';
 import {
+    BadgeDecagramPercent,
+    Bank1,
     Buildings11,
     CalendarTime,
     CreditCard,
+    Crown1,
     DashboardSquare1,
     FileText,
     Funnel1,
@@ -15,8 +18,8 @@ import {
     OpenBook,
     SackDollar,
     Shield1Check,
-    TrendUp2,
     SlidersDoubleHorizontal,
+    TrendUp2,
     User2,
     UserCircle1,
     UserMultiple1,
@@ -92,7 +95,7 @@ const NAV_DATA: NavSection[] = [
             {
                 titleKey: 'nav.cashbox',
                 url: '/cashbox',
-                icon: <HandTakingCoins className='size-5' />,
+                icon: <Wallet2 className='size-5' />,
                 visible: (session) => can(session, 'payments.view'),
             },
             {
@@ -104,7 +107,7 @@ const NAV_DATA: NavSection[] = [
             {
                 titleKey: 'nav.expenses',
                 url: '/expenses',
-                icon: <Wallet2 className='size-5' />,
+                icon: <Bank1 className='size-5' />,
                 visible: (session) => can(session, 'expenses.view'),
             },
             {
@@ -151,7 +154,7 @@ const NAV_DATA: NavSection[] = [
             {
                 titleKey: 'nav.billing',
                 url: '/billing',
-                icon: <Wallet2 className='size-5' />,
+                icon: <CreditCard className='size-5' />,
                 visible: (session) => can(session, 'billing.manage'),
             },
         ],
@@ -174,13 +177,13 @@ const NAV_DATA: NavSection[] = [
             {
                 titleKey: 'nav.tariffs',
                 url: '/tariffs',
-                icon: <Wallet2 className='size-5' />,
+                icon: <Crown1 className='size-5' />,
                 visible: isSuperAdmin,
             },
             {
                 titleKey: 'nav.payments',
                 url: '/payments',
-                icon: <CreditCard className='size-5' />,
+                icon: <Wallet2 className='size-5' />,
                 visible: isSuperAdmin,
             },
             {

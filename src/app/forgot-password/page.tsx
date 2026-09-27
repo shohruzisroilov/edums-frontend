@@ -33,7 +33,7 @@ export default function ForgotPasswordPage() {
     const [phone, setPhone] = useState('');
     const [step, setStep] = useState<'phone' | 'code'>('phone');
     const [code, setCode] = useState('');
-    const [codeLength, setCodeLength] = useState(6);
+    const [codeLength, setCodeLength] = useState(4);
     const [password, setPassword] = useState('');
     const [repeat, setRepeat] = useState('');
     const [resendIn, setResendIn] = useState(0);

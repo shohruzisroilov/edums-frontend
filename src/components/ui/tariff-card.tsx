@@ -28,7 +28,7 @@ export function TariffCard({
     ];
 
     return (
-        <div className='border-card-border bg-card-background flex flex-col rounded-2xl border p-6'>
+        <div className='border-card-border bg-card-background flex h-full flex-col rounded-2xl border p-6'>
             <h3 className='text-text-primary font-display text-lg font-semibold'>
                 {tariff.name}
             </h3>

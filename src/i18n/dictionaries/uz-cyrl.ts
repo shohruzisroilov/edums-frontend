@@ -11,6 +11,7 @@ export const uzCyrl: Dictionary = {
     'common.edit': 'Таҳрирлаш',
     'common.add': 'Қўшиш',
     'common.close': 'Ёпиш',
+    'common.confirmDiscard': 'Сақланмаган ўзгаришлар бор. Бекор қилинсинми?',
     'common.actions': 'Амаллар',
     'common.status': 'Ҳолати',
     'common.search': 'Қидириш…',
@@ -28,6 +29,17 @@ export const uzCyrl: Dictionary = {
     'common.createdAt': 'Қўшилган сана',
     'common.details': 'Батафсил',
     'common.avatar': 'Расм',
+
+    /* ── Header ──────────────────────────────────────────────────────── */
+    'header.searchPlaceholder': 'Қидириш…',
+    'header.quickPayment': 'Тўлов',
+    'header.quickStudent': 'Ўқувчи',
+    'header.quickLead': 'Лид',
+    'header.searchResults': 'Қидирув натижалари',
+    'header.noResults': 'Натижалар топилмади',
+    'header.studentsGroup': "Ўқувчилар",
+    'header.groupsGroup': 'Гуруҳлар',
+    'header.leadsGroup': 'Лидлар',
 
     /* ── Хатолар ─────────────────────────────────────────────────────── */
     'error.unknown': 'Кутилмаган хатолик юз берди',
@@ -306,7 +318,7 @@ export const uzCyrl: Dictionary = {
     'register.phoneHint': 'Шу рақамга SMS код юборилади — у логин бўлади',
     'register.sendCode': 'Код юбориш',
     'register.sending': 'Юборилмоқда…',
-    'register.codeSent': '{phone} рақамига 6 хонали код юборилди',
+    'register.codeSent': '{phone} рақамига 4 хонали код юборилди',
     'register.code': 'SMS код',
     'register.submit': 'Рўйхатдан ўтиш',
     'register.creating': 'Марказ очилмоқда…',
@@ -718,7 +730,8 @@ export const uzCyrl: Dictionary = {
     'balance.empty': 'Ҳали гуруҳда ўқимаган — ҳисоб йўқ',
     'balance.payments': 'Тўловлар тарихи',
     'attendance.title': 'Давомат',
-    'attendance.hint': 'Сана устига босинг — ўша кунни белгиланг',
+    'attendance.hint':
+        'Исталган кунни белгилаш учун сана устига босинг. Сариқ нуқта — давомати қилинмаган дарс.',
     'attendance.markTitle': 'Давомат — {date}',
     'attendance.allPresent': 'Ҳаммаси келди',
     'attendance.noLessons': 'Бу ойда дарс кунлари йўқ',
@@ -823,6 +836,19 @@ export const uzCyrl: Dictionary = {
     'auditField.duration_days': 'Муддат (кун)',
     'auditField.name': 'Номи',
     'auditField.is_active': 'Фаол',
+    'auditField.start_date': 'Бошланиш санаси',
+    'auditField.end_date': 'Тугаш санаси',
+    'auditField.lesson_start': 'Дарс бошланиши',
+    'auditField.lesson_end': 'Дарс тугаши',
+    'auditField.lesson_days': 'Дарс кунлари',
+    'auditField.duration_months': 'Давомийлиги',
+    'auditField.capacity': 'Сиғими',
+    'auditField.description': 'Тавсиф',
+    'auditField.phone': 'Телефон',
+    'auditField.parent_name': 'Ота-онаси (Ф.И.О.)',
+    'auditField.parent_phone': 'Ота-онаси телефони',
+    'auditField.birth_date': 'Тўғилган санаси',
+    'auditField.notes': 'Eслатмалар',
 
     /* ── Avtomatik xabarlar va markaz sozlamalari ── */
     'nav.settings': 'Марказ созламалари',
@@ -1225,6 +1251,10 @@ export const uzCyrl: Dictionary = {
     'setup.hide': 'Яшириш',
     'setup.progress': '{done} / {total} бажарилди',
     'setup.done': 'бажарилди',
+    'setup.branches.title': 'Филиални созланг',
+    'setup.branches.hint':
+        'Филиал номи ва манзили — хоналар ва гуруҳлар филиалга боғланади.',
+    'setup.branches.action': 'Филиал қўшиш',
     'setup.rooms.title': 'Хоналарни киритинг',
     'setup.rooms.hint': 'Дарс жадвали ва гуруҳ сиғими хоналарга боғланади.',
     'setup.rooms.action': 'Хона қўшиш',
@@ -1253,4 +1283,12 @@ export const uzCyrl: Dictionary = {
     'balance.statusClear': 'Қарз йўқ',
     'balance.details': 'батафсил',
     'common.group': 'Гуруҳ',
+
+    /* ── Давоматни белгилаш ── */
+    'attendance.markToday': 'Бугунги давомат',
+    'attendance.markDate': '{date} давомати',
+    'attendance.take': 'Давомат қилиш',
+    'attendance.marked': 'Давомат қилинди',
+    'attendance.unmarked': 'Давомат белгиланмаган',
+    'attendance.nothingToMark': 'Бу ойда ҳали белгиланадиган дарс йўқ',
 };

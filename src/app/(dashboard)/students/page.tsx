@@ -39,14 +39,18 @@ import {
 } from '@/types/api';
 import { can } from '@/utils/access';
 import { cn } from '@/utils/cn';
-import { fullName } from '@/utils/format';
+import { formatPhone, fullName } from '@/utils/format';
 import { balanceTone } from '@/utils/tone';
+import { exportToCsv } from '@/utils/export';
+import { StudentImportModal } from '@/components/ui/student-import-modal';
 import {
-    HandTakingCoins,
+    Download1,
     Pencil1,
     Plus,
     Trash1,
+    UploadCloud,
     UserCircle1,
+    Wallet2,
 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
@@ -90,6 +94,7 @@ function StudentsView() {
     } = useListQuery({ branch_id: '', status: 'active' });
 
     const [formOpen, setFormOpen] = useState(false);
+    const [importOpen, setImportOpen] = useState(false);
     const [editing, setEditing] = useState<Student | null>(null);
     const [deleting, setDeleting] = useState<Student | null>(null);
     const [paying, setPaying] = useState<Student | null>(null);
@@ -136,20 +141,53 @@ function StudentsView() {
                 count={query.data?.count}
                 description={t('students.subtitle')}
                 actions={
-                    canCreate && (
-                        <Button
-                            variant='primary'
-                            appearance='fill'
-                            size='md'
-                            onPress={() => {
-                                setEditing(null);
-                                setFormOpen(true);
-                            }}
-                        >
-                            <Plus />
-                            {t('students.new')}
-                        </Button>
-                    )
+                    <div className='flex flex-wrap items-center gap-2'>
+                        {query.data?.data && query.data.data.length > 0 && (
+                            <Button
+                                appearance='outline'
+                                size='md'
+                                onPress={() => {
+                                    exportToCsv(
+                                        'Oquvchilar',
+                                        ['F.I.Sh.', 'Telefon', 'Balans (som)', 'Holati'],
+                                        query.data.data.map((s) => [
+                                            fullName(s),
+                                            formatPhone(s.phone_number),
+                                            s.balance ?? 0,
+                                            s.status,
+                                        ]),
+                                    );
+                                }}
+                            >
+                                <Download1 />
+                                Eksport (Excel)
+                            </Button>
+                        )}
+                        {canCreate && (
+                            <>
+                                <Button
+                                    appearance='outline'
+                                    size='md'
+                                    onPress={() => setImportOpen(true)}
+                                >
+                                    <UploadCloud />
+                                    Import (Excel)
+                                </Button>
+                                <Button
+                                    variant='primary'
+                                    appearance='fill'
+                                    size='md'
+                                    onPress={() => {
+                                        setEditing(null);
+                                        setFormOpen(true);
+                                    }}
+                                >
+                                    <Plus />
+                                    {t('students.new')}
+                                </Button>
+                            </>
+                        )}
+                    </div>
                 }
             />
 
@@ -197,6 +235,34 @@ function StudentsView() {
                         <EmptyState
                             message={t('students.empty')}
                             icon={<UserCircle1 className='size-5' />}
+                            action={
+                                Boolean(search || filters.branch_id || (filters.status && filters.status !== 'active')) ? (
+                                    <Button
+                                        appearance='outline'
+                                        size='md'
+                                        onPress={() => {
+                                            setSearch('');
+                                            setFilter('branch_id', '');
+                                            setFilter('status', 'active');
+                                        }}
+                                    >
+                                        Filtrni tozalash
+                                    </Button>
+                                ) : canCreate ? (
+                                    <Button
+                                        variant='primary'
+                                        appearance='fill'
+                                        size='md'
+                                        onPress={() => {
+                                            setEditing(null);
+                                            setFormOpen(true);
+                                        }}
+                                    >
+                                        <Plus className='size-4' />
+                                        Birinchi o'quvchini qo'shish
+                                    </Button>
+                                ) : null
+                            }
                         />
                     ) : (
                         <>
@@ -317,7 +383,7 @@ function StudentsView() {
                                                                     )
                                                                 }
                                                             >
-                                                                <HandTakingCoins />
+                                                                <Wallet2 />
                                                             </Button>
                                                         )}
                                                         {canUpdate && (
@@ -388,6 +454,13 @@ function StudentsView() {
                 />
             )}
 
+            {importOpen && (
+                <StudentImportModal
+                    open={importOpen}
+                    onClose={() => setImportOpen(false)}
+                />
+            )}
+
             {paying && (
                 <PaymentModal
                     student={paying}
@@ -409,16 +482,18 @@ function StudentsView() {
     );
 }
 
+import { PhoneLink } from '@/components/ui/phone-link';
+
 /** O'quvchi telefoni va ostida ota-ona telefoni — bori ko'rsatiladi. */
 function PhoneLines({ student }: { student: Student }) {
     const t = useT();
 
     return (
         <div className='tabular-nums'>
-            {student.phone_number && <p>{student.phone_number}</p>}
+            {student.phone_number && <p><PhoneLink phone={student.phone_number} /></p>}
             {student.parent_phone && (
                 <p className='text-text-tertiary text-xs'>
-                    {t('students.parentPhone')}: {student.parent_phone}
+                    {t('students.parentPhone')}: <PhoneLink phone={student.parent_phone} />
                 </p>
             )}
         </div>

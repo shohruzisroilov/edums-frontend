@@ -73,17 +73,6 @@ export function Hero({ onStart }: { onStart: () => void }) {
                         {t('landing.seeFeatures')}
                     </Button>
                 </div>
-                <ul className='text-text-secondary mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm'>
-                    {POINTS.map((point) => (
-                        <li
-                            key={point}
-                            className='inline-flex items-center gap-2'
-                        >
-                            <Check className='text-brand-accent size-4' />
-                            {t(point)}
-                        </li>
-                    ))}
-                </ul>
             </div>
 
             <div className='relative mx-auto max-w-5xl px-5 pb-16'>

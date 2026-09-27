@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/form-field';
 import { Modal } from '@/components/ui/modal';
 import { MoneyInput } from '@/components/ui/number-input';
+import { ReceiptModal } from '@/components/ui/receipt-modal';
 import { SearchInput } from '@/components/ui/search-input';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
@@ -75,6 +76,14 @@ export function PaymentModal({
     });
     const groups = balanceQuery.data?.groups ?? [];
 
+    const [receiptData, setReceiptData] = useState<{
+        studentName: string;
+        groupName: string;
+        amount: number;
+        method: string;
+        date: string;
+    } | null>(null);
+
     const mutation = useMutation({
         mutationFn: () =>
             createStudentPayment({
@@ -96,7 +105,15 @@ export function PaymentModal({
                 queryClient.invalidateQueries({ queryKey: [key] });
             }
             toast.success(t('cashbox.created'));
-            onClose();
+
+            const selectedGrp = groups.find((g) => g.group.id === form.group_id);
+            setReceiptData({
+                studentName: student ? fullName(student) : '',
+                groupName: selectedGrp ? selectedGrp.group.name : 'Guruh',
+                amount: Number(form.amount),
+                method: t(`paymentMethod.${form.method}` as any) || form.method,
+                date: form.paid_at,
+            });
         },
         onError: (error) => toastError(error),
     });
@@ -276,6 +293,14 @@ export function PaymentModal({
                         </Button>
                     </div>
                 </form>
+            )}
+
+            {receiptData && (
+                <ReceiptModal
+                    open={Boolean(receiptData)}
+                    receiptData={receiptData}
+                    onClose={onClose}
+                />
             )}
         </Modal>
     );

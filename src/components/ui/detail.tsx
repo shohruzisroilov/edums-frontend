@@ -1,21 +1,38 @@
+'use client';
+
 import { ArrowLeft } from '@tailgrids/icons';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
 /** Batafsil sahifa tepasidagi "ro'yxatga qaytish" havolasi. */
 export function BackLink({ href, label }: { href: string; label: string }) {
+    const router = useRouter();
+
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+        if (typeof window !== 'undefined' && window.history.length > 1) {
+            e.preventDefault();
+            router.back();
+        }
+    };
+
     return (
         <div className='px-5 pt-6'>
             <Link
                 href={href}
-                className='text-text-tertiary hover:text-text-primary inline-flex items-center gap-1.5 text-sm transition-colors'
+                onClick={handleClick}
+                className='text-text-tertiary hover:text-text-primary inline-flex items-center gap-2 text-sm font-medium transition-colors group cursor-pointer'
             >
-                <ArrowLeft className='size-4' />
-                {label}
+                <span className='border-card-border bg-card-background flex size-8 items-center justify-center rounded-xl border shadow-2xs group-hover:border-brand-accent/50 group-hover:text-brand-accent group-hover:bg-brand-accent/5 transition-all'>
+                    <ArrowLeft className='size-4' />
+                </span>
+                <span>{label}</span>
             </Link>
         </div>
     );
 }
+
 
 /** Bitta qiymatli kichik karta: yorliq va uning ostida qiymat. */
 export function InfoCard({

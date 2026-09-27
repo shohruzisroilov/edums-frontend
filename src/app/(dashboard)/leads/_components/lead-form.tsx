@@ -60,6 +60,7 @@ export function LeadFormModal({
             : 'new') as EditableStatus,
         branch_id: lead?.branch?.id ?? '',
         course_id: lead?.course?.id ?? '',
+        next_call_date: lead?.next_call_date ? lead.next_call_date.slice(0, 10) : '',
         note: lead?.note ?? '',
     }));
 
@@ -72,6 +73,7 @@ export function LeadFormModal({
                 source: form.source,
                 branch_id: form.branch_id || null,
                 course_id: form.course_id || null,
+                next_call_date: form.next_call_date || null,
                 note: form.note.trim() || null,
                 // Aylantirilgan lidning holati o'zgarmaydi — yuborilmaydi.
                 ...(isWon ? {} : { status: form.status }),
@@ -174,20 +176,30 @@ export function LeadFormModal({
                         />
                     )}
                 </div>
-                {branches.length > 1 && (
-                    <SelectInput
-                        label={t('groups.branch')}
-                        options={branches.map((branch) => ({
-                            value: branch.id,
-                            label: branch.name,
-                        }))}
-                        placeholder={t('common.notSelected')}
-                        value={form.branch_id}
-                        onValueChange={(branch_id) =>
-                            setForm({ ...form, branch_id })
+                <div className='grid gap-4 sm:grid-cols-2'>
+                    <TextInput
+                        label="Keyingi qo'ng'iroq sanasi"
+                        type='date'
+                        value={form.next_call_date}
+                        onChange={(e) =>
+                            setForm({ ...form, next_call_date: e.target.value })
                         }
                     />
-                )}
+                    {branches.length > 1 && (
+                        <SelectInput
+                            label={t('groups.branch')}
+                            options={branches.map((branch) => ({
+                                value: branch.id,
+                                label: branch.name,
+                            }))}
+                            placeholder={t('common.notSelected')}
+                            value={form.branch_id}
+                            onValueChange={(branch_id) =>
+                                setForm({ ...form, branch_id })
+                            }
+                        />
+                    )}
+                </div>
                 <TextareaInput
                     label={t('common.note')}
                     maxLength={2000}

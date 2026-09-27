@@ -24,17 +24,20 @@ import {
 import { CheckboxInput } from '@/components/ui/form-field';
 import { LessonSchedule } from '@/components/ui/lesson-schedule';
 import { PageHeader } from '@/components/ui/page-header';
+import { PhoneLink } from '@/components/ui/phone-link';
 import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { GroupStatusBadge } from '@/components/ui/status-badge';
 import { useFormat } from '@/hooks/use-format';
+import { ATTENDANCE_PARAM } from '@/hooks/use-new-param';
 import { useSession } from '@/hooks/use-session';
+import { useUrlParams } from '@/hooks/use-url-state';
 import { useT } from '@/i18n/provider';
 import { getGroup } from '@/services/api/groups';
 import { listGroupStudents } from '@/services/api/students';
 import type { Enrollment } from '@/types/api';
 import { can } from '@/utils/access';
 import { fullName } from '@/utils/format';
-import { Pencil1, Plus } from '@tailgrids/icons';
+import { CheckCircle1, Pencil1, Plus } from '@tailgrids/icons';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -61,6 +64,9 @@ function GroupDetailView() {
     // O'quvchi qidirish GET /students dan.
     const canAddStudent = canUpdateStudents && can(session, 'students.view');
     const canOpenStudents = can(session, 'students.view');
+    const canMarkAttendance =
+        can(session, 'attendance.view') && can(session, 'attendance.mark');
+    const { update: updateUrl } = useUrlParams();
 
     const [editOpen, setEditOpen] = useState(false);
     const [addOpen, setAddOpen] = useState(false);
@@ -93,16 +99,35 @@ function GroupDetailView() {
                 title={group.name}
                 description={`${group.course.name} · ${group.branch.name}`}
                 actions={
-                    canEditGroup && (
-                        <Button
-                            appearance='outline'
-                            size='md'
-                            onPress={() => setEditOpen(true)}
-                        >
-                            <Pencil1 />
-                            {t('common.edit')}
-                        </Button>
-                    )
+                    <>
+                        {canEditGroup && (
+                            <Button
+                                appearance='outline'
+                                size='md'
+                                onPress={() => setEditOpen(true)}
+                            >
+                                <Pencil1 />
+                                {t('common.edit')}
+                            </Button>
+                        )}
+                        {canMarkAttendance && group.status === 'active' && (
+                            <Button
+                                variant='primary'
+                                appearance='fill'
+                                size='md'
+                                onPress={() =>
+                                    // Joriy oyga qaytib, belgilash oynasini ochadi.
+                                    updateUrl({
+                                        [ATTENDANCE_PARAM]: '1',
+                                        month: null,
+                                    })
+                                }
+                            >
+                                <CheckCircle1 />
+                                {t('attendance.take')}
+                            </Button>
+                        )}
+                    </>
                 }
             />
 
@@ -210,9 +235,12 @@ function GroupDetailView() {
                                         )}
                                     </TableCell>
                                     <TableCell className='tabular-nums'>
-                                        {enrollment.student.phone_number ??
-                                            enrollment.student.parent_phone ??
-                                            '—'}
+                                        <PhoneLink
+                                            phone={
+                                                enrollment.student.phone_number ??
+                                                enrollment.student.parent_phone
+                                            }
+                                        />
                                     </TableCell>
                                     <TableCell>
                                         {formatDate(enrollment.joined_at)}
@@ -266,7 +294,7 @@ function GroupDetailView() {
             {can(session, 'attendance.view') && (
                 <AttendanceSection
                     groupId={group.id}
-                    canMark={can(session, 'attendance.mark')}
+                    canMark={canMarkAttendance}
                 />
             )}
 

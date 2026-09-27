@@ -13,6 +13,7 @@ export const uz = {
     'common.edit': 'Tahrirlash',
     'common.add': "Qo'shish",
     'common.close': 'Yopish',
+    'common.confirmDiscard': "Saqlanmagan o'zgarishlar bor. Bekor qilinsinmi?",
     'common.actions': 'Amallar',
     'common.status': 'Holati',
     'common.search': 'Qidirish…',
@@ -30,6 +31,17 @@ export const uz = {
     'common.createdAt': "Qo'shilgan sana",
     'common.details': 'Batafsil',
     'common.avatar': 'Rasm',
+
+    /* ── Header ──────────────────────────────────────────────────────── */
+    'header.searchPlaceholder': 'Qidirish…',
+    'header.quickPayment': "To'lov",
+    'header.quickStudent': "O'quvchi",
+    'header.quickLead': 'Lid',
+    'header.searchResults': 'Qidiruv natijalari',
+    'header.noResults': 'Natijalar topilmadi',
+    'header.studentsGroup': "O'quvchilar",
+    'header.groupsGroup': 'Guruhlar',
+    'header.leadsGroup': 'Lidlar',
 
     /* ── Xatolar ─────────────────────────────────────────────────────── */
     'error.unknown': 'Kutilmagan xatolik yuz berdi',
@@ -308,7 +320,7 @@ export const uz = {
     'register.phoneHint': "Shu raqamga SMS kod yuboriladi — u login bo'ladi",
     'register.sendCode': 'Kod yuborish',
     'register.sending': 'Yuborilmoqda…',
-    'register.codeSent': '{phone} raqamiga 6 xonali kod yuborildi',
+    'register.codeSent': '{phone} raqamiga 4 xonali kod yuborildi',
     'register.code': 'SMS kod',
     'register.submit': "Ro'yxatdan o'tish",
     'register.creating': 'Markaz ochilmoqda…',
@@ -725,7 +737,8 @@ export const uz = {
     'balance.empty': "Hali guruhda o'qimagan — hisob yo'q",
     'balance.payments': "To'lovlar tarixi",
     'attendance.title': 'Davomat',
-    'attendance.hint': "Sana ustiga bosing — o'sha kunni belgilang",
+    'attendance.hint':
+        'Istalgan kunni belgilash uchun sana ustiga bosing. Sariq nuqta — davomati qilinmagan dars.',
     'attendance.markTitle': 'Davomat — {date}',
     'attendance.allPresent': 'Hammasi keldi',
     'attendance.noLessons': "Bu oyda dars kunlari yo'q",
@@ -830,6 +843,19 @@ export const uz = {
     'auditField.duration_days': 'Muddat (kun)',
     'auditField.name': 'Nomi',
     'auditField.is_active': 'Faol',
+    'auditField.start_date': 'Boshlanish sanasi',
+    'auditField.end_date': 'Tugash sanasi',
+    'auditField.lesson_start': 'Dars boshlanishi',
+    'auditField.lesson_end': 'Dars tugashi',
+    'auditField.lesson_days': 'Dars kunlari',
+    'auditField.duration_months': 'Davomiyligi',
+    'auditField.capacity': "Sig'imi",
+    'auditField.description': 'Tavsif',
+    'auditField.phone': 'Telefon',
+    'auditField.parent_name': 'Ota-onasi (F.I.O.)',
+    'auditField.parent_phone': 'Ota-onasi telefoni',
+    'auditField.birth_date': "Tug'ilgan sanasi",
+    'auditField.notes': 'Eslatmalar',
 
     /* ── Avtomatik xabarlar va markaz sozlamalari ── */
     'nav.settings': 'Markaz sozlamalari',
@@ -1202,10 +1228,10 @@ export const uz = {
         "Faqat telefon raqami: SMS orqali tasdiqlash kodi keladi. Bank kartasi so'ralmaydi.",
     'landing.faq.paymentQ': "To'lov qanday qilinadi?",
     'landing.faq.paymentA':
-        "Kabinetda tarifni tanlab so'rov yuborasiz va ko'rsatilgan usulda to'laysiz. To'lov tasdiqlangach, obuna uzayadi.",
-    'landing.faq.limitsQ': "Nechta filial va xodim qo'shsa bo'ladi?",
+        "Tizim kabinetida mos tarifni tanlab so'rov yuborasiz va ko'rsatilgan bank kartasiga to'lov qilib, chekni Telegram (@Shohruz_Isroilov) orqali yuborasiz. Administrator to'lovni tekshirib, obunani darhol faollashtiradi.",
+    'landing.faq.limitsQ': "Nechta filial va foydalanuvchi qo'shsa bo'ladi?",
     'landing.faq.limitsA':
-        "Filiallar soni cheklanmagan. Xodimlar soni tanlangan tarifga bog'liq.",
+        "Filiallar va xonalar soni cheklanmagan! Foydalanuvchilar limiti esa tanlangan tarifga bog'liq: Bepul (100 ta), Start (300 ta), Professional (1 000 ta) va Biznes (Cheksiz foydalanuvchilar).",
     'landing.faq.securityQ': "Ma'lumotlarim xavfsizmi?",
     'landing.faq.securityA':
         "Har bir markazning ma'lumotlari alohida saqlanadi, parollar shifrlangan holda. Xodim faqat ruxsat berilgan bo'limlarni ko'radi, har bir harakat tarixda qoladi.",
@@ -1235,6 +1261,10 @@ export const uz = {
     'setup.hide': 'Yashirish',
     'setup.progress': '{done} / {total} bajarildi',
     'setup.done': 'bajarildi',
+    'setup.branches.title': 'Filialni sozlang',
+    'setup.branches.hint':
+        "Filial nomi va manzili — xonalar va guruhlar filialga bog'lanadi.",
+    'setup.branches.action': "Filial qo'shish",
     'setup.rooms.title': 'Xonalarni kiriting',
     'setup.rooms.hint': "Dars jadvali va guruh sig'imi xonalarga bog'lanadi.",
     'setup.rooms.action': "Xona qo'shish",
@@ -1263,6 +1293,14 @@ export const uz = {
     'balance.statusClear': "Qarz yo'q",
     'balance.details': 'batafsil',
     'common.group': 'Guruh',
+
+    /* ── Davomatni belgilash ── */
+    'attendance.markToday': 'Bugungi davomat',
+    'attendance.markDate': '{date} davomati',
+    'attendance.take': 'Davomat qilish',
+    'attendance.marked': 'Davomat qilindi',
+    'attendance.unmarked': 'Davomat belgilanmagan',
+    'attendance.nothingToMark': "Bu oyda hali belgilanadigan dars yo'q",
 } as const;
 
 export type TranslationKey = keyof typeof uz;

@@ -6,6 +6,9 @@ import { useEffect } from 'react';
 /** Havolaga qo'shilsa, sahifa yaratish oynasi ochiq holda ochiladi. */
 export const NEW_PARAM = 'new';
 
+/** Guruh sahifasi shu parametr bilan ochilsa, davomat oynasi ochiladi. */
+export const ATTENDANCE_PARAM = 'attendance';
+
 /** `/students` → `/students?new=1`. */
 export function withNewParam(href: string): string {
     return `${href}${href.includes('?') ? '&' : '?'}${NEW_PARAM}=1`;

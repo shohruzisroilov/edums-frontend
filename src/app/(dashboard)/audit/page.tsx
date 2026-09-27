@@ -44,10 +44,23 @@ export default function AuditPage() {
     );
 }
 
+/** UUID formati. */
+const UUID_REGEX =
+    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+
 /** Pul sifatida ko'rsatiladigan maydonlar. */
 const MONEY_FIELDS = new Set(['amount', 'price', 'monthly_price']);
+
 /** Sana sifatida ko'rsatiladigan maydonlar. */
-const DATE_FIELDS = new Set(['paid_at', 'date', 'joined_at', 'left_at']);
+const DATE_FIELDS = new Set([
+    'paid_at',
+    'date',
+    'joined_at',
+    'left_at',
+    'start_date',
+    'end_date',
+    'birth_date',
+]);
 
 function AuditView() {
     const t = useT();
@@ -211,22 +224,32 @@ function AuditView() {
     );
 }
 
-/** Ma'lum maydonlar tarjima qilinadi va formatlanadi, qolgani xom holda. */
+/** Ma'lum maydonlar tarjima qilinadi va formatlanadi. Texnik ID'lar va bo'sh qiymatlar yashiriladi. */
 function Details({ log }: { log: AuditLog }) {
     const t = useT();
     const { formatPrice, formatDate } = useFormat();
 
     if (!log.details) return <>—</>;
 
+    const validEntries = Object.entries(log.details).filter(([key, value]) => {
+        if (value === null || value === undefined || value === '') return false;
+        if (Array.isArray(value) && value.length === 0) return false;
+        if (typeof value === 'string' && UUID_REGEX.test(value)) return false;
+        if (key.endsWith('_id') || key === 'id') return false;
+        return true;
+    });
+
+    if (validEntries.length === 0) return <>—</>;
+
     return (
         <dl className='flex flex-col gap-0.5'>
-            {Object.entries(log.details).map(([key, value]) => (
+            {validEntries.map(([key, value]) => (
                 <div key={key} className='flex gap-1'>
-                    <dt className='text-text-tertiary'>
+                    <dt className='text-text-tertiary font-medium'>
                         {fieldLabel(key, t)}:
                     </dt>
-                    <dd className='tabular-nums'>
-                        {formatValue(key, value, t, formatPrice, formatDate)}
+                    <dd className='tabular-nums text-text-primary'>
+                        {formatValue(key, value, log.action, t, formatPrice, formatDate)}
                     </dd>
                 </div>
             ))}
@@ -235,7 +258,6 @@ function Details({ log }: { log: AuditLog }) {
 }
 
 function fieldLabel(key: string, t: Translate): string {
-    // Lug'atda yo'q kalit uchun t() undefined qaytaradi — unda maydon nomi.
     const label = t(`auditField.${key}` as TranslationKey) as
         | string
         | undefined;
@@ -245,26 +267,90 @@ function fieldLabel(key: string, t: Translate): string {
 function formatValue(
     key: string,
     value: unknown,
+    action: string,
     t: Translate,
     formatPrice: (value: number, currency: string) => string,
     formatDate: (value: string) => string,
 ): string {
     if (value === null || value === undefined || value === '') return '—';
+
     if (typeof value === 'boolean') {
         return t(value ? 'common.active' : 'common.inactive');
     }
-    if (MONEY_FIELDS.has(key) && typeof value === 'number') {
+
+    if (
+        (MONEY_FIELDS.has(key) || (key === 'value' && action.startsWith('salary.'))) &&
+        typeof value === 'number'
+    ) {
         return formatPrice(value, t('common.som'));
     }
+
     if (DATE_FIELDS.has(key) && typeof value === 'string') {
         return formatDate(value);
     }
+
     if (
         key === 'method' &&
         PAYMENT_METHODS.includes(value as (typeof PAYMENT_METHODS)[number])
     ) {
         return t(`paymentMethod.${value as (typeof PAYMENT_METHODS)[number]}`);
     }
+
+    if (key === 'source' && typeof value === 'string') {
+        const sourceKey = `leadSource.${value}` as TranslationKey;
+        const translated = t(sourceKey);
+        if (translated && translated !== sourceKey) return translated;
+    }
+
+    if (key === 'status' && typeof value === 'string') {
+        if (action.startsWith('lead.')) {
+            const translated = t(`leadStatus.${value}` as TranslationKey);
+            if (translated && !translated.startsWith('leadStatus.')) return translated;
+        }
+        if (action.startsWith('group.')) {
+            const translated = t(`groupStatus.${value}` as TranslationKey);
+            if (translated && !translated.startsWith('groupStatus.')) return translated;
+        }
+        if (action.startsWith('student.')) {
+            const translated = t(`studentStatus.${value}` as TranslationKey);
+            if (translated && !translated.startsWith('studentStatus.')) return translated;
+        }
+        if (action.startsWith('education.')) {
+            const translated = t(`educationStatus.${value}` as TranslationKey);
+            if (translated && !translated.startsWith('educationStatus.')) return translated;
+        }
+        if (value === 'active') return t('common.active');
+        if (value === 'inactive') return t('common.inactive');
+    }
+
+    if (key === 'type' && action.startsWith('salary.')) {
+        if (value === 'per_student') return "O'quvchi boshiga";
+        if (value === 'fixed') return 'Fikslangan oylik';
+        if (value === 'per_hour') return 'Soatbay dars haqisidan';
+    }
+
+    if (key === 'lesson_days' && Array.isArray(value)) {
+        return value
+            .map((dayNum) => {
+                const dayKey = `weekday.${dayNum}` as TranslationKey;
+                const tr = t(dayKey);
+                return tr && !tr.startsWith('weekday.') ? tr : String(dayNum);
+            })
+            .join(', ');
+    }
+
+    if (key === 'capacity' && typeof value === 'number') {
+        return `${value} ${t('rooms.personUnit')}`;
+    }
+
+    if (key === 'duration_months' && typeof value === 'number') {
+        return `${value} ${t('courses.monthUnit')}`;
+    }
+
+    if (key === 'duration_days' && typeof value === 'number') {
+        return `${value} ${t('tariffs.dayUnit')}`;
+    }
+
     if (Array.isArray(value)) return value.join(', ');
     if (typeof value === 'object') return JSON.stringify(value);
     return String(value);
