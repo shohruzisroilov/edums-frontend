@@ -192,7 +192,7 @@ function StudentsView() {
                 }
             />
 
-            <div className='flex flex-wrap gap-3 px-5 pb-4'>
+            <div className='flex flex-wrap gap-3 px-4 sm:px-5 pb-4'>
                 <SearchInput
                     value={search}
                     onChange={setSearch}
@@ -226,7 +226,7 @@ function StudentsView() {
                 </div>
             </div>
 
-            <div className='px-5'>
+            <div className='px-4 sm:px-5'>
                 <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                     {query.isPending ? (
                         <TableSkeleton columns={5} />

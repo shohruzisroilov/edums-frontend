@@ -123,7 +123,7 @@ function StudentDetailView() {
                 }
             />
 
-            <div className='grid gap-4 px-5 sm:grid-cols-2 xl:grid-cols-4'>
+            <div className='grid gap-3.5 px-4 sm:gap-4 sm:px-5 grid-cols-2 xl:grid-cols-4'>
                 {canViewPayments && <BalanceCard studentId={student.id} />}
                 <InfoCard
                     label={t('students.phone')}
@@ -155,7 +155,7 @@ function StudentDetailView() {
             </div>
 
             {student.note && (
-                <div className='px-5 pt-4'>
+                <div className='px-4 sm:px-5 pt-4'>
                     <InfoCard
                         label={t('common.note')}
                         value={

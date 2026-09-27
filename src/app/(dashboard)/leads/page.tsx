@@ -216,7 +216,7 @@ function LeadsView() {
             />
 
             {/* Voronka: karta bosilsa shu holat bo'yicha filtrlanadi. */}
-            <div className='grid grid-cols-2 gap-3 px-5 pb-4 sm:grid-cols-3 lg:grid-cols-5'>
+            <div className='grid grid-cols-2 gap-3 px-4 sm:px-5 pb-4 sm:grid-cols-3 lg:grid-cols-5'>
                 {LEAD_STATUSES.map((status) => {
                     const active = filters.status === status;
 
@@ -249,7 +249,7 @@ function LeadsView() {
                 })}
             </div>
 
-            <div className='flex flex-wrap gap-3 px-5 pb-4'>
+            <div className='flex flex-wrap gap-3 px-4 sm:px-5 pb-4'>
                 <SearchInput
                     value={search}
                     onChange={setSearch}
@@ -279,7 +279,7 @@ function LeadsView() {
                 </div>
             </div>
 
-            <div className='px-5'>
+            <div className='px-4 sm:px-5'>
                 {query.isPending ? (
                     <TableSkeleton columns={6} />
                 ) : query.error ? (

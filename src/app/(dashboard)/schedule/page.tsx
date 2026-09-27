@@ -135,12 +135,12 @@ function ScheduleView() {
                 title={t('schedule.title')}
                 description={t('schedule.subtitle')}
                 actions={
-                    <div className='border-card-border bg-card-surface-area flex items-center rounded-lg border p-1 shadow-xs'>
+                    <div className='border-card-border bg-card-surface-area max-w-full overflow-x-auto flex items-center rounded-lg border p-1 shadow-xs'>
                         <button
                             type='button'
                             onClick={() => setViewMode('grid')}
                             className={cn(
-                                'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
+                                'flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
                                 viewMode === 'grid'
                                     ? 'bg-brand-accent text-white shadow-xs'
                                     : 'text-text-tertiary hover:text-text-primary',
@@ -153,7 +153,7 @@ function ScheduleView() {
                             type='button'
                             onClick={() => setViewMode('cards')}
                             className={cn(
-                                'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
+                                'flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
                                 viewMode === 'cards'
                                     ? 'bg-brand-accent text-white shadow-xs'
                                     : 'text-text-tertiary hover:text-text-primary',
@@ -166,7 +166,7 @@ function ScheduleView() {
                             type='button'
                             onClick={() => setViewMode('day')}
                             className={cn(
-                                'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
+                                'flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
                                 viewMode === 'day'
                                     ? 'bg-brand-accent text-white shadow-xs'
                                     : 'text-text-tertiary hover:text-text-primary',
@@ -178,7 +178,7 @@ function ScheduleView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center justify-between gap-3 px-5 pb-4'>
+            <div className='flex flex-wrap items-center justify-between gap-3 px-4 sm:px-5 pb-4'>
                 <div className='flex flex-wrap gap-3'>
                     {branches.length > 1 && (
                         <div className='w-full sm:w-48'>
@@ -248,7 +248,7 @@ function ScheduleView() {
                 )}
             </div>
 
-            <div className='px-5 pb-8'>
+            <div className='px-4 sm:px-5 pb-8'>
                 {query.isPending ? (
                     <TableSkeleton rows={6} columns={7} />
                 ) : query.error ? (
