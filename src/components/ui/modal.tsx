@@ -102,9 +102,9 @@ export function Modal({
     if (!open) return null;
 
     return (
-        <div className='fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 sm:items-center'>
+        <div className='fixed inset-0 z-50 flex items-end justify-center overflow-y-auto p-0 sm:items-center sm:p-4'>
             <div
-                className='fixed inset-0 bg-black/50'
+                className='fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity'
                 aria-hidden='true'
                 onClick={handleAttemptClose}
             />
@@ -115,10 +115,13 @@ export function Modal({
                 aria-label={title}
                 tabIndex={-1}
                 className={cn(
-                    'border-card-border bg-card-surface-area relative z-10 my-auto w-full rounded-xl border p-6 shadow-xl outline-none',
+                    'border-card-border bg-card-surface-area relative z-10 my-0 sm:my-auto w-full max-h-[92vh] sm:max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-xl border p-4.5 sm:p-6 shadow-2xl outline-none',
                     size === 'lg' ? 'max-w-3xl' : 'max-w-lg',
                 )}
             >
+                {/* Mobil telefonlar uchun maxsus visual sheet tutqichi */}
+                <div className='mx-auto mb-3 h-1.5 w-12 shrink-0 rounded-full bg-border-primary/80 opacity-80 sm:hidden' aria-hidden='true' />
+
                 <div className='mb-5 pr-10'>
                     <h2 className='text-text-primary font-display text-lg font-semibold tracking-[-0.01em]'>
                         {title}

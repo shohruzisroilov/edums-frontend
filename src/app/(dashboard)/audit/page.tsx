@@ -14,6 +14,8 @@ import {
     ErrorState,
     TableSkeleton,
 } from '@/components/ui/data-state';
+import { DateRangeFilter } from '@/components/ui/date-range-filter';
+import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
 import { SelectInput, TextInput } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
@@ -89,6 +91,46 @@ function AuditView() {
         queryFn: listUserOptions,
     });
 
+    const activeFilterCount =
+        (filters.entity_type ? 1 : 0) +
+        (filters.actor_id ? 1 : 0) +
+        (filters.from || filters.to ? 1 : 0);
+
+    const filterElements = (
+        <>
+            <div className='w-full sm:w-52'>
+                <SelectInput
+                    options={AUDIT_ENTITY_TYPES.map((type) => ({
+                        value: type,
+                        label: t(`auditEntity.${type}`),
+                    }))}
+                    placeholder={t('audit.allTypes')}
+                    value={filters.entity_type}
+                    onValueChange={(next) => setFilter('entity_type', next)}
+                />
+            </div>
+            <div className='w-full sm:w-52'>
+                <SelectInput
+                    options={(usersQuery.data ?? []).map((user) => ({
+                        value: user.id,
+                        label: fullName(user),
+                    }))}
+                    placeholder={t('audit.allUsers')}
+                    value={filters.actor_id}
+                    onValueChange={(next) => setFilter('actor_id', next)}
+                />
+            </div>
+            <DateRangeFilter
+                from={filters.from}
+                to={filters.to}
+                onDateChange={({ from, to }) => {
+                    setFilter('from', from);
+                    setFilter('to', to);
+                }}
+            />
+        </>
+    );
+
     return (
         <>
             <PageHeader
@@ -97,48 +139,22 @@ function AuditView() {
                 description={t('audit.subtitle')}
             />
 
-            <div className='flex flex-wrap gap-3 px-5 pb-4'>
-                <div className='w-full sm:w-52'>
-                    <SelectInput
-                        options={AUDIT_ENTITY_TYPES.map((type) => ({
-                            value: type,
-                            label: t(`auditEntity.${type}`),
-                        }))}
-                        placeholder={t('audit.allTypes')}
-                        value={filters.entity_type}
-                        onValueChange={(next) => setFilter('entity_type', next)}
-                    />
+            <div className='flex items-center gap-3 px-4 sm:px-5 pb-4'>
+                <div className='hidden sm:flex sm:flex-wrap sm:items-center sm:gap-3'>
+                    {filterElements}
                 </div>
-                <div className='w-full sm:w-52'>
-                    <SelectInput
-                        options={(usersQuery.data ?? []).map((user) => ({
-                            value: user.id,
-                            label: fullName(user),
-                        }))}
-                        placeholder={t('audit.allUsers')}
-                        value={filters.actor_id}
-                        onValueChange={(next) => setFilter('actor_id', next)}
-                    />
-                </div>
-                <div className='w-full sm:w-40'>
-                    <TextInput
-                        type='date'
-                        aria-label={t('common.from')}
-                        title={t('common.from')}
-                        value={filters.from}
-                        max={filters.to || undefined}
-                        onChange={(e) => setFilter('from', e.target.value)}
-                    />
-                </div>
-                <div className='w-full sm:w-40'>
-                    <TextInput
-                        type='date'
-                        aria-label={t('common.to')}
-                        title={t('common.to')}
-                        value={filters.to}
-                        min={filters.from || undefined}
-                        onChange={(e) => setFilter('to', e.target.value)}
-                    />
+                <div className='flex w-full items-center justify-end sm:hidden'>
+                    <MobileFilterSheet
+                        activeCount={activeFilterCount}
+                        onClear={() => {
+                            setFilter('entity_type', '');
+                            setFilter('actor_id', '');
+                            setFilter('from', '');
+                            setFilter('to', '');
+                        }}
+                    >
+                        {filterElements}
+                    </MobileFilterSheet>
                 </div>
             </div>
 

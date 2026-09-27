@@ -62,7 +62,7 @@ function DashboardView() {
 
             <GettingStarted setup={data.setup} />
 
-            <div className='grid gap-4 px-5 sm:grid-cols-2 xl:grid-cols-4'>
+            <div className='grid gap-3.5 px-4 sm:gap-4 sm:px-5 grid-cols-2 xl:grid-cols-4'>
                 <StatTile
                     label={t('dashboard.activeStudents')}
                     value={formatNumber(data.students.active)}
@@ -122,7 +122,7 @@ function DashboardView() {
                 </StatTile>
             </div>
 
-            <div className='mt-5 grid items-start gap-5 px-5 lg:grid-cols-[3fr_2fr]'>
+            <div className='mt-5 grid items-start gap-5 px-4 sm:px-5 lg:grid-cols-[3fr_2fr]'>
                 <SectionCard title={t('dashboard.revenueChart')}>
                     <p className='text-text-tertiary -mt-2 mb-4 text-xs'>
                         {t('dashboard.revenueChartHint')}
@@ -201,7 +201,7 @@ function DashboardView() {
                 </SectionCard>
             </div>
 
-            <div className='mt-5 grid items-start gap-5 px-5 pb-6 lg:grid-cols-[3fr_2fr]'>
+            <div className='mt-5 grid items-start gap-5 px-4 sm:px-5 pb-6 lg:grid-cols-[3fr_2fr]'>
                 <SectionCard title={t('dashboard.leadFunnel')}>
                     <p className='text-text-tertiary -mt-2 mb-4 text-xs'>
                         {t('dashboard.newLeads', {

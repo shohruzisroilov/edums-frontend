@@ -66,6 +66,7 @@ export default function LeadsPage() {
 }
 
 import { LeadKanbanBoard } from '@/components/ui/lead-kanban-board';
+import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
 import { Column, Table2 } from '@tailgrids/icons';
 
 function leadName(lead: Pick<Lead, 'first_name' | 'last_name'>) {
@@ -216,7 +217,7 @@ function LeadsView() {
             />
 
             {/* Voronka: karta bosilsa shu holat bo'yicha filtrlanadi. */}
-            <div className='grid grid-cols-2 gap-3 px-5 pb-4 sm:grid-cols-3 lg:grid-cols-5'>
+            <div className='grid grid-cols-2 gap-3 px-4 sm:px-5 pb-4 sm:grid-cols-3 lg:grid-cols-5'>
                 {LEAD_STATUSES.map((status) => {
                     const active = filters.status === status;
 
@@ -249,14 +250,32 @@ function LeadsView() {
                 })}
             </div>
 
-            <div className='flex flex-wrap gap-3 px-5 pb-4'>
-                <SearchInput
-                    value={search}
-                    onChange={setSearch}
-                    placeholder={t('leads.search')}
-                />
-                <div className='w-full sm:w-44'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 sm:px-5 pb-4'>
+                <div className='flex-1 min-w-[220px]'>
+                    <SearchInput
+                        value={search}
+                        onChange={setSearch}
+                        placeholder={t('leads.search')}
+                    />
+                </div>
+
+                <MobileFilterSheet
+                    activeCount={(filters.status ? 1 : 0) + (filters.source ? 1 : 0)}
+                    onClear={() => {
+                        setFilter('status', '');
+                        setFilter('source', '');
+                    }}
+                    activeChips={[
+                        ...(filters.status
+                            ? [{ key: 'status', label: `Holat: ${t(`leadStatus.${filters.status as LeadStatus}`)}`, onRemove: () => setFilter('status', '') }]
+                            : []),
+                        ...(filters.source
+                            ? [{ key: 'source', label: `Manba: ${t(`leadSource.${filters.source as LeadSource}`)}`, onRemove: () => setFilter('source', '') }]
+                            : []),
+                    ]}
+                >
                     <SelectInput
+                        label={t('common.allStatuses')}
                         options={LEAD_STATUSES.map((status) => ({
                             value: status,
                             label: t(`leadStatus.${status}`),
@@ -265,9 +284,8 @@ function LeadsView() {
                         value={filters.status}
                         onValueChange={(next) => setFilter('status', next)}
                     />
-                </div>
-                <div className='w-full sm:w-44'>
                     <SelectInput
+                        label={t('leads.allSources')}
                         options={LEAD_SOURCES.map((source) => ({
                             value: source,
                             label: t(`leadSource.${source}`),
@@ -276,10 +294,35 @@ function LeadsView() {
                         value={filters.source}
                         onValueChange={(next) => setFilter('source', next)}
                     />
+                </MobileFilterSheet>
+
+                <div className='hidden sm:flex items-center gap-3'>
+                    <div className='w-44'>
+                        <SelectInput
+                            options={LEAD_STATUSES.map((status) => ({
+                                value: status,
+                                label: t(`leadStatus.${status}`),
+                            }))}
+                            placeholder={t('common.allStatuses')}
+                            value={filters.status}
+                            onValueChange={(next) => setFilter('status', next)}
+                        />
+                    </div>
+                    <div className='w-44'>
+                        <SelectInput
+                            options={LEAD_SOURCES.map((source) => ({
+                                value: source,
+                                label: t(`leadSource.${source}`),
+                            }))}
+                            placeholder={t('leads.allSources')}
+                            value={filters.source}
+                            onValueChange={(next) => setFilter('source', next)}
+                        />
+                    </div>
                 </div>
             </div>
 
-            <div className='px-5'>
+            <div className='px-4 sm:px-5'>
                 {query.isPending ? (
                     <TableSkeleton columns={6} />
                 ) : query.error ? (

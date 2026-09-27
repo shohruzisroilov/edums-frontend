@@ -48,7 +48,7 @@ function OverviewView() {
                 description={t('overview.subtitle')}
             />
 
-            <div className='grid gap-4 px-5 sm:grid-cols-2 xl:grid-cols-4'>
+            <div className='grid gap-3.5 px-4 sm:gap-4 sm:px-5 grid-cols-2 xl:grid-cols-4'>
                 <StatTile
                     label={t('overview.educations')}
                     value={formatNumber(data.educations.total)}
@@ -82,7 +82,7 @@ function OverviewView() {
                 />
             </div>
 
-            <div className='mt-5 grid items-start gap-5 px-5 pb-6 lg:grid-cols-2'>
+            <div className='mt-5 grid items-start gap-5 px-4 sm:px-5 pb-6 lg:grid-cols-2'>
                 <SectionCard title={t('overview.revenueChart')}>
                     <ColumnChart
                         data={monthColumns(data.revenue.by_month, t)}

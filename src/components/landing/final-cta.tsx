@@ -21,8 +21,8 @@ export function FinalCta({
     const t = useT();
 
     return (
-        <section className='mx-auto max-w-5xl px-5 py-20'>
-            <div className='bg-brand-500 relative overflow-hidden rounded-3xl px-8 py-16 text-white sm:px-16'>
+        <section className='mx-auto max-w-5xl px-4 sm:px-5 py-12 sm:py-20'>
+            <div className='bg-brand-500 relative overflow-hidden rounded-2xl sm:rounded-3xl px-5 py-10 text-white sm:px-16 sm:py-16'>
                 {/* Orqa fon bezaklari */}
                 <div aria-hidden='true' className='absolute -top-24 -right-24 size-80 rounded-full bg-white/10 blur-3xl' />
                 <div aria-hidden='true' className='absolute -bottom-28 -left-20 size-80 rounded-full bg-white/10 blur-3xl' />
@@ -39,19 +39,19 @@ export function FinalCta({
                 />
 
                 <div className='relative text-center'>
-                    <h2 className='font-display text-3xl leading-tight font-bold sm:text-4xl lg:text-5xl'>
+                    <h2 className='font-display text-2xl leading-tight font-bold sm:text-4xl lg:text-5xl'>
                         {t('landing.ctaTitle')}
                     </h2>
-                    <p className='mx-auto mt-5 max-w-xl text-lg text-white/80 leading-relaxed'>
+                    <p className='mx-auto mt-3 sm:mt-5 max-w-xl text-sm sm:text-lg text-white/80 leading-relaxed'>
                         {t('landing.ctaText', { days: trialDays })}
                     </p>
 
                     {/* Buttons */}
-                    <div className='mt-9 flex flex-wrap justify-center gap-3'>
+                    <div className='mt-6 sm:mt-9 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2.5 sm:gap-3 max-w-sm mx-auto sm:max-w-none'>
                         <button
                             type='button'
                             onClick={onStart}
-                            className='text-brand-500 rounded-2xl bg-white px-8 py-4 text-sm font-bold shadow-xl transition hover:bg-white/95 hover:shadow-2xl active:scale-[0.98]'
+                            className='text-brand-500 rounded-xl sm:rounded-2xl bg-white px-6 sm:px-8 py-3.5 sm:py-4 text-sm font-bold shadow-xl transition hover:bg-white/95 hover:shadow-2xl active:scale-[0.98] cursor-pointer'
                         >
                             {t('landing.startFree')} →
                         </button>
@@ -59,7 +59,7 @@ export function FinalCta({
                             href={SUPPORT_TELEGRAM}
                             target='_blank'
                             rel='noopener noreferrer'
-                            className='inline-flex items-center gap-2.5 rounded-2xl border border-white/25 bg-white/10 px-8 py-4 text-sm font-semibold backdrop-blur-sm transition hover:bg-white/20'
+                            className='inline-flex items-center justify-center gap-2.5 rounded-xl sm:rounded-2xl border border-white/25 bg-white/10 px-6 sm:px-8 py-3.5 sm:py-4 text-sm font-semibold backdrop-blur-sm transition hover:bg-white/20'
                         >
                             <TelegramIcon className='size-4' />
                             {t('landing.askTelegram')}

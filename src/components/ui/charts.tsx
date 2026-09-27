@@ -305,7 +305,7 @@ export function HorizontalBars({
             {rows.map((row) => (
                 <li
                     key={row.key}
-                    className='grid grid-cols-[7rem_1fr_auto] items-center gap-3'
+                    className='grid grid-cols-[5.5rem_1fr_auto] items-center gap-2.5 sm:grid-cols-[7rem_1fr_auto] sm:gap-3'
                 >
                     <span className='text-text-secondary truncate text-sm'>
                         {row.label}

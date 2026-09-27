@@ -89,40 +89,40 @@ export function Showcases() {
     return (
         <section
             id='features'
-            className='mx-auto max-w-6xl scroll-mt-20 px-5 py-16'
+            className='mx-auto max-w-6xl scroll-mt-20 px-4 sm:px-5 py-12 sm:py-16'
         >
             <SectionHeading
                 title={t('landing.showcaseTitle')}
                 text={t('landing.showcaseText')}
             />
-            <div className='relative mt-16 flex flex-col gap-10 pb-16'>
+            <div className='relative mt-10 sm:mt-16 flex flex-col gap-6 sm:gap-10 pb-8 sm:pb-16'>
                 {SHOWCASES.map((item, index) => (
                     <article
                         key={item.image}
                         style={{
-                            top: `${5 + index * 1.5}rem`,
+                            top: `${4 + index * 0.75}rem`,
                             zIndex: 10 + index,
                         }}
-                        className='sticky border-card-border bg-card-background/95 backdrop-blur-md rounded-3xl border p-6 sm:p-10 lg:p-12 shadow-2xl transition-all duration-300 grid items-center gap-8 lg:grid-cols-2 lg:gap-12'
+                        className='sticky border-card-border bg-card-background/95 backdrop-blur-md rounded-2xl sm:rounded-3xl border p-5 sm:p-10 lg:p-12 shadow-xl sm:shadow-2xl transition-all duration-300 grid items-center gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12'
                     >
                         <div className={index % 2 ? 'lg:order-last' : undefined}>
-                            <p className='text-brand-accent inline-flex items-center gap-2 text-sm font-semibold'>
+                            <p className='text-brand-accent inline-flex items-center gap-2 text-xs sm:text-sm font-semibold'>
                                 {item.icon}
                                 {t(item.eyebrow)}
                             </p>
-                            <h3 className='text-text-primary font-display mt-3 text-2xl leading-snug font-semibold sm:text-3xl'>
+                            <h3 className='text-text-primary font-display mt-2 sm:mt-3 text-xl sm:text-3xl leading-snug font-semibold'>
                                 {t(item.title)}
                             </h3>
-                            <p className='text-text-secondary mt-4 leading-7 text-sm sm:text-base'>
+                            <p className='text-text-secondary mt-3 sm:mt-4 leading-6 sm:leading-7 text-sm sm:text-base'>
                                 {t(item.text)}
                             </p>
-                            <ul className='mt-6 space-y-3'>
+                            <ul className='mt-4 sm:mt-6 space-y-2.5 sm:space-y-3'>
                                 {item.bullets.map((bullet) => (
                                     <li
                                         key={bullet}
-                                        className='text-text-primary flex gap-3 text-sm leading-6'
+                                        className='text-text-primary flex gap-2.5 sm:gap-3 text-xs sm:text-sm leading-5 sm:leading-6'
                                     >
-                                        <CheckCircle1 className='text-brand-accent size-5 shrink-0' />
+                                        <CheckCircle1 className='text-brand-accent size-4 sm:size-5 shrink-0 mt-0.5' />
                                         {t(bullet)}
                                     </li>
                                 ))}

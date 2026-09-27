@@ -109,12 +109,6 @@ export default function LoginPage() {
 
                 {/* Asosiy kontent */}
                 <div className='relative space-y-6'>
-                    {/* Pill badge */}
-                    <div className='inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-medium backdrop-blur-sm'>
-                        <span className='size-1.5 rounded-full bg-white' />
-                        O&apos;quv markazlar uchun yagona tizim
-                    </div>
-
                     <h2 className='font-display text-3xl font-bold leading-tight sm:text-4xl'>
                         O&apos;quv markazingizni<br />
                         <span className='relative inline-block'>
@@ -176,15 +170,6 @@ export default function LoginPage() {
                 {/* Forma */}
                 <div className='flex flex-1 items-center justify-center p-6'>
                     <div className='w-full max-w-sm'>
-
-                        {/* Mobil badge */}
-                        <div className='mb-6 flex justify-center lg:hidden'>
-                            <div className='border-brand-500/20 bg-brand-500/8 text-brand-500 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-medium'>
-                                <span className='bg-brand-500 size-1.5 rounded-full' />
-                                O&apos;quv markazlar uchun yagona tizim
-                            </div>
-                        </div>
-
                         <div className='mb-8 text-center'>
                             <h1 className='text-text-primary font-display text-2xl font-bold'>
                                 {t('auth.title')}

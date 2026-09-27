@@ -60,6 +60,8 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { StudentFormModal } from './_components/student-form';
 
+import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
+
 export default function StudentsPage() {
     return (
         <AccessGuard allow={(session) => can(session, 'students.view')}>
@@ -135,6 +137,27 @@ function StudentsView() {
         onError: (error) => toastError(error),
     });
 
+    const activeBranch = branches.find((b) => b.id === filters.branch_id);
+    const activeStatus = filters.status && filters.status !== 'active' ? filters.status : null;
+    const activeCount = (filters.branch_id ? 1 : 0) + (activeStatus ? 1 : 0);
+
+    const activeChips = [
+        ...(activeBranch
+            ? [{
+                  key: 'branch',
+                  label: `Filial: ${activeBranch.name}`,
+                  onRemove: () => setFilter('branch_id', ''),
+              }]
+            : []),
+        ...(activeStatus
+            ? [{
+                  key: 'status',
+                  label: `Holat: ${t(`studentStatus.${activeStatus as StudentStatus}`)}`,
+                  onRemove: () => setFilter('status', 'active'),
+              }]
+            : []),
+    ];
+
     return (
         <>
             <PageHeader
@@ -192,29 +215,37 @@ function StudentsView() {
                 }
             />
 
-            <div className='flex flex-wrap gap-3 px-5 pb-4'>
-                <SearchInput
-                    value={search}
-                    onChange={setSearch}
-                    placeholder={t('students.search')}
-                />
-                {branches.length > 1 && (
-                    <div className='w-full sm:w-48'>
+            <div className='flex flex-wrap items-center gap-3 px-4 sm:px-5 pb-4'>
+                <div className='flex-1 min-w-[200px]'>
+                    <SearchInput
+                        value={search}
+                        onChange={setSearch}
+                        placeholder={t('students.search')}
+                    />
+                </div>
+
+                <MobileFilterSheet
+                    activeCount={activeCount}
+                    onClear={() => {
+                        setFilter('branch_id', '');
+                        setFilter('status', 'active');
+                    }}
+                    activeChips={activeChips}
+                >
+                    {branches.length > 1 && (
                         <SelectInput
+                            label={t('groups.allBranches')}
                             options={branches.map((branch) => ({
                                 value: branch.id,
                                 label: branch.name,
                             }))}
                             placeholder={t('groups.allBranches')}
                             value={filters.branch_id}
-                            onValueChange={(next) =>
-                                setFilter('branch_id', next)
-                            }
+                            onValueChange={(next) => setFilter('branch_id', next)}
                         />
-                    </div>
-                )}
-                <div className='w-full sm:w-40'>
+                    )}
                     <SelectInput
+                        label={t('common.allStatuses')}
                         options={STUDENT_STATUSES.map((status) => ({
                             value: status,
                             label: t(`studentStatus.${status}`),
@@ -223,10 +254,39 @@ function StudentsView() {
                         value={filters.status}
                         onValueChange={(next) => setFilter('status', next)}
                     />
+                </MobileFilterSheet>
+
+                <div className='hidden sm:flex items-center gap-3'>
+                    {branches.length > 1 && (
+                        <div className='w-48'>
+                            <SelectInput
+                                options={branches.map((branch) => ({
+                                    value: branch.id,
+                                    label: branch.name,
+                                }))}
+                                placeholder={t('groups.allBranches')}
+                                value={filters.branch_id}
+                                onValueChange={(next) =>
+                                    setFilter('branch_id', next)
+                                }
+                            />
+                        </div>
+                    )}
+                    <div className='w-40'>
+                        <SelectInput
+                            options={STUDENT_STATUSES.map((status) => ({
+                                value: status,
+                                label: t(`studentStatus.${status}`),
+                            }))}
+                            placeholder={t('common.allStatuses')}
+                            value={filters.status}
+                            onValueChange={(next) => setFilter('status', next)}
+                        />
+                    </div>
                 </div>
             </div>
 
-            <div className='px-5'>
+            <div className='px-4 sm:px-5'>
                 <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                     {query.isPending ? (
                         <TableSkeleton columns={5} />

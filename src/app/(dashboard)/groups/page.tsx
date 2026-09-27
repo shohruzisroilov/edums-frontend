@@ -46,6 +46,8 @@ import { toast } from 'sonner';
 import { GroupFormModal } from './_components/group-form';
 import { EyeLinkButton } from '@/components/ui/eye-icon';
 
+import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
+
 export default function GroupsPage() {
     return (
         <AccessGuard allow={(session) => can(session, 'groups.view')}>
@@ -131,6 +133,34 @@ function GroupsView() {
     });
 
     const branches = branchesQuery.data ?? [];
+    const courses = coursesQuery.data ?? [];
+    const teachers = teachersQuery.data ?? [];
+
+    const activeBranch = branches.find((b) => b.id === filters.branch_id);
+    const activeCourse = courses.find((c) => c.id === filters.course_id);
+    const activeTeacher = teachers.find((u) => u.id === filters.teacher_id);
+    const activeStatus = filters.status && filters.status !== 'active' ? filters.status : null;
+
+    const activeCount =
+        (filters.branch_id ? 1 : 0) +
+        (filters.course_id ? 1 : 0) +
+        (filters.teacher_id ? 1 : 0) +
+        (activeStatus ? 1 : 0);
+
+    const activeChips = [
+        ...(activeBranch
+            ? [{ key: 'branch', label: `Filial: ${activeBranch.name}`, onRemove: () => setFilter('branch_id', '') }]
+            : []),
+        ...(activeCourse
+            ? [{ key: 'course', label: `Kurs: ${activeCourse.name}`, onRemove: () => setFilter('course_id', '') }]
+            : []),
+        ...(activeTeacher
+            ? [{ key: 'teacher', label: `O'qituvchi: ${fullName(activeTeacher)}`, onRemove: () => setFilter('teacher_id', '') }]
+            : []),
+        ...(activeStatus
+            ? [{ key: 'status', label: `Holat: ${t(`groupStatus.${activeStatus as GroupStatus}`)}`, onRemove: () => setFilter('status', 'active') }]
+            : []),
+    ];
 
     return (
         <>
@@ -156,30 +186,58 @@ function GroupsView() {
                 }
             />
 
-            <div className='flex flex-wrap gap-3 px-5 pb-4'>
-                <SearchInput
-                    value={search}
-                    onChange={setSearch}
-                    placeholder={t('groups.search')}
-                />
-                {branches.length > 1 && (
-                    <div className='w-full sm:w-48'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 sm:px-5 pb-4'>
+                <div className='flex-1 min-w-[220px]'>
+                    <SearchInput
+                        value={search}
+                        onChange={setSearch}
+                        placeholder={t('groups.search')}
+                    />
+                </div>
+
+                <MobileFilterSheet
+                    activeCount={activeCount}
+                    onClear={() => {
+                        setFilter('branch_id', '');
+                        setFilter('course_id', '');
+                        setFilter('teacher_id', '');
+                        setFilter('status', 'active');
+                    }}
+                    activeChips={activeChips}
+                >
+                    {session?.kind === 'user' && (
+                        <div className='mb-2'>
+                            <Button
+                                appearance={filters.teacher_id === session.id ? 'fill' : 'outline'}
+                                variant={filters.teacher_id === session.id ? 'primary' : undefined}
+                                size='md'
+                                className='w-full'
+                                onPress={() =>
+                                    setFilter(
+                                        'teacher_id',
+                                        filters.teacher_id === session.id ? '' : session.id,
+                                    )
+                                }
+                            >
+                                Mening guruhlarim
+                            </Button>
+                        </div>
+                    )}
+                    {branches.length > 1 && (
                         <SelectInput
+                            label={t('groups.allBranches')}
                             options={branches.map((branch) => ({
                                 value: branch.id,
                                 label: branch.name,
                             }))}
                             placeholder={t('groups.allBranches')}
                             value={filters.branch_id}
-                            onValueChange={(next) =>
-                                setFilter('branch_id', next)
-                            }
+                            onValueChange={(next) => setFilter('branch_id', next)}
                         />
-                    </div>
-                )}
-                <div className='w-full sm:w-52'>
+                    )}
                     <SelectInput
-                        options={(coursesQuery.data ?? []).map((course) => ({
+                        label={t('groups.allCourses')}
+                        options={courses.map((course) => ({
                             value: course.id,
                             label: course.name,
                         }))}
@@ -187,10 +245,9 @@ function GroupsView() {
                         value={filters.course_id}
                         onValueChange={(next) => setFilter('course_id', next)}
                     />
-                </div>
-                <div className='w-full sm:w-52'>
                     <SelectInput
-                        options={(teachersQuery.data ?? []).map((user) => ({
+                        label={t('groups.allTeachers')}
+                        options={teachers.map((user) => ({
                             value: user.id,
                             label: fullName(user),
                         }))}
@@ -198,9 +255,8 @@ function GroupsView() {
                         value={filters.teacher_id}
                         onValueChange={(next) => setFilter('teacher_id', next)}
                     />
-                </div>
-                <div className='w-full sm:w-40'>
                     <SelectInput
+                        label={t('common.allStatuses')}
                         options={GROUP_STATUSES.map((status) => ({
                             value: status,
                             label: t(`groupStatus.${status}`),
@@ -209,25 +265,74 @@ function GroupsView() {
                         value={filters.status}
                         onValueChange={(next) => setFilter('status', next)}
                     />
+                </MobileFilterSheet>
+
+                <div className='hidden sm:flex items-center flex-wrap gap-3'>
+                    {branches.length > 1 && (
+                        <div className='w-48'>
+                            <SelectInput
+                                options={branches.map((branch) => ({
+                                    value: branch.id,
+                                    label: branch.name,
+                                }))}
+                                placeholder={t('groups.allBranches')}
+                                value={filters.branch_id}
+                                onValueChange={(next) => setFilter('branch_id', next)}
+                            />
+                        </div>
+                    )}
+                    <div className='w-52'>
+                        <SelectInput
+                            options={courses.map((course) => ({
+                                value: course.id,
+                                label: course.name,
+                            }))}
+                            placeholder={t('groups.allCourses')}
+                            value={filters.course_id}
+                            onValueChange={(next) => setFilter('course_id', next)}
+                        />
+                    </div>
+                    <div className='w-52'>
+                        <SelectInput
+                            options={teachers.map((user) => ({
+                                value: user.id,
+                                label: fullName(user),
+                            }))}
+                            placeholder={t('groups.allTeachers')}
+                            value={filters.teacher_id}
+                            onValueChange={(next) => setFilter('teacher_id', next)}
+                        />
+                    </div>
+                    <div className='w-40'>
+                        <SelectInput
+                            options={GROUP_STATUSES.map((status) => ({
+                                value: status,
+                                label: t(`groupStatus.${status}`),
+                            }))}
+                            placeholder={t('common.allStatuses')}
+                            value={filters.status}
+                            onValueChange={(next) => setFilter('status', next)}
+                        />
+                    </div>
+                    {session?.kind === 'user' && (
+                        <Button
+                            appearance={filters.teacher_id === session.id ? 'fill' : 'outline'}
+                            variant={filters.teacher_id === session.id ? 'primary' : undefined}
+                            size='md'
+                            onPress={() =>
+                                setFilter(
+                                    'teacher_id',
+                                    filters.teacher_id === session.id ? '' : session.id,
+                                )
+                            }
+                        >
+                            Mening guruhlarim
+                        </Button>
+                    )}
                 </div>
-                {session?.kind === 'user' && (
-                    <Button
-                        appearance={filters.teacher_id === session.id ? 'fill' : 'outline'}
-                        variant={filters.teacher_id === session.id ? 'primary' : undefined}
-                        size='md'
-                        onPress={() =>
-                            setFilter(
-                                'teacher_id',
-                                filters.teacher_id === session.id ? '' : session.id,
-                            )
-                        }
-                    >
-                        Mening guruhlarim
-                    </Button>
-                )}
             </div>
 
-            <div className='px-5'>
+            <div className='px-4 sm:px-5'>
                 <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                     {query.isPending ? (
                         <TableSkeleton columns={8} />

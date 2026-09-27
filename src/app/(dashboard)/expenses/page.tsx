@@ -16,6 +16,8 @@ import {
     ErrorState,
     TableSkeleton,
 } from '@/components/ui/data-state';
+import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
+import { DateRangeFilter } from '@/components/ui/date-range-filter';
 import {
     SelectInput,
     TextareaInput,
@@ -163,9 +165,32 @@ function ExpensesView() {
                 }
             />
 
-            <div className='flex flex-wrap gap-3 px-5 pb-4'>
-                <div className='w-full sm:w-52'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 sm:px-5 pb-4'>
+                <MobileFilterSheet
+                    activeCount={(filters.category ? 1 : 0) + (filters.from || filters.to ? 1 : 0)}
+                    onClear={() => {
+                        setFilter('category', '');
+                        setFilter('from', '');
+                        setFilter('to', '');
+                    }}
+                    activeChips={[
+                        ...(filters.category
+                            ? [{ key: 'category', label: `Kategoriya: ${t(`expenseCategory.${filters.category as ExpenseCategory}`)}`, onRemove: () => setFilter('category', '') }]
+                            : []),
+                        ...(filters.from || filters.to
+                            ? [{
+                                  key: 'date',
+                                  label: `Sana: ${filters.from || '…'} — ${filters.to || '…'}`,
+                                  onRemove: () => {
+                                      setFilter('from', '');
+                                      setFilter('to', '');
+                                  },
+                              }]
+                            : []),
+                    ]}
+                >
                     <SelectInput
+                        label={t('expenses.allCategories')}
                         options={EXPENSE_CATEGORIES.map((category) => ({
                             value: category,
                             label: t(`expenseCategory.${category}`),
@@ -174,25 +199,37 @@ function ExpensesView() {
                         value={filters.category}
                         onValueChange={(next) => setFilter('category', next)}
                     />
-                </div>
-                <div className='w-full sm:w-40'>
-                    <TextInput
-                        type='date'
-                        aria-label={t('common.from')}
-                        title={t('common.from')}
-                        value={filters.from}
-                        max={filters.to || undefined}
-                        onChange={(e) => setFilter('from', e.target.value)}
-                    />
-                </div>
-                <div className='w-full sm:w-40'>
-                    <TextInput
-                        type='date'
-                        aria-label={t('common.to')}
-                        title={t('common.to')}
-                        value={filters.to}
-                        min={filters.from || undefined}
-                        onChange={(e) => setFilter('to', e.target.value)}
+                    <div className='mt-1'>
+                        <DateRangeFilter
+                            from={filters.from}
+                            to={filters.to}
+                            onDateChange={({ from, to }) => {
+                                setFilter('from', from);
+                                setFilter('to', to);
+                            }}
+                        />
+                    </div>
+                </MobileFilterSheet>
+
+                <div className='hidden sm:flex flex-wrap items-center gap-3'>
+                    <div className='w-52'>
+                        <SelectInput
+                            options={EXPENSE_CATEGORIES.map((category) => ({
+                                value: category,
+                                label: t(`expenseCategory.${category}`),
+                            }))}
+                            placeholder={t('expenses.allCategories')}
+                            value={filters.category}
+                            onValueChange={(next) => setFilter('category', next)}
+                        />
+                    </div>
+                    <DateRangeFilter
+                        from={filters.from}
+                        to={filters.to}
+                        onDateChange={({ from, to }) => {
+                            setFilter('from', from);
+                            setFilter('to', to);
+                        }}
                     />
                 </div>
             </div>

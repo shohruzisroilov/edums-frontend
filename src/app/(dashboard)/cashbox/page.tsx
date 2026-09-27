@@ -16,6 +16,8 @@ import {
     ErrorState,
     TableSkeleton,
 } from '@/components/ui/data-state';
+import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
+import { DateRangeFilter } from '@/components/ui/date-range-filter';
 import { SelectInput, TextInput } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
@@ -181,14 +183,40 @@ function CashboxView() {
                 }
             />
 
-            <div className='flex flex-wrap items-end gap-3 px-5 pb-4'>
-                <SearchInput
-                    value={search}
-                    onChange={setSearch}
-                    placeholder={t('cashbox.search')}
-                />
-                <div className='w-full sm:w-40'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 sm:px-5 pb-4'>
+                <div className='flex-1 min-w-[220px]'>
+                    <SearchInput
+                        value={search}
+                        onChange={setSearch}
+                        placeholder={t('cashbox.search')}
+                    />
+                </div>
+
+                <MobileFilterSheet
+                    activeCount={(filters.method ? 1 : 0) + (filters.from || filters.to ? 1 : 0)}
+                    onClear={() => {
+                        setFilter('method', '');
+                        setFilter('from', '');
+                        setFilter('to', '');
+                    }}
+                    activeChips={[
+                        ...(filters.method
+                            ? [{ key: 'method', label: `To'lov turi: ${t(`paymentMethod.${filters.method as PaymentMethod}`)}`, onRemove: () => setFilter('method', '') }]
+                            : []),
+                        ...(filters.from || filters.to
+                            ? [{
+                                  key: 'date',
+                                  label: `Sana: ${filters.from || '…'} — ${filters.to || '…'}`,
+                                  onRemove: () => {
+                                      setFilter('from', '');
+                                      setFilter('to', '');
+                                  },
+                              }]
+                            : []),
+                    ]}
+                >
                     <SelectInput
+                        label={t('cashbox.allMethods')}
                         options={PAYMENT_METHODS.map((method) => ({
                             value: method,
                             label: t(`paymentMethod.${method}`),
@@ -197,25 +225,37 @@ function CashboxView() {
                         value={filters.method}
                         onValueChange={(next) => setFilter('method', next)}
                     />
-                </div>
-                <div className='w-full sm:w-40'>
-                    <TextInput
-                        type='date'
-                        aria-label={t('common.from')}
-                        title={t('common.from')}
-                        value={filters.from}
-                        max={filters.to || undefined}
-                        onChange={(e) => setFilter('from', e.target.value)}
-                    />
-                </div>
-                <div className='w-full sm:w-40'>
-                    <TextInput
-                        type='date'
-                        aria-label={t('common.to')}
-                        title={t('common.to')}
-                        value={filters.to}
-                        min={filters.from || undefined}
-                        onChange={(e) => setFilter('to', e.target.value)}
+                    <div className='mt-1'>
+                        <DateRangeFilter
+                            from={filters.from}
+                            to={filters.to}
+                            onDateChange={({ from, to }) => {
+                                setFilter('from', from);
+                                setFilter('to', to);
+                            }}
+                        />
+                    </div>
+                </MobileFilterSheet>
+
+                <div className='hidden sm:flex flex-wrap items-center gap-3'>
+                    <div className='w-40'>
+                        <SelectInput
+                            options={PAYMENT_METHODS.map((method) => ({
+                                value: method,
+                                label: t(`paymentMethod.${method}`),
+                            }))}
+                            placeholder={t('cashbox.allMethods')}
+                            value={filters.method}
+                            onValueChange={(next) => setFilter('method', next)}
+                        />
+                    </div>
+                    <DateRangeFilter
+                        from={filters.from}
+                        to={filters.to}
+                        onDateChange={({ from, to }) => {
+                            setFilter('from', from);
+                            setFilter('to', to);
+                        }}
                     />
                 </div>
             </div>

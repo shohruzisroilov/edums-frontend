@@ -144,7 +144,7 @@ function SalariesView() {
                 actions={<MonthSwitcher month={month} onChange={setMonth} />}
             />
 
-            <div className='px-5'>
+            <div className='px-4 sm:px-5'>
                 <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                     {sheetQuery.isPending ? (
                         <TableSkeleton columns={7} />

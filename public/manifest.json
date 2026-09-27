@@ -1,0 +1,17 @@
+{
+  "name": "EDU MS — Ta'lim Boshqaruv Tizimi",
+  "short_name": "EduMS",
+  "description": "O'quv markazlarini boshqarish tizimi",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "/landing/hero.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

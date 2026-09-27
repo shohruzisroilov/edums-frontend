@@ -38,6 +38,7 @@ import { Pencil1, Plus, Trash1, User2 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
 import { UserFormModal } from './_components/user-form';
 
 export default function UsersPage() {
@@ -116,6 +117,19 @@ function UsersView() {
         onError: (error) => toastError(error),
     });
 
+    const activeRole = roles.find((r) => r.id === filters.role_id);
+    const activeStatus = filters.is_active !== '' ? (filters.is_active === 'true' ? t('common.active') : t('common.inactive')) : null;
+    const activeCount = (filters.role_id ? 1 : 0) + (filters.is_active !== '' ? 1 : 0);
+
+    const activeChips = [
+        ...(activeRole
+            ? [{ key: 'role', label: `Rol: ${activeRole.name}`, onRemove: () => setFilter('role_id', '') }]
+            : []),
+        ...(activeStatus
+            ? [{ key: 'status', label: `Holat: ${activeStatus}`, onRemove: () => setFilter('is_active', '') }]
+            : []),
+    ];
+
     return (
         <>
             <PageHeader
@@ -140,15 +154,26 @@ function UsersView() {
                 }
             />
 
-            <div className='flex flex-wrap gap-3 px-5 pb-4'>
-                <SearchInput
-                    value={search}
-                    onChange={setSearch}
-                    placeholder={t('users.search')}
-                />
-                {canListRoles && (
-                    <div className='w-full sm:w-52'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 sm:px-5 pb-4'>
+                <div className='flex-1 min-w-[220px]'>
+                    <SearchInput
+                        value={search}
+                        onChange={setSearch}
+                        placeholder={t('users.search')}
+                    />
+                </div>
+
+                <MobileFilterSheet
+                    activeCount={activeCount}
+                    onClear={() => {
+                        setFilter('role_id', '');
+                        setFilter('is_active', '');
+                    }}
+                    activeChips={activeChips}
+                >
+                    {canListRoles && (
                         <SelectInput
+                            label={t('users.allRoles')}
                             options={roles.map((role) => ({
                                 value: role.id,
                                 label: role.name,
@@ -157,10 +182,9 @@ function UsersView() {
                             value={filters.role_id}
                             onValueChange={(next) => setFilter('role_id', next)}
                         />
-                    </div>
-                )}
-                <div className='w-full sm:w-40'>
+                    )}
                     <SelectInput
+                        label={t('common.allStatuses')}
                         options={[
                             { value: 'true', label: t('common.active') },
                             { value: 'false', label: t('common.inactive') },
@@ -169,6 +193,33 @@ function UsersView() {
                         value={filters.is_active}
                         onValueChange={(next) => setFilter('is_active', next)}
                     />
+                </MobileFilterSheet>
+
+                <div className='hidden sm:flex items-center gap-3'>
+                    {canListRoles && (
+                        <div className='w-52'>
+                            <SelectInput
+                                options={roles.map((role) => ({
+                                    value: role.id,
+                                    label: role.name,
+                                }))}
+                                placeholder={t('users.allRoles')}
+                                value={filters.role_id}
+                                onValueChange={(next) => setFilter('role_id', next)}
+                            />
+                        </div>
+                    )}
+                    <div className='w-40'>
+                        <SelectInput
+                            options={[
+                                { value: 'true', label: t('common.active') },
+                                { value: 'false', label: t('common.inactive') },
+                            ]}
+                            placeholder={t('common.allStatuses')}
+                            value={filters.is_active}
+                            onValueChange={(next) => setFilter('is_active', next)}
+                        />
+                    </div>
                 </div>
             </div>
 
