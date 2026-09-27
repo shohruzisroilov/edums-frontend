@@ -14,6 +14,7 @@ import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useT } from '@/i18n/provider';
 import { listStudents } from '@/services/api/students';
+import { listGroups } from '@/services/api/groups';
 import {
     createStudentPayment,
     getStudentBalance,
@@ -30,8 +31,9 @@ import { toast } from 'sonner';
 
 /**
  * To'lov qabul qilish. O'quvchi berilmasa — qidirib tanlanadi (GET /students,
- * students.view kerak). Guruhlar o'quvchi balansidan olinadi — har biri
- * yonida qarzi ko'rinadi va guruh tanlanganda summa qarz bilan to'ladi.
+ * students.view kerak). Guruhlar o'quvchi balansidan va markazning aktiv
+ * guruhlaridan olinadi. O'quvchi kirmagan guruh tanlansa, to'lov bilan birga
+ * avtomatik a'zo qilinadi.
  */
 export function PaymentModal({
     student: initialStudent,
@@ -76,6 +78,30 @@ export function PaymentModal({
     });
     const groups = balanceQuery.data?.groups ?? [];
 
+    const allGroupsQuery = useQuery({
+        queryKey: ['groups', { status: 'active', limit: 200 }],
+        queryFn: () => listGroups({ status: 'active', limit: 200 }),
+    });
+    const allGroups = allGroupsQuery.data?.data ?? [];
+
+    const enrolledGroupIds = new Set(groups.map((item) => item.group.id));
+
+    const groupOptions = [
+        ...groups.map((item) => ({
+            value: item.group.id,
+            label:
+                item.balance < 0
+                    ? `${item.group.name} · ${t('cashbox.groupDebt', { amount: formatPrice(-item.balance, t('common.som')) })}`
+                    : item.group.name,
+        })),
+        ...allGroups
+            .filter((g) => !enrolledGroupIds.has(g.id))
+            .map((g) => ({
+                value: g.id,
+                label: g.name,
+            })),
+    ];
+
     const [receiptData, setReceiptData] = useState<{
         studentName: string;
         groupName: string;
@@ -97,6 +123,7 @@ export function PaymentModal({
         onSuccess: () => {
             for (const key of [
                 'students',
+                'groups',
                 'student-payments',
                 'student-balance',
                 'debtors',
@@ -106,10 +133,17 @@ export function PaymentModal({
             }
             toast.success(t('cashbox.created'));
 
-            const selectedGrp = groups.find((g) => g.group.id === form.group_id);
+            const enrolledGrp = groups.find((g) => g.group.id === form.group_id);
+            const otherGrp = allGroups.find((g) => g.id === form.group_id);
+            const groupName = enrolledGrp
+                ? enrolledGrp.group.name
+                : otherGrp
+                  ? otherGrp.name
+                  : 'Guruh';
+
             setReceiptData({
                 studentName: student ? fullName(student) : '',
-                groupName: selectedGrp ? selectedGrp.group.name : 'Guruh',
+                groupName,
                 amount: Number(form.amount),
                 method: t(`paymentMethod.${form.method}` as any) || form.method,
                 date: form.paid_at,
@@ -132,12 +166,10 @@ export function PaymentModal({
     }
 
     // Guruh bitta bo'lsa, tanlashga hojat yo'q — qarzi bilan darhol to'ladi.
-    // Balans kelgan renderning o'zida bir marta (effekt emas: qo'shimcha
-    // render va summaning bir lahza bo'sh ko'rinishi bo'lmaydi).
     const [autoPicked, setAutoPicked] = useState(false);
-    if (!autoPicked && groups.length === 1 && !form.group_id) {
+    if (!autoPicked && groupOptions.length === 1 && !form.group_id) {
         setAutoPicked(true);
-        selectGroup(groups[0].group.id);
+        selectGroup(groupOptions[0].value);
     }
 
     function handleSubmit(event: FormEvent) {
@@ -205,15 +237,9 @@ export function PaymentModal({
                     <SelectInput
                         label={t('common.group')}
                         required
-                        options={groups.map((item) => ({
-                            value: item.group.id,
-                            label:
-                                item.balance < 0
-                                    ? `${item.group.name} · ${t('cashbox.groupDebt', { amount: formatPrice(-item.balance, t('common.som')) })}`
-                                    : item.group.name,
-                        }))}
+                        options={groupOptions}
                         hint={
-                            balanceQuery.isSuccess && groups.length === 0
+                            groupOptions.length === 0
                                 ? t('cashbox.noGroups')
                                 : t('cashbox.groupHint')
                         }
