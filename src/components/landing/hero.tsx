@@ -9,47 +9,54 @@ export function Hero({ onStart }: { onStart: () => void }) {
 
     return (
         <section className='relative overflow-hidden'>
-            {/* Orqa fondagi yumshoq brend nuri. */}
-            <div
-                aria-hidden='true'
-                className='pointer-events-none absolute inset-x-0 -top-48 flex justify-center'
-            >
-                <div className='bg-brand-500/15 size-160 rounded-full blur-3xl' />
+            {/* Gradient fon */}
+            <div aria-hidden='true' className='pointer-events-none absolute inset-0'>
+                <div className='bg-brand-500/12 absolute -top-32 left-1/2 size-[800px] -translate-x-1/2 rounded-full blur-[100px]' />
+                <div className='absolute -top-10 right-0 size-80 rounded-full bg-violet-500/8 blur-3xl' />
+                <div className='absolute top-40 -left-20 size-72 rounded-full bg-blue-500/8 blur-3xl' />
             </div>
 
-            <div className='relative mx-auto max-w-4xl px-5 pt-16 pb-12 text-center sm:pt-24'>
-                <h1 className='text-text-primary font-display text-4xl leading-tight font-semibold sm:text-5xl lg:text-6xl'>
+            <div className='relative mx-auto max-w-5xl px-5 pt-16 pb-10 sm:pt-24'>
+                {/* Sarlavha */}
+                <h1 className='text-text-primary font-display text-center text-4xl leading-[1.1] font-bold sm:text-5xl lg:text-[64px]'>
                     {t('landing.heroTitle')}
-                    <span className='text-brand-accent block'>
-                        {t('landing.heroAccent')}
+                    <span className='relative mt-2 block'>
+                        {/* Highlighted word */}
+                        <span className='bg-brand-500 relative inline-block rounded-2xl px-4 py-1 text-white'>
+                            {t('landing.heroAccent')}
+                        </span>
                     </span>
                 </h1>
-                <p className='text-text-secondary mx-auto mt-6 max-w-2xl text-lg'>
+
+                <p className='text-text-secondary mx-auto mt-7 max-w-2xl text-center text-lg leading-relaxed sm:text-xl'>
                     {t('landing.heroText')}
                 </p>
-                <div className='mt-8 flex flex-wrap justify-center gap-3'>
-                    <Button size='xl' onPress={onStart}>
-                        {t('landing.startFree')}
+
+                {/* Buttons */}
+                <div className='mt-8 flex flex-wrap items-center justify-center gap-3'>
+                    <Button
+                        size='xl'
+                        onPress={onStart}
+                        className='shadow-lg shadow-brand-500/20 px-8'
+                    >
+                        {t('landing.startFree')} →
                     </Button>
                     <Button
                         appearance='outline'
                         size='xl'
                         onPress={() =>
-                            document
-                                .getElementById('features')
-                                ?.scrollIntoView({ behavior: 'smooth' })
+                            document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })
                         }
+                        className='px-8'
                     >
                         {t('landing.seeFeatures')}
                     </Button>
                 </div>
             </div>
 
+            {/* Hero screenshot */}
             <div className='relative mx-auto max-w-5xl px-5 pb-16'>
-                <div
-                    aria-hidden='true'
-                    className='bg-brand-500/20 absolute inset-x-16 top-16 bottom-4 rounded-full blur-3xl'
-                />
+                <div aria-hidden='true' className='bg-brand-500/15 absolute inset-x-24 top-8 bottom-0 rounded-full blur-3xl' />
                 <div className='relative'>
                     <ImageSlot
                         image='hero'

@@ -1,6 +1,8 @@
 'use client';
 
-import { AuthHeader } from '@/components/common/auth-header';
+import { AppLogo } from '@/components/common/app-logo';
+import ThemeToggle from '@/components/common/header/theme-toggle';
+import { LocaleSwitcher } from '@/components/common/locale-switcher';
 import { Button } from '@/components/tailgrids/core/button';
 import { FormError } from '@/components/ui/form-error';
 import { PasswordInput } from '@/components/ui/password-input';
@@ -21,74 +23,46 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, type FormEvent } from 'react';
 
-/** Hisob ochish yoki savollar bo'yicha murojaat kanali. */
 const SUPPORT_TELEGRAM = 'https://t.me/edumsuz';
 
-/**
- * Backendda ikkita login endpointi bor: markaz foydalanuvchilari uchun /auth/login va
- * super admin uchun /super_admin/login. Foydalanuvchidan turini so'ramaymiz —
- * avval foydalanuvchi sifatida urinib ko'ramiz, 401 kelsa super admin sifatida.
- */
-async function signInWithPhone(
-    phone_number: string,
-    password: string,
-): Promise<Session> {
+async function signInWithPhone(phone_number: string, password: string): Promise<Session> {
     try {
         const res = await loginUser({ phone_number, password });
-
         return sessionFromAuthUser(res.token, res.user);
     } catch (userError) {
-        // Faqat "hisob topilmadi / parol xato" holatida ikkinchi endpointga
-        // o'tamiz; tarmoq yoki validatsiya xatosi bo'lsa darhol qaytaramiz.
-        if (!(userError instanceof ApiError) || userError.statusCode !== 401) {
-            throw userError;
-        }
-
+        if (!(userError instanceof ApiError) || userError.statusCode !== 401) throw userError;
         try {
             const res = await loginSuperAdmin({ phone_number, password });
-
             return {
-                token: res.token,
-                kind: 'super_admin',
-                id: res.super_admin.id,
-                phone_number: res.super_admin.phone_number,
-                first_name: 'Super',
-                last_name: 'Admin',
-                avatar_url: null,
-                education: null,
-                roles: [],
-                is_owner: false,
-                permissions: [],
-                subscription: null,
+                token: res.token, kind: 'super_admin', id: res.super_admin.id,
+                phone_number: res.super_admin.phone_number, first_name: 'Super',
+                last_name: 'Admin', avatar_url: null, education: null,
+                roles: [], is_owner: false, permissions: [], subscription: null,
             };
         } catch (superAdminError) {
-            // 429 — shu raqam uchun urinishlar limiti tugagan: kutish kerakligini
-            // aytmasak, odam to'g'ri parolni ham "xato" deb o'ylab qoladi.
-            if (
-                superAdminError instanceof ApiError &&
-                superAdminError.statusCode === 429
-            ) {
-                throw superAdminError;
-            }
-            // Ikkalasi ham rad etdi. Foydalanuvchi endpointining xabari to'liqroq
-            // (nofaol hisob haqida ham aytadi), shuning uchun o'shani beramiz.
+            if (superAdminError instanceof ApiError && superAdminError.statusCode === 429) throw superAdminError;
             throw userError;
         }
     }
 }
+
+const FEATURES = [
+    "O'quvchilar va guruhlar boshqaruvi",
+    "To'lovlar va moliyaviy hisobotlar",
+    'Davomat va dars jadvali',
+    'Lidlar va CRM tizimi',
+];
 
 export default function LoginPage() {
     const router = useRouter();
     const { session, loading, signIn } = useSession();
     const t = useT();
     const trialDays = useTrialDays();
-
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [pending, setPending] = useState(false);
 
-    // Allaqachon kirgan bo'lsa login sahifasida ushlab turishning ma'nosi yo'q.
     useEffect(() => {
         if (loading || !session) return;
         router.replace(homeHref(session));
@@ -98,101 +72,180 @@ export default function LoginPage() {
         event.preventDefault();
         setError(null);
         setPending(true);
-
         try {
             const next = await signInWithPhone(phone, password);
             signIn(next);
             router.replace(homeHref(next));
         } catch (err) {
-            setError(
-                err instanceof ApiError
-                    ? apiErrorMessage(err, t)
-                    : t('auth.failed'),
-            );
+            setError(err instanceof ApiError ? apiErrorMessage(err, t) : t('auth.failed'));
         } finally {
             setPending(false);
         }
     }
 
     return (
-        <div className='bg-background-gray-secondary_alt_2 flex h-full flex-col overflow-y-auto'>
-            <AuthHeader />
+        <div className='bg-background-gray-secondary_alt_2 flex h-full overflow-hidden'>
 
-            <div className='flex flex-1 items-center justify-center p-4 py-8'>
-                <div className='border-card-border bg-card-surface-area w-full max-w-md rounded-2xl border p-8 shadow-sm'>
-                    <div className='mb-7 flex flex-col items-center gap-3 text-center'>
-                        <h1 className='text-text-primary font-display text-xl font-semibold'>
-                            {t('auth.title')}
-                        </h1>
-                        <p className='text-text-tertiary text-sm'>
-                            {t('auth.subtitle')}
-                        </p>
+            {/* ── Chap: brend paneli ── */}
+            <div className='bg-brand-500 relative hidden flex-col justify-between overflow-hidden p-12 text-white lg:flex lg:w-[45%]'>
+                {/* Gradient nurlar */}
+                <div className='absolute -top-32 -left-32 size-96 rounded-full bg-white/10 blur-[80px]' />
+                <div className='absolute -bottom-32 -right-20 size-96 rounded-full bg-white/10 blur-[80px]' />
+                <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-80 rounded-full bg-white/5 blur-2xl' />
+
+                {/* Grid nuqtalari */}
+                <div
+                    className='absolute inset-0 opacity-10'
+                    style={{
+                        backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+                        backgroundSize: '28px 28px',
+                    }}
+                />
+
+                {/* Logo */}
+                <div className='relative'>
+                    <AppLogo variant='white' />
+                </div>
+
+                {/* Asosiy kontent */}
+                <div className='relative space-y-6'>
+                    {/* Pill badge */}
+                    <div className='inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-medium backdrop-blur-sm'>
+                        <span className='size-1.5 rounded-full bg-white' />
+                        O&apos;quv markazlar uchun yagona tizim
                     </div>
 
-                    <form
-                        onSubmit={handleSubmit}
-                        className='flex flex-col gap-4'
-                    >
-                        <PhoneInput
-                            label={t('common.phoneNumber')}
-                            required
-                            value={phone}
-                            onValueChange={setPhone}
-                        />
+                    <h2 className='font-display text-3xl font-bold leading-tight sm:text-4xl'>
+                        O&apos;quv markazingizni<br />
+                        <span className='relative inline-block'>
+                            bir joyda
+                            <svg className='absolute -bottom-1 left-0 w-full' viewBox='0 0 120 8' fill='none'>
+                                <path d='M2 6 C30 2, 90 2, 118 6' stroke='white' strokeWidth='2.5' strokeLinecap='round' opacity='0.5' />
+                            </svg>
+                        </span>{' '}
+                        boshqaring
+                    </h2>
 
-                        <PasswordInput
-                            label={t('common.password')}
-                            required
-                            autoComplete='current-password'
-                            placeholder='••••••••'
-                            value={password}
-                            onChange={(event) =>
-                                setPassword(event.target.value)
-                            }
-                        />
-
-                        {error && <FormError message={error} />}
-
-                        <Link
-                            href='/forgot-password'
-                            className='text-brand-accent -mt-1 self-end text-sm font-medium hover:underline'
-                        >
-                            {t('auth.forgotPassword')}
-                        </Link>
-
-                        <Button
-                            type='submit'
-                            variant='primary'
-                            appearance='fill'
-                            size='lg'
-                            isDisabled={pending}
-                            className='mt-1 w-full'
-                        >
-                            {pending ? t('auth.signingIn') : t('auth.signIn')}
-                        </Button>
-                    </form>
-
-                    <p className='text-text-secondary mt-6 text-center text-sm'>
-                        {t('auth.noAccount')}{' '}
-                        <Link
-                            href='/register'
-                            className='text-brand-accent font-medium hover:underline'
-                        >
-                            {t('auth.tryFree', { days: trialDays })}
-                        </Link>
+                    <p className='text-white/70 text-base leading-relaxed'>
+                        Guruhlar, to&apos;lovlar, davomat va lidlar —
+                        hammasi bitta tizimda.
                     </p>
 
-                    <p className='text-text-tertiary mt-3 text-center text-xs'>
-                        {t('auth.contact')}{' '}
-                        <a
-                            href={SUPPORT_TELEGRAM}
-                            target='_blank'
-                            rel='noopener noreferrer'
-                            className='text-brand-accent font-medium hover:underline'
+                    <ul className='space-y-3 pt-1'>
+                        {FEATURES.map((item) => (
+                            <li key={item} className='flex items-center gap-3 text-sm text-white/85'>
+                                <span className='bg-white/20 flex size-5 shrink-0 items-center justify-center rounded-full'>
+                                    <svg className='size-3' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='3'>
+                                        <path d='M20 6 9 17l-5-5' />
+                                    </svg>
+                                </span>
+                                {item}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <p className='relative text-xs text-white/40'>
+                    © {new Date().getFullYear()} EduMS. Barcha huquqlar himoyalangan.
+                </p>
+            </div>
+
+            {/* ── O'ng: forma ── */}
+            <div className='flex flex-1 flex-col overflow-y-auto'>
+                {/* Header */}
+                <header className='flex items-center justify-between px-6 py-4'>
+                    <Link href='/' className='lg:hidden'>
+                        <AppLogo />
+                    </Link>
+                    <div className='ml-auto flex items-center gap-2'>
+                        <Link
+                            href='/'
+                            className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary flex h-9 items-center gap-2 rounded-xl border px-3.5 text-sm font-medium transition'
                         >
-                            @edumsuz
-                        </a>
-                    </p>
+                            <svg className='size-4' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
+                                <path d='m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z' />
+                                <polyline points='9 22 9 12 15 12 15 22' />
+                            </svg>
+                            <span className='hidden sm:inline'>{t('landing.backHome')}</span>
+                        </Link>
+                        <LocaleSwitcher />
+                        <ThemeToggle />
+                    </div>
+                </header>
+
+                {/* Forma */}
+                <div className='flex flex-1 items-center justify-center p-6'>
+                    <div className='w-full max-w-sm'>
+
+                        {/* Mobil badge */}
+                        <div className='mb-6 flex justify-center lg:hidden'>
+                            <div className='border-brand-500/20 bg-brand-500/8 text-brand-500 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-medium'>
+                                <span className='bg-brand-500 size-1.5 rounded-full' />
+                                O&apos;quv markazlar uchun yagona tizim
+                            </div>
+                        </div>
+
+                        <div className='mb-8 text-center'>
+                            <h1 className='text-text-primary font-display text-2xl font-bold'>
+                                {t('auth.title')}
+                            </h1>
+                            <p className='text-text-tertiary mt-2 text-sm'>
+                                {t('auth.subtitle')}
+                            </p>
+                        </div>
+
+                        <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+                            <PhoneInput
+                                label={t('common.phoneNumber')}
+                                required
+                                value={phone}
+                                onValueChange={setPhone}
+                            />
+                            <PasswordInput
+                                label={t('common.password')}
+                                required
+                                autoComplete='current-password'
+                                placeholder='••••••••'
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+
+                            {error && <FormError message={error} />}
+
+                            <Link
+                                href='/forgot-password'
+                                className='text-brand-accent -mt-1 self-end text-sm font-medium hover:underline'
+                            >
+                                {t('auth.forgotPassword')}
+                            </Link>
+
+                            <Button
+                                type='submit'
+                                variant='primary'
+                                appearance='fill'
+                                size='lg'
+                                isDisabled={pending}
+                                className='w-full shadow-md shadow-brand-500/20'
+                            >
+                                {pending ? t('auth.signingIn') : t('auth.signIn')}
+                            </Button>
+                        </form>
+
+                        <div className='mt-6 space-y-3 text-center'>
+                            <p className='text-text-secondary text-sm'>
+                                {t('auth.noAccount')}{' '}
+                                <Link href='/register' className='text-brand-accent font-semibold hover:underline'>
+                                    {t('auth.tryFree', { days: trialDays })}
+                                </Link>
+                            </p>
+                            <p className='text-text-tertiary text-xs'>
+                                {t('auth.contact')}{' '}
+                                <a href={SUPPORT_TELEGRAM} target='_blank' rel='noopener noreferrer' className='text-brand-accent font-medium hover:underline'>
+                                    @edumsuz
+                                </a>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

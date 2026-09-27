@@ -51,7 +51,7 @@ lint (ogohlantirishsiz), format, typecheck, build va Docker image.
 | Landing page | `/` | Hamma |
 | Bosh sahifa | `/dashboard` | `reports.view` ruxsati borlar |
 | Umumiy ko'rinish | `/overview` | Super admin |
-| Ro'yxatdan o'tish | `/register` | Hamma (SMS kod bilan, 7 kun bepul) |
+| Ro'yxatdan o'tish | `/register` | Hamma (SMS kod bilan, 30 kun bepul) |
 | Kirish | `/login` | Hamma |
 | Parolni tiklash | `/forgot-password` | Hamma (SMS kod bilan) |
 | O'quv markazlar | `/educations`, `/educations/[id]` | Super admin |
