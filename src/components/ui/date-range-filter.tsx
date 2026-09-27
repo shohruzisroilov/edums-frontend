@@ -77,9 +77,9 @@ export function DateRangeFilter({
     };
 
     return (
-        <div className={cn('flex flex-wrap items-center gap-2.5', className)}>
+        <div className={cn('flex flex-wrap items-center gap-2.5 w-full sm:w-auto', className)}>
             {/* Presets Bar */}
-            <div className='border-card-border bg-background-gray-secondary/50 flex flex-wrap items-center rounded-xl border p-1 shadow-xs'>
+            <div className='border-card-border bg-background-gray-secondary/50 flex max-w-full overflow-x-auto sm:flex-wrap items-center rounded-xl border p-1 shadow-xs scrollbar-none'>
                 {presets.map((p) => {
                     const isActive = activePreset === p.id;
                     return (
@@ -88,7 +88,7 @@ export function DateRangeFilter({
                             type='button'
                             onClick={() => applyPreset(p.id)}
                             className={cn(
-                                'rounded-lg px-2.5 py-1 text-xs font-medium transition-all',
+                                'shrink-0 rounded-lg px-2.5 py-1.5 sm:py-1 text-xs font-medium transition-all',
                                 isActive
                                     ? 'bg-card-surface-area text-brand-accent shadow-xs font-semibold'
                                     : 'text-text-tertiary hover:text-text-primary',
@@ -101,8 +101,8 @@ export function DateRangeFilter({
             </div>
 
             {/* Custom Range Inputs */}
-            <div className='flex items-center gap-2'>
-                <div className='w-36'>
+            <div className='flex items-center gap-2 w-full sm:w-auto'>
+                <div className='flex-1 sm:w-36 sm:flex-none'>
                     <TextInput
                         type='date'
                         aria-label={t('common.from')}
@@ -112,8 +112,8 @@ export function DateRangeFilter({
                         onChange={(e) => onDateChange({ from: e.target.value, to })}
                     />
                 </div>
-                <span className='text-text-tertiary text-xs font-medium'>—</span>
-                <div className='w-36'>
+                <span className='text-text-tertiary text-xs font-medium shrink-0'>—</span>
+                <div className='flex-1 sm:w-36 sm:flex-none'>
                     <TextInput
                         type='date'
                         aria-label={t('common.to')}

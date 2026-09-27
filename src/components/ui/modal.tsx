@@ -102,9 +102,9 @@ export function Modal({
     if (!open) return null;
 
     return (
-        <div className='fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 sm:items-center'>
+        <div className='fixed inset-0 z-50 flex items-end justify-center overflow-y-auto p-0 sm:items-center sm:p-4'>
             <div
-                className='fixed inset-0 bg-black/50'
+                className='fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity'
                 aria-hidden='true'
                 onClick={handleAttemptClose}
             />
@@ -115,7 +115,7 @@ export function Modal({
                 aria-label={title}
                 tabIndex={-1}
                 className={cn(
-                    'border-card-border bg-card-surface-area relative z-10 my-auto w-full max-h-[90vh] overflow-y-auto rounded-xl border p-4 sm:p-6 shadow-xl outline-none',
+                    'border-card-border bg-card-surface-area relative z-10 my-0 sm:my-auto w-full max-h-[92vh] sm:max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-xl border p-4.5 sm:p-6 shadow-2xl outline-none',
                     size === 'lg' ? 'max-w-3xl' : 'max-w-lg',
                 )}
             >
