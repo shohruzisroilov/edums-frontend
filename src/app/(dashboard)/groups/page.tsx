@@ -186,29 +186,13 @@ function GroupsView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-3 px-4 sm:px-5 pb-4'>
-                <div className='flex-1 min-w-[200px] flex items-center gap-2'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 sm:px-5 pb-4'>
+                <div className='flex-1 min-w-[220px]'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
                         placeholder={t('groups.search')}
                     />
-                    {session?.kind === 'user' && (
-                        <Button
-                            appearance={filters.teacher_id === session.id ? 'fill' : 'outline'}
-                            variant={filters.teacher_id === session.id ? 'primary' : undefined}
-                            size='md'
-                            className='sm:hidden shrink-0'
-                            onPress={() =>
-                                setFilter(
-                                    'teacher_id',
-                                    filters.teacher_id === session.id ? '' : session.id,
-                                )
-                            }
-                        >
-                            Mening guruhlarim
-                        </Button>
-                    )}
                 </div>
 
                 <MobileFilterSheet
@@ -221,6 +205,24 @@ function GroupsView() {
                     }}
                     activeChips={activeChips}
                 >
+                    {session?.kind === 'user' && (
+                        <div className='mb-2'>
+                            <Button
+                                appearance={filters.teacher_id === session.id ? 'fill' : 'outline'}
+                                variant={filters.teacher_id === session.id ? 'primary' : undefined}
+                                size='md'
+                                className='w-full'
+                                onPress={() =>
+                                    setFilter(
+                                        'teacher_id',
+                                        filters.teacher_id === session.id ? '' : session.id,
+                                    )
+                                }
+                            >
+                                Mening guruhlarim
+                            </Button>
+                        </div>
+                    )}
                     {branches.length > 1 && (
                         <SelectInput
                             label={t('groups.allBranches')}
