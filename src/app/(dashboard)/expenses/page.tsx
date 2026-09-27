@@ -16,6 +16,7 @@ import {
     ErrorState,
     TableSkeleton,
 } from '@/components/ui/data-state';
+import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
 import { DateRangeFilter } from '@/components/ui/date-range-filter';
 import {
     SelectInput,
@@ -164,9 +165,32 @@ function ExpensesView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-3 px-5 pb-4'>
-                <div className='w-full sm:w-52'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 sm:px-5 pb-4'>
+                <MobileFilterSheet
+                    activeCount={(filters.category ? 1 : 0) + (filters.from || filters.to ? 1 : 0)}
+                    onClear={() => {
+                        setFilter('category', '');
+                        setFilter('from', '');
+                        setFilter('to', '');
+                    }}
+                    activeChips={[
+                        ...(filters.category
+                            ? [{ key: 'category', label: `Kategoriya: ${t(`expenseCategory.${filters.category as ExpenseCategory}`)}`, onRemove: () => setFilter('category', '') }]
+                            : []),
+                        ...(filters.from || filters.to
+                            ? [{
+                                  key: 'date',
+                                  label: `Sana: ${filters.from || '…'} — ${filters.to || '…'}`,
+                                  onRemove: () => {
+                                      setFilter('from', '');
+                                      setFilter('to', '');
+                                  },
+                              }]
+                            : []),
+                    ]}
+                >
                     <SelectInput
+                        label={t('expenses.allCategories')}
                         options={EXPENSE_CATEGORIES.map((category) => ({
                             value: category,
                             label: t(`expenseCategory.${category}`),
@@ -175,15 +199,39 @@ function ExpensesView() {
                         value={filters.category}
                         onValueChange={(next) => setFilter('category', next)}
                     />
+                    <div className='mt-1'>
+                        <DateRangeFilter
+                            from={filters.from}
+                            to={filters.to}
+                            onDateChange={({ from, to }) => {
+                                setFilter('from', from);
+                                setFilter('to', to);
+                            }}
+                        />
+                    </div>
+                </MobileFilterSheet>
+
+                <div className='hidden sm:flex flex-wrap items-center gap-3'>
+                    <div className='w-52'>
+                        <SelectInput
+                            options={EXPENSE_CATEGORIES.map((category) => ({
+                                value: category,
+                                label: t(`expenseCategory.${category}`),
+                            }))}
+                            placeholder={t('expenses.allCategories')}
+                            value={filters.category}
+                            onValueChange={(next) => setFilter('category', next)}
+                        />
+                    </div>
+                    <DateRangeFilter
+                        from={filters.from}
+                        to={filters.to}
+                        onDateChange={({ from, to }) => {
+                            setFilter('from', from);
+                            setFilter('to', to);
+                        }}
+                    />
                 </div>
-                <DateRangeFilter
-                    from={filters.from}
-                    to={filters.to}
-                    onDateChange={({ from, to }) => {
-                        setFilter('from', from);
-                        setFilter('to', to);
-                    }}
-                />
             </div>
 
             <div className='px-5'>

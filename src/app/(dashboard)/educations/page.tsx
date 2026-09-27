@@ -20,6 +20,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
 import { AccessGuard } from '@/components/ui/access-guard';
 import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
+import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
 import { SearchInput } from '@/components/ui/search-input';
 import {
     EducationStatusBadge,
@@ -116,13 +117,13 @@ function EducationsView() {
                 }
             />
 
-            <div className='flex flex-col gap-3 px-5 pb-4 sm:flex-row sm:items-center'>
+            <div className='flex items-center gap-2 px-4 sm:px-5 pb-4'>
                 <SearchInput
                     value={search}
                     onChange={setSearch}
                     placeholder={t('educations.search')}
                 />
-                <div className='sm:w-44'>
+                <div className='hidden sm:block sm:w-44'>
                     <SelectInput
                         options={EDUCATION_STATUSES.map((status) => ({
                             value: status,
@@ -133,6 +134,21 @@ function EducationsView() {
                         onValueChange={(next) => setFilter('status', next)}
                     />
                 </div>
+                <MobileFilterSheet
+                    activeCount={filters.status ? 1 : 0}
+                    onReset={() => setFilter('status', '')}
+                >
+                    <SelectInput
+                        label={t('common.status')}
+                        options={EDUCATION_STATUSES.map((status) => ({
+                            value: status,
+                            label: t(`educationStatus.${status}`),
+                        }))}
+                        placeholder={t('common.allStatuses')}
+                        value={filters.status}
+                        onValueChange={(next) => setFilter('status', next)}
+                    />
+                </MobileFilterSheet>
             </div>
 
             <div className='px-5'>
