@@ -26,6 +26,7 @@ import { PaymentMethodBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useListQuery } from '@/hooks/use-list-query';
+import { useOpenOnNewParam } from '@/hooks/use-new-param';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import {
@@ -41,7 +42,8 @@ import { can } from '@/utils/access';
 import { cn } from '@/utils/cn';
 import { fullName } from '@/utils/format';
 import { TONE_TEXT } from '@/utils/tone';
-import { HandTakingCoins, Plus, Trash1 } from '@tailgrids/icons';
+import { exportToCsv } from '@/utils/export';
+import { Download1, Plus, Trash1, Wallet2 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -81,6 +83,8 @@ function CashboxView() {
 
     const [creating, setCreating] = useState(false);
     const [deleting, setDeleting] = useState<StudentPayment | null>(null);
+
+    useOpenOnNewParam(() => setCreating(true), canCreate);
 
     const query = useQuery({
         queryKey: ['student-payments', { search, ...filters, limit, offset }],
@@ -130,17 +134,49 @@ function CashboxView() {
                         : t('cashbox.subtitle')
                 }
                 actions={
-                    canCreate && (
-                        <Button
-                            variant='primary'
-                            appearance='fill'
-                            size='md'
-                            onPress={() => setCreating(true)}
-                        >
-                            <Plus />
-                            {t('cashbox.new')}
-                        </Button>
-                    )
+                    <div className='flex flex-wrap items-center gap-2'>
+                        {query.data?.data && query.data.data.length > 0 && (
+                            <Button
+                                appearance='outline'
+                                size='md'
+                                onPress={() => {
+                                    exportToCsv(
+                                        'Kassa_Tushumlari',
+                                        [
+                                            'Sana',
+                                            "O'quvchi",
+                                            'Guruh',
+                                            'Summa (som)',
+                                            "To'lov turi",
+                                            'Qabul qildi',
+                                        ],
+                                        query.data.data.map((p) => [
+                                            formatDate(p.paid_at),
+                                            fullName(p.student),
+                                            p.group.name,
+                                            p.amount,
+                                            p.method,
+                                            p.received_by ? fullName(p.received_by) : '',
+                                        ]),
+                                    );
+                                }}
+                            >
+                                <Download1 />
+                                Eksport (Excel)
+                            </Button>
+                        )}
+                        {canCreate && (
+                            <Button
+                                variant='primary'
+                                appearance='fill'
+                                size='md'
+                                onPress={() => setCreating(true)}
+                            >
+                                <Plus />
+                                {t('cashbox.new')}
+                            </Button>
+                        )}
+                    </div>
                 }
             />
 
@@ -192,7 +228,33 @@ function CashboxView() {
                     ) : query.data.data.length === 0 ? (
                         <EmptyState
                             message={t('cashbox.empty')}
-                            icon={<HandTakingCoins className='size-5' />}
+                            icon={<Wallet2 className='size-5' />}
+                            action={
+                                Boolean(search || filters.method || filters.from || filters.to) ? (
+                                    <Button
+                                        appearance='outline'
+                                        size='md'
+                                        onPress={() => {
+                                            setSearch('');
+                                            setFilter('method', '');
+                                            setFilter('from', '');
+                                            setFilter('to', '');
+                                        }}
+                                    >
+                                        Filtrni tozalash
+                                    </Button>
+                                ) : canCreate ? (
+                                    <Button
+                                        variant='primary'
+                                        appearance='fill'
+                                        size='md'
+                                        onPress={() => setCreating(true)}
+                                    >
+                                        <Plus />
+                                        Birinchi to'lovni qabul qilish
+                                    </Button>
+                                ) : null
+                            }
                         />
                     ) : (
                         <>

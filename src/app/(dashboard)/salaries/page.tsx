@@ -34,6 +34,7 @@ import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useSession } from '@/hooks/use-session';
+import { useUrlParam } from '@/hooks/use-url-state';
 import { useT } from '@/i18n/provider';
 import {
     cancelSalaryPayout,
@@ -101,7 +102,7 @@ function SalariesView() {
     const canManage = can(session, 'salaries.manage');
     const som = t('common.som');
 
-    const [month, setMonth] = useState(currentMonth);
+    const [month, setMonth] = useUrlParam('month', currentMonth());
     const [rating, setRating] = useState<SalarySheetRow | null>(null);
     const [paying, setPaying] = useState<SalarySheetRow | null>(null);
     const [cancelling, setCancelling] = useState<SalaryPayout | null>(null);

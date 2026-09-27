@@ -51,7 +51,7 @@ export default function RegisterPage() {
     const [form, setForm] = useState<FormState>(EMPTY);
     const [step, setStep] = useState<'details' | 'code'>('details');
     const [code, setCode] = useState('');
-    const [codeLength, setCodeLength] = useState(6);
+    const [codeLength, setCodeLength] = useState(4);
     const [resendIn, setResendIn] = useState(0);
     const [error, setError] = useState<string | null>(null);
     const [pending, setPending] = useState(false);

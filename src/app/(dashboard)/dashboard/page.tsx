@@ -1,5 +1,6 @@
 'use client';
 
+import { Badge } from '@/components/tailgrids/core/badge';
 import { AccessGuard } from '@/components/ui/access-guard';
 import {
     ColumnChart,
@@ -13,6 +14,7 @@ import { ErrorState, TableSkeleton } from '@/components/ui/data-state';
 import { PageHeader } from '@/components/ui/page-header';
 import { SectionCard } from '@/components/ui/section-card';
 import { useFormat } from '@/hooks/use-format';
+import { ATTENDANCE_PARAM } from '@/hooks/use-new-param';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { getDashboard } from '@/services/api/reports';
@@ -20,6 +22,7 @@ import { LEAD_STATUSES } from '@/types/api';
 import { can } from '@/utils/access';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
+import { GettingStarted } from './_components/getting-started';
 
 export default function DashboardPage() {
     return (
@@ -43,6 +46,10 @@ function DashboardView() {
 
     const data = query.data;
     const canOpenGroups = can(session, 'groups.view');
+    const canMarkAttendance =
+        canOpenGroups &&
+        can(session, 'attendance.view') &&
+        can(session, 'attendance.mark');
 
     return (
         <>
@@ -53,10 +60,13 @@ function DashboardView() {
                 }
             />
 
+            <GettingStarted setup={data.setup} />
+
             <div className='grid gap-4 px-5 sm:grid-cols-2 xl:grid-cols-4'>
                 <StatTile
                     label={t('dashboard.activeStudents')}
                     value={formatNumber(data.students.active)}
+                    href='/students'
                     hint={t('dashboard.joinedLeft', {
                         joined: data.students.joined_this_month,
                         left: data.students.left_this_month,
@@ -65,6 +75,16 @@ function DashboardView() {
                 <StatTile
                     label={t('dashboard.revenueThisMonth')}
                     value={formatPrice(data.revenue.this_month, som)}
+                    href='/cashbox'
+                    trend={
+                        data.revenue.last_month > 0
+                            ? Math.round(
+                                  ((data.revenue.this_month - data.revenue.last_month) /
+                                      data.revenue.last_month) *
+                                      100,
+                              )
+                            : undefined
+                    }
                     hint={t('dashboard.vsLastMonth', {
                         amount: formatPrice(data.revenue.last_month, som),
                     })}
@@ -72,6 +92,7 @@ function DashboardView() {
                 <StatTile
                     label={t('dashboard.totalDebt')}
                     value={formatPrice(data.debt.total, som)}
+                    href='/debtors'
                     hint={t('dashboard.debtors', {
                         count: data.debt.debtors,
                     })}
@@ -83,6 +104,7 @@ function DashboardView() {
                             ? '—'
                             : `${Math.round(data.attendance.rate * 100)}%`
                     }
+                    href='/schedule'
                     hint={
                         data.attendance.rate === null
                             ? t('dashboard.noAttendance')
@@ -150,10 +172,28 @@ function DashboardView() {
                                                 .join(' · ')}
                                         </p>
                                     </div>
-                                    <span className='text-text-secondary shrink-0 text-sm tabular-nums'>
-                                        {lesson.lesson_start}–
-                                        {lesson.lesson_end}
-                                    </span>
+                                    <div className='flex shrink-0 flex-col items-end gap-1'>
+                                        <span className='text-text-secondary text-sm tabular-nums'>
+                                            {lesson.lesson_start}–
+                                            {lesson.lesson_end}
+                                        </span>
+                                        {lesson.attendance_marked ? (
+                                            <Badge size='sm' color='success'>
+                                                {t('attendance.marked')}
+                                            </Badge>
+                                        ) : canMarkAttendance ? (
+                                            <Link
+                                                href={`/groups/${lesson.group.id}?${ATTENDANCE_PARAM}=1`}
+                                                className='text-brand-accent text-xs font-medium hover:underline'
+                                            >
+                                                {t('attendance.take')}
+                                            </Link>
+                                        ) : (
+                                            <Badge size='sm' color='gray'>
+                                                {t('attendance.unmarked')}
+                                            </Badge>
+                                        )}
+                                    </div>
                                 </li>
                             ))}
                         </ul>
@@ -181,6 +221,7 @@ function DashboardView() {
                     <StatTile
                         label={t('dashboard.expensesThisMonth')}
                         value={formatPrice(data.expenses.this_month, som)}
+                        href='/expenses'
                     />
                     <StatTile
                         label={t('dashboard.profit')}
@@ -190,6 +231,7 @@ function DashboardView() {
                     <StatTile
                         label={t('dashboard.activeGroups')}
                         value={formatNumber(data.active_groups)}
+                        href='/groups'
                     />
                 </div>
             </div>

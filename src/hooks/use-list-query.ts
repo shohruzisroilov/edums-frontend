@@ -1,37 +1,84 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useUrlParams } from './use-url-state';
+
+const DEFAULT_LIMIT = 20;
+/** Backend `PaginationDto` chegarasi — qo'lda yozilgan manzil 400 bermasin. */
+const MAX_LIMIT = 200;
+
+/** Manzildagi nomlar: `?q=ali&status=active&page=3&limit=50`. */
+const SEARCH_PARAM = 'q';
+const PAGE_PARAM = 'page';
+const LIMIT_PARAM = 'limit';
 
 /**
  * Ro'yxat sahifalari uchun umumiy holat: qidiruv, filtrlar va limit/offset.
- * Filtr yoki qidiruv o'zgarganda offset avtomatik 0 ga qaytadi — aks holda
- * foydalanuvchi bo'sh sahifada qolib ketardi.
+ * Hammasi manzilda saqlanadi (`useUrlParams`): o'quvchini ochib "orqaga"
+ * qaytilsa, qidiruv, filtr va sahifa joyida qoladi.
+ *
+ * Filtr yoki qidiruv o'zgarganda sahifa birinchisiga qaytadi — aks holda
+ * foydalanuvchi bo'sh sahifada qolib ketardi. Standart qiymatlar manzilga
+ * yozilmaydi; standartdan farqli bo'sh qiymat ("barcha holatlar") esa
+ * `status=` ko'rinishida yoziladi.
  */
 export function useListQuery<TFilters extends Record<string, string>>(
     initialFilters: TFilters,
 ) {
-    const [search, setSearchValue] = useState('');
-    const [filters, setFiltersValue] = useState<TFilters>(initialFilters);
-    const [limit, setLimitValue] = useState(20);
-    const [offset, setOffset] = useState(0);
+    const { params, update } = useUrlParams();
+    // Chaqiruvchi har renderda yangi obyekt beradi — birinchisi yetarli.
+    const [defaults] = useState(initialFilters);
 
-    const setSearch = useCallback((value: string) => {
-        setSearchValue(value);
-        setOffset(0);
-    }, []);
+    const search = params.get(SEARCH_PARAM) ?? '';
+    const limit = Math.min(
+        positiveInt(params.get(LIMIT_PARAM)) ?? DEFAULT_LIMIT,
+        MAX_LIMIT,
+    );
+    const page = positiveInt(params.get(PAGE_PARAM)) ?? 1;
+    const offset = (page - 1) * limit;
 
-    const setFilter = useCallback(
-        <K extends keyof TFilters>(key: K, value: TFilters[K]) => {
-            setFiltersValue((prev) => ({ ...prev, [key]: value }));
-            setOffset(0);
-        },
-        [],
+    const query = params.toString();
+    const filters = useMemo(() => {
+        const current = new URLSearchParams(query);
+        const result: Record<string, string> = { ...defaults };
+        for (const key of Object.keys(defaults)) {
+            const value = current.get(key);
+            if (value !== null) result[key] = value;
+        }
+        return result as TFilters;
+    }, [query, defaults]);
+
+    const setSearch = useCallback(
+        (value: string) =>
+            update({ [SEARCH_PARAM]: value || null, [PAGE_PARAM]: null }),
+        [update],
     );
 
-    const setLimit = useCallback((value: number) => {
-        setLimitValue(value);
-        setOffset(0);
-    }, []);
+    const setFilter = useCallback(
+        <K extends keyof TFilters>(key: K, value: TFilters[K]) =>
+            update({
+                [key as string]: value === defaults[key] ? null : value,
+                [PAGE_PARAM]: null,
+            }),
+        [update, defaults],
+    );
+
+    const setLimit = useCallback(
+        (value: number) =>
+            update({
+                [LIMIT_PARAM]: value === DEFAULT_LIMIT ? null : String(value),
+                [PAGE_PARAM]: null,
+            }),
+        [update],
+    );
+
+    const setOffset = useCallback(
+        (value: number) => {
+            const next = Math.floor(value / limit) + 1;
+            update({ [PAGE_PARAM]: next === 1 ? null : String(next) });
+        },
+        [update, limit],
+    );
 
     return {
         search,
@@ -43,4 +90,9 @@ export function useListQuery<TFilters extends Record<string, string>>(
         offset,
         setOffset,
     };
+}
+
+function positiveInt(value: string | null): number | null {
+    const number = Number(value);
+    return Number.isInteger(number) && number > 0 ? number : null;
 }

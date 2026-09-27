@@ -65,6 +65,9 @@ export default function LeadsPage() {
     );
 }
 
+import { LeadKanbanBoard } from '@/components/ui/lead-kanban-board';
+import { Column, Table2 } from '@tailgrids/icons';
+
 function leadName(lead: Pick<Lead, 'first_name' | 'last_name'>) {
     return [lead.last_name, lead.first_name].filter(Boolean).join(' ');
 }
@@ -96,20 +99,21 @@ function LeadsView() {
         setOffset,
     } = useListQuery({ status: '', source: '' });
 
+    const [viewMode, setViewMode] = useState<'table' | 'kanban'>('kanban');
     const [formOpen, setFormOpen] = useState(false);
     const [editing, setEditing] = useState<Lead | null>(null);
     const [converting, setConverting] = useState<Lead | null>(null);
     const [deleting, setDeleting] = useState<Lead | null>(null);
 
     const query = useQuery({
-        queryKey: ['leads', { search, ...filters, limit, offset }],
+        queryKey: ['leads', { search, ...filters, limit, offset: viewMode === 'kanban' ? 0 : offset, limitVal: viewMode === 'kanban' ? 100 : limit }],
         queryFn: () =>
             listLeads({
                 search: search || undefined,
                 status: (filters.status || undefined) as LeadStatus | undefined,
                 source: (filters.source || undefined) as LeadSource | undefined,
-                limit,
-                offset,
+                limit: viewMode === 'kanban' ? 100 : limit,
+                offset: viewMode === 'kanban' ? 0 : offset,
             }),
     });
     const statsQuery = useQuery({
@@ -154,7 +158,35 @@ function LeadsView() {
                 count={query.data?.count}
                 description={t('leads.subtitle')}
                 actions={
-                    <div className='flex flex-wrap gap-2'>
+                    <div className='flex flex-wrap items-center gap-2'>
+                        <div className='border-card-border bg-background-gray-secondary/60 flex items-center rounded-xl border p-1'>
+                            <button
+                                type='button'
+                                onClick={() => setViewMode('kanban')}
+                                className={cn(
+                                    'flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium transition-colors',
+                                    viewMode === 'kanban'
+                                        ? 'bg-card-surface-area text-text-primary shadow-xs'
+                                        : 'text-text-tertiary hover:text-text-primary',
+                                )}
+                            >
+                                <Column className='size-3.5' />
+                                Kanban
+                            </button>
+                            <button
+                                type='button'
+                                onClick={() => setViewMode('table')}
+                                className={cn(
+                                    'flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium transition-colors',
+                                    viewMode === 'table'
+                                        ? 'bg-card-surface-area text-text-primary shadow-xs'
+                                        : 'text-text-tertiary hover:text-text-primary',
+                                )}
+                            >
+                                <Table2 className='size-3.5' />
+                                Jadval
+                            </button>
+                        </div>
                         {canManageSettings && (
                             <Button
                                 appearance='outline'
@@ -248,17 +280,59 @@ function LeadsView() {
             </div>
 
             <div className='px-5'>
-                <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
-                    {query.isPending ? (
-                        <TableSkeleton columns={6} />
-                    ) : query.error ? (
-                        <ErrorState error={query.error} />
-                    ) : query.data.data.length === 0 ? (
+                {query.isPending ? (
+                    <TableSkeleton columns={6} />
+                ) : query.error ? (
+                    <ErrorState error={query.error} />
+                ) : query.data.data.length === 0 ? (
+                    <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                         <EmptyState
                             message={t('leads.empty')}
                             icon={<Funnel1 className='size-5' />}
+                            action={
+                                Boolean(search || filters.status || filters.source) ? (
+                                    <Button
+                                        appearance='outline'
+                                        size='md'
+                                        onPress={() => {
+                                            setSearch('');
+                                            setFilter('status', '');
+                                            setFilter('source', '');
+                                        }}
+                                    >
+                                        Filtrni tozalash
+                                    </Button>
+                                ) : canCreate ? (
+                                    <Button
+                                        variant='primary'
+                                        appearance='fill'
+                                        size='md'
+                                        onPress={() => {
+                                            setEditing(null);
+                                            setFormOpen(true);
+                                        }}
+                                    >
+                                        <Plus />
+                                        Birinchi lidni qo'shish
+                                    </Button>
+                                ) : null
+                            }
                         />
-                    ) : (
+                    </div>
+                ) : viewMode === 'kanban' ? (
+                    <LeadKanbanBoard
+                        leads={query.data.data}
+                        onStatusChange={(id, status) => statusMutation.mutate({ id, status: status as any })}
+                        onEdit={(lead) => {
+                            setEditing(lead);
+                            setFormOpen(true);
+                        }}
+                        onConvert={(lead) => setConverting(lead)}
+                        canUpdate={canUpdate}
+                        canConvert={canConvert}
+                    />
+                ) : (
+                    <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                         <>
                             <TableRoot
                                 fullBleed
@@ -435,8 +509,8 @@ function LeadsView() {
                                 onOffsetChange={setOffset}
                             />
                         </>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
 
             {formOpen && (

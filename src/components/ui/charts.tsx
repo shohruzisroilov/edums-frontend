@@ -4,6 +4,8 @@ import { formatMonth } from '@/components/ui/month-switcher';
 import { useFormat } from '@/hooks/use-format';
 import { useT, type Translate } from '@/i18n/provider';
 import type { MonthAmount } from '@/types/api';
+import { cn } from '@/utils/cn';
+import Link from 'next/link';
 import type { ReactNode } from 'react';
 
 /*
@@ -46,17 +48,40 @@ export function StatTile({
     label,
     value,
     hint,
+    href,
+    trend,
     children,
 }: {
     label: string;
     value: ReactNode;
     hint?: ReactNode;
+    href?: string;
+    trend?: number;
     /** Qiymat ostidagi qo'shimcha — masalan, shkala. */
     children?: ReactNode;
 }) {
-    return (
-        <div className='border-card-border bg-card-background flex flex-col rounded-xl border p-4'>
-            <p className='text-text-tertiary text-xs'>{label}</p>
+    const content = (
+        <div
+            className={cn(
+                'border-card-border bg-card-background flex flex-col rounded-xl border p-4 transition-colors',
+                href && 'hover:border-input-primary-focus-border hover:shadow-sm cursor-pointer',
+            )}
+        >
+            <div className='flex items-center justify-between gap-2'>
+                <p className='text-text-tertiary text-xs'>{label}</p>
+                {trend !== undefined && trend !== 0 && (
+                    <span
+                        className={cn(
+                            'inline-flex items-center gap-0.5 text-xs font-semibold tabular-nums',
+                            trend > 0
+                                ? 'text-emerald-600 dark:text-emerald-400'
+                                : 'text-red-600 dark:text-red-400',
+                        )}
+                    >
+                        {trend > 0 ? `↑${trend}%` : `↓${Math.abs(trend)}%`}
+                    </span>
+                )}
+            </div>
             <p className='text-text-primary font-display mt-1.5 text-2xl font-semibold'>
                 {value}
             </p>
@@ -68,6 +93,12 @@ export function StatTile({
             )}
         </div>
     );
+
+    if (href) {
+        return <Link href={href}>{content}</Link>;
+    }
+
+    return content;
 }
 
 /** 0–1 ulush uchun shkala: iz — o'sha rangning och qadami. */

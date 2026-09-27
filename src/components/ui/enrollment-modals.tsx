@@ -256,7 +256,7 @@ export function EnrollToGroupModal({
         >
             <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
                 <SelectInput
-                    label={t('groups.title')}
+                    label={t('common.group')}
                     required
                     options={groups.map((group) => ({
                         value: group.id,

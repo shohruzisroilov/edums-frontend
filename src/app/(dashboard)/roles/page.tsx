@@ -23,6 +23,7 @@ import { SearchInput } from '@/components/ui/search-input';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useSession } from '@/hooks/use-session';
+import { useUrlParam } from '@/hooks/use-url-state';
 import { useT } from '@/i18n/provider';
 import { deleteRole, listRoles } from '@/services/api/roles';
 import type { Role } from '@/types/api';
@@ -52,7 +53,7 @@ function RolesView() {
     const canUpdate = can(session, 'roles.update');
     const canDelete = can(session, 'roles.delete');
 
-    const [search, setSearch] = useState('');
+    const [search, setSearch] = useUrlParam('q', '');
     const deferredSearch = useDeferredValue(search);
 
     const [formOpen, setFormOpen] = useState(false);

@@ -54,6 +54,15 @@ export function UserFormModal({
     // O'z rollari va holatini o'zgartirib bo'lmaydi — backend rad etadi.
     const isSelf = user?.id === session?.id;
 
+    const defaultRole =
+        roles.find(
+            (r) =>
+                r.name.toLowerCase().includes("o'qituvchi") ||
+                r.name.toLowerCase().includes('teacher'),
+        ) ??
+        roles.find((r) => !r.is_system) ??
+        roles[0];
+
     const [form, setForm] = useState<FormState>(() =>
         user
             ? {
@@ -66,7 +75,10 @@ export function UserFormModal({
                   avatar_url: user.avatar?.url ?? null,
                   is_active: user.is_active,
               }
-            : EMPTY,
+            : {
+                  ...EMPTY,
+                  role_ids: defaultRole ? [defaultRole.id] : [],
+              },
     );
     const queryClient = useQueryClient();
     const t = useT();

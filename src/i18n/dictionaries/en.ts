@@ -11,6 +11,7 @@ export const en: Dictionary = {
     'common.edit': 'Edit',
     'common.add': 'Add',
     'common.close': 'Close',
+    'common.confirmDiscard': 'There are unsaved changes. Discard?',
     'common.actions': 'Actions',
     'common.status': 'Status',
     'common.search': 'Search…',
@@ -28,6 +29,17 @@ export const en: Dictionary = {
     'common.createdAt': 'Added on',
     'common.details': 'Details',
     'common.avatar': 'Photo',
+
+    /* ── Header ──────────────────────────────────────────────────────── */
+    'header.searchPlaceholder': 'Search…',
+    'header.quickPayment': 'Payment',
+    'header.quickStudent': 'Student',
+    'header.quickLead': 'Lead',
+    'header.searchResults': 'Search Results',
+    'header.noResults': 'No results found',
+    'header.studentsGroup': 'Students',
+    'header.groupsGroup': 'Groups',
+    'header.leadsGroup': 'Leads',
 
     /* ── Errors ──────────────────────────────────────────────────────── */
     'error.unknown': 'An unexpected error occurred',
@@ -307,7 +319,7 @@ export const en: Dictionary = {
         "We'll text a code to this number — it becomes your login",
     'register.sendCode': 'Send code',
     'register.sending': 'Sending…',
-    'register.codeSent': 'A 6-digit code was sent to {phone}',
+    'register.codeSent': 'A 4-digit code was sent to {phone}',
     'register.code': 'SMS code',
     'register.submit': 'Sign up',
     'register.creating': 'Creating your center…',
@@ -718,7 +730,8 @@ export const en: Dictionary = {
     'balance.empty': "Hasn't been in a group — nothing charged",
     'balance.payments': 'Payment history',
     'attendance.title': 'Attendance',
-    'attendance.hint': 'Click a date to mark that day',
+    'attendance.hint':
+        "Click a date to mark any day. A yellow dot means attendance wasn't taken.",
     'attendance.markTitle': 'Attendance — {date}',
     'attendance.allPresent': 'Everyone present',
     'attendance.noLessons': 'No lessons this month',
@@ -823,6 +836,19 @@ export const en: Dictionary = {
     'auditField.duration_days': 'Days',
     'auditField.name': 'Name',
     'auditField.is_active': 'Active',
+    'auditField.start_date': 'Start date',
+    'auditField.end_date': 'End date',
+    'auditField.lesson_start': 'Lesson start',
+    'auditField.lesson_end': 'Lesson end',
+    'auditField.lesson_days': 'Lesson days',
+    'auditField.duration_months': 'Duration',
+    'auditField.capacity': 'Capacity',
+    'auditField.description': 'Description',
+    'auditField.phone': 'Phone',
+    'auditField.parent_name': 'Parent name',
+    'auditField.parent_phone': 'Parent phone',
+    'auditField.birth_date': 'Birth date',
+    'auditField.notes': 'Notes',
 
     /* ── Avtomatik xabarlar va markaz sozlamalari ── */
     'nav.settings': 'Center settings',
@@ -1211,4 +1237,52 @@ export const en: Dictionary = {
 
     /* ── Guruh sig'imi ── */
     'groups.full': "Group is full — the room's capacity is reached",
+
+    /* ── Getting started ── */
+    'setup.title': 'Set up your center',
+    'setup.subtitle':
+        'Go through these steps in order — then the system tracks debts, attendance and salaries for you.',
+    'setup.hide': 'Hide',
+    'setup.progress': '{done} of {total} done',
+    'setup.done': 'done',
+    'setup.branches.title': 'Configure branch',
+    'setup.branches.hint':
+        'Branch name and address — rooms and groups belong to a branch.',
+    'setup.branches.action': 'Add branch',
+    'setup.rooms.title': 'Add your rooms',
+    'setup.rooms.hint': 'The schedule and group capacity are tied to rooms.',
+    'setup.rooms.action': 'Add a room',
+    'setup.courses.title': 'Create a course',
+    'setup.courses.hint':
+        'Name and monthly price — groups take their price from it.',
+    'setup.courses.action': 'Create a course',
+    'setup.staff.title': 'Add a teacher',
+    'setup.staff.hint':
+        'Give each staff member a role — they only see the sections it allows.',
+    'setup.staff.action': 'Add staff',
+    'setup.groups.title': 'Open a group',
+    'setup.groups.hint': 'Pick the course, teacher, room and lesson days.',
+    'setup.groups.action': 'Open a group',
+    'setup.students.title': 'Add students',
+    'setup.students.hint':
+        'Once a student joins a group, the monthly fee is charged automatically.',
+    'setup.students.action': 'Add a student',
+    'setup.payments.title': 'Take the first payment',
+    'setup.payments.hint': 'Balances and debtors are calculated from payments.',
+    'setup.payments.action': 'Take a payment',
+
+    /* ── Student balance card ── */
+    'balance.statusDebt': 'Owes money',
+    'balance.statusCredit': 'Paid in advance',
+    'balance.statusClear': 'No debt',
+    'balance.details': 'details',
+    'common.group': 'Group',
+
+    /* ── Taking attendance ── */
+    'attendance.markToday': "Today's attendance",
+    'attendance.markDate': 'Attendance for {date}',
+    'attendance.take': 'Take attendance',
+    'attendance.marked': 'Attendance taken',
+    'attendance.unmarked': 'Attendance not taken',
+    'attendance.nothingToMark': 'No lessons to mark in this month yet',
 };

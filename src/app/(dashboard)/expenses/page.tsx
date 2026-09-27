@@ -46,7 +46,8 @@ import {
 } from '@/types/api';
 import { can } from '@/utils/access';
 import { fullName, toISODate } from '@/utils/format';
-import { Plus, SackDollar, Trash1 } from '@tailgrids/icons';
+import { exportToCsv } from '@/utils/export';
+import { Download1, Plus, SackDollar, Trash1 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
@@ -118,17 +119,47 @@ function ExpensesView() {
                         : t('expenses.subtitle')
                 }
                 actions={
-                    canManage && (
-                        <Button
-                            variant='primary'
-                            appearance='fill'
-                            size='md'
-                            onPress={() => setCreating(true)}
-                        >
-                            <Plus />
-                            {t('expenses.new')}
-                        </Button>
-                    )
+                    <div className='flex flex-wrap items-center gap-2'>
+                        {query.data?.data && query.data.data.length > 0 && (
+                            <Button
+                                appearance='outline'
+                                size='md'
+                                onPress={() => {
+                                    exportToCsv(
+                                        'Xarajatlar',
+                                        [
+                                            'Sana',
+                                            'Kategoriya',
+                                            'Summa (som)',
+                                            'Kiritdi',
+                                            'Izoh',
+                                        ],
+                                        query.data.data.map((e) => [
+                                            formatDate(e.spent_at),
+                                            e.category,
+                                            e.amount,
+                                            e.created_by ? fullName(e.created_by) : '',
+                                            e.note || '',
+                                        ]),
+                                    );
+                                }}
+                            >
+                                <Download1 />
+                                Eksport (Excel)
+                            </Button>
+                        )}
+                        {canManage && (
+                            <Button
+                                variant='primary'
+                                appearance='fill'
+                                size='md'
+                                onPress={() => setCreating(true)}
+                            >
+                                <Plus />
+                                {t('expenses.new')}
+                            </Button>
+                        )}
+                    </div>
                 }
             />
 
@@ -176,6 +207,31 @@ function ExpensesView() {
                         <EmptyState
                             message={t('expenses.empty')}
                             icon={<SackDollar className='size-5' />}
+                            action={
+                                Boolean(filters.category || filters.from || filters.to) ? (
+                                    <Button
+                                        appearance='outline'
+                                        size='md'
+                                        onPress={() => {
+                                            setFilter('category', '');
+                                            setFilter('from', '');
+                                            setFilter('to', '');
+                                        }}
+                                    >
+                                        Filtrni tozalash
+                                    </Button>
+                                ) : canManage ? (
+                                    <Button
+                                        variant='primary'
+                                        appearance='fill'
+                                        size='md'
+                                        onPress={() => setCreating(true)}
+                                    >
+                                        <Plus />
+                                        Yangi xarajat kiritish
+                                    </Button>
+                                ) : null
+                            }
                         />
                     ) : (
                         <>

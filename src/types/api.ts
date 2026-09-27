@@ -512,6 +512,11 @@ export interface Student {
     status: StudentStatus;
     /** Hozir o'qiyotgan guruhlari. */
     groups: Ref[];
+    /**
+     * Faqat ro'yxatda va `payments.view` bo'lsa: to'langan − hisoblangan,
+     * barcha guruhlar bo'yicha. Manfiy — qarz.
+     */
+    balance?: number;
     created_at: string;
     updated_at: string;
 }
@@ -579,6 +584,7 @@ export const EDITABLE_LEAD_STATUSES = [
     'new',
     'contacted',
     'trial',
+    'won',
     'lost',
 ] as const satisfies readonly LeadStatus[];
 
@@ -604,6 +610,7 @@ export interface Lead {
     branch: Ref | null;
     /** Qiziqqan kursi. */
     course: Ref | null;
+    next_call_date: string | null;
     note: string | null;
     /** Aylantirilgan o'quvchi. */
     student: PersonRef | null;
@@ -619,6 +626,7 @@ export interface LeadPayload {
     status?: Exclude<LeadStatus, 'won'>;
     branch_id?: string | null;
     course_id?: string | null;
+    next_call_date?: string | null;
     note?: string | null;
 }
 
@@ -994,7 +1002,21 @@ export interface Dashboard {
         room: string | null;
         teacher: string | null;
         students_count: number;
+        /** Bugungi davomat belgilanganmi. */
+        attendance_marked: boolean;
     }[];
+    /** Boshlash qadamlari uchun sanoq; `staff` — owner'dan boshqa xodimlar. */
+    setup: DashboardSetup;
+}
+
+export interface DashboardSetup {
+    branches: number;
+    rooms: number;
+    courses: number;
+    staff: number;
+    groups: number;
+    students: number;
+    payments: number;
 }
 
 /** GET /platform-stats — super admin. */

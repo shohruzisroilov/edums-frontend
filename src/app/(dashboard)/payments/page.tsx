@@ -34,7 +34,8 @@ import {
 import type { PaymentRequest, PaymentRequestStatus } from '@/types/api';
 import { PAYMENT_REQUEST_STATUSES } from '@/types/api';
 import { isSuperAdmin } from '@/utils/access';
-import { CreditCard } from '@tailgrids/icons';
+import { cn } from '@/utils/cn';
+import { Wallet2 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState, type FormEvent } from 'react';
@@ -92,17 +93,32 @@ function PaymentsView() {
                 description={t('payments.subtitle')}
             />
 
-            <div className='flex flex-wrap gap-3 px-5 pb-4'>
-                <div className='w-full sm:w-52'>
-                    <SelectInput
-                        options={PAYMENT_REQUEST_STATUSES.map((status) => ({
-                            value: status,
-                            label: t(`paymentStatus.${status}`),
-                        }))}
-                        placeholder={t('common.allStatuses')}
-                        value={filters.status}
-                        onValueChange={(next) => setFilter('status', next)}
-                    />
+            <div className='px-5 pb-4'>
+                <div className='border-card-border bg-background-gray-secondary/50 inline-flex flex-wrap items-center gap-1 rounded-xl border p-1'>
+                    {[
+                        { value: 'pending', label: t('paymentStatus.pending') },
+                        { value: 'approved', label: t('paymentStatus.approved') },
+                        { value: 'rejected', label: t('paymentStatus.rejected') },
+                        { value: 'cancelled', label: t('paymentStatus.cancelled') },
+                        { value: '', label: t('common.allStatuses') },
+                    ].map((tab) => {
+                        const isActive = (filters.status || '') === tab.value;
+                        return (
+                            <button
+                                key={tab.value}
+                                type='button'
+                                onClick={() => setFilter('status', tab.value)}
+                                className={cn(
+                                    'rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all cursor-pointer',
+                                    isActive
+                                        ? 'bg-card-background text-text-primary shadow-xs font-semibold'
+                                        : 'text-text-tertiary hover:text-text-primary hover:bg-card-background/50',
+                                )}
+                            >
+                                {tab.label}
+                            </button>
+                        );
+                    })}
                 </div>
             </div>
 
@@ -115,7 +131,7 @@ function PaymentsView() {
                     ) : query.data.data.length === 0 ? (
                         <EmptyState
                             message={t('payments.empty')}
-                            icon={<CreditCard className='size-5' />}
+                            icon={<Wallet2 className='size-5' />}
                         />
                     ) : (
                         <>

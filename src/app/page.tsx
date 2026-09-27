@@ -17,9 +17,10 @@ import { useTrialDays } from '@/hooks/use-trial-days';
 import { useT } from '@/i18n/provider';
 import { listPublicTariffs } from '@/services/api/tariffs';
 import { homeHref } from '@/utils/access';
-import { Wallet2 } from '@tailgrids/icons';
+import { ChevronLeft, ChevronRight, Wallet2 } from '@tailgrids/icons';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { useRef } from 'react';
 
 /**
  * Landing page. Bo'limlar `components/landing/` da; rasmlar
@@ -52,7 +53,7 @@ export default function LandingPage() {
     );
 }
 
-/** Tariflar bazadan — super admin qo'shgan faol tariflar. */
+/** Tariflar bazadan — super admin qo'shgan faol tariflar. Slider ko'rinishida. */
 function Tariffs({
     trialDays,
     onStart,
@@ -61,16 +62,31 @@ function Tariffs({
     onStart: () => void;
 }) {
     const t = useT();
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     const tariffsQuery = useQuery({
         queryKey: ['public-tariffs'],
         queryFn: listPublicTariffs,
     });
 
+    const scroll = (direction: 'left' | 'right') => {
+        if (scrollContainerRef.current) {
+            const { scrollLeft, clientWidth } = scrollContainerRef.current;
+            const scrollAmount = clientWidth * 0.75;
+            scrollContainerRef.current.scrollTo({
+                left:
+                    direction === 'left'
+                        ? scrollLeft - scrollAmount
+                        : scrollLeft + scrollAmount,
+                behavior: 'smooth',
+            });
+        }
+    };
+
     return (
         <section
             id='tariffs'
-            className='mx-auto max-w-6xl scroll-mt-20 px-5 py-16'
+            className='mx-auto max-w-7xl scroll-mt-20 px-5 py-16'
         >
             <SectionHeading
                 title={t('landing.tariffsTitle')}
@@ -88,26 +104,56 @@ function Tariffs({
                     </p>
                 </div>
             ) : (
-                // Tariflar markazda: bitta yoki ikkitasi chapga yopishib qolmaydi.
-                <div className='mt-10 flex flex-wrap justify-center gap-4'>
-                    {tariffsQuery.data.map((tariff) => (
-                        <div key={tariff.id} className='w-full sm:w-88'>
-                            <TariffCard
-                                tariff={tariff}
-                                action={
-                                    <Button
-                                        size='lg'
-                                        className='w-full'
-                                        onPress={onStart}
-                                    >
-                                        {t('landing.startFree')}
-                                    </Button>
-                                }
-                            />
-                        </div>
-                    ))}
+                <div className='relative mt-10 px-2 sm:px-4'>
+                    {/* Previous Button */}
+                    <button
+                        type='button'
+                        onClick={() => scroll('left')}
+                        aria-label='Previous'
+                        className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary active:scale-95 absolute -left-2 sm:left-0 top-1/2 z-20 flex -translate-y-1/2 size-10 sm:size-12 items-center justify-center rounded-full border shadow-lg transition-all cursor-pointer'
+                    >
+                        <ChevronLeft className='size-5 sm:size-6' />
+                    </button>
+
+                    {/* Next Button */}
+                    <button
+                        type='button'
+                        onClick={() => scroll('right')}
+                        aria-label='Next'
+                        className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary active:scale-95 absolute -right-2 sm:right-0 top-1/2 z-20 flex -translate-y-1/2 size-10 sm:size-12 items-center justify-center rounded-full border shadow-lg transition-all cursor-pointer'
+                    >
+                        <ChevronRight className='size-5 sm:size-6' />
+                    </button>
+
+                    {/* Horizontal Slider Track */}
+                    <div
+                        ref={scrollContainerRef}
+                        className='flex gap-5 overflow-x-auto py-3 px-6 sm:px-12 scroll-smooth snap-x snap-mandatory rounded-2xl scrollbar-none'
+                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                    >
+                        {tariffsQuery.data.map((tariff) => (
+                            <div
+                                key={tariff.id}
+                                className='w-[280px] sm:w-[320px] lg:w-[330px] shrink-0 snap-center'
+                            >
+                                <TariffCard
+                                    tariff={tariff}
+                                    action={
+                                        <Button
+                                            size='lg'
+                                            className='w-full'
+                                            onPress={onStart}
+                                        >
+                                            {t('landing.startFree')}
+                                        </Button>
+                                    }
+                                />
+                            </div>
+                        ))}
+                    </div>
                 </div>
             )}
         </section>
     );
 }
+

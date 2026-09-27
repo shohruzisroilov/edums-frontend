@@ -20,11 +20,14 @@ import {
 import { SelectInput } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
+import { PaymentModal } from '@/components/ui/payment-modal';
 import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { SearchInput } from '@/components/ui/search-input';
 import { StudentStatusBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
+import { useFormat } from '@/hooks/use-format';
 import { useListQuery } from '@/hooks/use-list-query';
+import { useOpenOnNewParam } from '@/hooks/use-new-param';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { listBranches } from '@/services/api/branches';
@@ -35,8 +38,20 @@ import {
     type StudentStatus,
 } from '@/types/api';
 import { can } from '@/utils/access';
-import { fullName } from '@/utils/format';
-import { Pencil1, Plus, Trash1, UserCircle1 } from '@tailgrids/icons';
+import { cn } from '@/utils/cn';
+import { formatPhone, fullName } from '@/utils/format';
+import { balanceTone } from '@/utils/tone';
+import { exportToCsv } from '@/utils/export';
+import { StudentImportModal } from '@/components/ui/student-import-modal';
+import {
+    Download1,
+    Pencil1,
+    Plus,
+    Trash1,
+    UploadCloud,
+    UserCircle1,
+    Wallet2,
+} from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -56,12 +71,16 @@ function StudentsView() {
     const t = useT();
     const router = useRouter();
     const toastError = useApiErrorToast();
+    const { formatPrice } = useFormat();
     const { session } = useSession();
     const queryClient = useQueryClient();
 
     const canCreate = can(session, 'students.create');
     const canUpdate = can(session, 'students.update');
     const canDelete = can(session, 'students.delete');
+    const canViewPayments = can(session, 'payments.view');
+    const canPay = can(session, 'payments.create');
+    const hasActions = canUpdate || canDelete || canPay;
 
     const {
         search,
@@ -75,8 +94,15 @@ function StudentsView() {
     } = useListQuery({ branch_id: '', status: 'active' });
 
     const [formOpen, setFormOpen] = useState(false);
+    const [importOpen, setImportOpen] = useState(false);
     const [editing, setEditing] = useState<Student | null>(null);
     const [deleting, setDeleting] = useState<Student | null>(null);
+    const [paying, setPaying] = useState<Student | null>(null);
+
+    useOpenOnNewParam(() => {
+        setEditing(null);
+        setFormOpen(true);
+    }, canCreate);
 
     const query = useQuery({
         queryKey: ['students', { search, ...filters, limit, offset }],
@@ -115,20 +141,53 @@ function StudentsView() {
                 count={query.data?.count}
                 description={t('students.subtitle')}
                 actions={
-                    canCreate && (
-                        <Button
-                            variant='primary'
-                            appearance='fill'
-                            size='md'
-                            onPress={() => {
-                                setEditing(null);
-                                setFormOpen(true);
-                            }}
-                        >
-                            <Plus />
-                            {t('students.new')}
-                        </Button>
-                    )
+                    <div className='flex flex-wrap items-center gap-2'>
+                        {query.data?.data && query.data.data.length > 0 && (
+                            <Button
+                                appearance='outline'
+                                size='md'
+                                onPress={() => {
+                                    exportToCsv(
+                                        'Oquvchilar',
+                                        ['F.I.Sh.', 'Telefon', 'Balans (som)', 'Holati'],
+                                        query.data.data.map((s) => [
+                                            fullName(s),
+                                            formatPhone(s.phone_number),
+                                            s.balance ?? 0,
+                                            s.status,
+                                        ]),
+                                    );
+                                }}
+                            >
+                                <Download1 />
+                                Eksport (Excel)
+                            </Button>
+                        )}
+                        {canCreate && (
+                            <>
+                                <Button
+                                    appearance='outline'
+                                    size='md'
+                                    onPress={() => setImportOpen(true)}
+                                >
+                                    <UploadCloud />
+                                    Import (Excel)
+                                </Button>
+                                <Button
+                                    variant='primary'
+                                    appearance='fill'
+                                    size='md'
+                                    onPress={() => {
+                                        setEditing(null);
+                                        setFormOpen(true);
+                                    }}
+                                >
+                                    <Plus />
+                                    {t('students.new')}
+                                </Button>
+                            </>
+                        )}
+                    </div>
                 }
             />
 
@@ -176,6 +235,34 @@ function StudentsView() {
                         <EmptyState
                             message={t('students.empty')}
                             icon={<UserCircle1 className='size-5' />}
+                            action={
+                                Boolean(search || filters.branch_id || (filters.status && filters.status !== 'active')) ? (
+                                    <Button
+                                        appearance='outline'
+                                        size='md'
+                                        onPress={() => {
+                                            setSearch('');
+                                            setFilter('branch_id', '');
+                                            setFilter('status', 'active');
+                                        }}
+                                    >
+                                        Filtrni tozalash
+                                    </Button>
+                                ) : canCreate ? (
+                                    <Button
+                                        variant='primary'
+                                        appearance='fill'
+                                        size='md'
+                                        onPress={() => {
+                                            setEditing(null);
+                                            setFormOpen(true);
+                                        }}
+                                    >
+                                        <Plus className='size-4' />
+                                        Birinchi o'quvchini qo'shish
+                                    </Button>
+                                ) : null
+                            }
                         />
                     ) : (
                         <>
@@ -198,7 +285,12 @@ function StudentsView() {
                                         <TableHead>
                                             {t('common.status')}
                                         </TableHead>
-                                        {(canUpdate || canDelete) && (
+                                        {canViewPayments && (
+                                            <TableHead numeric>
+                                                {t('balance.title')}
+                                            </TableHead>
+                                        )}
+                                        {hasActions && (
                                             <TableHead className='text-right'>
                                                 {t('common.actions')}
                                             </TableHead>
@@ -256,9 +348,44 @@ function StudentsView() {
                                                     status={student.status}
                                                 />
                                             </TableCell>
-                                            {(canUpdate || canDelete) && (
+                                            {canViewPayments && (
+                                                <TableCell
+                                                    numeric
+                                                    className={cn(
+                                                        'font-medium',
+                                                        balanceTone(
+                                                            student.balance ??
+                                                                0,
+                                                        ) ??
+                                                            'text-text-tertiary',
+                                                    )}
+                                                >
+                                                    {formatPrice(
+                                                        student.balance ?? 0,
+                                                        t('common.som'),
+                                                    )}
+                                                </TableCell>
+                                            )}
+                                            {hasActions && (
                                                 <TableCell>
                                                     <div className='flex justify-end gap-2'>
+                                                        {canPay && (
+                                                            <Button
+                                                                appearance='outline'
+                                                                size='md'
+                                                                iconOnly
+                                                                aria-label={t(
+                                                                    'cashbox.new',
+                                                                )}
+                                                                onPress={() =>
+                                                                    setPaying(
+                                                                        student,
+                                                                    )
+                                                                }
+                                                            >
+                                                                <Wallet2 />
+                                                            </Button>
+                                                        )}
                                                         {canUpdate && (
                                                             <Button
                                                                 appearance='outline'
@@ -327,6 +454,20 @@ function StudentsView() {
                 />
             )}
 
+            {importOpen && (
+                <StudentImportModal
+                    open={importOpen}
+                    onClose={() => setImportOpen(false)}
+                />
+            )}
+
+            {paying && (
+                <PaymentModal
+                    student={paying}
+                    onClose={() => setPaying(null)}
+                />
+            )}
+
             <ConfirmDialog
                 open={deleting !== null}
                 title={t('students.deleteTitle')}
@@ -341,16 +482,18 @@ function StudentsView() {
     );
 }
 
+import { PhoneLink } from '@/components/ui/phone-link';
+
 /** O'quvchi telefoni va ostida ota-ona telefoni — bori ko'rsatiladi. */
 function PhoneLines({ student }: { student: Student }) {
     const t = useT();
 
     return (
         <div className='tabular-nums'>
-            {student.phone_number && <p>{student.phone_number}</p>}
+            {student.phone_number && <p><PhoneLink phone={student.phone_number} /></p>}
             {student.parent_phone && (
                 <p className='text-text-tertiary text-xs'>
-                    {t('students.parentPhone')}: {student.parent_phone}
+                    {t('students.parentPhone')}: <PhoneLink phone={student.parent_phone} />
                 </p>
             )}
         </div>

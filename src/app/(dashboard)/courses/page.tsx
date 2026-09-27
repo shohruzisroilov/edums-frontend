@@ -21,6 +21,7 @@ import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { ActiveBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
+import { useOpenOnNewParam } from '@/hooks/use-new-param';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { deleteCourse, listCourses } from '@/services/api/courses';
@@ -54,6 +55,11 @@ function CoursesView() {
     const [formOpen, setFormOpen] = useState(false);
     const [editing, setEditing] = useState<Course | null>(null);
     const [deleting, setDeleting] = useState<Course | null>(null);
+
+    useOpenOnNewParam(() => {
+        setEditing(null);
+        setFormOpen(true);
+    }, canCreate);
 
     const query = useQuery({ queryKey: ['courses'], queryFn: listCourses });
 

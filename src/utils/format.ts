@@ -116,3 +116,13 @@ export function fullName(person: {
 }): string {
     return `${person.last_name} ${person.first_name}`.trim();
 }
+
+/** Telefon raqamini o'qilishga qulay formatlash: +998 90 123 45 67 */
+export function formatPhone(phone: string | null | undefined): string {
+    if (!phone) return '—';
+    const digits = phone.replace(/[^\d]/g, '');
+    if (digits.startsWith('998') && digits.length === 12) {
+        return `+${digits.slice(0, 3)} ${digits.slice(3, 5)} ${digits.slice(5, 8)} ${digits.slice(8, 10)} ${digits.slice(10, 12)}`;
+    }
+    return phone;
+}

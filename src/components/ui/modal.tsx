@@ -24,6 +24,7 @@ export function Modal({
     children,
     footer,
     size = 'md',
+    isDirty = false,
 }: {
     open: boolean;
     onClose: () => void;
@@ -32,9 +33,19 @@ export function Modal({
     children: ReactNode;
     footer?: ReactNode;
     size?: 'md' | 'lg';
+    isDirty?: boolean;
 }) {
     const t = useT();
     const dialogRef = useRef<HTMLDivElement>(null);
+
+    const handleAttemptClose = () => {
+        if (isDirty) {
+            if (!window.confirm(t('common.confirmDiscard'))) {
+                return;
+            }
+        }
+        onClose();
+    };
 
     useEffect(() => {
         if (!open) return;
@@ -54,7 +65,7 @@ export function Modal({
 
         const onKeyDown = (event: KeyboardEvent) => {
             if (event.key === 'Escape') {
-                onClose();
+                handleAttemptClose();
                 return;
             }
             if (event.key !== 'Tab') return;
@@ -86,7 +97,7 @@ export function Modal({
             document.body.style.overflow = previousOverflow;
             previouslyFocused?.focus();
         };
-    }, [open, onClose]);
+    }, [open, isDirty, t]);
 
     if (!open) return null;
 
@@ -95,7 +106,7 @@ export function Modal({
             <div
                 className='fixed inset-0 bg-black/50'
                 aria-hidden='true'
-                onClick={onClose}
+                onClick={handleAttemptClose}
             />
             <div
                 ref={dialogRef}
@@ -133,7 +144,7 @@ export function Modal({
                     yopish tugmasiga emas, birinchi maydonga tushadi.
                 */}
                 <Button
-                    onPress={onClose}
+                    onPress={handleAttemptClose}
                     variant='ghost'
                     iconOnly
                     size='md'

@@ -10,15 +10,17 @@ import {
     TableRow,
 } from '@/components/tailgrids/core/table';
 import { AccessGuard } from '@/components/ui/access-guard';
+import { BatchSmsModal } from '@/components/ui/batch-sms-modal';
 import {
     EmptyState,
     ErrorState,
     TableSkeleton,
 } from '@/components/ui/data-state';
-import { SelectInput } from '@/components/ui/form-field';
+import { CheckboxInput, SelectInput } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
 import { PaymentModal } from '@/components/ui/payment-modal';
+import { PhoneLink } from '@/components/ui/phone-link';
 import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { SearchInput } from '@/components/ui/search-input';
 import { useFormat } from '@/hooks/use-format';
@@ -29,8 +31,9 @@ import { listBranches } from '@/services/api/branches';
 import { listDebtors } from '@/services/api/student-payments';
 import type { Debtor } from '@/types/api';
 import { can } from '@/utils/access';
-import { fullName } from '@/utils/format';
-import { SackDollar } from '@tailgrids/icons';
+import { exportToCsv } from '@/utils/export';
+import { formatPhone, fullName } from '@/utils/format';
+import { Download1, Message1, SackDollar } from '@tailgrids/icons';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -63,6 +66,8 @@ function DebtorsView() {
     } = useListQuery({ branch_id: '' });
 
     const [paying, setPaying] = useState<Debtor | null>(null);
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [smsModalOpen, setSmsModalOpen] = useState(false);
 
     const query = useQuery({
         queryKey: ['debtors', { search, ...filters, limit, offset }],
@@ -82,12 +87,73 @@ function DebtorsView() {
     const branches = branchesQuery.data ?? [];
     const som = t('common.som');
 
+    const allDebtors = query.data?.data ?? [];
+    const toggleSelectAll = () => {
+        if (selectedIds.length === allDebtors.length) {
+            setSelectedIds([]);
+        } else {
+            setSelectedIds(allDebtors.map((d) => `${d.student.id}:${d.group.id}`));
+        }
+    };
+
+    const toggleSelect = (id: string) => {
+        setSelectedIds((prev) =>
+            prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
+        );
+    };
+
+    const selectedDebtors = allDebtors
+        .filter((d) => selectedIds.includes(`${d.student.id}:${d.group.id}`))
+        .map((d) => ({
+            name: fullName(d.student),
+            phone: d.student.phone_number || d.student.parent_phone || '',
+            debt: d.debt,
+        }));
+
     return (
         <>
             <PageHeader
                 title={t('debtors.title')}
                 count={query.data?.count}
                 description={t('debtors.subtitle')}
+                actions={
+                    <div className='flex flex-wrap items-center gap-2'>
+                        {selectedIds.length > 0 && (
+                            <Button
+                                variant='primary'
+                                appearance='fill'
+                                size='md'
+                                onPress={() => setSmsModalOpen(true)}
+                            >
+                                <Message1 />
+                                SMS yuborish ({selectedIds.length})
+                            </Button>
+                        )}
+                        {allDebtors.length > 0 && (
+                            <Button
+                                appearance='outline'
+                                size='md'
+                                onPress={() => {
+                                    exportToCsv(
+                                        'Qarzdorlar',
+                                        ['O\'quvchi', 'Telefon', 'Guruh', 'Hisoblangan (som)', 'To\'langan (som)', 'Qarzi (som)'],
+                                        allDebtors.map((d) => [
+                                            fullName(d.student),
+                                            formatPhone(d.student.phone_number || d.student.parent_phone),
+                                            d.group.name,
+                                            d.charged,
+                                            d.paid,
+                                            d.debt,
+                                        ]),
+                                    );
+                                }}
+                            >
+                                <Download1 />
+                                Eksport (Excel)
+                            </Button>
+                        )}
+                    </div>
+                }
             />
 
             <div className='flex flex-wrap items-center gap-3 px-5 pb-4'>
@@ -123,13 +189,27 @@ function DebtorsView() {
             <div className='px-5'>
                 <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                     {query.isPending ? (
-                        <TableSkeleton columns={6} />
+                        <TableSkeleton columns={7} />
                     ) : query.error ? (
                         <ErrorState error={query.error} />
-                    ) : query.data.data.length === 0 ? (
+                    ) : allDebtors.length === 0 ? (
                         <EmptyState
                             message={t('debtors.empty')}
                             icon={<SackDollar className='size-5' />}
+                            action={
+                                Boolean(search || filters.branch_id) ? (
+                                    <Button
+                                        appearance='outline'
+                                        size='md'
+                                        onPress={() => {
+                                            setSearch('');
+                                            setFilter('branch_id', '');
+                                        }}
+                                    >
+                                        Filtrni tozalash
+                                    </Button>
+                                ) : null
+                            }
                         />
                     ) : (
                         <>
@@ -139,6 +219,17 @@ function DebtorsView() {
                             >
                                 <TableHeader>
                                     <TableRow>
+                                        <TableHead className='w-10'>
+                                            <CheckboxInput
+                                                label=''
+                                                checked={
+                                                    selectedIds.length ===
+                                                        allDebtors.length &&
+                                                    allDebtors.length > 0
+                                                }
+                                                onChange={toggleSelectAll}
+                                            />
+                                        </TableHead>
                                         <RowNumberHead />
                                         <TableHead>
                                             {t('common.student')}
@@ -163,74 +254,86 @@ function DebtorsView() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {query.data.data.map((debtor, index) => (
-                                        <TableRow
-                                            key={`${debtor.student.id}:${debtor.group.id}`}
-                                        >
-                                            <RowNumberCell
-                                                index={index}
-                                                offset={offset}
-                                            />
-                                            <TableCell primary>
-                                                {canOpenStudents ? (
-                                                    <Link
-                                                        href={`/students/${debtor.student.id}`}
-                                                        className='hover:text-brand-accent hover:underline'
-                                                    >
-                                                        {fullName(
-                                                            debtor.student,
-                                                        )}
-                                                    </Link>
-                                                ) : (
-                                                    fullName(debtor.student)
-                                                )}
-                                                <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
-                                                    {debtor.group.name}
-                                                </p>
-                                            </TableCell>
-                                            <TableCell className='tabular-nums'>
-                                                {debtor.student.phone_number ??
-                                                    debtor.student
-                                                        .parent_phone ??
-                                                    '—'}
-                                            </TableCell>
-                                            <TableCell numeric>
-                                                {formatPrice(
-                                                    debtor.charged,
-                                                    som,
-                                                )}
-                                            </TableCell>
-                                            <TableCell numeric>
-                                                {formatPrice(debtor.paid, som)}
-                                            </TableCell>
-                                            <TableCell
-                                                numeric
-                                                className='text-badge-error-text font-semibold'
-                                            >
-                                                {formatPrice(debtor.debt, som)}
-                                            </TableCell>
-                                            {canPay && (
+                                    {allDebtors.map((debtor, index) => {
+                                        const key = `${debtor.student.id}:${debtor.group.id}`;
+                                        const isSelected = selectedIds.includes(key);
+
+                                        return (
+                                            <TableRow key={key}>
                                                 <TableCell>
-                                                    <div className='flex justify-end'>
-                                                        <Button
-                                                            variant='primary'
-                                                            appearance='outline'
-                                                            size='md'
-                                                            onPress={() =>
-                                                                setPaying(
-                                                                    debtor,
-                                                                )
-                                                            }
-                                                        >
-                                                            {t(
-                                                                'debtors.takePayment',
-                                                            )}
-                                                        </Button>
-                                                    </div>
+                                                    <CheckboxInput
+                                                        label=''
+                                                        checked={isSelected}
+                                                        onChange={() => toggleSelect(key)}
+                                                    />
                                                 </TableCell>
-                                            )}
-                                        </TableRow>
-                                    ))}
+                                                <RowNumberCell
+                                                    index={index}
+                                                    offset={offset}
+                                                />
+                                                <TableCell primary>
+                                                    {canOpenStudents ? (
+                                                        <Link
+                                                            href={`/students/${debtor.student.id}`}
+                                                            className='hover:text-brand-accent hover:underline'
+                                                        >
+                                                            {fullName(
+                                                                debtor.student,
+                                                            )}
+                                                        </Link>
+                                                    ) : (
+                                                        fullName(debtor.student)
+                                                    )}
+                                                    <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
+                                                        {debtor.group.name}
+                                                    </p>
+                                                </TableCell>
+                                                <TableCell className='tabular-nums'>
+                                                    <PhoneLink
+                                                        phone={
+                                                            debtor.student.phone_number ??
+                                                            debtor.student.parent_phone
+                                                        }
+                                                    />
+                                                </TableCell>
+                                                <TableCell numeric>
+                                                    {formatPrice(
+                                                        debtor.charged,
+                                                        som,
+                                                    )}
+                                                </TableCell>
+                                                <TableCell numeric>
+                                                    {formatPrice(debtor.paid, som)}
+                                                </TableCell>
+                                                <TableCell
+                                                    numeric
+                                                    className='text-badge-error-text font-semibold'
+                                                >
+                                                    {formatPrice(debtor.debt, som)}
+                                                </TableCell>
+                                                {canPay && (
+                                                    <TableCell>
+                                                        <div className='flex justify-end'>
+                                                            <Button
+                                                                variant='primary'
+                                                                appearance='outline'
+                                                                size='md'
+                                                                onPress={() =>
+                                                                    setPaying(
+                                                                        debtor,
+                                                                    )
+                                                                }
+                                                            >
+                                                                {t(
+                                                                    'debtors.takePayment',
+                                                                )}
+                                                            </Button>
+                                                        </div>
+                                                    </TableCell>
+                                                )}
+                                            </TableRow>
+                                        );
+                                    })}
                                 </TableBody>
                             </TableRoot>
 
@@ -252,6 +355,14 @@ function DebtorsView() {
                     groupId={paying.group.id}
                     amount={paying.debt}
                     onClose={() => setPaying(null)}
+                />
+            )}
+
+            {smsModalOpen && (
+                <BatchSmsModal
+                    open={smsModalOpen}
+                    recipients={selectedDebtors}
+                    onClose={() => setSmsModalOpen(false)}
                 />
             )}
         </>
