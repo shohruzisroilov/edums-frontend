@@ -5,7 +5,6 @@ import { useT } from '@/i18n/provider';
 import { ChevronDown } from '@tailgrids/icons';
 import { SectionHeading } from './section-heading';
 
-/** Javoblar tizimning haqiqiy qoidalariga mos (obuna, to'lov, limitlar). */
 const QUESTIONS: { q: TranslationKey; a: TranslationKey }[] = [
     { q: 'landing.faq.trialQ', a: 'landing.faq.trialA' },
     { q: 'landing.faq.signupQ', a: 'landing.faq.signupA' },
@@ -20,18 +19,29 @@ export function Faq({ trialDays }: { trialDays: number }) {
     const t = useT();
 
     return (
-        <section id='faq' className='mx-auto max-w-3xl scroll-mt-20 px-5 py-16'>
-            <SectionHeading title={t('landing.faqTitle')} />
-            <div className='border-card-border bg-card-background divide-card-border mt-10 divide-y rounded-2xl border'>
+        <section id='faq' className='mx-auto max-w-3xl scroll-mt-20 px-5 py-20'>
+            <SectionHeading
+                eyebrow="Ko'p so'raladigan savollar"
+                title={t('landing.faqTitle')}
+            />
+
+            <div className='mt-10 space-y-3'>
                 {QUESTIONS.map((item) => (
-                    <details key={item.q} className='group px-6'>
-                        <summary className='text-text-primary flex cursor-pointer list-none items-center justify-between gap-4 py-5 font-medium [&::-webkit-details-marker]:hidden'>
-                            {t(item.q, { days: trialDays })}
-                            <ChevronDown className='text-text-tertiary size-5 shrink-0 transition group-open:rotate-180' />
+                    <details
+                        key={item.q}
+                        className='border-card-border bg-card-background group rounded-2xl border transition-all open:shadow-md'
+                    >
+                        <summary className='text-text-primary flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 font-medium [&::-webkit-details-marker]:hidden'>
+                            <span>{t(item.q, { days: trialDays })}</span>
+                            <span className='border-card-border bg-background-gray-secondary flex size-7 shrink-0 items-center justify-center rounded-lg border transition group-open:rotate-180'>
+                                <ChevronDown className='text-text-tertiary size-4' />
+                            </span>
                         </summary>
-                        <p className='text-text-secondary -mt-1 pb-5 text-sm leading-6'>
-                            {t(item.a, { days: trialDays })}
-                        </p>
+                        <div className='border-card-border border-t px-6 pb-5 pt-4'>
+                            <p className='text-text-secondary text-sm leading-relaxed'>
+                                {t(item.a, { days: trialDays })}
+                            </p>
+                        </div>
                     </details>
                 ))}
             </div>

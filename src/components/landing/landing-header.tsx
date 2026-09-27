@@ -8,8 +8,8 @@ import type { TranslationKey } from '@/i18n/dictionaries/uz';
 import { useT } from '@/i18n/provider';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-/** Sahifa ichidagi bo'limlar — `id` lari page.tsx dagi bo'limlarga mos. */
 export const LANDING_NAV: { href: string; label: TranslationKey }[] = [
     { href: '#features', label: 'landing.navFeatures' },
     { href: '#how', label: 'landing.navHow' },
@@ -26,30 +26,39 @@ export function LandingHeader({
 }) {
     const t = useT();
     const router = useRouter();
+    const [mobileOpen, setMobileOpen] = useState(false);
 
     return (
-        <header className='border-card-border bg-card-surface-area/90 sticky top-0 z-20 border-b backdrop-blur'>
-            <div className='mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3'>
-                <Link href='/' aria-label={t('nav.home')}>
+        <header className='sticky top-0 z-20 px-4 py-3'>
+            <div className='border-card-border bg-card-surface-area/80 mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-2xl border px-5 py-2.5 shadow-sm backdrop-blur-md'>
+                {/* Logo */}
+                <Link href='/' aria-label={t('nav.home')} className='shrink-0'>
                     <AppLogo />
                 </Link>
+
+                {/* Desktop nav — pill shaklida o'rtada */}
                 <nav
                     aria-label={t('landing.navLabel')}
-                    className='hidden items-center gap-1 lg:flex'
+                    className='hidden items-center gap-0.5 lg:flex'
                 >
                     {LANDING_NAV.map((item) => (
                         <a
                             key={item.href}
                             href={item.href}
-                            className='text-text-secondary hover:text-text-primary rounded-lg px-3 py-2 text-sm font-medium transition'
+                            className='text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary rounded-xl px-4 py-2 text-sm font-medium transition'
                         >
                             {t(item.label)}
                         </a>
                     ))}
                 </nav>
+
+                {/* Actions */}
                 <div className='flex items-center gap-2'>
-                    <LocaleSwitcher />
-                    <ThemeToggle />
+                    <div className='hidden sm:flex items-center gap-2'>
+                        <LocaleSwitcher />
+                        <ThemeToggle />
+                    </div>
+
                     {signedIn ? (
                         <Button size='md' onPress={onStart}>
                             {t('landing.openCabinet')}
@@ -60,20 +69,62 @@ export function LandingHeader({
                                 appearance='outline'
                                 size='md'
                                 onPress={() => router.push('/login')}
+                                className='hidden sm:flex'
                             >
                                 {t('auth.signIn')}
                             </Button>
-                            <Button
-                                size='md'
-                                className='hidden sm:flex'
-                                onPress={onStart}
-                            >
+                            <Button size='md' onPress={onStart}>
                                 {t('landing.startFree')}
                             </Button>
                         </>
                     )}
+
+                    {/* Mobile menu button */}
+                    <button
+                        type='button'
+                        className='border-card-border text-text-secondary hover:bg-background-gray-secondary flex size-9 items-center justify-center rounded-lg border transition lg:hidden'
+                        onClick={() => setMobileOpen(!mobileOpen)}
+                        aria-label='Menu'
+                    >
+                        {mobileOpen ? (
+                            <svg className='size-4' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
+                                <path d='M18 6 6 18M6 6l12 12' />
+                            </svg>
+                        ) : (
+                            <svg className='size-4' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
+                                <path d='M4 6h16M4 12h16M4 18h16' />
+                            </svg>
+                        )}
+                    </button>
                 </div>
             </div>
+
+            {/* Mobile menu */}
+            {mobileOpen && (
+                <div className='border-card-border bg-card-surface-area/95 mx-auto mt-2 max-w-6xl rounded-2xl border p-4 shadow-lg backdrop-blur-md'>
+                    <nav className='flex flex-col gap-1'>
+                        {LANDING_NAV.map((item) => (
+                            <a
+                                key={item.href}
+                                href={item.href}
+                                onClick={() => setMobileOpen(false)}
+                                className='text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary rounded-xl px-4 py-3 text-sm font-medium transition'
+                            >
+                                {t(item.label)}
+                            </a>
+                        ))}
+                    </nav>
+                    <div className='border-card-border mt-3 flex items-center justify-between border-t pt-3'>
+                        <div className='flex items-center gap-2'>
+                            <LocaleSwitcher />
+                            <ThemeToggle />
+                        </div>
+                        <Button appearance='outline' size='sm' onPress={() => { router.push('/login'); setMobileOpen(false); }}>
+                            {t('auth.signIn')}
+                        </Button>
+                    </div>
+                </div>
+            )}
         </header>
     );
 }

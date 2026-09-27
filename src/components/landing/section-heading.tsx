@@ -1,4 +1,4 @@
-/** Landing bo'limi sarlavhasi: ixtiyoriy kichik yorliq, sarlavha va izoh. */
+/** Landing bo'limi sarlavhasi */
 export function SectionHeading({
     eyebrow,
     title,
@@ -11,14 +11,20 @@ export function SectionHeading({
     return (
         <div className='mx-auto max-w-2xl text-center'>
             {eyebrow && (
-                <p className='text-brand-accent text-sm font-semibold'>
-                    {eyebrow}
-                </p>
+                <div className='mb-4 inline-flex items-center gap-2'>
+                    <div className='border-brand-500/20 bg-brand-500/8 text-brand-500 rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-wide'>
+                        {eyebrow}
+                    </div>
+                </div>
             )}
-            <h2 className='text-text-primary font-display mt-2 text-3xl leading-tight font-semibold sm:text-4xl'>
+            <h2 className='text-text-primary font-display text-3xl leading-tight font-bold sm:text-4xl'>
                 {title}
             </h2>
-            {text && <p className='text-text-secondary mt-4 text-lg'>{text}</p>}
+            {text && (
+                <p className='text-text-secondary mx-auto mt-4 max-w-xl text-lg leading-relaxed'>
+                    {text}
+                </p>
+            )}
         </div>
     );
 }
