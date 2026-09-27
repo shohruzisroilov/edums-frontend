@@ -16,28 +16,28 @@ export function Hero({ onStart }: { onStart: () => void }) {
                 <div className='absolute top-40 -left-20 size-72 rounded-full bg-blue-500/8 blur-3xl' />
             </div>
 
-            <div className='relative mx-auto max-w-5xl px-5 pt-16 pb-10 sm:pt-24'>
+            <div className='relative mx-auto max-w-5xl px-4 pt-10 sm:pt-24 pb-8 sm:pb-10'>
                 {/* Sarlavha */}
-                <h1 className='text-text-primary font-display text-center text-4xl leading-[1.1] font-bold sm:text-5xl lg:text-[64px]'>
+                <h1 className='text-text-primary font-display text-center text-3xl leading-[1.15] font-bold sm:text-5xl lg:text-[64px] tracking-tight'>
                     {t('landing.heroTitle')}
                     <span className='relative mt-2 block'>
                         {/* Highlighted word */}
-                        <span className='bg-brand-500 relative inline-block rounded-2xl px-4 py-1 text-white'>
+                        <span className='bg-brand-500 relative inline-block rounded-xl sm:rounded-2xl px-3 sm:px-4 py-0.5 sm:py-1 text-white shadow-md shadow-brand-500/20'>
                             {t('landing.heroAccent')}
                         </span>
                     </span>
                 </h1>
 
-                <p className='text-text-secondary mx-auto mt-7 max-w-2xl text-center text-lg leading-relaxed sm:text-xl'>
+                <p className='text-text-secondary mx-auto mt-5 sm:mt-7 max-w-2xl text-center text-base sm:text-xl leading-relaxed'>
                     {t('landing.heroText')}
                 </p>
 
                 {/* Buttons */}
-                <div className='mt-8 flex flex-wrap items-center justify-center gap-3'>
+                <div className='mt-6 sm:mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2.5 sm:gap-3 w-full max-w-sm sm:max-w-none mx-auto px-2 sm:px-0'>
                     <Button
                         size='xl'
                         onPress={onStart}
-                        className='shadow-lg shadow-brand-500/20 px-8'
+                        className='shadow-lg shadow-brand-500/20 px-6 sm:px-8 w-full sm:w-auto justify-center'
                     >
                         {t('landing.startFree')} →
                     </Button>
@@ -47,7 +47,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
                         onPress={() =>
                             document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })
                         }
-                        className='px-8'
+                        className='px-6 sm:px-8 w-full sm:w-auto justify-center'
                     >
                         {t('landing.seeFeatures')}
                     </Button>
@@ -55,8 +55,8 @@ export function Hero({ onStart }: { onStart: () => void }) {
             </div>
 
             {/* Hero screenshot */}
-            <div className='relative mx-auto max-w-5xl px-5 pb-16'>
-                <div aria-hidden='true' className='bg-brand-500/15 absolute inset-x-24 top-8 bottom-0 rounded-full blur-3xl' />
+            <div className='relative mx-auto max-w-5xl px-4 sm:px-5 pb-12 sm:pb-16'>
+                <div aria-hidden='true' className='bg-brand-500/15 absolute inset-x-8 sm:inset-x-24 top-4 sm:top-8 bottom-0 rounded-full blur-3xl' />
                 <div className='relative'>
                     <ImageSlot
                         image='hero'

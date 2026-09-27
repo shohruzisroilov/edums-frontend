@@ -86,7 +86,7 @@ function Tariffs({
     return (
         <section
             id='tariffs'
-            className='mx-auto max-w-7xl scroll-mt-20 px-5 py-16'
+            className='mx-auto max-w-7xl scroll-mt-20 px-4 sm:px-5 py-12 sm:py-16'
         >
             <SectionHeading
                 title={t('landing.tariffsTitle')}
@@ -104,15 +104,15 @@ function Tariffs({
                     </p>
                 </div>
             ) : (
-                <div className='relative mt-10 px-2 sm:px-4'>
+                <div className='relative mt-8 sm:mt-10 px-0 sm:px-4'>
                     {/* Previous Button */}
                     <button
                         type='button'
                         onClick={() => scroll('left')}
                         aria-label='Previous'
-                        className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary active:scale-95 absolute -left-2 sm:left-0 top-1/2 z-20 flex -translate-y-1/2 size-10 sm:size-12 items-center justify-center rounded-full border shadow-lg transition-all cursor-pointer'
+                        className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary active:scale-95 absolute -left-1 sm:left-0 top-1/2 z-20 flex -translate-y-1/2 size-9 sm:size-12 items-center justify-center rounded-full border shadow-lg transition-all cursor-pointer'
                     >
-                        <ChevronLeft className='size-5 sm:size-6' />
+                        <ChevronLeft className='size-4 sm:size-6' />
                     </button>
 
                     {/* Next Button */}
@@ -120,21 +120,21 @@ function Tariffs({
                         type='button'
                         onClick={() => scroll('right')}
                         aria-label='Next'
-                        className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary active:scale-95 absolute -right-2 sm:right-0 top-1/2 z-20 flex -translate-y-1/2 size-10 sm:size-12 items-center justify-center rounded-full border shadow-lg transition-all cursor-pointer'
+                        className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary active:scale-95 absolute -right-1 sm:right-0 top-1/2 z-20 flex -translate-y-1/2 size-9 sm:size-12 items-center justify-center rounded-full border shadow-lg transition-all cursor-pointer'
                     >
-                        <ChevronRight className='size-5 sm:size-6' />
+                        <ChevronRight className='size-4 sm:size-6' />
                     </button>
 
                     {/* Horizontal Slider Track */}
                     <div
                         ref={scrollContainerRef}
-                        className='flex gap-5 overflow-x-auto py-3 px-6 sm:px-12 scroll-smooth snap-x snap-mandatory rounded-2xl scrollbar-none'
+                        className='flex gap-4 sm:gap-5 overflow-x-auto py-3 px-4 sm:px-12 scroll-smooth snap-x snap-mandatory rounded-2xl scrollbar-none'
                         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     >
                         {tariffsQuery.data.map((tariff) => (
                             <div
                                 key={tariff.id}
-                                className='w-[280px] sm:w-[320px] lg:w-[330px] shrink-0 snap-center'
+                                className='w-[260px] sm:w-[320px] lg:w-[330px] shrink-0 snap-center'
                             >
                                 <TariffCard
                                     tariff={tariff}

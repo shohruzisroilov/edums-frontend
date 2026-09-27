@@ -130,14 +130,14 @@ export function FeatureGrid() {
     }, [isPaused]);
 
     return (
-        <section className='mx-auto max-w-7xl px-5 py-16'>
+        <section className='mx-auto max-w-7xl px-4 sm:px-5 py-12 sm:py-16'>
             <SectionHeading
                 title={t('landing.featuresTitle')}
                 text={t('landing.featuresText')}
             />
 
             <div
-                className='relative mt-10 px-2 sm:px-4'
+                className='relative mt-8 sm:mt-10 px-0 sm:px-4'
                 onMouseEnter={() => setIsPaused(true)}
                 onMouseLeave={() => setIsPaused(false)}
             >
@@ -146,9 +146,9 @@ export function FeatureGrid() {
                     type='button'
                     onClick={() => scroll('left')}
                     aria-label='Previous'
-                    className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary active:scale-95 absolute -left-2 sm:left-0 top-1/2 z-20 flex -translate-y-1/2 size-10 sm:size-12 items-center justify-center rounded-full border shadow-lg transition-all cursor-pointer'
+                    className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary active:scale-95 absolute -left-1 sm:left-0 top-1/2 z-20 flex -translate-y-1/2 size-9 sm:size-12 items-center justify-center rounded-full border shadow-lg transition-all cursor-pointer'
                 >
-                    <ChevronLeft className='size-5 sm:size-6' />
+                    <ChevronLeft className='size-4 sm:size-6' />
                 </button>
 
                 {/* Next Button */}
@@ -156,30 +156,30 @@ export function FeatureGrid() {
                     type='button'
                     onClick={() => scroll('right')}
                     aria-label='Next'
-                    className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary active:scale-95 absolute -right-2 sm:right-0 top-1/2 z-20 flex -translate-y-1/2 size-10 sm:size-12 items-center justify-center rounded-full border shadow-lg transition-all cursor-pointer'
+                    className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary active:scale-95 absolute -right-1 sm:right-0 top-1/2 z-20 flex -translate-y-1/2 size-9 sm:size-12 items-center justify-center rounded-full border shadow-lg transition-all cursor-pointer'
                 >
-                    <ChevronRight className='size-5 sm:size-6' />
+                    <ChevronRight className='size-4 sm:size-6' />
                 </button>
 
                 {/* Horizontal Auto Slider Track */}
                 <div
                     ref={scrollContainerRef}
-                    className='flex gap-4 overflow-x-auto py-3 px-6 sm:px-10 scroll-smooth snap-x snap-mandatory rounded-2xl'
+                    className='flex gap-3.5 sm:gap-4 overflow-x-auto py-2 sm:py-3 px-4 sm:px-10 scroll-smooth snap-x snap-mandatory rounded-2xl'
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
                     {FEATURES.map((feature) => (
                         <div
                             key={feature.title}
-                            className='w-[270px] sm:w-[290px] shrink-0 snap-center border-card-border bg-card-background hover:border-brand-accent/50 rounded-2xl border p-6 transition-all hover:shadow-lg flex flex-col justify-between'
+                            className='w-[250px] sm:w-[290px] shrink-0 snap-center border-card-border bg-card-background hover:border-brand-accent/50 rounded-2xl border p-5 sm:p-6 transition-all hover:shadow-lg flex flex-col justify-between'
                         >
                             <div>
-                                <span className='bg-brand-accent/10 text-brand-accent flex size-10 items-center justify-center rounded-xl'>
+                                <span className='bg-brand-accent/10 text-brand-accent flex size-9 sm:size-10 items-center justify-center rounded-xl'>
                                     {feature.icon}
                                 </span>
-                                <h3 className='text-text-primary mt-4 font-semibold text-base'>
+                                <h3 className='text-text-primary mt-3 sm:mt-4 font-semibold text-sm sm:text-base'>
                                     {t(feature.title)}
                                 </h3>
-                                <p className='text-text-tertiary mt-2 text-sm leading-relaxed'>
+                                <p className='text-text-tertiary mt-1.5 sm:mt-2 text-xs sm:text-sm leading-relaxed'>
                                     {t(feature.text)}
                                 </p>
                             </div>
