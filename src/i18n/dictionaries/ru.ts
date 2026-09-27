@@ -50,6 +50,23 @@ export const ru: Dictionary = {
     'error.noAccess': 'Нет доступа',
     'error.noAccessHint':
         'У вас нет доступа к этому разделу. При необходимости обратитесь к руководителю центра.',
+    'error.internalServerError': 'Произошла внутренняя ошибка сервера',
+    'error.unauthorized': 'Сеанс истёк. Пожалуйста, войдите снова',
+    'error.forbidden': 'У вас нет прав на выполнение этого действия',
+    'error.badRequest': 'Некорректные данные запроса',
+    'error.notFound': 'Запрошенные данные не найдены',
+    'error.phoneFormat': 'Номер телефона должен быть в формате +998XXXXXXXXX',
+    'error.required': 'Поле обязательно для заполнения',
+    'error.mustBeString': 'Должно быть строкой',
+    'error.mustBeNumber': 'Должно быть числом',
+    'error.invalidEnum': 'Выберите корректное значение из списка',
+    'error.invalidId': 'Некорректный идентификатор (ID)',
+    'error.mustBePositive': 'Должно быть положительным числом',
+    'error.mustBeBoolean': 'Должно быть логическим значением',
+    'error.smsFailed': 'Не удалось отправить SMS, попробуйте позже',
+    'error.invalidPassword': 'Неверный пароль',
+    'error.alreadyExists': 'Запись с таким названием уже существует',
+    'error.phoneInUse': 'Этот номер телефона уже зарегистрирован',
 
     /* ── Вход ────────────────────────────────────────────────────────── */
     'auth.title': 'Вход в систему',

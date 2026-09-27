@@ -52,6 +52,23 @@ export const uz = {
     'error.noAccess': "Ruxsat yo'q",
     'error.noAccessHint':
         "Bu bo'lim uchun sizda ruxsat yo'q. Kerak bo'lsa, markaz rahbariga murojaat qiling.",
+    'error.internalServerError': 'Serverda ichki xatolik yuz berdi',
+    'error.unauthorized': 'Tizimga kirilmagan. Qaytadan kiring',
+    'error.forbidden': "Sizda bu amalni bajarish uchun ruxsat yo'q",
+    'error.badRequest': "So'rov ma'lumotlari noto'g'ri",
+    'error.notFound': "So'ralgan ma'lumot topilmadi",
+    'error.phoneFormat': "Telefon raqami +998XXXXXXXXX formatida bo'lishi kerak",
+    'error.required': "Maydon to'ldirilishi shart",
+    'error.mustBeString': "Matn shaklida bo'lishi kerak",
+    'error.mustBeNumber': "Raqam bo'lishi kerak",
+    'error.invalidEnum': "Ro'yxatdan to'g'ri qiymat tanlang",
+    'error.invalidId': "Noto'g'ri identifikator (ID)",
+    'error.mustBePositive': "Musbat raqam bo'lishi kerak",
+    'error.mustBeBoolean': "Ha/Yo'q qiymati bo'lishi kerak",
+    'error.smsFailed': "SMS yuborib bo'lmadi, keyinroq qayta urinib ko'ring",
+    'error.invalidPassword': "Parol noto'g'ri kiritildi",
+    'error.alreadyExists': "Bu nomdagi ma'lumot allaqachon mavjud",
+    'error.phoneInUse': "Bu telefon raqami bilan allaqachon ro'yxatdan o'tilgan",
 
     /* ── Kirish ──────────────────────────────────────────────────────── */
     'auth.title': 'Tizimga kirish',

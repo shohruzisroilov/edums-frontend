@@ -50,6 +50,23 @@ export const uzCyrl: Dictionary = {
     'error.noAccess': 'Рухсат йўқ',
     'error.noAccessHint':
         'Бу бўлим учун сизда рухсат йўқ. Керак бўлса, марказ раҳбарига мурожаат қилинг.',
+    'error.internalServerError': 'Серверда ички хатолик юз берди',
+    'error.unauthorized': 'Тизимга кирилмаган. Қайтадан киринг',
+    'error.forbidden': 'Сизда бу амални бажариш учун рухсат йўқ',
+    'error.badRequest': 'Сўров маълумотлари нотўғри',
+    'error.notFound': 'Сўралган маълумот топилмади',
+    'error.phoneFormat': 'Телефон рақами +998XXXXXXXXX форматида бўлиши керак',
+    'error.required': 'Майдон тўлдирилиши шарт',
+    'error.mustBeString': 'Матн шаклида бўлиши керак',
+    'error.mustBeNumber': 'Рақам бўлиши керак',
+    'error.invalidEnum': 'Рўйхатдан тўғри қиймат танланг',
+    'error.invalidId': 'Нотўғри идентификатор (ID)',
+    'error.mustBePositive': 'Мусбат рақам бўлиши керак',
+    'error.mustBeBoolean': 'Ҳа/Йўқ қиймати бўлиши керак',
+    'error.smsFailed': 'SMS юбориб бўлмади, кейинроқ қайта уриниб кўринг',
+    'error.invalidPassword': 'Пароль нотўғри киритилди',
+    'error.alreadyExists': 'Бу номдаги маълумот аллақачон мавжуд',
+    'error.phoneInUse': 'Бу телефон рақами билан аллақачон рўйхатдан ўтилган',
 
     /* ── Кириш ───────────────────────────────────────────────────────── */
     'auth.title': 'Тизимга кириш',

@@ -50,6 +50,23 @@ export const en: Dictionary = {
     'error.noAccess': 'No access',
     'error.noAccessHint':
         "You don't have access to this section. Ask your center's administrator if you need it.",
+    'error.internalServerError': 'An internal server error occurred',
+    'error.unauthorized': 'Session expired. Please sign in again',
+    'error.forbidden': 'You do not have permission to perform this action',
+    'error.badRequest': 'Invalid request data',
+    'error.notFound': 'Requested resource not found',
+    'error.phoneFormat': 'Phone number must match +998XXXXXXXXX format',
+    'error.required': 'This field is required',
+    'error.mustBeString': 'Must be a text string',
+    'error.mustBeNumber': 'Must be a number',
+    'error.invalidEnum': 'Please select a valid option from the list',
+    'error.invalidId': 'Invalid ID parameter',
+    'error.mustBePositive': 'Must be a positive number',
+    'error.mustBeBoolean': 'Must be a true/false boolean value',
+    'error.smsFailed': 'Failed to send SMS, please try again later',
+    'error.invalidPassword': 'Invalid password entered',
+    'error.alreadyExists': 'Record with this name already exists',
+    'error.phoneInUse': 'This phone number is already registered',
 
     /* ── Sign in ─────────────────────────────────────────────────────── */
     'auth.title': 'Sign in to EduMS',
