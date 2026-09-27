@@ -34,7 +34,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
     title: {
         template: '%s | EDU MS',
-        default: "EDU MS — Ta'lim boshqaruv tizimi",
+        default: "EDU MS — O'quv markaz boshqaruv tizimi",
     },
     description:
         "O'quv markazlarini boshqarish tizimi: markazlar, tariflar, xodimlar va o'quvchilar.",
