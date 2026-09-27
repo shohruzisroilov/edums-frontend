@@ -34,6 +34,7 @@ import type { Education, EducationStatus } from '@/types/api';
 import { EDUCATION_STATUSES } from '@/types/api';
 import { isSuperAdmin } from '@/utils/access';
 import { Buildings11, Pencil1, Plus, Trash1 } from '@tailgrids/icons';
+import { EyeLinkButton } from '@/components/ui/eye-icon';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -184,9 +185,10 @@ function EducationsView() {
                                             <TableCell>
                                                 <Link
                                                     href={`/educations/${education.id}`}
-                                                    className='text-brand-accent font-medium hover:underline'
+                                                    className='text-brand-accent group inline-flex items-center gap-1.5 font-medium hover:underline'
                                                 >
                                                     {education.name}
+                                                    <EyeIcon />
                                                 </Link>
                                             </TableCell>
                                             <TableCell>

@@ -34,7 +34,7 @@ export default function LandingPage() {
     const start = () => router.push(session ? homeHref(session) : '/register');
 
     return (
-        <div className='bg-background-gray-secondary_alt_2 h-full overflow-y-auto scroll-smooth'>
+        <div id='page-top' className='bg-background-gray-secondary_alt_2 h-full overflow-y-auto scroll-smooth'>
             <LandingHeader signedIn={Boolean(session)} onStart={start} />
 
             <main>
