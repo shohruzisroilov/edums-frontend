@@ -711,6 +711,11 @@
  * oq fonda qolib ketmasligi kerak.
  */
 @layer base {
+    html, body {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+    }
+
     select option,
     select optgroup {
         background-color: var(--background-white-secondary);

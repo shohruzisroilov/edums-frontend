@@ -1,36 +1,35 @@
 import Providers from '@/app/providers';
 import { cn } from '@/utils/cn';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { ThemeProvider } from 'next-themes';
 import { Golos_Text, Inter } from 'next/font/google';
 import { Toaster } from 'sonner';
 import './globals.css';
 
-/*
- * Subsetlar to'rt tilni ham qoplashi shart: `cyrillic-ext` bo'lmasa o'zbek
- * kirillidagi Ў, Қ, Ғ, Ҳ harflari tizim shriftiga tushib ketadi.
- * `next/font` ro'yxatni literal ko'rinishda talab qiladi (o'zgaruvchi yoki
- * spread ishlamaydi), shuning uchun ro'yxat takrorlanadi.
- */
-
-/** Interfeys matni — zich jadvallarda o'qilishi sinovdan o'tgan. */
 const inter = Inter({
     variable: '--font-inter',
     subsets: ['latin', 'latin-ext', 'cyrillic', 'cyrillic-ext'],
     display: 'swap',
 });
 
-/*
- * Sarlavhalar uchun. Golos — Paratype'ning kirill uchun mo'ljallab chizilgan
- * oilasi; mahsulotning to'rt tilidan ikkitasi kirill bo'lgani uchun lotinga
- * moslab kirilli keyin qo'shilgan shriftdan ko'ra mantiqiyroq.
- */
 const golos = Golos_Text({
     variable: '--font-golos',
     subsets: ['latin', 'latin-ext', 'cyrillic', 'cyrillic-ext'],
     weight: ['500', '600', '700'],
     display: 'swap',
 });
+
+export const viewport: Viewport = {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    viewportFit: 'cover',
+    themeColor: [
+        { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+        { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
+    ],
+};
 
 export const metadata: Metadata = {
     title: {
@@ -39,6 +38,15 @@ export const metadata: Metadata = {
     },
     description:
         "O'quv markazlarini boshqarish tizimi: markazlar, tariflar, xodimlar va o'quvchilar.",
+    manifest: '/manifest.json',
+    appleWebApp: {
+        capable: true,
+        statusBarStyle: 'default',
+        title: 'EDU MS',
+    },
+    formatDetection: {
+        telephone: false,
+    },
 };
 
 export default function RootLayout({
