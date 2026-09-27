@@ -18,10 +18,10 @@ export function PageHeader({
     actions?: ReactNode;
 }) {
     return (
-        <div className='flex flex-col gap-4 px-5 pt-6 pb-5 sm:flex-row sm:items-start sm:justify-between'>
+        <div className='flex flex-col gap-3 px-4 pt-4 pb-3 sm:gap-4 sm:px-5 sm:pt-6 sm:pb-5 sm:flex-row sm:items-start sm:justify-between'>
             <div className='min-w-0'>
                 <div className='flex items-center gap-2.5'>
-                    <h1 className='text-text-primary font-display truncate text-2xl leading-tight font-semibold tracking-[-0.015em]'>
+                    <h1 className='text-text-primary font-display truncate text-xl sm:text-2xl leading-tight font-semibold tracking-[-0.015em]'>
                         {title}
                     </h1>
                     {count !== undefined && (
@@ -31,13 +31,13 @@ export function PageHeader({
                     )}
                 </div>
                 {description && (
-                    <div className='text-text-tertiary mt-1.5 flex flex-wrap items-center gap-2 text-sm'>
+                    <div className='text-text-tertiary mt-1 flex flex-wrap items-center gap-2 text-xs sm:text-sm'>
                         {description}
                     </div>
                 )}
             </div>
             {actions && (
-                <div className='flex shrink-0 items-center gap-2'>
+                <div className='flex flex-wrap shrink-0 items-center gap-2'>
                     {actions}
                 </div>
             )}

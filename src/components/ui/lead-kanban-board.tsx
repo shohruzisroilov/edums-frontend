@@ -63,7 +63,7 @@ export function LeadKanbanBoard({
     }
 
     return (
-        <div className='grid grid-cols-1 gap-4 overflow-x-auto pb-6 sm:grid-cols-2 lg:grid-cols-5'>
+        <div className='flex gap-4 overflow-x-auto pb-6 snap-x min-w-full xl:grid xl:grid-cols-5'>
             {LEAD_STATUSES.map((status) => {
                 const columnLeads = leads.filter((l) => l.status === status);
                 const isOver = dragOverColumn === status;
@@ -75,7 +75,7 @@ export function LeadKanbanBoard({
                         onDragLeave={handleDragLeave}
                         onDrop={(e) => canUpdate && handleDrop(e, status)}
                         className={cn(
-                            'border-card-border bg-background-gray-secondary/40 flex flex-col rounded-2xl border p-3 min-h-[400px] transition-all duration-150',
+                            'border-card-border bg-background-gray-secondary/40 flex flex-col rounded-2xl border p-3 min-h-[400px] w-[280px] shrink-0 snap-start xl:w-auto xl:shrink transition-all duration-150',
                             isOver && 'border-brand-accent bg-brand-accent/10 ring-2 ring-brand-accent/20 scale-[1.01]',
                         )}
                     >

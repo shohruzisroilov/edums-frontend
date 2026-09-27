@@ -115,7 +115,7 @@ export function Modal({
                 aria-label={title}
                 tabIndex={-1}
                 className={cn(
-                    'border-card-border bg-card-surface-area relative z-10 my-auto w-full rounded-xl border p-6 shadow-xl outline-none',
+                    'border-card-border bg-card-surface-area relative z-10 my-auto w-full max-h-[90vh] overflow-y-auto rounded-xl border p-4 sm:p-6 shadow-xl outline-none',
                     size === 'lg' ? 'max-w-3xl' : 'max-w-lg',
                 )}
             >

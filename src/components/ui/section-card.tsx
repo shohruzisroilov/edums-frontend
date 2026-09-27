@@ -12,7 +12,7 @@ export function SectionCard({
     children: ReactNode;
 }) {
     return (
-        <div className='border-card-border bg-card-background rounded-xl border p-6'>
+        <div className='border-card-border bg-card-background rounded-xl border p-4 sm:p-6'>
             <div className='mb-4 flex flex-wrap items-center justify-between gap-3'>
                 <h2 className='text-text-primary font-display text-base font-semibold'>
                     {title}
