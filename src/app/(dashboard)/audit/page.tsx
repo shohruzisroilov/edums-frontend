@@ -146,7 +146,7 @@ function AuditView() {
                 <div className='flex w-full items-center justify-end sm:hidden'>
                     <MobileFilterSheet
                         activeCount={activeFilterCount}
-                        onReset={() => {
+                        onClear={() => {
                             setFilter('entity_type', '');
                             setFilter('actor_id', '');
                             setFilter('from', '');

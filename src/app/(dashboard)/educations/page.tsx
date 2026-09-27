@@ -136,7 +136,7 @@ function EducationsView() {
                 </div>
                 <MobileFilterSheet
                     activeCount={filters.status ? 1 : 0}
-                    onReset={() => setFilter('status', '')}
+                    onClear={() => setFilter('status', '')}
                 >
                     <SelectInput
                         label={t('common.status')}
