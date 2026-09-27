@@ -11,13 +11,13 @@ export type LandingImage = 'hero' | 'finance' | 'learning' | 'leads' | 'team';
  */
 export const LANDING_IMAGES: Record<LandingImage, string | null> = {
     /** Hero ostidagi katta rasm — dashboard. */
-    hero: null,
+    hero: '/landing/hero.png',
     /** Moliya bo'limi — kassa yoki qarzdorlar sahifasi. */
-    finance: null,
+    finance: '/landing/finance.png',
     /** O'quv jarayoni — guruh sahifasi (davomat) yoki dars jadvali. */
-    learning: null,
+    learning: '/landing/learning.png',
     /** Lidlar sahifasi. */
-    leads: null,
+    leads: '/landing/leads.png',
     /** Jamoa — oyliklar yoki rollar sahifasi. */
-    team: null,
+    team: '/landing/team.png',
 };

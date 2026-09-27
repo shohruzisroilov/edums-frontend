@@ -1,38 +1,8 @@
 'use client';
 
 import { Button } from '@/components/tailgrids/core/button';
-import type { TranslationKey } from '@/i18n/dictionaries/uz';
 import { useT } from '@/i18n/provider';
-import {
-    Check,
-    Code1,
-    ColourPalette3,
-    EmojiSmile,
-    Globe2,
-    Hat1,
-} from '@tailgrids/icons';
-import type { ReactNode } from 'react';
 import { ImageSlot } from './image-slot';
-
-const POINTS: TranslationKey[] = [
-    'landing.heroPoint.noCard',
-    'landing.heroPoint.languages',
-    'landing.heroPoint.devices',
-];
-
-const AUDIENCE: { icon: ReactNode; label: TranslationKey }[] = [
-    {
-        icon: <Globe2 className='size-4' />,
-        label: 'landing.audience.languages',
-    },
-    { icon: <Code1 className='size-4' />, label: 'landing.audience.it' },
-    { icon: <Hat1 className='size-4' />, label: 'landing.audience.exam' },
-    { icon: <EmojiSmile className='size-4' />, label: 'landing.audience.kids' },
-    {
-        icon: <ColourPalette3 className='size-4' />,
-        label: 'landing.audience.studios',
-    },
-];
 
 export function Hero({ onStart }: { onStart: () => void }) {
     const t = useT();
@@ -88,25 +58,6 @@ export function Hero({ onStart }: { onStart: () => void }) {
                         priority
                     />
                 </div>
-            </div>
-
-            <div className='mx-auto max-w-5xl px-5 pb-8 text-center'>
-                <p className='text-text-tertiary text-sm font-medium'>
-                    {t('landing.audienceTitle')}
-                </p>
-                <ul className='mt-4 flex flex-wrap justify-center gap-2'>
-                    {AUDIENCE.map((item) => (
-                        <li
-                            key={item.label}
-                            className='border-card-border bg-card-background text-text-secondary inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm'
-                        >
-                            <span className='text-brand-accent'>
-                                {item.icon}
-                            </span>
-                            {t(item.label)}
-                        </li>
-                    ))}
-                </ul>
             </div>
         </section>
     );
