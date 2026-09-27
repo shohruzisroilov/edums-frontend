@@ -52,6 +52,7 @@ import {
     UserCircle1,
     Wallet2,
 } from '@tailgrids/icons';
+import { EyeLinkButton } from '@/components/ui/eye-icon';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -369,6 +370,7 @@ function StudentsView() {
                                             {hasActions && (
                                                 <TableCell>
                                                     <div className='flex justify-end gap-2'>
+                                                        <EyeLinkButton href={`/students/${student.id}`} />
                                                         {canPay && (
                                                             <Button
                                                                 appearance='outline'

@@ -44,6 +44,7 @@ import { fullName } from '@/utils/format';
 import { TONE_TEXT } from '@/utils/tone';
 import { exportToCsv } from '@/utils/export';
 import { Download1, Plus, Trash1, Wallet2 } from '@tailgrids/icons';
+import { EyeLinkButton } from '@/components/ui/eye-icon';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';

@@ -44,6 +44,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { GroupFormModal } from './_components/group-form';
+import { EyeLinkButton } from '@/components/ui/eye-icon';
 
 export default function GroupsPage() {
     return (
@@ -358,6 +359,7 @@ function GroupsView() {
                                             {(canUpdate || canDelete) && (
                                                 <TableCell>
                                                     <div className='flex justify-end gap-2'>
+                                                        <EyeLinkButton href={`/groups/${group.id}`} />
                                                         {canUpdate && (
                                                             <Button
                                                                 appearance='outline'

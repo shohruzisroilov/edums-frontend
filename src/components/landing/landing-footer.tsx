@@ -72,9 +72,33 @@ export function LandingFooter() {
                 </div>
             </div>
             <div className='border-card-border border-t'>
-                <p className='text-text-tertiary mx-auto max-w-6xl px-5 py-5 text-sm'>
-                    © {new Date().getFullYear()} EduMS
-                </p>
+                <div className='mx-auto flex max-w-6xl items-center justify-between px-5 py-5'>
+                    <p className='text-text-tertiary text-sm'>
+                        © {new Date().getFullYear()} EduMS. Barcha huquqlar himoyalangan.
+                    </p>
+                    <button
+                        type='button'
+                        onClick={() => {
+                            document.getElementById('page-top')?.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className='border-card-border text-text-tertiary hover:text-text-primary hover:bg-card-border flex size-9 items-center justify-center rounded-lg border transition'
+                        aria-label='Yuqoriga chiqish'
+                    >
+                        <svg
+                            xmlns='http://www.w3.org/2000/svg'
+                            width='16'
+                            height='16'
+                            viewBox='0 0 24 24'
+                            fill='none'
+                            stroke='currentColor'
+                            strokeWidth='2'
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                        >
+                            <path d='M18 15l-6-6-6 6' />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </footer>
     );

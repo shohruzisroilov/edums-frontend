@@ -1,0 +1,10 @@
+{
+    "buildCommand": "npm run build",
+    "installCommand": "npm ci",
+    "framework": "nextjs",
+    "regions": ["fra1"],
+    "env": {
+        "NEXT_PUBLIC_API_URL": "https://api.edums.uz/api",
+        "NEXT_PUBLIC_FILES_URL": "https://api.edums.uz"
+    }
+}

@@ -874,7 +874,7 @@ export const uzCyrl: Dictionary = {
     'smsSettings.subscriptionTemplate': 'Обуна тугаши (марказга)',
     'smsSettings.debtTemplate': 'Қарз эслатмаси (ота-онага)',
     'smsSettings.absenceTemplate': 'Келмаганлик (ота-онага)',
-    'smsSettings.placeholders': 'Ўринлар: {list}',
+    'smsSettings.placeholders': 'Мавжуд ўзгарувчилар: {list}',
 
     /* ── Dashboard va hisobotlar ── */
     'nav.main': 'АСОСИЙ',

@@ -340,7 +340,7 @@ export const uz = {
     'landing.featuresTitle': 'Hammasi bitta tizimda',
     'landing.featureRolesTitle': 'Dinamik rollar',
     'landing.featureRolesText':
-        "Administrator, o'qituvchi, kassir — rollarni o'zingiz yarating va ruxsatlarini belgilang.",
+        "Administrator, o'qituvchi, manager — rollarni o'zingiz yarating va ruxsatlarini belgilang.",
     'landing.featureSecurityTitle': 'Xavfsizlik',
     'landing.featureSecurityText':
         "Har bir markaz ma'lumoti alohida. Xodim o'zidan katta huquqni hech kimga bera olmaydi.",
@@ -881,7 +881,7 @@ export const uz = {
     'smsSettings.subscriptionTemplate': 'Obuna tugashi (markazga)',
     'smsSettings.debtTemplate': 'Qarz eslatmasi (ota-onaga)',
     'smsSettings.absenceTemplate': 'Kelmaganlik (ota-onaga)',
-    'smsSettings.placeholders': "O'rinlar: {list}",
+    'smsSettings.placeholders': "Mavjud o'zgaruvchilar: {list}",
 
     /* ── Dashboard va hisobotlar ── */
     'nav.main': 'ASOSIY',
@@ -1164,7 +1164,7 @@ export const uz = {
         "Kelmagan o'quvchining ota-onasiga o'sha kuni SMS yuborish mumkin",
     'landing.showcaseTitle': 'Markazni boshqarish — bir joyda',
     'landing.showcaseText':
-        "Direktor, administrator, kassir va o'qituvchi — har biri o'z ishini shu yerda qiladi.",
+        "Direktor, administrator, manager va o'qituvchi — har biri o'z ishini shu yerda qiladi.",
     'landing.finance.eyebrow': 'Moliya',
     'landing.finance.title':
         "Pul qayerdan kelib, qayerga ketayotganini ko'ring",
@@ -1193,7 +1193,7 @@ export const uz = {
     'landing.team.eyebrow': 'Jamoa',
     'landing.team.title': "Har kim faqat o'z ishini ko'radi",
     'landing.team.text':
-        "O'qituvchiga — guruhlar va davomat, kassirga — to'lovlar, menejerga — lidlar. Rollarni o'zingiz yaratasiz, har bir harakat tarixda saqlanadi.",
+        "O'qituvchiga — guruhlar va davomat, managera — to'lovlar, menejerga — lidlar. Rollarni o'zingiz yaratasiz, har bir harakat tarixda saqlanadi.",
     'landing.team.point1':
         "O'qituvchi oyligi — belgilangan, foiz yoki o'quvchi boshiga",
     'landing.team.point2':

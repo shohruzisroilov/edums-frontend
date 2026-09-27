@@ -1,13 +1,19 @@
 # Production image: Next.js standalone server.
 # NEXT_PUBLIC_* manzillar build vaqtida kodga yoziladi — o'zgarsa, qayta build.
+#
+# Build misoli:
+#   docker build \
+#     --build-arg NEXT_PUBLIC_API_URL=https://api.edums.uz/api \
+#     --build-arg NEXT_PUBLIC_FILES_URL=https://api.edums.uz \
+#     -t edums-frontend .
 
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
-ARG NEXT_PUBLIC_API_URL=http://localhost:4000/api
-ARG NEXT_PUBLIC_FILES_URL=http://localhost:4000
+ARG NEXT_PUBLIC_API_URL=https://api.edums.uz/api
+ARG NEXT_PUBLIC_FILES_URL=https://api.edums.uz
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL \
     NEXT_PUBLIC_FILES_URL=$NEXT_PUBLIC_FILES_URL \
     NEXT_TELEMETRY_DISABLED=1 \
