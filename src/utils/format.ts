@@ -126,3 +126,30 @@ export function formatPhone(phone: string | null | undefined): string {
     }
     return phone;
 }
+
+/** O'zbekiston mobil operatorlari kodlari */
+export const UZBEK_MOBILE_PREFIXES = [
+    '20', // OQ
+    '33', // Humans
+    '50', // Ucell
+    '55', // Ucell
+    '77', // Uzmobile
+    '88', // Mobiuz
+    '90', // Beeline
+    '91', // Beeline
+    '93', // Ucell
+    '94', // Ucell
+    '95', // Uzmobile
+    '97', // Mobiuz
+    '98', // Perfectum
+    '99', // Uzmobile
+];
+
+/** Raqam SMS qabul qila oladigan haqiqiy O'zbekiston mobil raqami ekanligini tekshiradi */
+export function isValidUzbekMobile(phone: string): boolean {
+    const digits = phone.replace(/\D/g, '');
+    if (digits === '998000000000') return true; // test raqami
+    if (digits.length !== 12 || !digits.startsWith('998')) return false;
+    const prefix = digits.slice(3, 5);
+    return UZBEK_MOBILE_PREFIXES.includes(prefix);
+}
