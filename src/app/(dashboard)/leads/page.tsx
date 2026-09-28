@@ -239,15 +239,15 @@ function LeadsView() {
                                 setFilter('status', active ? '' : status)
                             }
                             className={cn(
-                                'bg-card-background rounded-xl border p-4 text-left transition',
+                                'bg-card-background rounded-xl border p-3.5 sm:p-4 text-left transition',
                                 active
-                                    ? 'border-brand-accent'
+                                    ? 'border-brand-accent ring-brand-accent/20 ring-2'
                                     : 'border-card-border hover:border-text-tertiary',
                             )}
                         >
-                            <p className='text-text-tertiary flex items-center gap-2 text-xs'>
+                            <p className='text-text-tertiary flex items-center gap-1.5 text-xs font-medium'>
                                 <LeadStatusDot status={status} />
-                                {t(`leadStatus.${status}`)}
+                                <span className='truncate'>{t(`leadStatus.${status}`)}</span>
                             </p>
                             <p className='text-text-primary font-display mt-1 text-2xl font-semibold tabular-nums'>
                                 {statsQuery.data
