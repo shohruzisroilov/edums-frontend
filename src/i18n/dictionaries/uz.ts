@@ -392,15 +392,25 @@ export const uz = {
     'nav.smsSettings': 'SMS sozlamalari',
     'smsSettings.title': 'SMS sozlamalari',
     'smsSettings.subtitle':
-        "Ro'yxatdan o'tish kodlari yuboriladigan Eskiz.uz ulanishi",
-    'smsSettings.connectionTitle': 'Eskiz ulanishi',
+        "Ro'yxatdan o'tish kodlari va xabarlar yuboriladigan SMS provayder ulanishi",
+    'smsSettings.connectionTitle': 'SMS provayder ulanishi',
     'smsSettings.driver': 'Rejim',
-    'smsSettings.driverEskiz': 'Eskiz — haqiqiy SMS',
+    'smsSettings.driverDevsms': 'DevSMS — haqiqiy SMS (devsms.uz)',
+    'smsSettings.driverEskiz': 'Eskiz — haqiqiy SMS (eskiz.uz)',
     'smsSettings.driverConsole': 'Console — faqat server logi (test)',
+    'smsSettings.driverDevsmsHint':
+        'Xabarlar DevSMS.uz orqali telefon raqamga yuboriladi',
     'smsSettings.driverEskizHint':
         'Kodlar Eskiz.uz orqali telefonga yuboriladi',
     'smsSettings.driverConsoleHint':
         'SMS yuborilmaydi, kod backend terminalida chiqadi. Productionda taqiqlangan',
+    'smsSettings.devsmsToken': 'DevSMS API Token',
+    'smsSettings.devsmsTokenHint':
+        'devsms.uz kabinetidagi profil/API sozlamalaridan olingan Bearer token',
+    'smsSettings.devsmsTokenSavedHint':
+        "Token saqlangan. O'zgartirish uchun yangisini kiriting, aks holda bo'sh qoldiring",
+    'smsSettings.devsmsFrom': "DevSMS jo'natuvchi (from)",
+    'smsSettings.devsmsFromHint': "DevSMS tizimidagi from identifikatori (standart: 4546)",
     'smsSettings.email': 'Eskiz email',
     'smsSettings.password': 'Eskiz paroli',
     'smsSettings.passwordHint': 'Eskiz kabinetiga kirish paroli',
@@ -410,12 +420,12 @@ export const uz = {
     'smsSettings.fromHint': 'Eskiz bergan nik yoki raqam, masalan 4546',
     'smsSettings.template': 'SMS shabloni',
     'smsSettings.templateHint':
-        "{code} — kod o'rni. Matn Eskiz kabinetida tasdiqlangan shablon bilan aynan bir xil bo'lishi shart",
+        "{code} — kod o'rni. Masalan: EduMS: tasdiqlash kodi {code}",
     'smsSettings.templateMissingCode': "Shablonda {code} bo'lishi shart",
     'smsSettings.saved': 'SMS sozlamalari saqlandi',
     'smsSettings.testTitle': 'Sinov SMS',
     'smsSettings.testText':
-        "Saqlangan sozlamalar bilan shablon bo'yicha 123456 kodini yuboradi. Avval o'zgarishlarni saqlang.",
+        "Saqlangan sozlamalar bilan shablon bo'yicha 1234 kodini yuboradi. Avval o'zgarishlarni saqlang.",
     'smsSettings.testSend': 'Yuborish',
     'smsSettings.testSending': 'Yuborilmoqda…',
 

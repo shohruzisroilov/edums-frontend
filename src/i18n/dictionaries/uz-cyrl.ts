@@ -388,14 +388,24 @@ export const uzCyrl: Dictionary = {
     'nav.smsSettings': 'SMS созламалари',
     'smsSettings.title': 'SMS созламалари',
     'smsSettings.subtitle':
-        'Рўйхатдан ўтиш кодлари юбориладиган Eskiz.uz уланиши',
-    'smsSettings.connectionTitle': 'Eskiz уланиши',
+        'Рўйхатдан ўтиш кодлари ва хабарлар юбориладиган SMS провайдер уланиши',
+    'smsSettings.connectionTitle': 'SMS провайдер уланиши',
     'smsSettings.driver': 'Режим',
-    'smsSettings.driverEskiz': 'Eskiz — ҳақиқий SMS',
+    'smsSettings.driverDevsms': 'DevSMS — ҳақиқий SMS (devsms.uz)',
+    'smsSettings.driverEskiz': 'Eskiz — ҳақиқий SMS (eskiz.uz)',
     'smsSettings.driverConsole': 'Console — фақат сервер логи (тест)',
+    'smsSettings.driverDevsmsHint':
+        'Хабарлар DevSMS.uz орқали телефон рақамига юборилади',
     'smsSettings.driverEskizHint': 'Кодлар Eskiz.uz орқали телефонга юборилади',
     'smsSettings.driverConsoleHint':
         'SMS юборилмайди, код бэкенд терминалида чиқади. Productionда тақиқланган',
+    'smsSettings.devsmsToken': 'DevSMS API Token',
+    'smsSettings.devsmsTokenHint':
+        'devsms.uz кабинетидан олинган API Bearer token',
+    'smsSettings.devsmsTokenSavedHint':
+        'Токен сақланган. Ўзгартириш учун янгисини киритинг, акс ҳолда бўш қолдиринг',
+    'smsSettings.devsmsFrom': 'DevSMS жўнатувчи (from)',
+    'smsSettings.devsmsFromHint': 'DevSMS тизимидаги from идентификатори (стандарт: 4546)',
     'smsSettings.email': 'Eskiz email',
     'smsSettings.password': 'Eskiz пароли',
     'smsSettings.passwordHint': 'Eskiz кабинетига кириш пароли',
@@ -405,12 +415,12 @@ export const uzCyrl: Dictionary = {
     'smsSettings.fromHint': 'Eskiz берган ник ёки рақам, масалан 4546',
     'smsSettings.template': 'SMS шаблони',
     'smsSettings.templateHint':
-        '{code} — код ўрни. Матн Eskiz кабинетида тасдиқланган шаблон билан айнан бир хил бўлиши шарт',
+        '{code} — код ўрни. Масалан: EduMS: tasdiqlash kodi {code}',
     'smsSettings.templateMissingCode': 'Шаблонда {code} бўлиши шарт',
     'smsSettings.saved': 'SMS созламалари сақланди',
     'smsSettings.testTitle': 'Синов SMS',
     'smsSettings.testText':
-        'Сақланган созламалар билан шаблон бўйича 123456 кодини юборади. Аввал ўзгаришларни сақланг.',
+        'Сақланган созламалар билан шаблон бўйича 1234 кодини юборади. Аввал ўзгаришларни сақланг.',
     'smsSettings.testSend': 'Юбориш',
     'smsSettings.testSending': 'Юборилмоқда…',
 

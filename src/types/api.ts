@@ -216,14 +216,16 @@ export interface BillingOverview {
 
 /* ── SMS sozlamalari ──────────────────────────────────────────────────── */
 
-export type SmsDriver = 'eskiz' | 'console';
+export type SmsDriver = 'eskiz' | 'devsms' | 'console';
 
-/** GET /sms-settings — parolning o'zi hech qachon kelmaydi. */
+/** GET /sms-settings — parol va tokenlarning o'zi hech qachon kelmaydi. */
 export interface SmsSettings {
     driver: SmsDriver;
     eskiz_email: string | null;
     has_eskiz_password: boolean;
     eskiz_from: string;
+    has_devsms_token: boolean;
+    devsms_from: string;
     template: string;
     /** Avtomatik xabarlarning umumiy kaliti (eslatmalar, kelmaganlik). */
     notifications_enabled: boolean;
@@ -238,10 +240,13 @@ export interface SmsSettings {
 
 export interface SmsSettingsPayload {
     driver: SmsDriver;
-    eskiz_email: string | null;
+    eskiz_email?: string | null;
     /** Bo'sh yoki yo'q bo'lsa — saqlangan parol o'zgarmaydi. */
     eskiz_password?: string;
-    eskiz_from: string;
+    eskiz_from?: string;
+    /** Bo'sh yoki yo'q bo'lsa — saqlangan DevSMS token o'zgarmaydi. */
+    devsms_token?: string;
+    devsms_from?: string;
     template: string;
     notifications_enabled?: boolean;
     subscription_template?: string;

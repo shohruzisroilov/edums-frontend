@@ -88,9 +88,12 @@ function SettingsForm({ settings }: { settings: SmsSettings }) {
         eskiz_email: settings.eskiz_email ?? '',
         eskiz_password: '',
         eskiz_from: settings.eskiz_from,
+        devsms_token: '',
+        devsms_from: settings.devsms_from || '4546',
         template: settings.template,
     });
 
+    const isDevSms = form.driver === 'devsms';
     const isEskiz = form.driver === 'eskiz';
 
     const mutation = useMutation({
@@ -101,6 +104,8 @@ function SettingsForm({ settings }: { settings: SmsSettings }) {
                 // Bo'sh qoldirilsa backend saqlangan parolni o'zgartirmaydi.
                 eskiz_password: form.eskiz_password || undefined,
                 eskiz_from: form.eskiz_from.trim(),
+                devsms_token: form.devsms_token.trim() || undefined,
+                devsms_from: form.devsms_from.trim(),
                 template: form.template.trim(),
             }),
         onSuccess: (data) => {
@@ -123,6 +128,10 @@ function SettingsForm({ settings }: { settings: SmsSettings }) {
                     required
                     options={[
                         {
+                            value: 'devsms',
+                            label: t('smsSettings.driverDevsms'),
+                        },
+                        {
                             value: 'eskiz',
                             label: t('smsSettings.driverEskiz'),
                         },
@@ -131,58 +140,115 @@ function SettingsForm({ settings }: { settings: SmsSettings }) {
                             label: t('smsSettings.driverConsole'),
                         },
                     ]}
-                    hint={t(
-                        isEskiz
-                            ? 'smsSettings.driverEskizHint'
-                            : 'smsSettings.driverConsoleHint',
-                    )}
+                    hint={
+                        isDevSms
+                            ? t('smsSettings.driverDevsmsHint')
+                            : isEskiz
+                            ? t('smsSettings.driverEskizHint')
+                            : t('smsSettings.driverConsoleHint')
+                    }
                     value={form.driver}
                     onValueChange={(driver) =>
                         setForm({ ...form, driver: driver as SmsDriver })
                     }
                 />
 
-                <TextInput
-                    label={t('smsSettings.email')}
-                    type='email'
-                    required={isEskiz}
-                    autoComplete='off'
-                    placeholder='info@example.uz'
-                    value={form.eskiz_email}
-                    onChange={(e) =>
-                        setForm({ ...form, eskiz_email: e.target.value })
-                    }
-                />
+                {isDevSms && (
+                    <>
+                        <PasswordInput
+                            label={t('smsSettings.devsmsToken')}
+                            required={!settings.has_devsms_token}
+                            autoComplete='off'
+                            placeholder={
+                                settings.has_devsms_token
+                                    ? '••••••••'
+                                    : undefined
+                            }
+                            hint={t(
+                                settings.has_devsms_token
+                                    ? 'smsSettings.devsmsTokenSavedHint'
+                                    : 'smsSettings.devsmsTokenHint',
+                            )}
+                            value={form.devsms_token}
+                            onChange={(e) =>
+                                setForm({
+                                    ...form,
+                                    devsms_token: e.target.value,
+                                })
+                            }
+                        />
 
-                <PasswordInput
-                    label={t('smsSettings.password')}
-                    // Saqlangan parol bo'lsa, maydon bo'sh qolishi mumkin.
-                    required={isEskiz && !settings.has_eskiz_password}
-                    autoComplete='new-password'
-                    placeholder={
-                        settings.has_eskiz_password ? '••••••••' : undefined
-                    }
-                    hint={t(
-                        settings.has_eskiz_password
-                            ? 'smsSettings.passwordSavedHint'
-                            : 'smsSettings.passwordHint',
-                    )}
-                    value={form.eskiz_password}
-                    onChange={(e) =>
-                        setForm({ ...form, eskiz_password: e.target.value })
-                    }
-                />
+                        <TextInput
+                            label={t('smsSettings.devsmsFrom')}
+                            required
+                            maxLength={20}
+                            hint={t('smsSettings.devsmsFromHint')}
+                            value={form.devsms_from}
+                            onChange={(e) =>
+                                setForm({
+                                    ...form,
+                                    devsms_from: e.target.value,
+                                })
+                            }
+                        />
+                    </>
+                )}
 
-                <TextInput
-                    label={t('smsSettings.from')}
-                    required
-                    maxLength={20}
-                    hint={t('smsSettings.fromHint')}
-                    value={form.eskiz_from}
-                    onChange={(e) =>
-                        setForm({ ...form, eskiz_from: e.target.value })
-                    }
-                />
+                {isEskiz && (
+                    <>
+                        <TextInput
+                            label={t('smsSettings.email')}
+                            type='email'
+                            required
+                            autoComplete='off'
+                            placeholder='info@example.uz'
+                            value={form.eskiz_email}
+                            onChange={(e) =>
+                                setForm({
+                                    ...form,
+                                    eskiz_email: e.target.value,
+                                })
+                            }
+                        />
+
+                        <PasswordInput
+                            label={t('smsSettings.password')}
+                            required={!settings.has_eskiz_password}
+                            autoComplete='new-password'
+                            placeholder={
+                                settings.has_eskiz_password
+                                    ? '••••••••'
+                                    : undefined
+                            }
+                            hint={t(
+                                settings.has_eskiz_password
+                                    ? 'smsSettings.passwordSavedHint'
+                                    : 'smsSettings.passwordHint',
+                            )}
+                            value={form.eskiz_password}
+                            onChange={(e) =>
+                                setForm({
+                                    ...form,
+                                    eskiz_password: e.target.value,
+                                })
+                            }
+                        />
+
+                        <TextInput
+                            label={t('smsSettings.from')}
+                            required
+                            maxLength={20}
+                            hint={t('smsSettings.fromHint')}
+                            value={form.eskiz_from}
+                            onChange={(e) =>
+                                setForm({
+                                    ...form,
+                                    eskiz_from: e.target.value,
+                                })
+                            }
+                        />
+                    </>
+                )}
 
                 <TextareaInput
                     label={t('smsSettings.template')}
