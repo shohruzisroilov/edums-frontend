@@ -86,7 +86,7 @@ export const uzCyrl: Dictionary = {
     'nav.roles': 'Роллар',
     'nav.educations': 'Ўқув марказлар',
     'nav.profile': 'Профил',
-    'nav.home': 'EDU MS бош саҳифа',
+    'nav.home': 'EDUMS бош саҳифа',
     'nav.openMenu': 'Менюни очиш',
     'nav.closeMenu': 'Менюни ёпиш',
     'nav.collapse': 'Менюни йиғиш',
@@ -416,7 +416,7 @@ export const uzCyrl: Dictionary = {
     'smsSettings.fromHint': 'Eskiz берган ник ёки рақам, масалан 4546',
     'smsSettings.template': 'SMS шаблони',
     'smsSettings.templateHint':
-        '{code} — код ўрни. Масалан: EduMS: tasdiqlash kodi {code}',
+        '{code} — код ўрни. Масалан: EDUMS: tasdiqlash kodi {code}',
     'smsSettings.templateMissingCode': 'Шаблонда {code} бўлиши шарт',
     'smsSettings.saved': 'SMS созламалари сақланди',
     'smsSettings.testTitle': 'Синов SMS',

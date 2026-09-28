@@ -43,7 +43,7 @@ export function PainPoints() {
                         <div className='my-3.5 flex items-center gap-2 sm:my-5 sm:gap-3'>
                             <div className='border-card-border h-px flex-1 border-t border-dashed' />
                             <span className='text-brand-500 text-[11px] font-semibold whitespace-nowrap'>
-                                EduMS bilan
+                                EDUMS bilan
                             </span>
                             <div className='border-card-border h-px flex-1 border-t border-dashed' />
                         </div>

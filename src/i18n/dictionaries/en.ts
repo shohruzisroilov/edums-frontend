@@ -69,7 +69,7 @@ export const en: Dictionary = {
     'error.phoneInUse': 'This phone number is already registered',
 
     /* ── Sign in ─────────────────────────────────────────────────────── */
-    'auth.title': 'Sign in to EduMS',
+    'auth.title': 'Sign in to EDUMS',
     'auth.subtitle': 'Enter your phone number and password to sign in',
     'auth.signIn': 'Sign in',
     'auth.signingIn': 'Signing in…',
@@ -86,7 +86,7 @@ export const en: Dictionary = {
     'nav.roles': 'Roles',
     'nav.educations': 'Education centers',
     'nav.profile': 'Profile',
-    'nav.home': 'EDU MS home',
+    'nav.home': 'EDUMS home',
     'nav.openMenu': 'Open menu',
     'nav.closeMenu': 'Close menu',
     'nav.collapse': 'Collapse menu',
@@ -416,7 +416,7 @@ export const en: Dictionary = {
     'smsSettings.fromHint': 'Nickname or number given by Eskiz, e.g. 4546',
     'smsSettings.template': 'SMS template',
     'smsSettings.templateHint':
-        '{code} is replaced by the code. E.g.: EduMS: tasdiqlash kodi {code}',
+        '{code} is replaced by the code. E.g.: EDUMS: tasdiqlash kodi {code}',
     'smsSettings.templateMissingCode': 'The template must contain {code}',
     'smsSettings.saved': 'SMS settings saved',
     'smsSettings.testTitle': 'Test SMS',

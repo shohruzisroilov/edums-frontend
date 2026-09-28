@@ -74,7 +74,7 @@ export function LandingFooter() {
             <div className='border-card-border border-t'>
                 <div className='mx-auto flex max-w-6xl items-center justify-between px-5 py-5'>
                     <p className='text-text-tertiary text-sm'>
-                        © {new Date().getFullYear()} EduMS. Barcha huquqlar
+                        © {new Date().getFullYear()} EDUMS. Barcha huquqlar
                         himoyalangan.
                     </p>
                     <button

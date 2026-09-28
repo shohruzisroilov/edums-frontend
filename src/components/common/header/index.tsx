@@ -50,7 +50,7 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                     <Link
                         href='/'
                         className='flex shrink-0 items-center xl:hidden'
-                        aria-label='EduMS'
+                        aria-label='EDUMS'
                     >
                         <span className='sm:hidden'>
                             <AppLogo collapsed className='size-8' />

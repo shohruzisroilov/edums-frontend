@@ -90,7 +90,7 @@ export const uz = {
     'nav.roles': 'Rollar',
     'nav.educations': "O'quv markazlar",
     'nav.profile': 'Profil',
-    'nav.home': 'EDU MS bosh sahifa',
+    'nav.home': 'EDUMS bosh sahifa',
     'nav.openMenu': 'Menyuni ochish',
     'nav.closeMenu': 'Menyuni yopish',
     'nav.collapse': "Menyuni yig'ish",
@@ -421,7 +421,7 @@ export const uz = {
     'smsSettings.fromHint': 'Eskiz bergan nik yoki raqam, masalan 4546',
     'smsSettings.template': 'SMS shabloni',
     'smsSettings.templateHint':
-        "{code} — kod o'rni. Masalan: EduMS: tasdiqlash kodi {code}",
+        "{code} — kod o'rni. Masalan: EDUMS: tasdiqlash kodi {code}",
     'smsSettings.templateMissingCode': "Shablonda {code} bo'lishi shart",
     'smsSettings.saved': 'SMS sozlamalari saqlandi',
     'smsSettings.testTitle': 'Sinov SMS',

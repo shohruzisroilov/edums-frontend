@@ -1,6 +1,6 @@
 {
-  "name": "EDU MS — O'quv Markaz Boshqaruv Tizimi",
-  "short_name": "EduMS",
+  "name": "EDUMS — O'quv Markaz Boshqaruv Tizimi",
+  "short_name": "EDUMS",
   "description": "O'quv markazlarini boshqarish tizimi",
   "start_url": "/dashboard",
   "display": "standalone",
