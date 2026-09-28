@@ -128,7 +128,12 @@ export default function ForgotPasswordPage() {
 
                 {/* Logo */}
                 <div className='relative'>
-                    <AppLogo variant='white' />
+                    <Link
+                        href='/'
+                        className='inline-block transition-opacity hover:opacity-90'
+                    >
+                        <AppLogo variant='white' />
+                    </Link>
                 </div>
 
                 {/* Asosiy kontent */}
