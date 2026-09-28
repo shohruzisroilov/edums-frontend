@@ -31,7 +31,7 @@ export function EyeLinkButton({
         <Link
             href={href}
             aria-label={label}
-            className='border-button-primary-outline-stroke bg-button-primary-outline-background text-button-primary-outline-text hover:bg-button-primary-outline-hover-background hover:text-button-primary-outline-hover-text inline-flex size-9.5 items-center justify-center rounded-lg border transition outline-none'
+            className='border-button-primary-outline-stroke bg-button-primary-outline-background text-button-primary-outline-text hover:bg-button-primary-outline-hover-background hover:text-button-primary-outline-hover-text inline-flex size-9 items-center justify-center rounded-lg border transition outline-none'
         >
             <EyeIcon className='size-5' />
         </Link>

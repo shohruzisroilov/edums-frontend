@@ -35,7 +35,7 @@ import type { Education, EducationStatus } from '@/types/api';
 import { EDUCATION_STATUSES } from '@/types/api';
 import { isSuperAdmin } from '@/utils/access';
 import { Buildings11, Pencil1, Plus, Trash1 } from '@tailgrids/icons';
-import { EyeIcon } from '@/components/ui/eye-icon';
+import { EyeLinkButton } from '@/components/ui/eye-icon';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -198,13 +198,12 @@ function EducationsView() {
                                                 index={index}
                                                 offset={offset}
                                             />
-                                            <TableCell>
+                                            <TableCell primary>
                                                 <Link
                                                     href={`/educations/${education.id}`}
-                                                    className='text-brand-accent group inline-flex items-center gap-1.5 font-medium hover:underline'
+                                                    className='hover:text-brand-accent hover:underline'
                                                 >
                                                     {education.name}
-                                                    <EyeIcon />
                                                 </Link>
                                             </TableCell>
                                             <TableCell>
@@ -229,6 +228,9 @@ function EducationsView() {
                                             </TableCell>
                                             <TableCell>
                                                 <div className='flex justify-end gap-2'>
+                                                    <EyeLinkButton
+                                                        href={`/educations/${education.id}`}
+                                                    />
                                                     <Button
                                                         appearance='outline'
                                                         size='md'
