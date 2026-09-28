@@ -10,7 +10,6 @@ import { Button } from '@/components/tailgrids/core/button';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { can } from '@/utils/access';
-import { cn } from '@/utils/cn';
 import { Funnel1, Search1, UserCircle1, Wallet2 } from '@tailgrids/icons';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -128,33 +127,6 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                     >
                         <Search1 className='size-5' />
                     </button>
-
-                    {session?.kind === 'user' && session.subscription && (
-                        <Link
-                            href='/billing'
-                            className='border-card-border bg-card-background hover:bg-background-gray-secondary hover:border-brand-accent/40 shadow-2xs hidden items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-all lg:inline-flex'
-                        >
-                            <span
-                                className={cn(
-                                    'size-2 rounded-full',
-                                    session.subscription.active
-                                        ? 'bg-emerald-500'
-                                        : 'bg-red-500',
-                                )}
-                            />
-                            <span className='text-text-primary font-semibold'>
-                                {session.subscription.tariff_name ||
-                                    (session.subscription.kind === 'trial'
-                                        ? t('billing.trial')
-                                        : t('billing.subscription'))}
-                            </span>
-                            {session.subscription.active && (
-                                <span className='text-text-tertiary text-[11px]'>
-                                    · {session.subscription.days_left} kun
-                                </span>
-                            )}
-                        </Link>
-                    )}
 
                     <LocaleSwitcher />
                     <ThemeToggle />

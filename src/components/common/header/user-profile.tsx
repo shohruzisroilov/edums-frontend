@@ -52,20 +52,10 @@ export function UserProfileButton() {
                     <span className='text-text-primary block text-sm font-medium'>
                         {displayName}
                     </span>
-                    <span className='text-text-tertiary flex items-center gap-1.5 text-xs'>
-                        <span className='truncate max-w-[120px]'>
-                            {superAdmin
-                                ? t('profile.superAdmin')
-                                : (session.education?.name ?? '')}
-                        </span>
-                        {!superAdmin && session.subscription && (
-                            <span className='border-brand-accent/25 bg-brand-accent/10 text-brand-accent shrink-0 inline-flex items-center rounded-md border px-1.5 py-0 text-[10px] font-semibold'>
-                                {session.subscription.tariff_name ||
-                                    (session.subscription.kind === 'trial'
-                                        ? t('billing.trial')
-                                        : t('billing.subscription'))}
-                            </span>
-                        )}
+                    <span className='text-text-tertiary block text-xs'>
+                        {superAdmin
+                            ? t('profile.superAdmin')
+                            : (session.education?.name ?? '')}
                     </span>
                 </span>
             </DropdownMenuTrigger>
@@ -78,35 +68,6 @@ export function UserProfileButton() {
                     <p className='text-text-tertiary text-xs'>
                         {session.phone_number}
                     </p>
-                    {!superAdmin && session.subscription && (
-                        <div className='border-card-border bg-background-gray-primary/60 mt-2.5 rounded-lg border p-2 text-xs'>
-                            <div className='flex items-center justify-between'>
-                                <span className='text-text-tertiary font-normal'>
-                                    {t('billing.tariff')}:
-                                </span>
-                                <span className='text-brand-accent font-semibold'>
-                                    {session.subscription.tariff_name ||
-                                        (session.subscription.kind === 'trial'
-                                            ? t('billing.trial')
-                                            : t('billing.subscription'))}
-                                </span>
-                            </div>
-                            <div className='text-text-tertiary mt-1 flex items-center justify-between text-[11px]'>
-                                <span>{t('common.status')}:</span>
-                                <span
-                                    className={
-                                        session.subscription.active
-                                            ? 'font-medium text-emerald-600 dark:text-emerald-400'
-                                            : 'font-medium text-red-600'
-                                    }
-                                >
-                                    {session.subscription.active
-                                        ? `${session.subscription.days_left} kun qoldi`
-                                        : t('billing.expired')}
-                                </span>
-                            </div>
-                        </div>
-                    )}
                 </DropdownMenuLabel>
 
                 <DropdownMenuSeparator />
