@@ -285,6 +285,10 @@ export const en: Dictionary = {
     'billing.trial': 'Free trial',
     'billing.trialDays': 'Trial · {days} days',
     'billing.paidDays': '{name} · {days} days',
+    'billing.currentPlan': 'Current Plan',
+    'billing.extendPlan': 'Extend',
+    'billing.manageSubscription': 'Manage plan',
+    'billing.userLimitNotice': 'User limit reached',
     'tariffs.title': 'Plans',
     'tariffs.subtitle':
         'Paid plans — shown on the landing page and the billing page',

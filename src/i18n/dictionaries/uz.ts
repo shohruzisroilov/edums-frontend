@@ -288,6 +288,10 @@ export const uz = {
     'billing.trial': 'Bepul sinov',
     'billing.trialDays': 'Sinov · {days} kun',
     'billing.paidDays': '{name} · {days} kun',
+    'billing.currentPlan': 'Joriy tarif',
+    'billing.extendPlan': 'Uzaytirish',
+    'billing.manageSubscription': 'Tarifni boshqarish',
+    'billing.userLimitNotice': 'Foydalanuvchilar limiti toʻlgan',
     'tariffs.title': 'Tariflar',
     'tariffs.subtitle':
         "Pulli tariflar — landing page va tarif tanlash sahifasida ko'rinadi",
