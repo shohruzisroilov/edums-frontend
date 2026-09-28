@@ -27,7 +27,15 @@ export function AppLogo({
         setMounted(true);
     }, []);
 
-    if (collapsed) return <Logo className={className} />;
+    if (collapsed) {
+        return (
+            <Logo
+                isDark={mounted && resolvedTheme === 'dark'}
+                isWhite={variant === 'white'}
+                className={className}
+            />
+        );
+    }
 
     if (variant === 'white') {
         return <LogoWithTextDark className={className} />;

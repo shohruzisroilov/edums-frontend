@@ -399,7 +399,7 @@ export default function RegisterPage() {
                                             setError(null);
                                         }}
                                     >
-                                        ← {t('register.changeDetails')}
+                                        {t('register.changeDetails')}
                                     </button>
                                     <button
                                         type='button'

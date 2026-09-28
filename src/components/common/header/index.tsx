@@ -35,21 +35,30 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
     const canAddLead = can(session, 'leads.create');
 
     return (
-        <header className='border-card-border bg-card-surface-area sticky top-0 z-40 w-full border-b-[0.5px] px-3 py-3 lg:px-5'>
-            <div className='flex items-center justify-between gap-3'>
-                <div className='flex items-center gap-3'>
+        <header className='border-card-border bg-card-surface-area sticky top-0 z-40 w-full border-b-[0.5px] px-3 py-2.5 sm:py-3 lg:px-5'>
+            <div className='flex items-center justify-between gap-2 sm:gap-3'>
+                <div className='flex items-center gap-2 sm:gap-3'>
                     <button
                         type='button'
                         onClick={onMenuClick}
                         aria-label={t('nav.openMenu')}
-                        className='text-icon-tertiary hover:text-text-primary hover:bg-background-gray-secondary focus-visible:ring-input-primary-focus-border/30 -ml-1 flex size-11 items-center justify-center rounded-lg transition-colors outline-none focus-visible:ring-4 xl:hidden'
+                        className='text-icon-tertiary hover:text-text-primary hover:bg-background-gray-secondary focus-visible:ring-input-primary-focus-border/30 -ml-1 flex size-10 items-center justify-center rounded-lg transition-colors outline-none focus-visible:ring-4 sm:size-11 xl:hidden'
                     >
                         <MenuIcon />
                     </button>
 
-                    <span className='xl:hidden'>
-                        <AppLogo />
-                    </span>
+                    <Link
+                        href='/'
+                        className='flex shrink-0 items-center xl:hidden'
+                        aria-label='EduMS'
+                    >
+                        <span className='sm:hidden'>
+                            <AppLogo collapsed className='size-8' />
+                        </span>
+                        <span className='hidden sm:inline-block'>
+                            <AppLogo />
+                        </span>
+                    </Link>
 
                     {/* Global Search Trigger */}
                     <button
@@ -113,7 +122,8 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                     <button
                         type='button'
                         onClick={() => setSearchOpen(true)}
-                        className='text-icon-tertiary hover:text-text-primary hover:bg-background-gray-secondary flex size-9 items-center justify-center rounded-lg transition-colors sm:hidden'
+                        aria-label={t('header.searchPlaceholder')}
+                        className='border-card-border bg-card-background text-icon-primary hover:bg-background-gray-secondary focus-visible:border-input-primary-focus-border focus-visible:ring-input-primary-focus-border/20 flex size-10 items-center justify-center rounded-lg border shadow-xs transition-colors outline-none focus-visible:ring-4 sm:hidden'
                     >
                         <Search1 className='size-5' />
                     </button>
