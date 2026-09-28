@@ -144,8 +144,8 @@ function SettingsForm({ settings }: { settings: SmsSettings }) {
                         isDevSms
                             ? t('smsSettings.driverDevsmsHint')
                             : isEskiz
-                            ? t('smsSettings.driverEskizHint')
-                            : t('smsSettings.driverConsoleHint')
+                              ? t('smsSettings.driverEskizHint')
+                              : t('smsSettings.driverConsoleHint')
                     }
                     value={form.driver}
                     onValueChange={(driver) =>

@@ -401,12 +401,12 @@ export const ru: Dictionary = {
     'smsSettings.driverConsoleHint':
         'SMS не отправляются, код выводится в терминал бэкенда. Запрещено в production',
     'smsSettings.devsmsToken': 'API Token DevSMS',
-    'smsSettings.devsmsTokenHint':
-        'Bearer токен из личного кабинета devsms.uz',
+    'smsSettings.devsmsTokenHint': 'Bearer токен из личного кабинета devsms.uz',
     'smsSettings.devsmsTokenSavedHint':
         'Токен сохранён. Чтобы изменить, введите новый, иначе оставьте пустым',
     'smsSettings.devsmsFrom': 'Отправитель DevSMS (from)',
-    'smsSettings.devsmsFromHint': 'Идентификатор отправителя в DevSMS (по умолчанию: 4546)',
+    'smsSettings.devsmsFromHint':
+        'Идентификатор отправителя в DevSMS (по умолчанию: 4546)',
     'smsSettings.email': 'Email Eskiz',
     'smsSettings.password': 'Пароль Eskiz',
     'smsSettings.passwordHint': 'Пароль от кабинета Eskiz',

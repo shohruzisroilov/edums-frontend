@@ -405,7 +405,8 @@ export const uzCyrl: Dictionary = {
     'smsSettings.devsmsTokenSavedHint':
         'Токен сақланган. Ўзгартириш учун янгисини киритинг, акс ҳолда бўш қолдиринг',
     'smsSettings.devsmsFrom': 'DevSMS жўнатувчи (from)',
-    'smsSettings.devsmsFromHint': 'DevSMS тизимидаги from идентификатори (стандарт: 4546)',
+    'smsSettings.devsmsFromHint':
+        'DevSMS тизимидаги from идентификатори (стандарт: 4546)',
     'smsSettings.email': 'Eskiz email',
     'smsSettings.password': 'Eskiz пароли',
     'smsSettings.passwordHint': 'Eskiz кабинетига кириш пароли',
