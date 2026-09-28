@@ -18,6 +18,7 @@ import {
 } from '@/services/api/auth';
 import { ApiError } from '@/services/api/client';
 import { homeHref } from '@/utils/access';
+import { isValidUzbekMobile } from '@/utils/format';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, type FormEvent } from 'react';
@@ -240,7 +241,12 @@ export default function ForgotPasswordPage() {
                                 <PhoneInput
                                     label={t('common.phoneNumber')}
                                     required
-                                    hint={t('forgot.phoneHint')}
+                                    hint={
+                                        phone.length === 13 &&
+                                        !isValidUzbekMobile(phone)
+                                            ? "Noto'g'ri mobil raqam (faqat O'zbekiston mobil operatorlari)"
+                                            : t('forgot.phoneHint')
+                                    }
                                     value={phone}
                                     onValueChange={setPhone}
                                 />
@@ -252,7 +258,9 @@ export default function ForgotPasswordPage() {
                                     variant='primary'
                                     appearance='fill'
                                     size='lg'
-                                    isDisabled={pending || phone.length !== 13}
+                                    isDisabled={
+                                        pending || !isValidUzbekMobile(phone)
+                                    }
                                     className='shadow-brand-500/20 w-full shadow-md'
                                 >
                                     {pending

@@ -19,6 +19,7 @@ import {
 } from '@/services/api/auth';
 import { ApiError } from '@/services/api/client';
 import { homeHref } from '@/utils/access';
+import { isValidUzbekMobile } from '@/utils/format';
 import { Buildings11, Message1, Send1 } from '@tailgrids/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -300,7 +301,12 @@ export default function RegisterPage() {
                                 <PhoneInput
                                     label={t('common.phoneNumber')}
                                     required
-                                    hint={t('register.phoneHint')}
+                                    hint={
+                                        form.phone_number.length === 13 &&
+                                        !isValidUzbekMobile(form.phone_number)
+                                            ? "Noto'g'ri mobil raqam (faqat O'zbekiston mobil operatorlari)"
+                                            : t('register.phoneHint')
+                                    }
                                     value={form.phone_number}
                                     onValueChange={(phone_number) =>
                                         setForm({ ...form, phone_number })
@@ -331,7 +337,7 @@ export default function RegisterPage() {
                                     size='lg'
                                     isDisabled={
                                         pending ||
-                                        form.phone_number.length !== 13
+                                        !isValidUzbekMobile(form.phone_number)
                                     }
                                     className='shadow-brand-500/20 mt-1 w-full shadow-md'
                                 >
