@@ -36,7 +36,6 @@ import { can, canManageUser } from '@/utils/access';
 import { fullName } from '@/utils/format';
 import { Pencil1, Plus, Trash1, User2 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
@@ -149,34 +148,12 @@ function UsersView() {
             : []),
     ];
 
-    const maxUsers = session?.subscription?.max_users;
-    const isAtUserLimit =
-        maxUsers !== null &&
-        maxUsers !== undefined &&
-        query.data !== undefined &&
-        query.data.count >= maxUsers;
-
     return (
         <>
             <PageHeader
                 title={t('users.title')}
-                count={
-                    maxUsers !== null &&
-                    maxUsers !== undefined &&
-                    query.data?.count !== undefined
-                        ? `${query.data.count} / ${maxUsers}`
-                        : query.data?.count
-                }
-                description={
-                    <span className='flex flex-wrap items-center gap-2'>
-                        <span>{t('users.subtitle')}</span>
-                        {session?.subscription?.tariff_name && (
-                            <span className='border-brand-accent/25 bg-brand-accent/10 text-brand-accent rounded-md border px-2 py-0.5 text-xs font-semibold'>
-                                {t('billing.tariff')}: {session.subscription.tariff_name}
-                            </span>
-                        )}
-                    </span>
-                }
+                count={query.data?.count}
+                description={t('users.subtitle')}
                 actions={
                     canCreate && (
                         <Button
@@ -194,26 +171,6 @@ function UsersView() {
                     )
                 }
             />
-
-            {isAtUserLimit && (
-                <div className='border-card-border bg-amber-50/80 text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/20 dark:text-amber-200 mx-4 mb-3 flex items-center justify-between gap-3 rounded-xl border p-3 text-xs sm:mx-5'>
-                    <span>
-                        Tarifingiz (
-                        <strong>
-                            {session?.subscription?.tariff_name || 'Boshlang\'ich'}
-                        </strong>
-                        ) boʻyicha maksimal {maxUsers} ta foydalanuvchi limiti toʻlgan ({query.data?.count} / {maxUsers}). Yangi foydalanuvchi qoʻshish uchun yuqoriroq tarifga oʻting.
-                    </span>
-                    {can(session, 'billing.manage') && (
-                        <Link
-                            href='/billing'
-                            className='text-brand-accent shrink-0 font-semibold hover:underline'
-                        >
-                            {t('billing.manageSubscription')} →
-                        </Link>
-                    )}
-                </div>
-            )}
 
             <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5'>
                 <div className='min-w-[220px] flex-1'>
