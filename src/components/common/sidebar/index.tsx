@@ -5,7 +5,8 @@ import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { cn } from '@/utils/cn';
 import Link from 'next/link';
-import { homeHref } from '@/utils/access';
+import { can, homeHref } from '@/utils/access';
+import { Shield1Check } from '@tailgrids/icons';
 import { navSectionsFor } from './data';
 import { CloseIcon, SidebarExpandedIcon } from './icon';
 import NavItem from './nav-item';
@@ -80,6 +81,73 @@ export default function Sidebar({
                     </div>
                 ))}
             </nav>
+
+            {session?.kind === 'user' && session.subscription && (
+                <div className='border-card-border mt-auto border-t p-3'>
+                    {isSidebarOpen ? (
+                        <div className='border-card-border bg-card-surface-area shadow-2xs space-y-2 rounded-xl border p-3'>
+                            <div className='flex items-center justify-between gap-1'>
+                                <div className='text-text-primary flex items-center gap-1.5 truncate text-xs font-semibold'>
+                                    <Shield1Check className='text-brand-accent size-4 shrink-0' />
+                                    <span className='truncate'>
+                                        {session.subscription.tariff_name ||
+                                            (session.subscription.kind === 'trial'
+                                                ? t('billing.trial')
+                                                : t('billing.subscription'))}
+                                    </span>
+                                </div>
+                                <span
+                                    className={cn(
+                                        'shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold',
+                                        session.subscription.active
+                                            ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300'
+                                            : 'bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-300',
+                                    )}
+                                >
+                                    {session.subscription.active
+                                        ? t('common.active')
+                                        : t('billing.expired')}
+                                </span>
+                            </div>
+
+                            <div className='text-text-tertiary flex items-center justify-between text-[11px]'>
+                                <span>{t('billing.period')}:</span>
+                                <span className='text-text-secondary font-medium'>
+                                    {session.subscription.days_left} kun
+                                </span>
+                            </div>
+
+                            {session.subscription.max_users !== null && (
+                                <div className='text-text-tertiary flex items-center justify-between text-[11px]'>
+                                    <span>Limit:</span>
+                                    <span className='text-text-secondary font-medium'>
+                                        {session.subscription.max_users} ta xodim
+                                    </span>
+                                </div>
+                            )}
+
+                            {can(session, 'billing.manage') && (
+                                <Link
+                                    href='/billing'
+                                    onClick={onItemClick}
+                                    className='text-brand-accent block w-full pt-1 text-center text-xs font-semibold hover:underline'
+                                >
+                                    {t('billing.manageSubscription')} →
+                                </Link>
+                            )}
+                        </div>
+                    ) : (
+                        <Link
+                            href='/billing'
+                            onClick={onItemClick}
+                            title={`${session.subscription.tariff_name || t('billing.trial')} (${session.subscription.days_left} kun)`}
+                            className='hover:bg-sidebar-navigation-nav-item-nav-hover-background text-brand-accent mx-auto flex size-9 items-center justify-center rounded-lg transition-colors'
+                        >
+                            <Shield1Check className='size-5' />
+                        </Link>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

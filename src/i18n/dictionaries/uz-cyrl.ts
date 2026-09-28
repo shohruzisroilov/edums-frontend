@@ -284,6 +284,10 @@ export const uzCyrl: Dictionary = {
     'billing.trial': 'Бепул синов',
     'billing.trialDays': 'Синов · {days} кун',
     'billing.paidDays': '{name} · {days} кун',
+    'billing.currentPlan': 'Жорий тариф',
+    'billing.extendPlan': 'Узайтириш',
+    'billing.manageSubscription': 'Тарифни бошқариш',
+    'billing.userLimitNotice': 'Фойдаланувчилар лимити тўлган',
     'tariffs.title': 'Тарифлар',
     'tariffs.subtitle':
         'Пулли тарифлар — лендинг ва тариф танлаш саҳифасида кўринади',

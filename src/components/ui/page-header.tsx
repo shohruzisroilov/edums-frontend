@@ -14,7 +14,7 @@ export function PageHeader({
     title: string;
     /** Matn yoki qisqa qator (masalan, filial · holat belgisi). */
     description?: ReactNode;
-    count?: number;
+    count?: ReactNode;
     actions?: ReactNode;
 }) {
     return (

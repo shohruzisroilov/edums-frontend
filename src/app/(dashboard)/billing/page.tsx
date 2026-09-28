@@ -19,6 +19,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { PaymentStatusBadge } from '@/components/ui/status-badge';
 import { TariffCard } from '@/components/ui/tariff-card';
+import { Shield1Check } from '@tailgrids/icons';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useSession } from '@/hooks/use-session';
@@ -170,41 +171,56 @@ function BillingView() {
                         </div>
                     ) : (
                         <div className='grid gap-4 md:grid-cols-2 xl:grid-cols-3'>
-                            {tariffs.map((tariff) => (
-                                <TariffCard
-                                    key={tariff.id}
-                                    tariff={tariff}
-                                    action={
-                                        pending?.tariff_id === tariff.id ? (
-                                            <Button
-                                                appearance='outline'
-                                                size='md'
-                                                className='w-full'
-                                                isDisabled
-                                            >
-                                                {t('billing.requested')}
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                variant='primary'
-                                                appearance='fill'
-                                                size='md'
-                                                className='w-full'
-                                                isDisabled={
-                                                    requestMutation.isPending
-                                                }
-                                                onPress={() =>
-                                                    requestMutation.mutate(
-                                                        tariff.id,
-                                                    )
-                                                }
-                                            >
-                                                {t('billing.choose')}
-                                            </Button>
-                                        )
-                                    }
-                                />
-                            ))}
+                            {tariffs.map((tariff) => {
+                                const isCurrent =
+                                    subscription.active &&
+                                    subscription.kind === 'paid' &&
+                                    subscription.tariff_name?.toLowerCase() ===
+                                        tariff.name.toLowerCase();
+
+                                return (
+                                    <TariffCard
+                                        key={tariff.id}
+                                        tariff={tariff}
+                                        isCurrent={isCurrent}
+                                        action={
+                                            pending?.tariff_id === tariff.id ? (
+                                                <Button
+                                                    appearance='outline'
+                                                    size='md'
+                                                    className='w-full'
+                                                    isDisabled
+                                                >
+                                                    {t('billing.requested')}
+                                                </Button>
+                                            ) : (
+                                                <Button
+                                                    variant='primary'
+                                                    appearance={
+                                                        isCurrent
+                                                            ? 'outline'
+                                                            : 'fill'
+                                                    }
+                                                    size='md'
+                                                    className='w-full'
+                                                    isDisabled={
+                                                        requestMutation.isPending
+                                                    }
+                                                    onPress={() =>
+                                                        requestMutation.mutate(
+                                                            tariff.id,
+                                                        )
+                                                    }
+                                                >
+                                                    {isCurrent
+                                                        ? t('billing.extendPlan')
+                                                        : t('billing.choose')}
+                                                </Button>
+                                            )
+                                        }
+                                    />
+                                );
+                            })}
                         </div>
                     )}
                     <p className='text-text-tertiary mt-3 text-xs'>
@@ -325,35 +341,80 @@ function StatusCard({ subscription }: { subscription: SubscriptionStatus }) {
     const t = useT();
     const { formatDate } = useFormat();
 
-    const title = !subscription.active
-        ? t('billing.statusExpired')
-        : subscription.kind === 'trial'
-          ? t('billing.statusTrial')
-          : t('billing.statusPaid', { name: subscription.tariff_name ?? '' });
+    const planName =
+        subscription.tariff_name ||
+        (subscription.kind === 'trial'
+            ? t('billing.trial')
+            : t('billing.subscription'));
 
     return (
         <section
             className={cn(
-                'rounded-xl border p-5',
+                'rounded-2xl border p-5 transition-all sm:p-6',
                 subscription.active
-                    ? 'border-card-border bg-card-background'
+                    ? 'border-brand-accent/30 bg-card-background shadow-xs'
                     : 'border-red-200 bg-red-50 dark:border-red-900/50 dark:bg-red-950/40',
             )}
         >
-            <div className='flex flex-wrap items-center gap-3'>
-                <h2 className='text-text-primary font-display text-lg font-semibold'>
-                    {title}
-                </h2>
-                <Badge
-                    size='sm'
-                    color={subscription.active ? 'success' : 'error'}
-                >
-                    {subscription.active
-                        ? t('common.active')
-                        : t('billing.expired')}
-                </Badge>
+            <div className='flex flex-wrap items-center justify-between gap-4'>
+                <div className='flex items-center gap-3.5'>
+                    <div
+                        className={cn(
+                            'flex size-12 shrink-0 items-center justify-center rounded-2xl font-bold',
+                            subscription.active
+                                ? 'bg-brand-accent/10 text-brand-accent'
+                                : 'bg-red-100 text-red-600 dark:bg-red-900/30',
+                        )}
+                    >
+                        <Shield1Check className='size-6' />
+                    </div>
+                    <div>
+                        <div className='flex items-center gap-2'>
+                            <span className='text-text-tertiary text-xs font-semibold tracking-wider uppercase'>
+                                {t('billing.currentPlan')}
+                            </span>
+                            <Badge
+                                size='sm'
+                                color={subscription.active ? 'success' : 'error'}
+                            >
+                                {subscription.active
+                                    ? t('common.active')
+                                    : t('billing.expired')}
+                            </Badge>
+                        </div>
+                        <h2 className='text-text-primary font-display mt-0.5 text-xl font-bold sm:text-2xl'>
+                            {planName}
+                        </h2>
+                    </div>
+                </div>
+
+                <div className='flex flex-wrap items-center gap-2.5 sm:gap-3'>
+                    {subscription.active && (
+                        <div className='border-card-border bg-card-background/80 shadow-2xs rounded-xl border px-3.5 py-2 text-left'>
+                            <span className='text-text-tertiary block text-[11px] font-medium'>
+                                {t('billing.period')}
+                            </span>
+                            <span className='text-text-primary block text-xs font-semibold'>
+                                {formatDate(subscription.ends_at)} ({subscription.days_left} kun)
+                            </span>
+                        </div>
+                    )}
+                    <div className='border-card-border bg-card-background/80 shadow-2xs rounded-xl border px-3.5 py-2 text-left'>
+                        <span className='text-text-tertiary block text-[11px] font-medium'>
+                            {t('users.title')}
+                        </span>
+                        <span className='text-text-primary block text-xs font-semibold'>
+                            {subscription.max_users === null
+                                ? t('tariffs.usersUnlimited')
+                                : t('tariffs.usersLimit', {
+                                      count: subscription.max_users,
+                                  })}
+                        </span>
+                    </div>
+                </div>
             </div>
-            <p className='text-text-secondary mt-2 text-sm'>
+
+            <p className='border-card-border/60 text-text-secondary mt-4 border-t pt-3 text-xs sm:text-sm'>
                 {subscription.active
                     ? t('billing.activeUntil', {
                           date: formatDate(subscription.ends_at),

@@ -284,6 +284,10 @@ export const ru: Dictionary = {
     'billing.trial': 'Пробный период',
     'billing.trialDays': 'Пробный · {days} дн.',
     'billing.paidDays': '{name} · {days} дн.',
+    'billing.currentPlan': 'Текущий тариф',
+    'billing.extendPlan': 'Продлить',
+    'billing.manageSubscription': 'Управление подпиской',
+    'billing.userLimitNotice': 'Лимит пользователей исчерпан',
     'tariffs.title': 'Тарифы',
     'tariffs.subtitle':
         'Платные тарифы — видны на лендинге и на странице выбора тарифа',
