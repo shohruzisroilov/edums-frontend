@@ -68,7 +68,7 @@ export function LeadKanbanBoard({
     }
 
     return (
-        <div className='flex min-w-full snap-x gap-4 overflow-x-auto pb-6 pt-1 scrollbar-thin 2xl:grid 2xl:grid-cols-5'>
+        <div className='flex min-w-full snap-x scrollbar-thin gap-4 overflow-x-auto pt-1 pb-6 2xl:grid 2xl:grid-cols-5'>
             {LEAD_STATUSES.map((status) => {
                 const columnLeads = leads.filter((l) => l.status === status);
                 const isOver = dragOverColumn === status;
@@ -143,13 +143,14 @@ export function LeadKanbanBoard({
                                                         title={`${lead.first_name} ${lead.last_name || ''}`}
                                                     >
                                                         {canUpdate && (
-                                                            <span className='text-text-tertiary cursor-grab select-none text-xs opacity-60 hover:opacity-100 shrink-0'>
+                                                            <span className='text-text-tertiary shrink-0 cursor-grab text-xs opacity-60 select-none hover:opacity-100'>
                                                                 ⋮⋮
                                                             </span>
                                                         )}
                                                         <span className='truncate'>
                                                             {lead.first_name}{' '}
-                                                            {lead.last_name || ''}
+                                                            {lead.last_name ||
+                                                                ''}
                                                         </span>
                                                     </h5>
                                                     {canUpdate && (
@@ -181,7 +182,9 @@ export function LeadKanbanBoard({
                                                     {lead.course && (
                                                         <span
                                                             className='bg-background-gray-secondary text-text-secondary max-w-[160px] truncate rounded-md px-1.5 py-0.5 text-[10px] font-medium'
-                                                            title={lead.course.name}
+                                                            title={
+                                                                lead.course.name
+                                                            }
                                                         >
                                                             {lead.course.name}
                                                         </span>
@@ -209,7 +212,7 @@ export function LeadKanbanBoard({
                                                             size='sm'
                                                             variant='primary'
                                                             appearance='outline'
-                                                            className='h-7.5 shrink-0 whitespace-nowrap px-2.5 text-xs font-medium'
+                                                            className='h-7.5 shrink-0 px-2.5 text-xs font-medium whitespace-nowrap'
                                                             onPress={() =>
                                                                 onConvert(lead)
                                                             }
@@ -229,13 +232,15 @@ export function LeadKanbanBoard({
                                                                         .value as LeadStatus,
                                                                 )
                                                             }
-                                                            className='border-card-border bg-background-gray-secondary text-text-secondary hover:text-text-primary focus:border-brand-accent max-w-[130px] cursor-pointer truncate rounded-lg border px-2 py-1 text-xs font-medium outline-none transition'
+                                                            className='border-card-border bg-background-gray-secondary text-text-secondary hover:text-text-primary focus:border-brand-accent max-w-[130px] cursor-pointer truncate rounded-lg border px-2 py-1 text-xs font-medium transition outline-none'
                                                         >
                                                             {LEAD_STATUSES.map(
                                                                 (s) => (
                                                                     <option
                                                                         key={s}
-                                                                        value={s}
+                                                                        value={
+                                                                            s
+                                                                        }
                                                                     >
                                                                         {t(
                                                                             `leadStatus.${s}` as import('@/i18n/dictionaries/uz').TranslationKey,
