@@ -410,7 +410,8 @@ export const uz = {
     'smsSettings.devsmsTokenSavedHint':
         "Token saqlangan. O'zgartirish uchun yangisini kiriting, aks holda bo'sh qoldiring",
     'smsSettings.devsmsFrom': "DevSMS jo'natuvchi (from)",
-    'smsSettings.devsmsFromHint': "DevSMS tizimidagi from identifikatori (standart: 4546)",
+    'smsSettings.devsmsFromHint':
+        'DevSMS tizimidagi from identifikatori (standart: 4546)',
     'smsSettings.email': 'Eskiz email',
     'smsSettings.password': 'Eskiz paroli',
     'smsSettings.passwordHint': 'Eskiz kabinetiga kirish paroli',
