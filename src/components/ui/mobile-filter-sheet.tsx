@@ -2,7 +2,6 @@
 
 import { Button } from '@/components/tailgrids/core/button';
 import { Modal } from '@/components/ui/modal';
-import { useT } from '@/i18n/provider';
 import { Funnel1, Close } from '@tailgrids/icons';
 import { useState, type ReactNode } from 'react';
 
@@ -23,7 +22,6 @@ export function MobileFilterSheet({
     onClear,
     activeChips = [],
 }: MobileFilterSheetProps) {
-    const t = useT();
     const [open, setOpen] = useState(false);
 
     return (

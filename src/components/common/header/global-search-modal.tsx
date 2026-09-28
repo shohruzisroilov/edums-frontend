@@ -8,7 +8,7 @@ import type { Group, Lead, Student } from '@/types/api';
 import { formatPhone } from '@/utils/format';
 import { Funnel1, OpenBook, Search1, UserCircle1, Xmark } from '@tailgrids/icons';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export function GlobalSearchModal({
     open,
@@ -27,22 +27,33 @@ export function GlobalSearchModal({
     const [groups, setGroups] = useState<Group[]>([]);
     const [leads, setLeads] = useState<Lead[]>([]);
 
-    useEffect(() => {
-        if (open) {
-            setTimeout(() => inputRef.current?.focus(), 50);
-        } else {
-            setQuery('');
+    const handleClose = useCallback(() => {
+        setQuery('');
+        setStudents([]);
+        setGroups([]);
+        setLeads([]);
+        onClose();
+    }, [onClose]);
+
+    const handleQueryChange = (val: string) => {
+        setQuery(val);
+        if (!val.trim()) {
             setStudents([]);
             setGroups([]);
             setLeads([]);
         }
+    };
+
+    useEffect(() => {
+        if (open) {
+            const timer = setTimeout(() => inputRef.current?.focus(), 50);
+            return () => clearTimeout(timer);
+        }
     }, [open]);
 
     useEffect(() => {
-        if (!query.trim()) {
-            setStudents([]);
-            setGroups([]);
-            setLeads([]);
+        const trimmed = query.trim();
+        if (!trimmed) {
             return;
         }
 
@@ -50,9 +61,9 @@ export function GlobalSearchModal({
             setLoading(true);
             try {
                 const [stdRes, grpRes, leadRes] = await Promise.all([
-                    listStudents({ search: query, limit: 5 }).catch(() => ({ data: [] })),
-                    listGroups({ search: query, limit: 5 }).catch(() => ({ data: [] })),
-                    listLeads({ search: query, limit: 5 }).catch(() => ({ data: [] })),
+                    listStudents({ search: trimmed, limit: 5 }).catch(() => ({ data: [] })),
+                    listGroups({ search: trimmed, limit: 5 }).catch(() => ({ data: [] })),
+                    listLeads({ search: trimmed, limit: 5 }).catch(() => ({ data: [] })),
                 ]);
 
                 setStudents(stdRes.data || []);
@@ -68,17 +79,17 @@ export function GlobalSearchModal({
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') onClose();
+            if (e.key === 'Escape') handleClose();
         };
         if (open) document.addEventListener('keydown', handleKeyDown);
         return () => document.removeEventListener('keydown', handleKeyDown);
-    }, [open, onClose]);
+    }, [open, handleClose]);
 
     if (!open) return null;
 
     const navigateTo = (url: string) => {
         router.push(url);
-        onClose();
+        handleClose();
     };
 
     const hasResults = students.length > 0 || groups.length > 0 || leads.length > 0;
@@ -88,7 +99,7 @@ export function GlobalSearchModal({
             <div
                 className='fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity'
                 aria-hidden='true'
-                onClick={onClose}
+                onClick={handleClose}
             />
             <div className='border-card-border bg-card-surface-area relative z-10 flex max-h-[80vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border shadow-2xl transition-all'>
                 {/* Search Header Input */}
@@ -98,7 +109,7 @@ export function GlobalSearchModal({
                         ref={inputRef}
                         type='text'
                         value={query}
-                        onChange={(e) => setQuery(e.target.value)}
+                        onChange={(e) => handleQueryChange(e.target.value)}
                         placeholder={t('header.searchPlaceholder')}
                         className='text-text-primary placeholder:text-text-tertiary w-full bg-transparent text-base border-none outline-none ring-0 focus:outline-none focus:ring-0 focus:border-none focus-visible:outline-none focus-visible:ring-0'
                         style={{ outline: 'none', boxShadow: 'none' }}
@@ -107,7 +118,7 @@ export function GlobalSearchModal({
                         {query && (
                             <button
                                 type='button'
-                                onClick={() => setQuery('')}
+                                onClick={() => handleQueryChange('')}
                                 className='text-icon-tertiary hover:text-text-primary hover:bg-background-gray-secondary rounded-lg p-1 transition-colors'
                                 title='Tozalash'
                             >
