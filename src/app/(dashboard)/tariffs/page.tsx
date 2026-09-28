@@ -107,7 +107,7 @@ function TariffsView() {
                                         {t('tariffs.duration')}
                                     </TableHead>
                                     <TableHead numeric>
-                                        {t('tariffs.maxUsers')}
+                                        {t('tariffs.maxStudents')}
                                     </TableHead>
                                     <TableHead>{t('common.status')}</TableHead>
                                     <TableHead className='text-right'>
@@ -134,10 +134,10 @@ function TariffsView() {
                                             })}
                                         </TableCell>
                                         <TableCell numeric>
-                                            {tariff.max_users === null
+                                            {(tariff.max_students ?? tariff.max_users ?? null) === null
                                                 ? t('common.unlimited')
                                                 : formatNumber(
-                                                      tariff.max_users,
+                                                      (tariff.max_students ?? tariff.max_users)!,
                                                   )}
                                         </TableCell>
                                         <TableCell>
