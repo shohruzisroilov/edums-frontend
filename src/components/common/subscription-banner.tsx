@@ -24,8 +24,15 @@ export function SubscriptionBanner() {
     if (session?.kind !== 'user' || !subscription) return null;
 
     const expired = !subscription.active;
-    const trial = subscription.kind === 'trial';
-    const ending = subscription.days_left <= WARN_DAYS;
+    // Pulli tarifga obuna bo'lganmi (kind === 'paid' yoki tariff_name mavjud bo'lsa)
+    const isPaid =
+        subscription.kind === 'paid' || Boolean(subscription.tariff_name);
+
+    // Bepul sinov banneri FAQAT pulli tarifga obuna bo'lmagan markazlarga chiqadi
+    const trial = !isPaid && subscription.kind === 'trial';
+
+    // Pulli tarifda esa faqat tugashiga oz (3 kun yoki kam) qolganda ogohlantirish chiqadi
+    const ending = isPaid && subscription.days_left <= WARN_DAYS;
 
     if (!expired && !trial && !ending) return null;
 

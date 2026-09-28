@@ -61,7 +61,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         },
         enabled: !!session,
         retry: false,
-        staleTime: Infinity,
+        staleTime: 60 * 1000,
+        refetchOnWindowFocus: true,
     });
 
     // Sessiya localStorage'dan o'qilgach tekshiriladi; aks holda har
