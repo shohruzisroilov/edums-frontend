@@ -38,6 +38,9 @@ export const metadata: Metadata = {
     },
     description:
         "O'quv markazlarini boshqarish tizimi: markazlar, tariflar, xodimlar va o'quvchilar.",
+    verification: {
+        google: 'DuH0dlATA0mmNA0BNX6VqeSlLOUBZJQeKonxapL9rM8',
+    },
     manifest: '/manifest.json',
     appleWebApp: {
         capable: true,
