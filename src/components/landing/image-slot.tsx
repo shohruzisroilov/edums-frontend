@@ -34,7 +34,7 @@ export function ImageSlot({
                 <span className='bg-card-border size-2.5 rounded-full' />
                 <span className='bg-card-border size-2.5 rounded-full' />
             </div>
-            <div className='relative aspect-16/10'>
+            <div className='relative aspect-video'>
                 {src ? (
                     <Image
                         src={src}
@@ -42,7 +42,7 @@ export function ImageSlot({
                         fill
                         sizes={sizes}
                         priority={priority}
-                        className='object-cover object-top'
+                        className='object-contain'
                     />
                 ) : (
                     <div className='border-card-border text-text-tertiary absolute inset-3 flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-4 text-center'>
