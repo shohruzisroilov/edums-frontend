@@ -196,24 +196,6 @@ export default function ForgotPasswordPage() {
                         <AppLogo />
                     </Link>
                     <div className='ml-auto flex items-center gap-2'>
-                        <Link
-                            href='/'
-                            className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary flex h-9 items-center gap-2 rounded-xl border px-3.5 text-sm font-medium transition'
-                        >
-                            <svg
-                                className='size-4'
-                                viewBox='0 0 24 24'
-                                fill='none'
-                                stroke='currentColor'
-                                strokeWidth='2'
-                            >
-                                <path d='m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z' />
-                                <polyline points='9 22 9 12 15 12 15 22' />
-                            </svg>
-                            <span className='hidden sm:inline'>
-                                {t('landing.backHome')}
-                            </span>
-                        </Link>
                         <LocaleSwitcher />
                         <ThemeToggle />
                     </div>
