@@ -158,7 +158,9 @@ function CashboxView() {
                                             p.group.name,
                                             p.amount,
                                             p.method,
-                                            p.received_by ? fullName(p.received_by) : '',
+                                            p.received_by
+                                                ? fullName(p.received_by)
+                                                : '',
                                         ]),
                                     );
                                 }}
@@ -182,8 +184,8 @@ function CashboxView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-2.5 px-4 sm:px-5 pb-4'>
-                <div className='flex-1 min-w-[220px]'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5'>
+                <div className='min-w-[220px] flex-1'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
@@ -192,7 +194,10 @@ function CashboxView() {
                 </div>
 
                 <MobileFilterSheet
-                    activeCount={(filters.method ? 1 : 0) + (filters.from || filters.to ? 1 : 0)}
+                    activeCount={
+                        (filters.method ? 1 : 0) +
+                        (filters.from || filters.to ? 1 : 0)
+                    }
                     onClear={() => {
                         setFilter('method', '');
                         setFilter('from', '');
@@ -200,17 +205,25 @@ function CashboxView() {
                     }}
                     activeChips={[
                         ...(filters.method
-                            ? [{ key: 'method', label: `To'lov turi: ${t(`paymentMethod.${filters.method as PaymentMethod}`)}`, onRemove: () => setFilter('method', '') }]
+                            ? [
+                                  {
+                                      key: 'method',
+                                      label: `To'lov turi: ${t(`paymentMethod.${filters.method as PaymentMethod}`)}`,
+                                      onRemove: () => setFilter('method', ''),
+                                  },
+                              ]
                             : []),
                         ...(filters.from || filters.to
-                            ? [{
-                                  key: 'date',
-                                  label: `Sana: ${filters.from || '…'} — ${filters.to || '…'}`,
-                                  onRemove: () => {
-                                      setFilter('from', '');
-                                      setFilter('to', '');
+                            ? [
+                                  {
+                                      key: 'date',
+                                      label: `Sana: ${filters.from || '…'} — ${filters.to || '…'}`,
+                                      onRemove: () => {
+                                          setFilter('from', '');
+                                          setFilter('to', '');
+                                      },
                                   },
-                              }]
+                              ]
                             : []),
                     ]}
                 >
@@ -236,7 +249,7 @@ function CashboxView() {
                     </div>
                 </MobileFilterSheet>
 
-                <div className='hidden sm:flex flex-wrap items-center gap-3'>
+                <div className='hidden flex-wrap items-center gap-3 sm:flex'>
                     <div className='w-40'>
                         <SelectInput
                             options={PAYMENT_METHODS.map((method) => ({
@@ -270,7 +283,12 @@ function CashboxView() {
                             message={t('cashbox.empty')}
                             icon={<Wallet2 className='size-5' />}
                             action={
-                                Boolean(search || filters.method || filters.from || filters.to) ? (
+                                Boolean(
+                                    search ||
+                                    filters.method ||
+                                    filters.from ||
+                                    filters.to,
+                                ) ? (
                                     <Button
                                         appearance='outline'
                                         size='md'

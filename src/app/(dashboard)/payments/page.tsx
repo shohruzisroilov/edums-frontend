@@ -96,9 +96,18 @@ function PaymentsView() {
                 <div className='border-card-border bg-background-gray-secondary/50 inline-flex flex-wrap items-center gap-1 rounded-xl border p-1'>
                     {[
                         { value: 'pending', label: t('paymentStatus.pending') },
-                        { value: 'approved', label: t('paymentStatus.approved') },
-                        { value: 'rejected', label: t('paymentStatus.rejected') },
-                        { value: 'cancelled', label: t('paymentStatus.cancelled') },
+                        {
+                            value: 'approved',
+                            label: t('paymentStatus.approved'),
+                        },
+                        {
+                            value: 'rejected',
+                            label: t('paymentStatus.rejected'),
+                        },
+                        {
+                            value: 'cancelled',
+                            label: t('paymentStatus.cancelled'),
+                        },
                         { value: '', label: t('common.allStatuses') },
                     ].map((tab) => {
                         const isActive = (filters.status || '') === tab.value;
@@ -108,9 +117,9 @@ function PaymentsView() {
                                 type='button'
                                 onClick={() => setFilter('status', tab.value)}
                                 className={cn(
-                                    'rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all cursor-pointer',
+                                    'cursor-pointer rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all',
                                     isActive
-                                        ? 'bg-card-background text-text-primary shadow-xs font-semibold'
+                                        ? 'bg-card-background text-text-primary font-semibold shadow-xs'
                                         : 'text-text-tertiary hover:text-text-primary hover:bg-card-background/50',
                                 )}
                             >

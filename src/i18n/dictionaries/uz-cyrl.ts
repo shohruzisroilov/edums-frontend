@@ -37,7 +37,7 @@ export const uzCyrl: Dictionary = {
     'header.quickLead': 'Лид',
     'header.searchResults': 'Қидирув натижалари',
     'header.noResults': 'Натижалар топилмади',
-    'header.studentsGroup': "Ўқувчилар",
+    'header.studentsGroup': 'Ўқувчилар',
     'header.groupsGroup': 'Гуруҳлар',
     'header.leadsGroup': 'Лидлар',
 

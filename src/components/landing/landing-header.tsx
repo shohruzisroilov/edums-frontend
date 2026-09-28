@@ -29,10 +29,14 @@ export function LandingHeader({
     const [mobileOpen, setMobileOpen] = useState(false);
 
     return (
-        <header className='sticky top-0 z-30 px-3 sm:px-4 py-2.5 sm:py-3'>
-            <div className='border-card-border bg-card-surface-area/90 mx-auto flex max-w-6xl items-center justify-between gap-2 sm:gap-3 rounded-2xl border px-3.5 sm:px-5 py-2 sm:py-2.5 shadow-sm backdrop-blur-md'>
+        <header className='sticky top-0 z-30 px-3 py-2.5 sm:px-4 sm:py-3'>
+            <div className='border-card-border bg-card-surface-area/90 mx-auto flex max-w-6xl items-center justify-between gap-2 rounded-2xl border px-3.5 py-2 shadow-sm backdrop-blur-md sm:gap-3 sm:px-5 sm:py-2.5'>
                 {/* Logo */}
-                <Link href='/' aria-label={t('nav.home')} className='shrink-0 scale-95 sm:scale-100 origin-left'>
+                <Link
+                    href='/'
+                    aria-label={t('nav.home')}
+                    className='shrink-0 origin-left scale-95 sm:scale-100'
+                >
                     <AppLogo />
                 </Link>
 
@@ -53,14 +57,18 @@ export function LandingHeader({
                 </nav>
 
                 {/* Actions */}
-                <div className='flex items-center gap-1.5 sm:gap-2 shrink-0'>
-                    <div className='hidden sm:flex items-center gap-2'>
+                <div className='flex shrink-0 items-center gap-1.5 sm:gap-2'>
+                    <div className='hidden items-center gap-2 sm:flex'>
                         <LocaleSwitcher />
                         <ThemeToggle />
                     </div>
 
                     {signedIn ? (
-                        <Button size='md' onPress={onStart} className='whitespace-nowrap text-xs sm:text-sm px-3 sm:px-4'>
+                        <Button
+                            size='md'
+                            onPress={onStart}
+                            className='px-3 text-xs whitespace-nowrap sm:px-4 sm:text-sm'
+                        >
                             {t('landing.openCabinet')}
                         </Button>
                     ) : (
@@ -69,11 +77,15 @@ export function LandingHeader({
                                 appearance='outline'
                                 size='md'
                                 onPress={() => router.push('/login')}
-                                className='hidden sm:flex whitespace-nowrap'
+                                className='hidden whitespace-nowrap sm:flex'
                             >
                                 {t('auth.signIn')}
                             </Button>
-                            <Button size='md' onPress={onStart} className='whitespace-nowrap text-xs sm:text-sm px-3 sm:px-4'>
+                            <Button
+                                size='md'
+                                onPress={onStart}
+                                className='px-3 text-xs whitespace-nowrap sm:px-4 sm:text-sm'
+                            >
                                 {t('landing.startFree')}
                             </Button>
                         </>
@@ -82,16 +94,28 @@ export function LandingHeader({
                     {/* Mobile menu button */}
                     <button
                         type='button'
-                        className='border-card-border text-text-secondary hover:bg-background-gray-secondary flex size-9 shrink-0 items-center justify-center rounded-lg border transition lg:hidden cursor-pointer'
+                        className='border-card-border text-text-secondary hover:bg-background-gray-secondary flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border transition lg:hidden'
                         onClick={() => setMobileOpen(!mobileOpen)}
                         aria-label='Menu'
                     >
                         {mobileOpen ? (
-                            <svg className='size-4' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
+                            <svg
+                                className='size-4'
+                                viewBox='0 0 24 24'
+                                fill='none'
+                                stroke='currentColor'
+                                strokeWidth='2'
+                            >
                                 <path d='M18 6 6 18M6 6l12 12' />
                             </svg>
                         ) : (
-                            <svg className='size-4' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
+                            <svg
+                                className='size-4'
+                                viewBox='0 0 24 24'
+                                fill='none'
+                                stroke='currentColor'
+                                strokeWidth='2'
+                            >
                                 <path d='M4 6h16M4 12h16M4 18h16' />
                             </svg>
                         )}
@@ -119,7 +143,14 @@ export function LandingHeader({
                             <LocaleSwitcher />
                             <ThemeToggle />
                         </div>
-                        <Button appearance='outline' size='sm' onPress={() => { router.push('/login'); setMobileOpen(false); }}>
+                        <Button
+                            appearance='outline'
+                            size='sm'
+                            onPress={() => {
+                                router.push('/login');
+                                setMobileOpen(false);
+                            }}
+                        >
                             {t('auth.signIn')}
                         </Button>
                     </div>

@@ -57,7 +57,8 @@ export const uz = {
     'error.forbidden': "Sizda bu amalni bajarish uchun ruxsat yo'q",
     'error.badRequest': "So'rov ma'lumotlari noto'g'ri",
     'error.notFound': "So'ralgan ma'lumot topilmadi",
-    'error.phoneFormat': "Telefon raqami +998XXXXXXXXX formatida bo'lishi kerak",
+    'error.phoneFormat':
+        "Telefon raqami +998XXXXXXXXX formatida bo'lishi kerak",
     'error.required': "Maydon to'ldirilishi shart",
     'error.mustBeString': "Matn shaklida bo'lishi kerak",
     'error.mustBeNumber': "Raqam bo'lishi kerak",
@@ -68,7 +69,8 @@ export const uz = {
     'error.smsFailed': "SMS yuborib bo'lmadi, keyinroq qayta urinib ko'ring",
     'error.invalidPassword': "Parol noto'g'ri kiritildi",
     'error.alreadyExists': "Bu nomdagi ma'lumot allaqachon mavjud",
-    'error.phoneInUse': "Bu telefon raqami bilan allaqachon ro'yxatdan o'tilgan",
+    'error.phoneInUse':
+        "Bu telefon raqami bilan allaqachon ro'yxatdan o'tilgan",
 
     /* ── Kirish ──────────────────────────────────────────────────────── */
     'auth.title': 'Tizimga kirish',

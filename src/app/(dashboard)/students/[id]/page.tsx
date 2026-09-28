@@ -123,7 +123,7 @@ function StudentDetailView() {
                 }
             />
 
-            <div className='grid gap-3.5 px-4 sm:gap-4 sm:px-5 grid-cols-2 xl:grid-cols-4'>
+            <div className='grid grid-cols-2 gap-3.5 px-4 sm:gap-4 sm:px-5 xl:grid-cols-4'>
                 {canViewPayments && <BalanceCard studentId={student.id} />}
                 <InfoCard
                     label={t('students.phone')}
@@ -139,7 +139,9 @@ function StudentDetailView() {
                                 )}
                                 {student.parent_phone && (
                                     <p className='text-text-secondary'>
-                                        <PhoneLink phone={student.parent_phone} />
+                                        <PhoneLink
+                                            phone={student.parent_phone}
+                                        />
                                     </p>
                                 )}
                             </>
@@ -155,7 +157,7 @@ function StudentDetailView() {
             </div>
 
             {student.note && (
-                <div className='px-4 sm:px-5 pt-4'>
+                <div className='px-4 pt-4 sm:px-5'>
                     <InfoCard
                         label={t('common.note')}
                         value={

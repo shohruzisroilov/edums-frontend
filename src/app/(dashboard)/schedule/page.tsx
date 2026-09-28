@@ -136,7 +136,7 @@ function ScheduleView() {
                 title={t('schedule.title')}
                 description={t('schedule.subtitle')}
                 actions={
-                    <div className='border-card-border bg-card-surface-area max-w-full overflow-x-auto flex items-center rounded-lg border p-1 shadow-xs'>
+                    <div className='border-card-border bg-card-surface-area flex max-w-full items-center overflow-x-auto rounded-lg border p-1 shadow-xs'>
                         <button
                             type='button'
                             onClick={() => setViewMode('grid')}
@@ -179,7 +179,7 @@ function ScheduleView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center justify-between gap-3 px-4 sm:px-5 pb-4'>
+            <div className='flex flex-wrap items-center justify-between gap-3 px-4 pb-4 sm:px-5'>
                 <div className='flex flex-wrap gap-3'>
                     {branches.length > 1 && (
                         <div className='w-full sm:w-48'>
@@ -229,7 +229,7 @@ function ScheduleView() {
                 </div>
 
                 {viewMode === 'day' && (
-                    <div className='flex items-center gap-1 overflow-x-auto rounded-lg border border-card-border bg-card-surface-area p-1'>
+                    <div className='border-card-border bg-card-surface-area flex items-center gap-1 overflow-x-auto rounded-lg border p-1'>
                         {WEEKDAYS.map((day) => (
                             <button
                                 key={day}
@@ -249,13 +249,13 @@ function ScheduleView() {
                 )}
             </div>
 
-            <div className='px-4 sm:px-5 pb-8'>
+            <div className='px-4 pb-8 sm:px-5'>
                 {query.isPending ? (
                     <TableSkeleton rows={6} columns={7} />
                 ) : query.error ? (
                     <ErrorState error={query.error} />
                 ) : scheduleData.length === 0 ? (
-                    <div className='rounded-xl border border-card-border bg-card-background p-8'>
+                    <div className='border-card-border bg-card-background rounded-xl border p-8'>
                         <EmptyState
                             message={t('schedule.empty')}
                             icon={<CalendarTime className='size-5' />}
@@ -281,7 +281,9 @@ function ScheduleView() {
                         {WEEKDAYS.map((day) => (
                             <DayColumn
                                 key={day}
-                                title={t(`weekdayLong.${day}` as TranslationKey)}
+                                title={t(
+                                    `weekdayLong.${day}` as TranslationKey,
+                                )}
                                 groups={scheduleData.filter((group) =>
                                     group.lesson_days.includes(day),
                                 )}
@@ -305,35 +307,38 @@ function ScheduleView() {
                 >
                     <div className='flex flex-col gap-4 py-2'>
                         <div className='grid grid-cols-2 gap-3 text-sm'>
-                            <div className='rounded-lg border border-card-border bg-card-surface-area p-3'>
-                                <p className='text-xs font-medium text-text-tertiary'>
+                            <div className='border-card-border bg-card-surface-area rounded-lg border p-3'>
+                                <p className='text-text-tertiary text-xs font-medium'>
                                     Dars vaqti
                                 </p>
-                                <p className='mt-1 font-semibold text-text-primary tabular-nums'>
-                                    {selectedGroup.lesson_start} – {selectedGroup.lesson_end}
+                                <p className='text-text-primary mt-1 font-semibold tabular-nums'>
+                                    {selectedGroup.lesson_start} –{' '}
+                                    {selectedGroup.lesson_end}
                                 </p>
                             </div>
-                            <div className='rounded-lg border border-card-border bg-card-surface-area p-3'>
-                                <p className='text-xs font-medium text-text-tertiary'>
+                            <div className='border-card-border bg-card-surface-area rounded-lg border p-3'>
+                                <p className='text-text-tertiary text-xs font-medium'>
                                     Xona
                                 </p>
-                                <p className='mt-1 font-semibold text-text-primary'>
+                                <p className='text-text-primary mt-1 font-semibold'>
                                     {selectedGroup.room?.name ?? '—'}
                                 </p>
                             </div>
-                            <div className='rounded-lg border border-card-border bg-card-surface-area p-3'>
-                                <p className='text-xs font-medium text-text-tertiary'>
+                            <div className='border-card-border bg-card-surface-area rounded-lg border p-3'>
+                                <p className='text-text-tertiary text-xs font-medium'>
                                     O'qituvchi
                                 </p>
-                                <p className='mt-1 font-semibold text-text-primary'>
-                                    {selectedGroup.teacher ? fullName(selectedGroup.teacher) : '—'}
+                                <p className='text-text-primary mt-1 font-semibold'>
+                                    {selectedGroup.teacher
+                                        ? fullName(selectedGroup.teacher)
+                                        : '—'}
                                 </p>
                             </div>
-                            <div className='rounded-lg border border-card-border bg-card-surface-area p-3'>
-                                <p className='text-xs font-medium text-text-tertiary'>
+                            <div className='border-card-border bg-card-surface-area rounded-lg border p-3'>
+                                <p className='text-text-tertiary text-xs font-medium'>
                                     O'quvchilar soni
                                 </p>
-                                <p className='mt-1 font-semibold text-text-primary'>
+                                <p className='text-text-primary mt-1 font-semibold'>
                                     {selectedGroup.students_count} ta
                                 </p>
                             </div>
@@ -348,7 +353,11 @@ function ScheduleView() {
                                 Yopish
                             </Button>
                             <Link href={`/groups/${selectedGroup.id}`}>
-                                <Button variant='primary' appearance='fill' size='md'>
+                                <Button
+                                    variant='primary'
+                                    appearance='fill'
+                                    size='md'
+                                >
                                     <Eye className='size-4' />
                                     Guruhga o'tish
                                 </Button>
@@ -389,46 +398,60 @@ function TimetableGrid({
     }, [groups]);
 
     return (
-        <div className='overflow-x-auto rounded-xl border border-card-border bg-card-background shadow-xs'>
+        <div className='border-card-border bg-card-background overflow-x-auto rounded-xl border shadow-xs'>
             <table className='w-full border-collapse text-left'>
                 <thead>
-                    <tr className='border-b border-card-border bg-card-surface-area text-xs font-semibold text-text-primary'>
-                        <th className='w-20 border-r border-card-border p-3 text-center'>
+                    <tr className='border-card-border bg-card-surface-area text-text-primary border-b text-xs font-semibold'>
+                        <th className='border-card-border w-20 border-r p-3 text-center'>
                             Vaqt
                         </th>
                         {WEEKDAYS.map((day) => (
-                            <th key={day} className='min-w-[150px] border-r border-card-border p-3 text-center last:border-r-0'>
+                            <th
+                                key={day}
+                                className='border-card-border min-w-[150px] border-r p-3 text-center last:border-r-0'
+                            >
                                 {t(`weekdayLong.${day}`)}
                             </th>
                         ))}
                     </tr>
                 </thead>
-                <tbody className='divide-y divide-card-border text-xs'>
+                <tbody className='divide-card-border divide-y text-xs'>
                     {HOURS.map((hour) => {
                         const hourFormatted = `${String(hour).padStart(2, '0')}:00`;
                         return (
-                            <tr key={hour} className='group hover:bg-card-surface-area/40'>
-                                <td className='border-r border-card-border bg-card-surface-area/30 p-2.5 text-center font-medium tabular-nums text-text-tertiary'>
+                            <tr
+                                key={hour}
+                                className='group hover:bg-card-surface-area/40'
+                            >
+                                <td className='border-card-border bg-card-surface-area/30 text-text-tertiary border-r p-2.5 text-center font-medium tabular-nums'>
                                     {hourFormatted}
                                 </td>
                                 {WEEKDAYS.map((day) => {
                                     const key = `${day}-${hour}`;
-                                    const cellGroups = lessonsByCell.get(key) ?? [];
+                                    const cellGroups =
+                                        lessonsByCell.get(key) ?? [];
                                     return (
                                         <td
                                             key={day}
-                                            className='min-w-[150px] border-r border-card-border p-1.5 vertical-top last:border-r-0'
+                                            className='border-card-border vertical-top min-w-[150px] border-r p-1.5 last:border-r-0'
                                         >
                                             <div className='flex flex-col gap-1.5'>
                                                 {cellGroups.map((group) => {
-                                                    const palette = getGroupPalette(group.id);
+                                                    const palette =
+                                                        getGroupPalette(
+                                                            group.id,
+                                                        );
                                                     return (
                                                         <button
                                                             key={group.id}
                                                             type='button'
-                                                            onClick={() => onSelectGroup(group)}
+                                                            onClick={() =>
+                                                                onSelectGroup(
+                                                                    group,
+                                                                )
+                                                            }
                                                             className={cn(
-                                                                'w-full text-left rounded-lg border p-2 transition-all hover:scale-[1.02] hover:shadow-xs',
+                                                                'w-full rounded-lg border p-2 text-left transition-all hover:scale-[1.02] hover:shadow-xs',
                                                                 palette.bg,
                                                                 palette.border,
                                                             )}
@@ -440,33 +463,50 @@ function TimetableGrid({
                                                                         palette.text,
                                                                     )}
                                                                 >
-                                                                    {group.lesson_start}–{group.lesson_end}
+                                                                    {
+                                                                        group.lesson_start
+                                                                    }
+                                                                    –
+                                                                    {
+                                                                        group.lesson_end
+                                                                    }
                                                                 </span>
                                                                 {group.room && (
                                                                     <span
                                                                         className={cn(
-                                                                            'rounded px-1 py-0.2 text-[10px] font-medium border',
+                                                                            'py-0.2 rounded border px-1 text-[10px] font-medium',
                                                                             palette.border,
                                                                             palette.subtext,
                                                                         )}
                                                                     >
-                                                                        {group.room.name}
+                                                                        {
+                                                                            group
+                                                                                .room
+                                                                                .name
+                                                                        }
                                                                     </span>
                                                                 )}
                                                             </div>
                                                             <p
                                                                 className={cn(
-                                                                    'mt-1 font-semibold text-xs leading-tight line-clamp-1',
+                                                                    'mt-1 line-clamp-1 text-xs leading-tight font-semibold',
                                                                     palette.text,
                                                                 )}
                                                             >
                                                                 {group.name}
                                                             </p>
                                                             <div className='mt-1 flex items-center justify-between text-[11px]'>
-                                                                <span className={cn('line-clamp-1', palette.subtext)}>
+                                                                <span
+                                                                    className={cn(
+                                                                        'line-clamp-1',
+                                                                        palette.subtext,
+                                                                    )}
+                                                                >
                                                                     {group.teacher
-                                                                        ? fullName(group.teacher)
-                                                                        : 'O\'qituvchi yo\'q'}
+                                                                        ? fullName(
+                                                                              group.teacher,
+                                                                          )
+                                                                        : "O'qituvchi yo'q"}
                                                                 </span>
                                                             </div>
                                                         </button>
@@ -500,13 +540,14 @@ function DayView({
     const t = useT();
 
     return (
-        <div className='rounded-xl border border-card-border bg-card-background shadow-xs p-6'>
-            <h2 className='font-display text-base font-semibold text-text-primary mb-4'>
-                {t(`weekdayLong.${day}` as TranslationKey)} darslari ({groups.length} ta guruh)
+        <div className='border-card-border bg-card-background rounded-xl border p-6 shadow-xs'>
+            <h2 className='font-display text-text-primary mb-4 text-base font-semibold'>
+                {t(`weekdayLong.${day}` as TranslationKey)} darslari (
+                {groups.length} ta guruh)
             </h2>
 
             {groups.length === 0 ? (
-                <p className='text-sm text-text-tertiary py-6 text-center'>
+                <p className='text-text-tertiary py-6 text-center text-sm'>
                     Ushbu kunda darslar yo'q
                 </p>
             ) : (
@@ -523,33 +564,57 @@ function DayView({
                                     palette.border,
                                 )}
                             >
-                                <div className='flex items-center justify-between gap-2 mb-2'>
+                                <div className='mb-2 flex items-center justify-between gap-2'>
                                     <span
                                         className={cn(
-                                            'rounded-md px-2 py-0.5 text-xs font-bold tabular-nums border',
+                                            'rounded-md border px-2 py-0.5 text-xs font-bold tabular-nums',
                                             palette.border,
                                             palette.text,
                                         )}
                                     >
-                                        {group.lesson_start} – {group.lesson_end}
+                                        {group.lesson_start} –{' '}
+                                        {group.lesson_end}
                                     </span>
                                     {group.room && (
-                                        <span className={cn('text-xs font-medium', palette.subtext)}>
+                                        <span
+                                            className={cn(
+                                                'text-xs font-medium',
+                                                palette.subtext,
+                                            )}
+                                        >
                                             📍 {group.room.name}
                                         </span>
                                     )}
                                 </div>
-                                <h3 className={cn('font-semibold text-base mb-1', palette.text)}>
+                                <h3
+                                    className={cn(
+                                        'mb-1 text-base font-semibold',
+                                        palette.text,
+                                    )}
+                                >
                                     {group.name}
                                 </h3>
-                                <p className={cn('text-xs mb-3', palette.subtext)}>
+                                <p
+                                    className={cn(
+                                        'mb-3 text-xs',
+                                        palette.subtext,
+                                    )}
+                                >
                                     {group.course.name}
                                 </p>
-                                <div className='flex items-center justify-between border-t border-black/5 dark:border-white/5 pt-2 text-xs'>
+                                <div className='flex items-center justify-between border-t border-black/5 pt-2 text-xs dark:border-white/5'>
                                     <span className={palette.subtext}>
-                                        👤 {group.teacher ? fullName(group.teacher) : 'O\'qituvchi tayinlanmagan'}
+                                        👤{' '}
+                                        {group.teacher
+                                            ? fullName(group.teacher)
+                                            : "O'qituvchi tayinlanmagan"}
                                     </span>
-                                    <span className={cn('font-medium', palette.text)}>
+                                    <span
+                                        className={cn(
+                                            'font-medium',
+                                            palette.text,
+                                        )}
+                                    >
                                         {group.students_count} ta o'quvchi
                                     </span>
                                 </div>
@@ -594,21 +659,37 @@ function DayColumn({
                                     type='button'
                                     onClick={() => onSelectGroup(group)}
                                     className={cn(
-                                        'w-full text-left rounded-lg border p-2.5 transition-all hover:scale-[1.02]',
+                                        'w-full rounded-lg border p-2.5 text-left transition-all hover:scale-[1.02]',
                                         palette.bg,
                                         palette.border,
                                     )}
                                 >
-                                    <p className={cn('text-xs font-semibold tabular-nums', palette.text)}>
+                                    <p
+                                        className={cn(
+                                            'text-xs font-semibold tabular-nums',
+                                            palette.text,
+                                        )}
+                                    >
                                         {group.lesson_start}–{group.lesson_end}
                                     </p>
-                                    <p className={cn('mt-0.5 text-sm font-medium', palette.text)}>
+                                    <p
+                                        className={cn(
+                                            'mt-0.5 text-sm font-medium',
+                                            palette.text,
+                                        )}
+                                    >
                                         {group.name}
                                     </p>
-                                    <p className={cn('mt-0.5 text-xs', palette.subtext)}>
+                                    <p
+                                        className={cn(
+                                            'mt-0.5 text-xs',
+                                            palette.subtext,
+                                        )}
+                                    >
                                         {[
                                             group.room?.name,
-                                            group.teacher && fullName(group.teacher),
+                                            group.teacher &&
+                                                fullName(group.teacher),
                                             showBranch && group.branch.name,
                                         ]
                                             .filter(Boolean)
@@ -623,4 +704,3 @@ function DayColumn({
         </section>
     );
 }
-

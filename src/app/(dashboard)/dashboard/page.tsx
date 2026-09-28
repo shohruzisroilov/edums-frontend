@@ -62,7 +62,7 @@ function DashboardView() {
 
             <GettingStarted setup={data.setup} />
 
-            <div className='grid gap-3.5 px-4 sm:gap-4 sm:px-5 grid-cols-2 xl:grid-cols-4'>
+            <div className='grid grid-cols-2 gap-3.5 px-4 sm:gap-4 sm:px-5 xl:grid-cols-4'>
                 <StatTile
                     label={t('dashboard.activeStudents')}
                     value={formatNumber(data.students.active)}
@@ -79,7 +79,8 @@ function DashboardView() {
                     trend={
                         data.revenue.last_month > 0
                             ? Math.round(
-                                  ((data.revenue.this_month - data.revenue.last_month) /
+                                  ((data.revenue.this_month -
+                                      data.revenue.last_month) /
                                       data.revenue.last_month) *
                                       100,
                               )
@@ -201,7 +202,7 @@ function DashboardView() {
                 </SectionCard>
             </div>
 
-            <div className='mt-5 grid items-start gap-5 px-4 sm:px-5 pb-6 lg:grid-cols-[3fr_2fr]'>
+            <div className='mt-5 grid items-start gap-5 px-4 pb-6 sm:px-5 lg:grid-cols-[3fr_2fr]'>
                 <SectionCard title={t('dashboard.leadFunnel')}>
                     <p className='text-text-tertiary -mt-2 mb-4 text-xs'>
                         {t('dashboard.newLeads', {

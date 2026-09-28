@@ -26,10 +26,7 @@ const LogoMark = ({
     return (
         <g id={`${idPrefix}_mark`}>
             {/* Graduation Cap Top Diamond */}
-            <path
-                d='M 16 2 L 28.5 7 L 16 12 L 3.5 7 Z'
-                fill={capColor}
-            />
+            <path d='M 16 2 L 28.5 7 L 16 12 L 3.5 7 Z' fill={capColor} />
             {/* Cap Underside Shadow/Band */}
             <path
                 d='M 7.5 8.8 L 16 12 L 24.5 8.8 L 27 9.8 L 16 13.8 L 5 9.8 Z'
@@ -43,12 +40,7 @@ const LogoMark = ({
                 strokeWidth='1.2'
                 strokeLinecap='round'
             />
-            <circle
-                cx='26.5'
-                cy='14.8'
-                r='1.2'
-                fill={strokeColor}
-            />
+            <circle cx='26.5' cy='14.8' r='1.2' fill={strokeColor} />
 
             {/* Left 3D Face - "E" Shape */}
             <path
@@ -65,7 +57,11 @@ const LogoMark = ({
     );
 };
 
-export const Logo = ({ isDark = false, isWhite = false, ...props }: IconProps & { isDark?: boolean; isWhite?: boolean }) => {
+export const Logo = ({
+    isDark = false,
+    isWhite = false,
+    ...props
+}: IconProps & { isDark?: boolean; isWhite?: boolean }) => {
     return (
         <svg
             width={38}
@@ -75,7 +71,11 @@ export const Logo = ({ isDark = false, isWhite = false, ...props }: IconProps & 
             xmlns='http://www.w3.org/2000/svg'
             {...props}
         >
-            <LogoMark idPrefix='logo_collapsed' isDark={isDark} isWhite={isWhite} />
+            <LogoMark
+                idPrefix='logo_collapsed'
+                isDark={isDark}
+                isWhite={isWhite}
+            />
         </svg>
     );
 };

@@ -64,7 +64,8 @@ export function StatTile({
         <div
             className={cn(
                 'border-card-border bg-card-background flex flex-col rounded-xl border p-4 transition-colors',
-                href && 'hover:border-input-primary-focus-border hover:shadow-sm cursor-pointer',
+                href &&
+                    'hover:border-input-primary-focus-border cursor-pointer hover:shadow-sm',
             )}
         >
             <div className='flex items-center justify-between gap-2'>

@@ -25,7 +25,10 @@ import { useEffect, useState, type FormEvent } from 'react';
 
 const SUPPORT_TELEGRAM = 'https://t.me/edumsuz';
 
-async function signInWithPhone(phone_number: string, password: string): Promise<Session> {
+async function signInWithPhone(
+    phone_number: string,
+    password: string,
+): Promise<Session> {
     try {
         const res = await loginSuperAdmin({ phone_number, password });
         return {
@@ -43,7 +46,10 @@ async function signInWithPhone(phone_number: string, password: string): Promise<
             subscription: null,
         };
     } catch (superAdminError) {
-        if (superAdminError instanceof ApiError && superAdminError.statusCode === 429) {
+        if (
+            superAdminError instanceof ApiError &&
+            superAdminError.statusCode === 429
+        ) {
             throw superAdminError;
         }
         try {
@@ -89,7 +95,11 @@ export default function LoginPage() {
             signIn(next);
             router.replace(homeHref(next));
         } catch (err) {
-            setError(err instanceof ApiError ? apiErrorMessage(err, t) : t('auth.failed'));
+            setError(
+                err instanceof ApiError
+                    ? apiErrorMessage(err, t)
+                    : t('auth.failed'),
+            );
         } finally {
             setPending(false);
         }
@@ -97,19 +107,19 @@ export default function LoginPage() {
 
     return (
         <div className='bg-background-gray-secondary_alt_2 flex h-full overflow-hidden'>
-
             {/* ── Chap: brend paneli ── */}
             <div className='bg-brand-500 relative hidden flex-col justify-between overflow-hidden p-12 text-white lg:flex lg:w-[45%]'>
                 {/* Gradient nurlar */}
                 <div className='absolute -top-32 -left-32 size-96 rounded-full bg-white/10 blur-[80px]' />
-                <div className='absolute -bottom-32 -right-20 size-96 rounded-full bg-white/10 blur-[80px]' />
-                <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-80 rounded-full bg-white/5 blur-2xl' />
+                <div className='absolute -right-20 -bottom-32 size-96 rounded-full bg-white/10 blur-[80px]' />
+                <div className='absolute top-1/2 left-1/2 size-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/5 blur-2xl' />
 
                 {/* Grid nuqtalari */}
                 <div
                     className='absolute inset-0 opacity-10'
                     style={{
-                        backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+                        backgroundImage:
+                            'radial-gradient(circle, white 1px, transparent 1px)',
                         backgroundSize: '28px 28px',
                     }}
                 />
@@ -121,27 +131,47 @@ export default function LoginPage() {
 
                 {/* Asosiy kontent */}
                 <div className='relative space-y-6'>
-                    <h2 className='font-display text-3xl font-bold leading-tight sm:text-4xl'>
-                        O&apos;quv markazingizni<br />
+                    <h2 className='font-display text-3xl leading-tight font-bold sm:text-4xl'>
+                        O&apos;quv markazingizni
+                        <br />
                         <span className='relative inline-block'>
                             bir joyda
-                            <svg className='absolute -bottom-1 left-0 w-full' viewBox='0 0 120 8' fill='none'>
-                                <path d='M2 6 C30 2, 90 2, 118 6' stroke='white' strokeWidth='2.5' strokeLinecap='round' opacity='0.5' />
+                            <svg
+                                className='absolute -bottom-1 left-0 w-full'
+                                viewBox='0 0 120 8'
+                                fill='none'
+                            >
+                                <path
+                                    d='M2 6 C30 2, 90 2, 118 6'
+                                    stroke='white'
+                                    strokeWidth='2.5'
+                                    strokeLinecap='round'
+                                    opacity='0.5'
+                                />
                             </svg>
                         </span>{' '}
                         boshqaring
                     </h2>
 
-                    <p className='text-white/70 text-base leading-relaxed'>
-                        Guruhlar, to&apos;lovlar, davomat va lidlar —
-                        hammasi bitta tizimda.
+                    <p className='text-base leading-relaxed text-white/70'>
+                        Guruhlar, to&apos;lovlar, davomat va lidlar — hammasi
+                        bitta tizimda.
                     </p>
 
                     <ul className='space-y-3 pt-1'>
                         {FEATURES.map((item) => (
-                            <li key={item} className='flex items-center gap-3 text-sm text-white/85'>
-                                <span className='bg-white/20 flex size-5 shrink-0 items-center justify-center rounded-full'>
-                                    <svg className='size-3' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='3'>
+                            <li
+                                key={item}
+                                className='flex items-center gap-3 text-sm text-white/85'
+                            >
+                                <span className='flex size-5 shrink-0 items-center justify-center rounded-full bg-white/20'>
+                                    <svg
+                                        className='size-3'
+                                        viewBox='0 0 24 24'
+                                        fill='none'
+                                        stroke='currentColor'
+                                        strokeWidth='3'
+                                    >
                                         <path d='M20 6 9 17l-5-5' />
                                     </svg>
                                 </span>
@@ -152,7 +182,8 @@ export default function LoginPage() {
                 </div>
 
                 <p className='relative text-xs text-white/40'>
-                    © {new Date().getFullYear()} EduMS. Barcha huquqlar himoyalangan.
+                    © {new Date().getFullYear()} EduMS. Barcha huquqlar
+                    himoyalangan.
                 </p>
             </div>
 
@@ -168,11 +199,19 @@ export default function LoginPage() {
                             href='/'
                             className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary flex h-9 items-center gap-2 rounded-xl border px-3.5 text-sm font-medium transition'
                         >
-                            <svg className='size-4' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
+                            <svg
+                                className='size-4'
+                                viewBox='0 0 24 24'
+                                fill='none'
+                                stroke='currentColor'
+                                strokeWidth='2'
+                            >
                                 <path d='m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z' />
                                 <polyline points='9 22 9 12 15 12 15 22' />
                             </svg>
-                            <span className='hidden sm:inline'>{t('landing.backHome')}</span>
+                            <span className='hidden sm:inline'>
+                                {t('landing.backHome')}
+                            </span>
                         </Link>
                         <LocaleSwitcher />
                         <ThemeToggle />
@@ -191,7 +230,10 @@ export default function LoginPage() {
                             </p>
                         </div>
 
-                        <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+                        <form
+                            onSubmit={handleSubmit}
+                            className='flex flex-col gap-4'
+                        >
                             <PhoneInput
                                 label={t('common.phoneNumber')}
                                 required
@@ -222,22 +264,32 @@ export default function LoginPage() {
                                 appearance='fill'
                                 size='lg'
                                 isDisabled={pending}
-                                className='w-full shadow-md shadow-brand-500/20'
+                                className='shadow-brand-500/20 w-full shadow-md'
                             >
-                                {pending ? t('auth.signingIn') : t('auth.signIn')}
+                                {pending
+                                    ? t('auth.signingIn')
+                                    : t('auth.signIn')}
                             </Button>
                         </form>
 
                         <div className='mt-6 space-y-3 text-center'>
                             <p className='text-text-secondary text-sm'>
                                 {t('auth.noAccount')}{' '}
-                                <Link href='/register' className='text-brand-accent font-semibold hover:underline'>
+                                <Link
+                                    href='/register'
+                                    className='text-brand-accent font-semibold hover:underline'
+                                >
                                     {t('auth.tryFree', { days: trialDays })}
                                 </Link>
                             </p>
                             <p className='text-text-tertiary text-xs'>
                                 {t('auth.contact')}{' '}
-                                <a href={SUPPORT_TELEGRAM} target='_blank' rel='noopener noreferrer' className='text-brand-accent font-medium hover:underline'>
+                                <a
+                                    href={SUPPORT_TELEGRAM}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className='text-brand-accent font-medium hover:underline'
+                                >
                                     @edumsuz
                                 </a>
                             </p>

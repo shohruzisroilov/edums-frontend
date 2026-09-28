@@ -51,17 +51,22 @@ export function HowItWorks({ trialDays }: { trialDays: number }) {
                 {/* Connecting line */}
                 <div
                     aria-hidden='true'
-                    className='bg-gradient-to-r from-transparent via-card-border to-transparent absolute top-10 right-[15%] left-[15%] hidden h-px md:block'
+                    className='via-card-border absolute top-10 right-[15%] left-[15%] hidden h-px bg-gradient-to-r from-transparent to-transparent md:block'
                 />
 
                 <ol className='relative grid gap-8 md:grid-cols-3'>
                     {STEPS.map((step, index) => (
-                        <li key={step.title} className='relative flex flex-col items-center text-center'>
+                        <li
+                            key={step.title}
+                            className='relative flex flex-col items-center text-center'
+                        >
                             {/* Icon box */}
-                            <div className={`bg-gradient-to-br ${step.color} border-card-border ${step.iconColor} relative flex size-20 items-center justify-center rounded-3xl border shadow-sm`}>
+                            <div
+                                className={`bg-gradient-to-br ${step.color} border-card-border ${step.iconColor} relative flex size-20 items-center justify-center rounded-3xl border shadow-sm`}
+                            >
                                 {step.icon}
                                 {/* Step number */}
-                                <span className='bg-brand-500 absolute -top-2.5 -right-2.5 flex size-7 items-center justify-center rounded-full text-xs font-bold text-white shadow-md shadow-brand-500/30'>
+                                <span className='bg-brand-500 shadow-brand-500/30 absolute -top-2.5 -right-2.5 flex size-7 items-center justify-center rounded-full text-xs font-bold text-white shadow-md'>
                                     {index + 1}
                                 </span>
                             </div>

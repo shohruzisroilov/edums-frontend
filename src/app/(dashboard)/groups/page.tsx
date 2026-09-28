@@ -139,7 +139,8 @@ function GroupsView() {
     const activeBranch = branches.find((b) => b.id === filters.branch_id);
     const activeCourse = courses.find((c) => c.id === filters.course_id);
     const activeTeacher = teachers.find((u) => u.id === filters.teacher_id);
-    const activeStatus = filters.status && filters.status !== 'active' ? filters.status : null;
+    const activeStatus =
+        filters.status && filters.status !== 'active' ? filters.status : null;
 
     const activeCount =
         (filters.branch_id ? 1 : 0) +
@@ -149,16 +150,40 @@ function GroupsView() {
 
     const activeChips = [
         ...(activeBranch
-            ? [{ key: 'branch', label: `Filial: ${activeBranch.name}`, onRemove: () => setFilter('branch_id', '') }]
+            ? [
+                  {
+                      key: 'branch',
+                      label: `Filial: ${activeBranch.name}`,
+                      onRemove: () => setFilter('branch_id', ''),
+                  },
+              ]
             : []),
         ...(activeCourse
-            ? [{ key: 'course', label: `Kurs: ${activeCourse.name}`, onRemove: () => setFilter('course_id', '') }]
+            ? [
+                  {
+                      key: 'course',
+                      label: `Kurs: ${activeCourse.name}`,
+                      onRemove: () => setFilter('course_id', ''),
+                  },
+              ]
             : []),
         ...(activeTeacher
-            ? [{ key: 'teacher', label: `O'qituvchi: ${fullName(activeTeacher)}`, onRemove: () => setFilter('teacher_id', '') }]
+            ? [
+                  {
+                      key: 'teacher',
+                      label: `O'qituvchi: ${fullName(activeTeacher)}`,
+                      onRemove: () => setFilter('teacher_id', ''),
+                  },
+              ]
             : []),
         ...(activeStatus
-            ? [{ key: 'status', label: `Holat: ${t(`groupStatus.${activeStatus as GroupStatus}`)}`, onRemove: () => setFilter('status', 'active') }]
+            ? [
+                  {
+                      key: 'status',
+                      label: `Holat: ${t(`groupStatus.${activeStatus as GroupStatus}`)}`,
+                      onRemove: () => setFilter('status', 'active'),
+                  },
+              ]
             : []),
     ];
 
@@ -186,8 +211,8 @@ function GroupsView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-2.5 px-4 sm:px-5 pb-4'>
-                <div className='flex-1 min-w-[220px]'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5'>
+                <div className='min-w-[220px] flex-1'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
@@ -208,14 +233,24 @@ function GroupsView() {
                     {session?.kind === 'user' && (
                         <div className='mb-2'>
                             <Button
-                                appearance={filters.teacher_id === session.id ? 'fill' : 'outline'}
-                                variant={filters.teacher_id === session.id ? 'primary' : undefined}
+                                appearance={
+                                    filters.teacher_id === session.id
+                                        ? 'fill'
+                                        : 'outline'
+                                }
+                                variant={
+                                    filters.teacher_id === session.id
+                                        ? 'primary'
+                                        : undefined
+                                }
                                 size='md'
                                 className='w-full'
                                 onPress={() =>
                                     setFilter(
                                         'teacher_id',
-                                        filters.teacher_id === session.id ? '' : session.id,
+                                        filters.teacher_id === session.id
+                                            ? ''
+                                            : session.id,
                                     )
                                 }
                             >
@@ -232,7 +267,9 @@ function GroupsView() {
                             }))}
                             placeholder={t('groups.allBranches')}
                             value={filters.branch_id}
-                            onValueChange={(next) => setFilter('branch_id', next)}
+                            onValueChange={(next) =>
+                                setFilter('branch_id', next)
+                            }
                         />
                     )}
                     <SelectInput
@@ -267,7 +304,7 @@ function GroupsView() {
                     />
                 </MobileFilterSheet>
 
-                <div className='hidden sm:flex items-center flex-wrap gap-3'>
+                <div className='hidden flex-wrap items-center gap-3 sm:flex'>
                     {branches.length > 1 && (
                         <div className='w-48'>
                             <SelectInput
@@ -277,7 +314,9 @@ function GroupsView() {
                                 }))}
                                 placeholder={t('groups.allBranches')}
                                 value={filters.branch_id}
-                                onValueChange={(next) => setFilter('branch_id', next)}
+                                onValueChange={(next) =>
+                                    setFilter('branch_id', next)
+                                }
                             />
                         </div>
                     )}
@@ -289,7 +328,9 @@ function GroupsView() {
                             }))}
                             placeholder={t('groups.allCourses')}
                             value={filters.course_id}
-                            onValueChange={(next) => setFilter('course_id', next)}
+                            onValueChange={(next) =>
+                                setFilter('course_id', next)
+                            }
                         />
                     </div>
                     <div className='w-52'>
@@ -300,7 +341,9 @@ function GroupsView() {
                             }))}
                             placeholder={t('groups.allTeachers')}
                             value={filters.teacher_id}
-                            onValueChange={(next) => setFilter('teacher_id', next)}
+                            onValueChange={(next) =>
+                                setFilter('teacher_id', next)
+                            }
                         />
                     </div>
                     <div className='w-40'>
@@ -316,13 +359,23 @@ function GroupsView() {
                     </div>
                     {session?.kind === 'user' && (
                         <Button
-                            appearance={filters.teacher_id === session.id ? 'fill' : 'outline'}
-                            variant={filters.teacher_id === session.id ? 'primary' : undefined}
+                            appearance={
+                                filters.teacher_id === session.id
+                                    ? 'fill'
+                                    : 'outline'
+                            }
+                            variant={
+                                filters.teacher_id === session.id
+                                    ? 'primary'
+                                    : undefined
+                            }
                             size='md'
                             onPress={() =>
                                 setFilter(
                                     'teacher_id',
-                                    filters.teacher_id === session.id ? '' : session.id,
+                                    filters.teacher_id === session.id
+                                        ? ''
+                                        : session.id,
                                 )
                             }
                         >
@@ -345,10 +398,11 @@ function GroupsView() {
                             action={
                                 Boolean(
                                     search ||
-                                        filters.branch_id ||
-                                        filters.course_id ||
-                                        filters.teacher_id ||
-                                        (filters.status && filters.status !== 'active'),
+                                    filters.branch_id ||
+                                    filters.course_id ||
+                                    filters.teacher_id ||
+                                    (filters.status &&
+                                        filters.status !== 'active'),
                                 ) ? (
                                     <Button
                                         appearance='outline'
@@ -464,7 +518,9 @@ function GroupsView() {
                                             {(canUpdate || canDelete) && (
                                                 <TableCell>
                                                     <div className='flex justify-end gap-2'>
-                                                        <EyeLinkButton href={`/groups/${group.id}`} />
+                                                        <EyeLinkButton
+                                                            href={`/groups/${group.id}`}
+                                                        />
                                                         {canUpdate && (
                                                             <Button
                                                                 appearance='outline'

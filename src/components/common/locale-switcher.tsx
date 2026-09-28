@@ -18,7 +18,7 @@ export function LocaleSwitcher() {
         <DropdownMenu>
             <DropdownMenuTrigger
                 aria-label={t('locale.change')}
-                className='border-card-border bg-card-background text-text-primary hover:bg-background-gray-secondary flex h-8 sm:h-10 min-w-9 sm:min-w-12 items-center justify-center rounded-lg border px-2 sm:px-3 text-xs sm:text-sm font-medium shadow-xs transition-colors shrink-0'
+                className='border-card-border bg-card-background text-text-primary hover:bg-background-gray-secondary flex h-8 min-w-9 shrink-0 items-center justify-center rounded-lg border px-2 text-xs font-medium shadow-xs transition-colors sm:h-10 sm:min-w-12 sm:px-3 sm:text-sm'
             >
                 {LOCALE_SHORT[locale]}
             </DropdownMenuTrigger>

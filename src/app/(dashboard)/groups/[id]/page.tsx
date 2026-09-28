@@ -237,7 +237,8 @@ function GroupDetailView() {
                                     <TableCell className='tabular-nums'>
                                         <PhoneLink
                                             phone={
-                                                enrollment.student.phone_number ??
+                                                enrollment.student
+                                                    .phone_number ??
                                                 enrollment.student.parent_phone
                                             }
                                         />

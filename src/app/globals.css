@@ -711,7 +711,8 @@
  * oq fonda qolib ketmasligi kerak.
  */
 @layer base {
-    html, body {
+    html,
+    body {
         -webkit-tap-highlight-color: transparent;
         touch-action: manipulation;
     }

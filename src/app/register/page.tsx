@@ -33,14 +33,29 @@ interface FormState {
 }
 
 const EMPTY: FormState = {
-    education_name: '', first_name: '', last_name: '',
-    phone_number: '', password: '',
+    education_name: '',
+    first_name: '',
+    last_name: '',
+    phone_number: '',
+    password: '',
 };
 
 const STEPS_INFO: { num: string; icon: ReactNode; text: string }[] = [
-    { num: '1', icon: <Buildings11 className='size-5' />, text: "Ma'lumotlarni kiriting" },
-    { num: '2', icon: <Message1 className='size-5' />, text: 'SMS kodni tasdiqlang' },
-    { num: '3', icon: <Send1 className='size-5' />, text: 'Markazingizni boshqaring' },
+    {
+        num: '1',
+        icon: <Buildings11 className='size-5' />,
+        text: "Ma'lumotlarni kiriting",
+    },
+    {
+        num: '2',
+        icon: <Message1 className='size-5' />,
+        text: 'SMS kodni tasdiqlang',
+    },
+    {
+        num: '3',
+        icon: <Send1 className='size-5' />,
+        text: 'Markazingizni boshqaring',
+    },
 ];
 
 export default function RegisterPage() {
@@ -68,7 +83,11 @@ export default function RegisterPage() {
     }, [resendIn]);
 
     function showError(err: unknown) {
-        setError(err instanceof ApiError ? apiErrorMessage(err, t) : t('error.unknown'));
+        setError(
+            err instanceof ApiError
+                ? apiErrorMessage(err, t)
+                : t('error.unknown'),
+        );
     }
 
     async function sendCode() {
@@ -114,19 +133,19 @@ export default function RegisterPage() {
 
     return (
         <div className='bg-background-gray-secondary_alt_2 flex h-full overflow-hidden'>
-
             {/* ── Chap: brend paneli ── */}
             <div className='bg-brand-500 relative hidden flex-col justify-between overflow-hidden p-12 text-white lg:flex lg:w-[45%]'>
                 {/* Gradient nurlar */}
                 <div className='absolute -top-32 -left-32 size-96 rounded-full bg-white/10 blur-[80px]' />
-                <div className='absolute -bottom-32 -right-20 size-96 rounded-full bg-white/10 blur-[80px]' />
-                <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-80 rounded-full bg-white/5 blur-2xl' />
+                <div className='absolute -right-20 -bottom-32 size-96 rounded-full bg-white/10 blur-[80px]' />
+                <div className='absolute top-1/2 left-1/2 size-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/5 blur-2xl' />
 
                 {/* Grid nuqtalari */}
                 <div
                     className='absolute inset-0 opacity-10'
                     style={{
-                        backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+                        backgroundImage:
+                            'radial-gradient(circle, white 1px, transparent 1px)',
                         backgroundSize: '28px 28px',
                     }}
                 />
@@ -138,33 +157,44 @@ export default function RegisterPage() {
 
                 {/* Asosiy kontent */}
                 <div className='relative space-y-6'>
-                    <h2 className='font-display text-3xl font-bold leading-tight sm:text-4xl'>
+                    <h2 className='font-display text-3xl leading-tight font-bold sm:text-4xl'>
                         Bugun boshlang —<br />
-                        <span className='text-white/80'>hisob ochish bepul</span>
+                        <span className='text-white/80'>
+                            hisob ochish bepul
+                        </span>
                     </h2>
 
-                    <p className='text-white/65 text-base leading-relaxed'>
-                        Kredit karta talab qilinmaydi.
-                        Sinov muddati tugagach tarif tanlaysiz.
+                    <p className='text-base leading-relaxed text-white/65'>
+                        Kredit karta talab qilinmaydi. Sinov muddati tugagach
+                        tarif tanlaysiz.
                     </p>
 
                     {/* Qadamlar */}
                     <div className='space-y-3 pt-2'>
                         {STEPS_INFO.map((s, i) => (
-                            <div key={s.num} className='flex items-center gap-4'>
-                                <div className={`flex size-10 shrink-0 items-center justify-center rounded-2xl transition-all ${
-                                    (step === 'details' && i === 0) || (step === 'code' && i === 1)
-                                        ? 'bg-white text-brand-500 shadow-md'
-                                        : 'bg-white/15 text-white'
-                                }`}>
+                            <div
+                                key={s.num}
+                                className='flex items-center gap-4'
+                            >
+                                <div
+                                    className={`flex size-10 shrink-0 items-center justify-center rounded-2xl transition-all ${
+                                        (step === 'details' && i === 0) ||
+                                        (step === 'code' && i === 1)
+                                            ? 'text-brand-500 bg-white shadow-md'
+                                            : 'bg-white/15 text-white'
+                                    }`}
+                                >
                                     {s.icon}
                                 </div>
                                 <div>
-                                    <p className={`text-sm font-medium ${
-                                        (step === 'details' && i === 0) || (step === 'code' && i === 1)
-                                            ? 'text-white'
-                                            : 'text-white/65'
-                                    }`}>
+                                    <p
+                                        className={`text-sm font-medium ${
+                                            (step === 'details' && i === 0) ||
+                                            (step === 'code' && i === 1)
+                                                ? 'text-white'
+                                                : 'text-white/65'
+                                        }`}
+                                    >
                                         {s.text}
                                     </p>
                                 </div>
@@ -174,7 +204,8 @@ export default function RegisterPage() {
                 </div>
 
                 <p className='relative text-xs text-white/40'>
-                    © {new Date().getFullYear()} EduMS. Barcha huquqlar himoyalangan.
+                    © {new Date().getFullYear()} EduMS. Barcha huquqlar
+                    himoyalangan.
                 </p>
             </div>
 
@@ -190,11 +221,19 @@ export default function RegisterPage() {
                             href='/'
                             className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary flex h-9 items-center gap-2 rounded-xl border px-3.5 text-sm font-medium transition'
                         >
-                            <svg className='size-4' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
+                            <svg
+                                className='size-4'
+                                viewBox='0 0 24 24'
+                                fill='none'
+                                stroke='currentColor'
+                                strokeWidth='2'
+                            >
                                 <path d='m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z' />
                                 <polyline points='9 22 9 12 15 12 15 22' />
                             </svg>
-                            <span className='hidden sm:inline'>{t('landing.backHome')}</span>
+                            <span className='hidden sm:inline'>
+                                {t('landing.backHome')}
+                            </span>
                         </Link>
                         <LocaleSwitcher />
                         <ThemeToggle />
@@ -207,14 +246,16 @@ export default function RegisterPage() {
                         {/* Step indicator */}
                         <div className='mb-6 flex items-center gap-2'>
                             <div className='bg-brand-500 h-1.5 flex-1 rounded-full' />
-                            <div className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${step === 'code' ? 'bg-brand-500' : 'bg-card-border'}`} />
+                            <div
+                                className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${step === 'code' ? 'bg-brand-500' : 'bg-card-border'}`}
+                            />
                         </div>
 
                         <div className='mb-7 text-center'>
                             <h1 className='text-text-primary font-display text-2xl font-bold'>
                                 {step === 'details'
                                     ? t('register.title', { days: trialDays })
-                                    : "SMS kodni kiriting"}
+                                    : 'SMS kodni kiriting'}
                             </h1>
                             <p className='text-text-tertiary mt-2 text-sm'>
                                 {step === 'details'
@@ -224,14 +265,24 @@ export default function RegisterPage() {
                         </div>
 
                         {step === 'details' ? (
-                            <form onSubmit={handleDetails} className='flex flex-col gap-4'>
+                            <form
+                                onSubmit={handleDetails}
+                                className='flex flex-col gap-4'
+                            >
                                 <TextInput
                                     label={t('register.educationName')}
                                     required
                                     maxLength={150}
-                                    placeholder={t('register.educationPlaceholder')}
+                                    placeholder={t(
+                                        'register.educationPlaceholder',
+                                    )}
                                     value={form.education_name}
-                                    onChange={(e) => setForm({ ...form, education_name: e.target.value })}
+                                    onChange={(e) =>
+                                        setForm({
+                                            ...form,
+                                            education_name: e.target.value,
+                                        })
+                                    }
                                 />
                                 <div className='grid gap-4 sm:grid-cols-2'>
                                     <TextInput
@@ -239,14 +290,24 @@ export default function RegisterPage() {
                                         required
                                         maxLength={100}
                                         value={form.last_name}
-                                        onChange={(e) => setForm({ ...form, last_name: e.target.value })}
+                                        onChange={(e) =>
+                                            setForm({
+                                                ...form,
+                                                last_name: e.target.value,
+                                            })
+                                        }
                                     />
                                     <TextInput
                                         label={t('common.firstName')}
                                         required
                                         maxLength={100}
                                         value={form.first_name}
-                                        onChange={(e) => setForm({ ...form, first_name: e.target.value })}
+                                        onChange={(e) =>
+                                            setForm({
+                                                ...form,
+                                                first_name: e.target.value,
+                                            })
+                                        }
                                     />
                                 </div>
                                 <PhoneInput
@@ -254,7 +315,9 @@ export default function RegisterPage() {
                                     required
                                     hint={t('register.phoneHint')}
                                     value={form.phone_number}
-                                    onValueChange={(phone_number) => setForm({ ...form, phone_number })}
+                                    onValueChange={(phone_number) =>
+                                        setForm({ ...form, phone_number })
+                                    }
                                 />
                                 <PasswordInput
                                     label={t('common.password')}
@@ -264,7 +327,12 @@ export default function RegisterPage() {
                                     autoComplete='new-password'
                                     hint={t('users.passwordHint')}
                                     value={form.password}
-                                    onChange={(e) => setForm({ ...form, password: e.target.value })}
+                                    onChange={(e) =>
+                                        setForm({
+                                            ...form,
+                                            password: e.target.value,
+                                        })
+                                    }
                                 />
 
                                 {error && <FormError message={error} />}
@@ -274,14 +342,22 @@ export default function RegisterPage() {
                                     variant='primary'
                                     appearance='fill'
                                     size='lg'
-                                    isDisabled={pending || form.phone_number.length !== 13}
-                                    className='mt-1 w-full shadow-md shadow-brand-500/20'
+                                    isDisabled={
+                                        pending ||
+                                        form.phone_number.length !== 13
+                                    }
+                                    className='shadow-brand-500/20 mt-1 w-full shadow-md'
                                 >
-                                    {pending ? t('register.sending') : t('register.sendCode')}
+                                    {pending
+                                        ? t('register.sending')
+                                        : t('register.sendCode')}
                                 </Button>
                             </form>
                         ) : (
-                            <form onSubmit={handleCode} className='flex flex-col gap-5'>
+                            <form
+                                onSubmit={handleCode}
+                                className='flex flex-col gap-5'
+                            >
                                 {/* Kod inputi */}
                                 <div className='border-brand-500/20 bg-brand-500/5 rounded-2xl border p-6 text-center'>
                                     <p className='text-text-tertiary mb-4 text-xs'>
@@ -293,10 +369,19 @@ export default function RegisterPage() {
                                         inputMode='numeric'
                                         autoComplete='one-time-code'
                                         maxLength={codeLength}
-                                        placeholder={'_ '.repeat(codeLength).trim()}
-                                        className='text-center text-3xl tracking-[0.6em] font-bold'
+                                        placeholder={'_ '
+                                            .repeat(codeLength)
+                                            .trim()}
+                                        className='text-center text-3xl font-bold tracking-[0.6em]'
                                         value={code}
-                                        onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+                                        onChange={(e) =>
+                                            setCode(
+                                                e.target.value.replace(
+                                                    /\D/g,
+                                                    '',
+                                                ),
+                                            )
+                                        }
                                     />
                                 </div>
 
@@ -307,17 +392,25 @@ export default function RegisterPage() {
                                     variant='primary'
                                     appearance='fill'
                                     size='lg'
-                                    isDisabled={pending || code.length !== codeLength}
-                                    className='w-full shadow-md shadow-brand-500/20'
+                                    isDisabled={
+                                        pending || code.length !== codeLength
+                                    }
+                                    className='shadow-brand-500/20 w-full shadow-md'
                                 >
-                                    {pending ? t('register.creating') : t('register.submit')}
+                                    {pending
+                                        ? t('register.creating')
+                                        : t('register.submit')}
                                 </Button>
 
                                 <div className='flex items-center justify-between text-sm'>
                                     <button
                                         type='button'
                                         className='text-text-tertiary hover:text-text-primary flex items-center gap-1 transition'
-                                        onClick={() => { setStep('details'); setCode(''); setError(null); }}
+                                        onClick={() => {
+                                            setStep('details');
+                                            setCode('');
+                                            setError(null);
+                                        }}
                                     >
                                         ← {t('register.changeDetails')}
                                     </button>
@@ -328,7 +421,9 @@ export default function RegisterPage() {
                                         onClick={() => void sendCode()}
                                     >
                                         {resendIn > 0
-                                            ? t('register.resendIn', { seconds: resendIn })
+                                            ? t('register.resendIn', {
+                                                  seconds: resendIn,
+                                              })
                                             : t('register.resend')}
                                     </button>
                                 </div>
@@ -337,7 +432,10 @@ export default function RegisterPage() {
 
                         <p className='text-text-tertiary mt-6 text-center text-sm'>
                             {t('register.haveAccount')}{' '}
-                            <Link href='/login' className='text-brand-accent font-semibold hover:underline'>
+                            <Link
+                                href='/login'
+                                className='text-brand-accent font-semibold hover:underline'
+                            >
                                 {t('auth.signIn')}
                             </Link>
                         </p>

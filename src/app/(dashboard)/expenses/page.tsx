@@ -140,7 +140,9 @@ function ExpensesView() {
                                             formatDate(e.spent_at),
                                             e.category,
                                             e.amount,
-                                            e.created_by ? fullName(e.created_by) : '',
+                                            e.created_by
+                                                ? fullName(e.created_by)
+                                                : '',
                                             e.note || '',
                                         ]),
                                     );
@@ -165,9 +167,12 @@ function ExpensesView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-2.5 px-4 sm:px-5 pb-4'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5'>
                 <MobileFilterSheet
-                    activeCount={(filters.category ? 1 : 0) + (filters.from || filters.to ? 1 : 0)}
+                    activeCount={
+                        (filters.category ? 1 : 0) +
+                        (filters.from || filters.to ? 1 : 0)
+                    }
                     onClear={() => {
                         setFilter('category', '');
                         setFilter('from', '');
@@ -175,17 +180,25 @@ function ExpensesView() {
                     }}
                     activeChips={[
                         ...(filters.category
-                            ? [{ key: 'category', label: `Kategoriya: ${t(`expenseCategory.${filters.category as ExpenseCategory}`)}`, onRemove: () => setFilter('category', '') }]
+                            ? [
+                                  {
+                                      key: 'category',
+                                      label: `Kategoriya: ${t(`expenseCategory.${filters.category as ExpenseCategory}`)}`,
+                                      onRemove: () => setFilter('category', ''),
+                                  },
+                              ]
                             : []),
                         ...(filters.from || filters.to
-                            ? [{
-                                  key: 'date',
-                                  label: `Sana: ${filters.from || '…'} — ${filters.to || '…'}`,
-                                  onRemove: () => {
-                                      setFilter('from', '');
-                                      setFilter('to', '');
+                            ? [
+                                  {
+                                      key: 'date',
+                                      label: `Sana: ${filters.from || '…'} — ${filters.to || '…'}`,
+                                      onRemove: () => {
+                                          setFilter('from', '');
+                                          setFilter('to', '');
+                                      },
                                   },
-                              }]
+                              ]
                             : []),
                     ]}
                 >
@@ -211,7 +224,7 @@ function ExpensesView() {
                     </div>
                 </MobileFilterSheet>
 
-                <div className='hidden sm:flex flex-wrap items-center gap-3'>
+                <div className='hidden flex-wrap items-center gap-3 sm:flex'>
                     <div className='w-52'>
                         <SelectInput
                             options={EXPENSE_CATEGORIES.map((category) => ({
@@ -220,7 +233,9 @@ function ExpensesView() {
                             }))}
                             placeholder={t('expenses.allCategories')}
                             value={filters.category}
-                            onValueChange={(next) => setFilter('category', next)}
+                            onValueChange={(next) =>
+                                setFilter('category', next)
+                            }
                         />
                     </div>
                     <DateRangeFilter
@@ -245,7 +260,11 @@ function ExpensesView() {
                             message={t('expenses.empty')}
                             icon={<SackDollar className='size-5' />}
                             action={
-                                Boolean(filters.category || filters.from || filters.to) ? (
+                                Boolean(
+                                    filters.category ||
+                                    filters.from ||
+                                    filters.to,
+                                ) ? (
                                     <Button
                                         appearance='outline'
                                         size='md'

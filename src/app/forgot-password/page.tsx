@@ -113,14 +113,15 @@ export default function ForgotPasswordPage() {
             <div className='bg-brand-500 relative hidden flex-col justify-between overflow-hidden p-12 text-white lg:flex lg:w-[45%]'>
                 {/* Gradient nurlar */}
                 <div className='absolute -top-32 -left-32 size-96 rounded-full bg-white/10 blur-[80px]' />
-                <div className='absolute -bottom-32 -right-20 size-96 rounded-full bg-white/10 blur-[80px]' />
-                <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-80 rounded-full bg-white/5 blur-2xl' />
+                <div className='absolute -right-20 -bottom-32 size-96 rounded-full bg-white/10 blur-[80px]' />
+                <div className='absolute top-1/2 left-1/2 size-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/5 blur-2xl' />
 
                 {/* Grid nuqtalari */}
                 <div
                     className='absolute inset-0 opacity-10'
                     style={{
-                        backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+                        backgroundImage:
+                            'radial-gradient(circle, white 1px, transparent 1px)',
                         backgroundSize: '28px 28px',
                     }}
                 />
@@ -132,25 +133,46 @@ export default function ForgotPasswordPage() {
 
                 {/* Asosiy kontent */}
                 <div className='relative space-y-6'>
-                    <h2 className='font-display text-3xl font-bold leading-tight sm:text-4xl'>
-                        Hisobingizga kirishni<br />
+                    <h2 className='font-display text-3xl leading-tight font-bold sm:text-4xl'>
+                        Hisobingizga kirishni
+                        <br />
                         <span className='relative inline-block'>
                             qayta tiklang
-                            <svg className='absolute -bottom-1 left-0 w-full' viewBox='0 0 120 8' fill='none'>
-                                <path d='M2 6 C30 2, 90 2, 118 6' stroke='white' strokeWidth='2.5' strokeLinecap='round' opacity='0.5' />
+                            <svg
+                                className='absolute -bottom-1 left-0 w-full'
+                                viewBox='0 0 120 8'
+                                fill='none'
+                            >
+                                <path
+                                    d='M2 6 C30 2, 90 2, 118 6'
+                                    stroke='white'
+                                    strokeWidth='2.5'
+                                    strokeLinecap='round'
+                                    opacity='0.5'
+                                />
                             </svg>
                         </span>
                     </h2>
 
-                    <p className='text-white/70 text-base leading-relaxed'>
-                        Xavfsizlik maqsadida parolingiz faqat telefoningizga yuboriladigan bir martalik SMS kod orqali yangilanadi.
+                    <p className='text-base leading-relaxed text-white/70'>
+                        Xavfsizlik maqsadida parolingiz faqat telefoningizga
+                        yuboriladigan bir martalik SMS kod orqali yangilanadi.
                     </p>
 
                     <ul className='space-y-3 pt-1'>
                         {STEPS.map((item) => (
-                            <li key={item} className='flex items-center gap-3 text-sm text-white/85'>
-                                <span className='bg-white/20 flex size-5 shrink-0 items-center justify-center rounded-full'>
-                                    <svg className='size-3' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='3'>
+                            <li
+                                key={item}
+                                className='flex items-center gap-3 text-sm text-white/85'
+                            >
+                                <span className='flex size-5 shrink-0 items-center justify-center rounded-full bg-white/20'>
+                                    <svg
+                                        className='size-3'
+                                        viewBox='0 0 24 24'
+                                        fill='none'
+                                        stroke='currentColor'
+                                        strokeWidth='3'
+                                    >
                                         <path d='M20 6 9 17l-5-5' />
                                     </svg>
                                 </span>
@@ -161,7 +183,8 @@ export default function ForgotPasswordPage() {
                 </div>
 
                 <p className='relative text-xs text-white/40'>
-                    © {new Date().getFullYear()} EduMS. Barcha huquqlar himoyalangan.
+                    © {new Date().getFullYear()} EduMS. Barcha huquqlar
+                    himoyalangan.
                 </p>
             </div>
 
@@ -177,11 +200,19 @@ export default function ForgotPasswordPage() {
                             href='/'
                             className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary flex h-9 items-center gap-2 rounded-xl border px-3.5 text-sm font-medium transition'
                         >
-                            <svg className='size-4' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
+                            <svg
+                                className='size-4'
+                                viewBox='0 0 24 24'
+                                fill='none'
+                                stroke='currentColor'
+                                strokeWidth='2'
+                            >
                                 <path d='m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z' />
                                 <polyline points='9 22 9 12 15 12 15 22' />
                             </svg>
-                            <span className='hidden sm:inline'>{t('landing.backHome')}</span>
+                            <span className='hidden sm:inline'>
+                                {t('landing.backHome')}
+                            </span>
                         </Link>
                         <LocaleSwitcher />
                         <ThemeToggle />
@@ -196,7 +227,9 @@ export default function ForgotPasswordPage() {
                             <div className='bg-brand-500 h-1.5 flex-1 rounded-full' />
                             <div
                                 className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-                                    step === 'code' ? 'bg-brand-500' : 'bg-card-border'
+                                    step === 'code'
+                                        ? 'bg-brand-500'
+                                        : 'bg-card-border'
                                 }`}
                             />
                         </div>
@@ -213,7 +246,10 @@ export default function ForgotPasswordPage() {
                         </div>
 
                         {step === 'phone' ? (
-                            <form onSubmit={handlePhone} className='flex flex-col gap-4'>
+                            <form
+                                onSubmit={handlePhone}
+                                className='flex flex-col gap-4'
+                            >
                                 <PhoneInput
                                     label={t('common.phoneNumber')}
                                     required
@@ -230,7 +266,7 @@ export default function ForgotPasswordPage() {
                                     appearance='fill'
                                     size='lg'
                                     isDisabled={pending || phone.length !== 13}
-                                    className='w-full shadow-md shadow-brand-500/20'
+                                    className='shadow-brand-500/20 w-full shadow-md'
                                 >
                                     {pending
                                         ? t('register.sending')
@@ -238,7 +274,10 @@ export default function ForgotPasswordPage() {
                                 </Button>
                             </form>
                         ) : (
-                            <form onSubmit={handleReset} className='flex flex-col gap-4'>
+                            <form
+                                onSubmit={handleReset}
+                                className='flex flex-col gap-4'
+                            >
                                 <TextInput
                                     label={t('register.code')}
                                     required
@@ -249,7 +288,9 @@ export default function ForgotPasswordPage() {
                                     className='text-center text-lg tracking-[0.5em]'
                                     value={code}
                                     onChange={(e) =>
-                                        setCode(e.target.value.replace(/\D/g, ''))
+                                        setCode(
+                                            e.target.value.replace(/\D/g, ''),
+                                        )
                                     }
                                 />
                                 <PasswordInput
@@ -260,7 +301,9 @@ export default function ForgotPasswordPage() {
                                     autoComplete='new-password'
                                     hint={t('users.passwordHint')}
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={(e) =>
+                                        setPassword(e.target.value)
+                                    }
                                 />
                                 <PasswordInput
                                     label={t('profile.repeatPassword')}
@@ -284,7 +327,7 @@ export default function ForgotPasswordPage() {
                                         code.length !== codeLength ||
                                         password.length < 8
                                     }
-                                    className='w-full shadow-md shadow-brand-500/20'
+                                    className='shadow-brand-500/20 w-full shadow-md'
                                 >
                                     {pending
                                         ? t('common.saving')
@@ -306,7 +349,7 @@ export default function ForgotPasswordPage() {
                                     <button
                                         type='button'
                                         disabled={resendIn > 0 || pending}
-                                        className='text-brand-accent disabled:text-text-tertiary font-medium hover:underline transition-colors'
+                                        className='text-brand-accent disabled:text-text-tertiary font-medium transition-colors hover:underline'
                                         onClick={() => void sendCode()}
                                     >
                                         {resendIn > 0

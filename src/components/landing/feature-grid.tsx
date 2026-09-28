@@ -100,13 +100,19 @@ export function FeatureGrid() {
 
     const scroll = (direction: 'left' | 'right') => {
         if (!scrollContainerRef.current) return;
-        const { scrollLeft, clientWidth, scrollWidth } = scrollContainerRef.current;
+        const { scrollLeft, clientWidth, scrollWidth } =
+            scrollContainerRef.current;
         const cardWidth = 300;
 
         let newScrollLeft =
-            direction === 'left' ? scrollLeft - cardWidth : scrollLeft + cardWidth;
+            direction === 'left'
+                ? scrollLeft - cardWidth
+                : scrollLeft + cardWidth;
 
-        if (direction === 'right' && scrollLeft + clientWidth >= scrollWidth - 20) {
+        if (
+            direction === 'right' &&
+            scrollLeft + clientWidth >= scrollWidth - 20
+        ) {
             newScrollLeft = 0;
         } else if (direction === 'left' && scrollLeft <= 10) {
             newScrollLeft = scrollWidth - clientWidth;
@@ -130,14 +136,14 @@ export function FeatureGrid() {
     }, [isPaused]);
 
     return (
-        <section className='mx-auto max-w-7xl px-4 sm:px-5 py-12 sm:py-16'>
+        <section className='mx-auto max-w-7xl px-4 py-12 sm:px-5 sm:py-16'>
             <SectionHeading
                 title={t('landing.featuresTitle')}
                 text={t('landing.featuresText')}
             />
 
             <div
-                className='relative mt-8 sm:mt-10 px-0 sm:px-4'
+                className='relative mt-8 px-0 sm:mt-10 sm:px-4'
                 onMouseEnter={() => setIsPaused(true)}
                 onMouseLeave={() => setIsPaused(false)}
             >
@@ -146,7 +152,7 @@ export function FeatureGrid() {
                     type='button'
                     onClick={() => scroll('left')}
                     aria-label='Previous'
-                    className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary active:scale-95 absolute -left-1 sm:left-0 top-1/2 z-20 flex -translate-y-1/2 size-9 sm:size-12 items-center justify-center rounded-full border shadow-lg transition-all cursor-pointer'
+                    className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary absolute top-1/2 -left-1 z-20 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-lg transition-all active:scale-95 sm:left-0 sm:size-12'
                 >
                     <ChevronLeft className='size-4 sm:size-6' />
                 </button>
@@ -156,7 +162,7 @@ export function FeatureGrid() {
                     type='button'
                     onClick={() => scroll('right')}
                     aria-label='Next'
-                    className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary active:scale-95 absolute -right-1 sm:right-0 top-1/2 z-20 flex -translate-y-1/2 size-9 sm:size-12 items-center justify-center rounded-full border shadow-lg transition-all cursor-pointer'
+                    className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary absolute top-1/2 -right-1 z-20 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-lg transition-all active:scale-95 sm:right-0 sm:size-12'
                 >
                     <ChevronRight className='size-4 sm:size-6' />
                 </button>
@@ -164,22 +170,22 @@ export function FeatureGrid() {
                 {/* Horizontal Auto Slider Track */}
                 <div
                     ref={scrollContainerRef}
-                    className='flex gap-3.5 sm:gap-4 overflow-x-auto py-2 sm:py-3 px-4 sm:px-10 scroll-smooth snap-x snap-mandatory rounded-2xl'
+                    className='flex snap-x snap-mandatory gap-3.5 overflow-x-auto scroll-smooth rounded-2xl px-4 py-2 sm:gap-4 sm:px-10 sm:py-3'
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
                     {FEATURES.map((feature) => (
                         <div
                             key={feature.title}
-                            className='w-[250px] sm:w-[290px] shrink-0 snap-center border-card-border bg-card-background hover:border-brand-accent/50 rounded-2xl border p-5 sm:p-6 transition-all hover:shadow-lg flex flex-col justify-between'
+                            className='border-card-border bg-card-background hover:border-brand-accent/50 flex w-[250px] shrink-0 snap-center flex-col justify-between rounded-2xl border p-5 transition-all hover:shadow-lg sm:w-[290px] sm:p-6'
                         >
                             <div>
-                                <span className='bg-brand-accent/10 text-brand-accent flex size-9 sm:size-10 items-center justify-center rounded-xl'>
+                                <span className='bg-brand-accent/10 text-brand-accent flex size-9 items-center justify-center rounded-xl sm:size-10'>
                                     {feature.icon}
                                 </span>
-                                <h3 className='text-text-primary mt-3 sm:mt-4 font-semibold text-sm sm:text-base'>
+                                <h3 className='text-text-primary mt-3 text-sm font-semibold sm:mt-4 sm:text-base'>
                                     {t(feature.title)}
                                 </h3>
-                                <p className='text-text-tertiary mt-1.5 sm:mt-2 text-xs sm:text-sm leading-relaxed'>
+                                <p className='text-text-tertiary mt-1.5 text-xs leading-relaxed sm:mt-2 sm:text-sm'>
                                     {t(feature.text)}
                                 </p>
                             </div>
@@ -190,4 +196,3 @@ export function FeatureGrid() {
         </section>
     );
 }
-

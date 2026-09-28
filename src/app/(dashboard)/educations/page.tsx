@@ -117,7 +117,7 @@ function EducationsView() {
                 }
             />
 
-            <div className='flex items-center gap-2 px-4 sm:px-5 pb-4'>
+            <div className='flex items-center gap-2 px-4 pb-4 sm:px-5'>
                 <SearchInput
                     value={search}
                     onChange={setSearch}

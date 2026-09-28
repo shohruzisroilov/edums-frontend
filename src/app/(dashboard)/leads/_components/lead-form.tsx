@@ -60,7 +60,9 @@ export function LeadFormModal({
             : 'new') as EditableStatus,
         branch_id: lead?.branch?.id ?? '',
         course_id: lead?.course?.id ?? '',
-        next_call_date: lead?.next_call_date ? lead.next_call_date.slice(0, 10) : '',
+        next_call_date: lead?.next_call_date
+            ? lead.next_call_date.slice(0, 10)
+            : '',
         note: lead?.note ?? '',
     }));
 

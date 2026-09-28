@@ -55,7 +55,7 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                     <button
                         type='button'
                         onClick={() => setSearchOpen(true)}
-                        className='border-card-border bg-background-gray-secondary/50 hover:bg-background-gray-secondary hover:border-input-primary-focus-border focus-visible:ring-2 focus-visible:ring-brand-accent/30 hidden items-center gap-2.5 rounded-xl border px-3 py-1.5 transition-all sm:flex group outline-none'
+                        className='border-card-border bg-background-gray-secondary/50 hover:bg-background-gray-secondary hover:border-input-primary-focus-border focus-visible:ring-brand-accent/30 group hidden items-center gap-2.5 rounded-xl border px-3 py-1.5 transition-all outline-none focus-visible:ring-2 sm:flex'
                     >
                         <Search1 className='text-icon-tertiary group-hover:text-text-secondary size-4 transition-colors' />
                         <span className='text-text-tertiary group-hover:text-text-secondary text-xs font-medium transition-colors'>
@@ -73,7 +73,11 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                     <div className='hidden items-center gap-2 md:flex'>
                         {canAddPayment && (
                             <Link href='/cashbox?new=1'>
-                                <Button size='sm' appearance='outline' className='gap-1.5 text-xs font-medium'>
+                                <Button
+                                    size='sm'
+                                    appearance='outline'
+                                    className='gap-1.5 text-xs font-medium'
+                                >
                                     <Wallet2 className='size-3.5 text-emerald-600 dark:text-emerald-400' />
                                     <span>{t('header.quickPayment')}</span>
                                 </Button>
@@ -81,7 +85,11 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                         )}
                         {canAddStudent && (
                             <Link href='/students?new=1'>
-                                <Button size='sm' appearance='outline' className='gap-1.5 text-xs font-medium'>
+                                <Button
+                                    size='sm'
+                                    appearance='outline'
+                                    className='gap-1.5 text-xs font-medium'
+                                >
                                     <UserCircle1 className='size-3.5 text-blue-600 dark:text-blue-400' />
                                     <span>{t('header.quickStudent')}</span>
                                 </Button>
@@ -89,7 +97,11 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                         )}
                         {canAddLead && (
                             <Link href='/leads?new=1'>
-                                <Button size='sm' appearance='outline' className='gap-1.5 text-xs font-medium'>
+                                <Button
+                                    size='sm'
+                                    appearance='outline'
+                                    className='gap-1.5 text-xs font-medium'
+                                >
                                     <Funnel1 className='size-3.5 text-amber-600 dark:text-amber-400' />
                                     <span>{t('header.quickLead')}</span>
                                 </Button>
@@ -112,7 +124,10 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                 </div>
             </div>
 
-            <GlobalSearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
+            <GlobalSearchModal
+                open={searchOpen}
+                onClose={() => setSearchOpen(false)}
+            />
         </header>
     );
 }

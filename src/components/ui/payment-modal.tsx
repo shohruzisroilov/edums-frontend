@@ -133,7 +133,9 @@ export function PaymentModal({
             }
             toast.success(t('cashbox.created'));
 
-            const enrolledGrp = groups.find((g) => g.group.id === form.group_id);
+            const enrolledGrp = groups.find(
+                (g) => g.group.id === form.group_id,
+            );
             const otherGrp = allGroups.find((g) => g.id === form.group_id);
             const groupName = enrolledGrp
                 ? enrolledGrp.group.name
@@ -145,7 +147,10 @@ export function PaymentModal({
                 studentName: student ? fullName(student) : '',
                 groupName,
                 amount: Number(form.amount),
-                method: t(`paymentMethod.${form.method}` as import('@/i18n/dictionaries/uz').TranslationKey) || form.method,
+                method:
+                    t(
+                        `paymentMethod.${form.method}` as import('@/i18n/dictionaries/uz').TranslationKey,
+                    ) || form.method,
                 date: form.paid_at,
             });
         },

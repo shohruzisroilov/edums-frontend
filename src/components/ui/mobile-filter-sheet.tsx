@@ -31,12 +31,12 @@ export function MobileFilterSheet({
                 variant={activeCount > 0 ? 'primary' : undefined}
                 size='md'
                 onPress={() => setOpen(true)}
-                className='sm:hidden shrink-0'
+                className='shrink-0 sm:hidden'
             >
                 <Funnel1 className='size-4' />
                 <span>Filtrlar</span>
                 {activeCount > 0 && (
-                    <span className='bg-white text-brand-accent dark:bg-slate-950 ml-1 rounded-full px-1.5 py-0.2 text-[11px] font-bold tabular-nums'>
+                    <span className='text-brand-accent py-0.2 ml-1 rounded-full bg-white px-1.5 text-[11px] font-bold tabular-nums dark:bg-slate-950'>
                         {activeCount}
                     </span>
                 )}
@@ -46,8 +46,8 @@ export function MobileFilterSheet({
                 <Modal
                     open={open}
                     onClose={() => setOpen(false)}
-                    title="Filtrlar"
-                    description="Qidiruv va saralash mezonlarini tanlang"
+                    title='Filtrlar'
+                    description='Qidiruv va saralash mezonlarini tanlang'
                     footer={
                         <div className='flex w-full items-center justify-between gap-2'>
                             {onClear && (
@@ -75,9 +75,7 @@ export function MobileFilterSheet({
                         </div>
                     }
                 >
-                    <div className='flex flex-col gap-4 py-2'>
-                        {children}
-                    </div>
+                    <div className='flex flex-col gap-4 py-2'>{children}</div>
                 </Modal>
             )}
 
@@ -104,7 +102,7 @@ export function MobileFilterSheet({
                         <button
                             type='button'
                             onClick={onClear}
-                            className='text-badge-error-text hover:underline shrink-0 text-xs font-medium px-1'
+                            className='text-badge-error-text shrink-0 px-1 text-xs font-medium hover:underline'
                         >
                             Barchasini tozalash
                         </button>
