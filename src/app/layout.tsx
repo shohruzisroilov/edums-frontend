@@ -1,6 +1,7 @@
 import Providers from '@/app/providers';
 import { cn } from '@/utils/cn';
 import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 import { ThemeProvider } from 'next-themes';
 import { Golos_Text, Inter } from 'next/font/google';
 import { Toaster } from 'sonner';
@@ -38,6 +39,9 @@ export const metadata: Metadata = {
     },
     description:
         "O'quv markazlarini boshqarish tizimi: markazlar, tariflar, xodimlar va o'quvchilar.",
+    verification: {
+        google: 'DuH0dlATA0mmNA0BNX6VqeSlLOUBZJQeKonxapL9rM8',
+    },
     manifest: '/manifest.json',
     appleWebApp: {
         capable: true,
@@ -64,6 +68,19 @@ export default function RootLayout({
             )}
         >
             <body className='bg-background-gray-secondary_alt_2 h-full overflow-hidden'>
+                <Script
+                    strategy='afterInteractive'
+                    src='https://www.googletagmanager.com/gtag/js?id=G-QBLBTKVCN3'
+                />
+                <Script id='google-analytics' strategy='afterInteractive'>
+                    {`
+                        window.dataLayer = window.dataLayer || [];
+                        function gtag(){dataLayer.push(arguments);}
+                        gtag('js', new Date());
+
+                        gtag('config', 'G-QBLBTKVCN3');
+                    `}
+                </Script>
                 <ThemeProvider
                     attribute='data-theme'
                     defaultTheme='light'
