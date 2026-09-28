@@ -145,7 +145,7 @@ export function PaymentModal({
                 studentName: student ? fullName(student) : '',
                 groupName,
                 amount: Number(form.amount),
-                method: t(`paymentMethod.${form.method}` as any) || form.method,
+                method: t(`paymentMethod.${form.method}` as import('@/i18n/dictionaries/uz').TranslationKey) || form.method,
                 date: form.paid_at,
             });
         },

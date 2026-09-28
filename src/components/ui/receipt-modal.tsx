@@ -4,7 +4,6 @@ import { Button } from '@/components/tailgrids/core/button';
 import { Modal } from '@/components/ui/modal';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
-import { formatPhone } from '@/utils/format';
 import { Printer } from '@tailgrids/icons';
 
 export function ReceiptModal({

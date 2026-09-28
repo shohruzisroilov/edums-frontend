@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/data-state';
 import { DateRangeFilter } from '@/components/ui/date-range-filter';
 import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
-import { SelectInput, TextInput } from '@/components/ui/form-field';
+import { SelectInput } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
 import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';

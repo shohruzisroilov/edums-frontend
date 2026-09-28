@@ -2,7 +2,6 @@ import type { TranslationKey } from '@/i18n/dictionaries/uz';
 import type { Session } from '@/types/api';
 import { can, isSuperAdmin } from '@/utils/access';
 import {
-    BadgeDecagramPercent,
     Bank1,
     Buildings11,
     CalendarTime,
@@ -12,7 +11,6 @@ import {
     FileText,
     Funnel1,
     Gear1,
-    HandTakingCoins,
     MapMarker5,
     Message1,
     OpenBook,

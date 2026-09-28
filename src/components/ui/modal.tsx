@@ -3,7 +3,7 @@
 import { Button } from '@/components/tailgrids/core/button';
 import { useT } from '@/i18n/provider';
 import { cn } from '@/utils/cn';
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, type ReactNode } from 'react';
 
 const FOCUSABLE =
     'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -38,14 +38,14 @@ export function Modal({
     const t = useT();
     const dialogRef = useRef<HTMLDivElement>(null);
 
-    const handleAttemptClose = () => {
+    const handleAttemptClose = useCallback(() => {
         if (isDirty) {
             if (!window.confirm(t('common.confirmDiscard'))) {
                 return;
             }
         }
         onClose();
-    };
+    }, [isDirty, onClose, t]);
 
     useEffect(() => {
         if (!open) return;
@@ -97,7 +97,7 @@ export function Modal({
             document.body.style.overflow = previousOverflow;
             previouslyFocused?.focus();
         };
-    }, [open, isDirty, t]);
+    }, [open, handleAttemptClose]);
 
     if (!open) return null;
 

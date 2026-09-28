@@ -365,7 +365,7 @@ function LeadsView() {
                 ) : viewMode === 'kanban' ? (
                     <LeadKanbanBoard
                         leads={query.data.data}
-                        onStatusChange={(id, status) => statusMutation.mutate({ id, status: status as any })}
+                        onStatusChange={(id, status) => statusMutation.mutate({ id, status: status as NonNullable<LeadPayload['status']> })}
                         onEdit={(lead) => {
                             setEditing(lead);
                             setFormOpen(true);

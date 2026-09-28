@@ -4,7 +4,6 @@ import { TextInput } from '@/components/ui/form-field';
 import { useT } from '@/i18n/provider';
 import { cn } from '@/utils/cn';
 import { toISODate } from '@/utils/format';
-import { Calendar } from '@tailgrids/icons';
 
 export type DatePreset = 'today' | 'yesterday' | 'this_week' | 'this_month' | 'last_month' | 'all';
 

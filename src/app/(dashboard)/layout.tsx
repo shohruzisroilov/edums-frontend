@@ -32,15 +32,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     const pathname = usePathname();
     const t = useT();
 
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [isMobileSheetOpen, setIsMobileSheetOpen] = useState(false);
-
-    useEffect(() => {
-        const stored = localStorage.getItem('edums_sidebar_open');
-        if (stored !== null) {
-            setIsSidebarOpen(stored === 'true');
+    const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const stored = localStorage.getItem('edums_sidebar_open');
+            if (stored !== null) return stored === 'true';
         }
-    }, []);
+        return true;
+    });
+    const [isMobileSheetOpen, setIsMobileSheetOpen] = useState(false);
 
     // Saqlangan token eskirgan bo'lishi mumkin. Uni bir marta serverda
     // tekshiramiz: super admin uchun /super_admin/verify_token, foydalanuvchi

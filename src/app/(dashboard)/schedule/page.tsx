@@ -19,7 +19,8 @@ import { WEEKDAYS, type Group, type Weekday } from '@/types/api';
 import { can } from '@/utils/access';
 import { cn } from '@/utils/cn';
 import { fullName } from '@/utils/format';
-import { CalendarTime, Eye, Layout20, UserMultiple1 } from '@tailgrids/icons';
+import type { TranslationKey } from '@/i18n/dictionaries/uz';
+import { CalendarTime, Eye, Layout20 } from '@tailgrids/icons';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
@@ -241,7 +242,7 @@ function ScheduleView() {
                                         : 'text-text-tertiary hover:text-text-primary',
                                 )}
                             >
-                                {t(`weekday.${day}` as any)}
+                                {t(`weekday.${day}` as TranslationKey)}
                             </button>
                         ))}
                     </div>
@@ -280,7 +281,7 @@ function ScheduleView() {
                         {WEEKDAYS.map((day) => (
                             <DayColumn
                                 key={day}
-                                title={t(`weekdayLong.${day}` as any)}
+                                title={t(`weekdayLong.${day}` as TranslationKey)}
                                 groups={scheduleData.filter((group) =>
                                     group.lesson_days.includes(day),
                                 )}
@@ -364,7 +365,7 @@ function ScheduleView() {
 function TimetableGrid({
     groups,
     onSelectGroup,
-    showBranch,
+    showBranch: _showBranch,
 }: {
     groups: Group[];
     onSelectGroup: (g: Group) => void;
@@ -489,7 +490,7 @@ function DayView({
     day,
     groups,
     onSelectGroup,
-    showBranch,
+    showBranch: _showBranch,
 }: {
     day: Weekday;
     groups: Group[];
@@ -501,7 +502,7 @@ function DayView({
     return (
         <div className='rounded-xl border border-card-border bg-card-background shadow-xs p-6'>
             <h2 className='font-display text-base font-semibold text-text-primary mb-4'>
-                {t(`weekdayLong.${day}` as any)} darslari ({groups.length} ta guruh)
+                {t(`weekdayLong.${day}` as TranslationKey)} darslari ({groups.length} ta guruh)
             </h2>
 
             {groups.length === 0 ? (

@@ -20,6 +20,7 @@ const eslintConfig = defineConfig([
     {
         rules: {
             '@typescript-eslint/no-empty-object-type': 'off',
+            'react/no-unescaped-entities': 'off',
             // Ishlatilmaydigan o'zgaruvchilar xato, lekin `_` bilan
             // boshlanganlari ataylab qoldirilgan deb hisoblanadi.
             '@typescript-eslint/no-unused-vars': [

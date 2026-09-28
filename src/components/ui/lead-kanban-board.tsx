@@ -84,7 +84,7 @@ export function LeadKanbanBoard({
                             <div className='flex items-center gap-2'>
                                 <LeadStatusDot status={status} />
                                 <h4 className='text-text-primary text-sm font-semibold'>
-                                    {t(`leadStatus.${status}` as any)}
+                                    {t(`leadStatus.${status}` as import('@/i18n/dictionaries/uz').TranslationKey)}
                                 </h4>
                             </div>
                             <span className='border-card-border bg-card-surface-area text-text-secondary rounded-md border px-2 py-0.5 text-xs font-semibold tabular-nums'>
