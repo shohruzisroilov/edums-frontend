@@ -389,14 +389,24 @@ export const en: Dictionary = {
     'nav.smsSettings': 'SMS settings',
     'smsSettings.title': 'SMS settings',
     'smsSettings.subtitle':
-        'Eskiz.uz connection used to send registration codes',
-    'smsSettings.connectionTitle': 'Eskiz connection',
+        'SMS provider connection used to send registration codes and notifications',
+    'smsSettings.connectionTitle': 'SMS provider connection',
     'smsSettings.driver': 'Mode',
-    'smsSettings.driverEskiz': 'Eskiz — real SMS',
+    'smsSettings.driverDevsms': 'DevSMS — real SMS (devsms.uz)',
+    'smsSettings.driverEskiz': 'Eskiz — real SMS (eskiz.uz)',
     'smsSettings.driverConsole': 'Console — server log only (testing)',
+    'smsSettings.driverDevsmsHint':
+        'Messages are sent to phone numbers via DevSMS.uz',
     'smsSettings.driverEskizHint': 'Codes are sent to the phone via Eskiz.uz',
     'smsSettings.driverConsoleHint':
         'No SMS is sent; the code is printed in the backend terminal. Not allowed in production',
+    'smsSettings.devsmsToken': 'DevSMS API Token',
+    'smsSettings.devsmsTokenHint':
+        'Bearer token from your devsms.uz profile or API docs',
+    'smsSettings.devsmsTokenSavedHint':
+        'Token is saved. Enter a new one to change it, or leave empty',
+    'smsSettings.devsmsFrom': 'DevSMS sender (from)',
+    'smsSettings.devsmsFromHint': 'Sender identifier in DevSMS (default: 4546)',
     'smsSettings.email': 'Eskiz email',
     'smsSettings.password': 'Eskiz password',
     'smsSettings.passwordHint': 'Password of the Eskiz cabinet',
@@ -406,12 +416,12 @@ export const en: Dictionary = {
     'smsSettings.fromHint': 'Nickname or number given by Eskiz, e.g. 4546',
     'smsSettings.template': 'SMS template',
     'smsSettings.templateHint':
-        '{code} is replaced by the code. Must match the template approved in the Eskiz cabinet exactly',
+        '{code} is replaced by the code. E.g.: EduMS: tasdiqlash kodi {code}',
     'smsSettings.templateMissingCode': 'The template must contain {code}',
     'smsSettings.saved': 'SMS settings saved',
     'smsSettings.testTitle': 'Test SMS',
     'smsSettings.testText':
-        'Sends code 123456 using the template and the saved settings. Save your changes first.',
+        'Sends code 1234 using the template and the saved settings. Save your changes first.',
     'smsSettings.testSend': 'Send',
     'smsSettings.testSending': 'Sending…',
 

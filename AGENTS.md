@@ -42,7 +42,7 @@ src/
       educations/         # /educations va /[id] — o'quv markazlar (super admin)
       tariffs/            # /tariffs — tariflar (super admin)
       payments/           # /payments — to'lov so'rovlari (super admin)
-      sms-settings/       # /sms-settings — Eskiz ulanishi (super admin)
+      sms-settings/       # /sms-settings — SMS provayder (DevSMS / Eskiz) ulanishi (super admin)
       platform-settings/  # /platform-settings — sinov muddati, to'lov ko'rsatmasi (super admin)
       profile/            # /profile — o'z ma'lumotlari va paroli
     not-found.tsx

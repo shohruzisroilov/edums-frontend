@@ -388,15 +388,25 @@ export const ru: Dictionary = {
     'nav.smsSettings': 'Настройки SMS',
     'smsSettings.title': 'Настройки SMS',
     'smsSettings.subtitle':
-        'Подключение Eskiz.uz для отправки кодов регистрации',
-    'smsSettings.connectionTitle': 'Подключение Eskiz',
+        'Подключение SMS-провайдера для отправки кодов регистрации и уведомлений',
+    'smsSettings.connectionTitle': 'Подключение SMS-провайдера',
     'smsSettings.driver': 'Режим',
-    'smsSettings.driverEskiz': 'Eskiz — реальные SMS',
+    'smsSettings.driverDevsms': 'DevSMS — реальные SMS (devsms.uz)',
+    'smsSettings.driverEskiz': 'Eskiz — реальные SMS (eskiz.uz)',
     'smsSettings.driverConsole': 'Console — только лог сервера (тест)',
+    'smsSettings.driverDevsmsHint':
+        'Сообщения отправляются на телефон через сервис DevSMS.uz',
     'smsSettings.driverEskizHint':
         'Коды отправляются на телефон через Eskiz.uz',
     'smsSettings.driverConsoleHint':
         'SMS не отправляются, код выводится в терминал бэкенда. Запрещено в production',
+    'smsSettings.devsmsToken': 'API Token DevSMS',
+    'smsSettings.devsmsTokenHint':
+        'Bearer токен из личного кабинета devsms.uz',
+    'smsSettings.devsmsTokenSavedHint':
+        'Токен сохранён. Чтобы изменить, введите новый, иначе оставьте пустым',
+    'smsSettings.devsmsFrom': 'Отправитель DevSMS (from)',
+    'smsSettings.devsmsFromHint': 'Идентификатор отправителя в DevSMS (по умолчанию: 4546)',
     'smsSettings.email': 'Email Eskiz',
     'smsSettings.password': 'Пароль Eskiz',
     'smsSettings.passwordHint': 'Пароль от кабинета Eskiz',
@@ -406,12 +416,12 @@ export const ru: Dictionary = {
     'smsSettings.fromHint': 'Ник или номер от Eskiz, например 4546',
     'smsSettings.template': 'Шаблон SMS',
     'smsSettings.templateHint':
-        '{code} — место кода. Текст должен точно совпадать с шаблоном, утверждённым в кабинете Eskiz',
+        '{code} — место кода. Например: EduMS: tasdiqlash kodi {code}',
     'smsSettings.templateMissingCode': 'В шаблоне должен быть {code}',
     'smsSettings.saved': 'Настройки SMS сохранены',
     'smsSettings.testTitle': 'Тестовое SMS',
     'smsSettings.testText':
-        'Отправляет код 123456 по шаблону с сохранёнными настройками. Сначала сохраните изменения.',
+        'Отправляет код 1234 по шаблону с сохранёнными настройками. Сначала сохраните изменения.',
     'smsSettings.testSend': 'Отправить',
     'smsSettings.testSending': 'Отправка…',
 
