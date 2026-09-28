@@ -213,7 +213,9 @@ function BillingView() {
                                                     }
                                                 >
                                                     {isCurrent
-                                                        ? t('billing.extendPlan')
+                                                        ? t(
+                                                              'billing.extendPlan',
+                                                          )
                                                         : t('billing.choose')}
                                                 </Button>
                                             )
@@ -375,7 +377,9 @@ function StatusCard({ subscription }: { subscription: SubscriptionStatus }) {
                             </span>
                             <Badge
                                 size='sm'
-                                color={subscription.active ? 'success' : 'error'}
+                                color={
+                                    subscription.active ? 'success' : 'error'
+                                }
                             >
                                 {subscription.active
                                     ? t('common.active')
@@ -390,24 +394,28 @@ function StatusCard({ subscription }: { subscription: SubscriptionStatus }) {
 
                 <div className='flex flex-wrap items-center gap-2.5 sm:gap-3'>
                     {subscription.active && (
-                        <div className='border-card-border bg-card-background/80 shadow-2xs rounded-xl border px-3.5 py-2 text-left'>
+                        <div className='border-card-border bg-card-background/80 rounded-xl border px-3.5 py-2 text-left shadow-2xs'>
                             <span className='text-text-tertiary block text-[11px] font-medium'>
                                 {t('billing.period')}
                             </span>
                             <span className='text-text-primary block text-xs font-semibold'>
-                                {formatDate(subscription.ends_at)} ({subscription.days_left} kun)
+                                {formatDate(subscription.ends_at)} (
+                                {subscription.days_left} kun)
                             </span>
                         </div>
                     )}
-                    <div className='border-card-border bg-card-background/80 shadow-2xs rounded-xl border px-3.5 py-2 text-left'>
+                    <div className='border-card-border bg-card-background/80 rounded-xl border px-3.5 py-2 text-left shadow-2xs'>
                         <span className='text-text-tertiary block text-[11px] font-medium'>
                             {t('students.title')}
                         </span>
                         <span className='text-text-primary block text-xs font-semibold'>
-                            {(subscription.max_students ?? subscription.max_users ?? null) === null
+                            {(subscription.max_students ??
+                                subscription.max_users ??
+                                null) === null
                                 ? t('tariffs.studentsUnlimited')
                                 : t('tariffs.studentsLimit', {
-                                      count: (subscription.max_students ?? subscription.max_users)!,
+                                      count: (subscription.max_students ??
+                                          subscription.max_users)!,
                                   })}
                         </span>
                     </div>

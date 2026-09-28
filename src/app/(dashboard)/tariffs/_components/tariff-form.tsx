@@ -69,7 +69,9 @@ export function TariffFormModal({
 
     const mutation = useMutation({
         mutationFn: () => {
-            const studentCap = form.max_students ? Number(form.max_students) : null;
+            const studentCap = form.max_students
+                ? Number(form.max_students)
+                : null;
             const payload = {
                 name: form.name.trim(),
                 description: form.description.trim() || null,

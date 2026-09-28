@@ -37,12 +37,12 @@ export function TariffCard({
             className={cn(
                 'bg-card-background relative flex h-full flex-col rounded-2xl p-6 transition-all',
                 isCurrent
-                    ? 'border-2 border-brand-accent shadow-md ring-2 ring-brand-accent/15 bg-brand-accent/[0.02]'
+                    ? 'border-brand-accent ring-brand-accent/15 bg-brand-accent/[0.02] border-2 shadow-md ring-2'
                     : 'border-card-border border',
             )}
         >
             {isCurrent && (
-                <div className='bg-brand-accent shadow-xs absolute -top-3 right-5 flex items-center gap-1 rounded-full px-3 py-0.5 text-xs font-semibold text-white'>
+                <div className='bg-brand-accent absolute -top-3 right-5 flex items-center gap-1 rounded-full px-3 py-0.5 text-xs font-semibold text-white shadow-xs'>
                     <Check className='size-3 shrink-0' />
                     <span>{t('billing.currentPlan')}</span>
                 </div>

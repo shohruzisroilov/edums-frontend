@@ -134,10 +134,13 @@ function TariffsView() {
                                             })}
                                         </TableCell>
                                         <TableCell numeric>
-                                            {(tariff.max_students ?? tariff.max_users ?? null) === null
+                                            {(tariff.max_students ??
+                                                tariff.max_users ??
+                                                null) === null
                                                 ? t('common.unlimited')
                                                 : formatNumber(
-                                                      (tariff.max_students ?? tariff.max_users)!,
+                                                      (tariff.max_students ??
+                                                          tariff.max_users)!,
                                                   )}
                                         </TableCell>
                                         <TableCell>
