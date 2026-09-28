@@ -24,11 +24,12 @@ export function TariffCard({
     const t = useT();
     const { formatPrice } = useFormat();
 
+    const studentLimit = tariff.max_students ?? tariff.max_users ?? null;
     const features = [
         t('tariffs.durationValue', { days: tariff.duration_days }),
-        tariff.max_users === null
-            ? t('tariffs.usersUnlimited')
-            : t('tariffs.usersLimit', { count: tariff.max_users }),
+        studentLimit === null
+            ? t('tariffs.studentsUnlimited')
+            : t('tariffs.studentsLimit', { count: studentLimit }),
     ];
 
     return (

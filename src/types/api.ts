@@ -139,7 +139,8 @@ export interface Tariff {
     price: number;
     duration_days: number;
     /** null — cheksiz */
-    max_users: number | null;
+    max_students: number | null;
+    max_users?: number | null;
     is_active: boolean;
     sort_order: number;
     created_at: string;
@@ -151,6 +152,7 @@ export interface TariffPayload {
     description?: string | null;
     price: number;
     duration_days: number;
+    max_students?: number | null;
     max_users?: number | null;
     is_active?: boolean;
     sort_order?: number;
@@ -165,7 +167,8 @@ export interface SubscriptionStatus {
     /** Oldindan to'langan davrlar bilan birga. */
     ends_at: string | null;
     days_left: number;
-    max_users: number | null;
+    max_students: number | null;
+    max_users?: number | null;
 }
 
 /** Bitta davr: sinov yoki pulli tarif. */
@@ -176,7 +179,8 @@ export interface Subscription {
     tariff_id: string | null;
     tariff_name: string | null;
     price: number;
-    max_users: number | null;
+    max_students: number | null;
+    max_users?: number | null;
     starts_at: string;
     ends_at: string;
     created_at: string;
@@ -191,7 +195,8 @@ export interface PaymentRequest {
     tariff_name: string;
     price: number;
     duration_days: number;
-    max_users: number | null;
+    max_students: number | null;
+    max_users?: number | null;
     status: PaymentRequestStatus;
     requested_by_id: string | null;
     /** Rad etish sababi. */

@@ -22,7 +22,7 @@ interface FormState {
     description: string;
     price: string;
     duration_days: string;
-    max_users: string;
+    max_students: string;
     sort_order: string;
     is_active: boolean;
 }
@@ -32,7 +32,7 @@ const EMPTY: FormState = {
     description: '',
     price: '',
     duration_days: '30',
-    max_users: '',
+    max_students: '',
     sort_order: '0',
     is_active: true,
 };
@@ -57,8 +57,10 @@ export function TariffFormModal({
                   description: tariff.description ?? '',
                   price: String(Math.round(tariff.price)),
                   duration_days: String(tariff.duration_days),
-                  max_users:
-                      tariff.max_users === null ? '' : String(tariff.max_users),
+                  max_students:
+                      (tariff.max_students ?? tariff.max_users) == null
+                          ? ''
+                          : String(tariff.max_students ?? tariff.max_users),
                   sort_order: String(tariff.sort_order),
                   is_active: tariff.is_active,
               }
@@ -67,12 +69,14 @@ export function TariffFormModal({
 
     const mutation = useMutation({
         mutationFn: () => {
+            const studentCap = form.max_students ? Number(form.max_students) : null;
             const payload = {
                 name: form.name.trim(),
                 description: form.description.trim() || null,
                 price: Number(form.price || 0),
                 duration_days: Number(form.duration_days),
-                max_users: form.max_users ? Number(form.max_users) : null,
+                max_students: studentCap,
+                max_users: studentCap,
                 sort_order: Number(form.sort_order || 0),
                 is_active: form.is_active,
             };
@@ -138,11 +142,11 @@ export function TariffFormModal({
                         }
                     />
                     <NumberInput
-                        label={t('tariffs.maxUsers')}
+                        label={t('tariffs.maxStudents')}
                         hint={t('tariffs.unlimitedHint')}
-                        value={form.max_users}
-                        onValueChange={(max_users) =>
-                            setForm({ ...form, max_users })
+                        value={form.max_students}
+                        onValueChange={(max_students) =>
+                            setForm({ ...form, max_students })
                         }
                     />
                     <NumberInput

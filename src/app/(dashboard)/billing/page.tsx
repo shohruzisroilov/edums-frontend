@@ -401,13 +401,13 @@ function StatusCard({ subscription }: { subscription: SubscriptionStatus }) {
                     )}
                     <div className='border-card-border bg-card-background/80 shadow-2xs rounded-xl border px-3.5 py-2 text-left'>
                         <span className='text-text-tertiary block text-[11px] font-medium'>
-                            {t('users.title')}
+                            {t('students.title')}
                         </span>
                         <span className='text-text-primary block text-xs font-semibold'>
-                            {subscription.max_users === null
-                                ? t('tariffs.usersUnlimited')
-                                : t('tariffs.usersLimit', {
-                                      count: subscription.max_users,
+                            {(subscription.max_students ?? subscription.max_users ?? null) === null
+                                ? t('tariffs.studentsUnlimited')
+                                : t('tariffs.studentsLimit', {
+                                      count: (subscription.max_students ?? subscription.max_users)!,
                                   })}
                         </span>
                     </div>
