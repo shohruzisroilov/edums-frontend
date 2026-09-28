@@ -122,7 +122,8 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                     <button
                         type='button'
                         onClick={() => setSearchOpen(true)}
-                        className='text-icon-tertiary hover:text-text-primary hover:bg-background-gray-secondary flex size-9 items-center justify-center rounded-lg transition-colors sm:hidden'
+                        aria-label={t('header.searchPlaceholder')}
+                        className='border-card-border bg-card-background text-icon-primary hover:bg-background-gray-secondary focus-visible:border-input-primary-focus-border focus-visible:ring-input-primary-focus-border/20 flex size-10 items-center justify-center rounded-lg border shadow-xs transition-colors outline-none focus-visible:ring-4 sm:hidden'
                     >
                         <Search1 className='size-5' />
                     </button>
