@@ -138,23 +138,28 @@ function StudentsView() {
     });
 
     const activeBranch = branches.find((b) => b.id === filters.branch_id);
-    const activeStatus = filters.status && filters.status !== 'active' ? filters.status : null;
+    const activeStatus =
+        filters.status && filters.status !== 'active' ? filters.status : null;
     const activeCount = (filters.branch_id ? 1 : 0) + (activeStatus ? 1 : 0);
 
     const activeChips = [
         ...(activeBranch
-            ? [{
-                  key: 'branch',
-                  label: `Filial: ${activeBranch.name}`,
-                  onRemove: () => setFilter('branch_id', ''),
-              }]
+            ? [
+                  {
+                      key: 'branch',
+                      label: `Filial: ${activeBranch.name}`,
+                      onRemove: () => setFilter('branch_id', ''),
+                  },
+              ]
             : []),
         ...(activeStatus
-            ? [{
-                  key: 'status',
-                  label: `Holat: ${t(`studentStatus.${activeStatus as StudentStatus}`)}`,
-                  onRemove: () => setFilter('status', 'active'),
-              }]
+            ? [
+                  {
+                      key: 'status',
+                      label: `Holat: ${t(`studentStatus.${activeStatus as StudentStatus}`)}`,
+                      onRemove: () => setFilter('status', 'active'),
+                  },
+              ]
             : []),
     ];
 
@@ -173,7 +178,12 @@ function StudentsView() {
                                 onPress={() => {
                                     exportToCsv(
                                         'Oquvchilar',
-                                        ['F.I.Sh.', 'Telefon', 'Balans (som)', 'Holati'],
+                                        [
+                                            'F.I.Sh.',
+                                            'Telefon',
+                                            'Balans (som)',
+                                            'Holati',
+                                        ],
                                         query.data.data.map((s) => [
                                             fullName(s),
                                             formatPhone(s.phone_number),
@@ -215,8 +225,8 @@ function StudentsView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-3 px-4 sm:px-5 pb-4'>
-                <div className='flex-1 min-w-[200px]'>
+            <div className='flex flex-wrap items-center gap-3 px-4 pb-4 sm:px-5'>
+                <div className='min-w-[200px] flex-1'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
@@ -241,7 +251,9 @@ function StudentsView() {
                             }))}
                             placeholder={t('groups.allBranches')}
                             value={filters.branch_id}
-                            onValueChange={(next) => setFilter('branch_id', next)}
+                            onValueChange={(next) =>
+                                setFilter('branch_id', next)
+                            }
                         />
                     )}
                     <SelectInput
@@ -256,7 +268,7 @@ function StudentsView() {
                     />
                 </MobileFilterSheet>
 
-                <div className='hidden sm:flex items-center gap-3'>
+                <div className='hidden items-center gap-3 sm:flex'>
                     {branches.length > 1 && (
                         <div className='w-48'>
                             <SelectInput
@@ -297,7 +309,12 @@ function StudentsView() {
                             message={t('students.empty')}
                             icon={<UserCircle1 className='size-5' />}
                             action={
-                                Boolean(search || filters.branch_id || (filters.status && filters.status !== 'active')) ? (
+                                Boolean(
+                                    search ||
+                                    filters.branch_id ||
+                                    (filters.status &&
+                                        filters.status !== 'active'),
+                                ) ? (
                                     <Button
                                         appearance='outline'
                                         size='md'
@@ -430,7 +447,9 @@ function StudentsView() {
                                             {hasActions && (
                                                 <TableCell>
                                                     <div className='flex justify-end gap-2'>
-                                                        <EyeLinkButton href={`/students/${student.id}`} />
+                                                        <EyeLinkButton
+                                                            href={`/students/${student.id}`}
+                                                        />
                                                         {canPay && (
                                                             <Button
                                                                 appearance='outline'
@@ -552,10 +571,15 @@ function PhoneLines({ student }: { student: Student }) {
 
     return (
         <div className='tabular-nums'>
-            {student.phone_number && <p><PhoneLink phone={student.phone_number} /></p>}
+            {student.phone_number && (
+                <p>
+                    <PhoneLink phone={student.phone_number} />
+                </p>
+            )}
             {student.parent_phone && (
                 <p className='text-text-tertiary text-xs'>
-                    {t('students.parentPhone')}: <PhoneLink phone={student.parent_phone} />
+                    {t('students.parentPhone')}:{' '}
+                    <PhoneLink phone={student.parent_phone} />
                 </p>
             )}
         </div>

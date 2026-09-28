@@ -118,15 +118,33 @@ function UsersView() {
     });
 
     const activeRole = roles.find((r) => r.id === filters.role_id);
-    const activeStatus = filters.is_active !== '' ? (filters.is_active === 'true' ? t('common.active') : t('common.inactive')) : null;
-    const activeCount = (filters.role_id ? 1 : 0) + (filters.is_active !== '' ? 1 : 0);
+    const activeStatus =
+        filters.is_active !== ''
+            ? filters.is_active === 'true'
+                ? t('common.active')
+                : t('common.inactive')
+            : null;
+    const activeCount =
+        (filters.role_id ? 1 : 0) + (filters.is_active !== '' ? 1 : 0);
 
     const activeChips = [
         ...(activeRole
-            ? [{ key: 'role', label: `Rol: ${activeRole.name}`, onRemove: () => setFilter('role_id', '') }]
+            ? [
+                  {
+                      key: 'role',
+                      label: `Rol: ${activeRole.name}`,
+                      onRemove: () => setFilter('role_id', ''),
+                  },
+              ]
             : []),
         ...(activeStatus
-            ? [{ key: 'status', label: `Holat: ${activeStatus}`, onRemove: () => setFilter('is_active', '') }]
+            ? [
+                  {
+                      key: 'status',
+                      label: `Holat: ${activeStatus}`,
+                      onRemove: () => setFilter('is_active', ''),
+                  },
+              ]
             : []),
     ];
 
@@ -154,8 +172,8 @@ function UsersView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-2.5 px-4 sm:px-5 pb-4'>
-                <div className='flex-1 min-w-[220px]'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5'>
+                <div className='min-w-[220px] flex-1'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
@@ -195,7 +213,7 @@ function UsersView() {
                     />
                 </MobileFilterSheet>
 
-                <div className='hidden sm:flex items-center gap-3'>
+                <div className='hidden items-center gap-3 sm:flex'>
                     {canListRoles && (
                         <div className='w-52'>
                             <SelectInput
@@ -205,7 +223,9 @@ function UsersView() {
                                 }))}
                                 placeholder={t('users.allRoles')}
                                 value={filters.role_id}
-                                onValueChange={(next) => setFilter('role_id', next)}
+                                onValueChange={(next) =>
+                                    setFilter('role_id', next)
+                                }
                             />
                         </div>
                     )}
@@ -217,7 +237,9 @@ function UsersView() {
                             ]}
                             placeholder={t('common.allStatuses')}
                             value={filters.is_active}
-                            onValueChange={(next) => setFilter('is_active', next)}
+                            onValueChange={(next) =>
+                                setFilter('is_active', next)
+                            }
                         />
                     </div>
                 </div>

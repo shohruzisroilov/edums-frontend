@@ -21,19 +21,29 @@ export function FinalCta({
     const t = useT();
 
     return (
-        <section className='mx-auto max-w-5xl px-4 sm:px-5 py-12 sm:py-20'>
-            <div className='bg-brand-500 relative overflow-hidden rounded-2xl sm:rounded-3xl px-5 py-10 text-white sm:px-16 sm:py-16'>
+        <section className='mx-auto max-w-5xl px-4 py-12 sm:px-5 sm:py-20'>
+            <div className='bg-brand-500 relative overflow-hidden rounded-2xl px-5 py-10 text-white sm:rounded-3xl sm:px-16 sm:py-16'>
                 {/* Orqa fon bezaklari */}
-                <div aria-hidden='true' className='absolute -top-24 -right-24 size-80 rounded-full bg-white/10 blur-3xl' />
-                <div aria-hidden='true' className='absolute -bottom-28 -left-20 size-80 rounded-full bg-white/10 blur-3xl' />
-                <div aria-hidden='true' className='absolute top-0 left-1/2 -translate-x-1/2 size-full bg-gradient-to-b from-white/5 to-transparent' />
+                <div
+                    aria-hidden='true'
+                    className='absolute -top-24 -right-24 size-80 rounded-full bg-white/10 blur-3xl'
+                />
+                <div
+                    aria-hidden='true'
+                    className='absolute -bottom-28 -left-20 size-80 rounded-full bg-white/10 blur-3xl'
+                />
+                <div
+                    aria-hidden='true'
+                    className='absolute top-0 left-1/2 size-full -translate-x-1/2 bg-gradient-to-b from-white/5 to-transparent'
+                />
 
                 {/* Grid nuqtalari */}
                 <div
                     aria-hidden='true'
                     className='absolute inset-0 opacity-10'
                     style={{
-                        backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+                        backgroundImage:
+                            'radial-gradient(circle, white 1px, transparent 1px)',
                         backgroundSize: '32px 32px',
                     }}
                 />
@@ -42,16 +52,16 @@ export function FinalCta({
                     <h2 className='font-display text-2xl leading-tight font-bold sm:text-4xl lg:text-5xl'>
                         {t('landing.ctaTitle')}
                     </h2>
-                    <p className='mx-auto mt-3 sm:mt-5 max-w-xl text-sm sm:text-lg text-white/80 leading-relaxed'>
+                    <p className='mx-auto mt-3 max-w-xl text-sm leading-relaxed text-white/80 sm:mt-5 sm:text-lg'>
                         {t('landing.ctaText', { days: trialDays })}
                     </p>
 
                     {/* Buttons */}
-                    <div className='mt-6 sm:mt-9 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2.5 sm:gap-3 max-w-sm mx-auto sm:max-w-none'>
+                    <div className='mx-auto mt-6 flex max-w-sm flex-col items-stretch justify-center gap-2.5 sm:mt-9 sm:max-w-none sm:flex-row sm:items-center sm:gap-3'>
                         <button
                             type='button'
                             onClick={onStart}
-                            className='text-brand-500 rounded-xl sm:rounded-2xl bg-white px-6 sm:px-8 py-3.5 sm:py-4 text-sm font-bold shadow-xl transition hover:bg-white/95 hover:shadow-2xl active:scale-[0.98] cursor-pointer'
+                            className='text-brand-500 cursor-pointer rounded-xl bg-white px-6 py-3.5 text-sm font-bold shadow-xl transition hover:bg-white/95 hover:shadow-2xl active:scale-[0.98] sm:rounded-2xl sm:px-8 sm:py-4'
                         >
                             {t('landing.startFree')} →
                         </button>
@@ -59,7 +69,7 @@ export function FinalCta({
                             href={SUPPORT_TELEGRAM}
                             target='_blank'
                             rel='noopener noreferrer'
-                            className='inline-flex items-center justify-center gap-2.5 rounded-xl sm:rounded-2xl border border-white/25 bg-white/10 px-6 sm:px-8 py-3.5 sm:py-4 text-sm font-semibold backdrop-blur-sm transition hover:bg-white/20'
+                            className='inline-flex items-center justify-center gap-2.5 rounded-xl border border-white/25 bg-white/10 px-6 py-3.5 text-sm font-semibold backdrop-blur-sm transition hover:bg-white/20 sm:rounded-2xl sm:px-8 sm:py-4'
                         >
                             <TelegramIcon className='size-4' />
                             {t('landing.askTelegram')}

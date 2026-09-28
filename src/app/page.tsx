@@ -34,7 +34,10 @@ export default function LandingPage() {
     const start = () => router.push(session ? homeHref(session) : '/register');
 
     return (
-        <div id='page-top' className='bg-background-gray-secondary_alt_2 h-full overflow-y-auto scroll-smooth'>
+        <div
+            id='page-top'
+            className='bg-background-gray-secondary_alt_2 h-full overflow-y-auto scroll-smooth'
+        >
             <LandingHeader signedIn={Boolean(session)} onStart={start} />
 
             <main>
@@ -86,7 +89,7 @@ function Tariffs({
     return (
         <section
             id='tariffs'
-            className='mx-auto max-w-7xl scroll-mt-20 px-4 sm:px-5 py-12 sm:py-16'
+            className='mx-auto max-w-7xl scroll-mt-20 px-4 py-12 sm:px-5 sm:py-16'
         >
             <SectionHeading
                 title={t('landing.tariffsTitle')}
@@ -104,13 +107,13 @@ function Tariffs({
                     </p>
                 </div>
             ) : (
-                <div className='relative mt-8 sm:mt-10 px-0 sm:px-4'>
+                <div className='relative mt-8 px-0 sm:mt-10 sm:px-4'>
                     {/* Previous Button */}
                     <button
                         type='button'
                         onClick={() => scroll('left')}
                         aria-label='Previous'
-                        className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary active:scale-95 absolute -left-1 sm:left-0 top-1/2 z-20 flex -translate-y-1/2 size-9 sm:size-12 items-center justify-center rounded-full border shadow-lg transition-all cursor-pointer'
+                        className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary absolute top-1/2 -left-1 z-20 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-lg transition-all active:scale-95 sm:left-0 sm:size-12'
                     >
                         <ChevronLeft className='size-4 sm:size-6' />
                     </button>
@@ -120,7 +123,7 @@ function Tariffs({
                         type='button'
                         onClick={() => scroll('right')}
                         aria-label='Next'
-                        className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary active:scale-95 absolute -right-1 sm:right-0 top-1/2 z-20 flex -translate-y-1/2 size-9 sm:size-12 items-center justify-center rounded-full border shadow-lg transition-all cursor-pointer'
+                        className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary absolute top-1/2 -right-1 z-20 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-lg transition-all active:scale-95 sm:right-0 sm:size-12'
                     >
                         <ChevronRight className='size-4 sm:size-6' />
                     </button>
@@ -128,13 +131,16 @@ function Tariffs({
                     {/* Horizontal Slider Track */}
                     <div
                         ref={scrollContainerRef}
-                        className='flex gap-4 sm:gap-5 overflow-x-auto py-3 px-4 sm:px-12 scroll-smooth snap-x snap-mandatory rounded-2xl scrollbar-none'
-                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                        className='flex snap-x snap-mandatory scrollbar-none gap-4 overflow-x-auto scroll-smooth rounded-2xl px-4 py-3 sm:gap-5 sm:px-12'
+                        style={{
+                            scrollbarWidth: 'none',
+                            msOverflowStyle: 'none',
+                        }}
                     >
                         {tariffsQuery.data.map((tariff) => (
                             <div
                                 key={tariff.id}
-                                className='w-[260px] sm:w-[320px] lg:w-[330px] shrink-0 snap-center'
+                                className='w-[260px] shrink-0 snap-center sm:w-[320px] lg:w-[330px]'
                             >
                                 <TariffCard
                                     tariff={tariff}
@@ -156,4 +162,3 @@ function Tariffs({
         </section>
     );
 }
-

@@ -41,8 +41,8 @@ export function PaginationBar({
     const to = Math.min(offset + limit, count);
 
     return (
-        <div className='border-card-border flex flex-col gap-3 border-t px-4 sm:px-5 py-3 sm:py-4 sm:flex-row sm:items-center sm:justify-between'>
-            <p className='text-text-tertiary text-xs sm:text-sm tabular-nums text-center sm:text-left'>
+        <div className='border-card-border flex flex-col gap-3 border-t px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-4'>
+            <p className='text-text-tertiary text-center text-xs tabular-nums sm:text-left sm:text-sm'>
                 {t('pagination.summary', {
                     count: formatNumber(count),
                     from: formatNumber(from),
@@ -50,9 +50,11 @@ export function PaginationBar({
                 })}
             </p>
 
-            <div className='flex items-center justify-between sm:justify-end gap-3'>
+            <div className='flex items-center justify-between gap-3 sm:justify-end'>
                 <div className='text-text-tertiary flex items-center gap-1.5 text-xs sm:text-sm'>
-                    <span id={perPageId} className='hidden sm:inline'>{t('pagination.perPage')}</span>
+                    <span id={perPageId} className='hidden sm:inline'>
+                        {t('pagination.perPage')}
+                    </span>
                     <Select
                         value={String(limit)}
                         onValueChange={(next) => {
@@ -62,7 +64,7 @@ export function PaginationBar({
                     >
                         <SelectTrigger
                             aria-labelledby={perPageId}
-                            className='h-8.5 sm:h-9.5 w-auto gap-1 px-2.5 tabular-nums text-xs sm:text-sm'
+                            className='h-8.5 w-auto gap-1 px-2.5 text-xs tabular-nums sm:h-9.5 sm:text-sm'
                         >
                             <SelectValue />
                         </SelectTrigger>
@@ -71,7 +73,7 @@ export function PaginationBar({
                                 <SelectItem
                                     key={size}
                                     value={String(size)}
-                                    className='tabular-nums text-xs sm:text-sm'
+                                    className='text-xs tabular-nums sm:text-sm'
                                 >
                                     {size}
                                 </SelectItem>
@@ -91,7 +93,7 @@ export function PaginationBar({
                     >
                         {t('pagination.prev')}
                     </Button>
-                    <span className='text-text-tertiary px-1 text-xs sm:text-sm whitespace-nowrap tabular-nums font-medium'>
+                    <span className='text-text-tertiary px-1 text-xs font-medium whitespace-nowrap tabular-nums sm:text-sm'>
                         {currentPage} / {totalPages}
                     </span>
                     <Button

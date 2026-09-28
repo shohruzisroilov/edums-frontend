@@ -22,7 +22,7 @@ type TableRootProps = ComponentProps<'table'> &
 
 export function TableRoot({ className, fullBleed, ...props }: TableRootProps) {
     return (
-        <div className='overflow-x-auto scrollbar-thin'>
+        <div className='scrollbar-thin overflow-x-auto'>
             <table
                 className={cn(tableRootStyles({ fullBleed }), className)}
                 {...props}
@@ -48,7 +48,8 @@ export function TableBody({ className, ...props }: ComponentProps<'tbody'>) {
     return <tbody className={className} {...props} />;
 }
 
-const cellPadding = 'px-3 sm:px-5 py-2.5 sm:py-3.5 whitespace-nowrap text-xs sm:text-sm';
+const cellPadding =
+    'px-3 sm:px-5 py-2.5 sm:py-3.5 whitespace-nowrap text-xs sm:text-sm';
 
 const tableHeadStyles = cva(cellPadding, {
     variants: {
@@ -91,7 +92,10 @@ const tableCellStyles = cva(
         variants: {
             numeric: { true: 'text-right', false: '' },
             /** Qatorning asosiy ustuni — ismi yoki nomi. Mobil ekranda matn bir nechta mayda qatorga bo'linib ketmasligi uchun min-w berilgan. */
-            primary: { true: 'text-text-primary font-semibold min-w-[160px] sm:min-w-[200px]', false: '' },
+            primary: {
+                true: 'text-text-primary font-semibold min-w-[160px] sm:min-w-[200px]',
+                false: '',
+            },
         },
         defaultVariants: { numeric: false, primary: false },
     },

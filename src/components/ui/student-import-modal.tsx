@@ -177,8 +177,7 @@ export function StudentImportModal({
                         onDragLeave={() => setDragOver(false)}
                         onDrop={handleDrop}
                         onClick={() => fileInputRef.current?.click()}
-                        className={`border-2 border-dashed rounded-xl p-10 flex flex-col items-center justify-center gap-3 cursor-pointer transition select-none
-                            ${dragOver ? 'border-brand-accent bg-brand-accent/5' : 'border-card-border hover:border-brand-accent/50 hover:bg-background-gray-secondary'}`}
+                        className={`flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-10 transition select-none ${dragOver ? 'border-brand-accent bg-brand-accent/5' : 'border-card-border hover:border-brand-accent/50 hover:bg-background-gray-secondary'}`}
                     >
                         <div className='bg-background-gray-secondary flex size-14 items-center justify-center rounded-full'>
                             <svg
@@ -199,7 +198,9 @@ export function StudentImportModal({
                         <div className='text-center'>
                             <p className='text-text-primary text-sm font-medium'>
                                 Faylni shu yerga tashlang yoki{' '}
-                                <span className='text-brand-accent'>tanlang</span>
+                                <span className='text-brand-accent'>
+                                    tanlang
+                                </span>
                             </p>
                             <p className='text-text-tertiary mt-1 text-xs'>
                                 .csv, .xlsx, .xls — maksimal 10 MB
@@ -254,7 +255,7 @@ export function StudentImportModal({
                         <p className='text-text-tertiary text-xs'>{fileName}</p>
                     </div>
 
-                    <div className='border-card-border scrollbar-thin max-h-60 overflow-y-auto rounded-xl border'>
+                    <div className='border-card-border max-h-60 scrollbar-thin overflow-y-auto rounded-xl border'>
                         <table className='w-full text-left text-sm'>
                             <thead className='bg-background-gray-secondary border-b text-xs font-semibold uppercase'>
                                 <tr>

@@ -6,7 +6,13 @@ import { listLeads } from '@/services/api/leads';
 import { listStudents } from '@/services/api/students';
 import type { Group, Lead, Student } from '@/types/api';
 import { formatPhone } from '@/utils/format';
-import { Funnel1, OpenBook, Search1, UserCircle1, Xmark } from '@tailgrids/icons';
+import {
+    Funnel1,
+    OpenBook,
+    Search1,
+    UserCircle1,
+    Xmark,
+} from '@tailgrids/icons';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -61,9 +67,15 @@ export function GlobalSearchModal({
             setLoading(true);
             try {
                 const [stdRes, grpRes, leadRes] = await Promise.all([
-                    listStudents({ search: trimmed, limit: 5 }).catch(() => ({ data: [] })),
-                    listGroups({ search: trimmed, limit: 5 }).catch(() => ({ data: [] })),
-                    listLeads({ search: trimmed, limit: 5 }).catch(() => ({ data: [] })),
+                    listStudents({ search: trimmed, limit: 5 }).catch(() => ({
+                        data: [],
+                    })),
+                    listGroups({ search: trimmed, limit: 5 }).catch(() => ({
+                        data: [],
+                    })),
+                    listLeads({ search: trimmed, limit: 5 }).catch(() => ({
+                        data: [],
+                    })),
                 ]);
 
                 setStudents(stdRes.data || []);
@@ -92,7 +104,8 @@ export function GlobalSearchModal({
         handleClose();
     };
 
-    const hasResults = students.length > 0 || groups.length > 0 || leads.length > 0;
+    const hasResults =
+        students.length > 0 || groups.length > 0 || leads.length > 0;
 
     return (
         <div className='fixed inset-0 z-50 flex items-start justify-center p-4 pt-16 sm:pt-24'>
@@ -111,10 +124,10 @@ export function GlobalSearchModal({
                         value={query}
                         onChange={(e) => handleQueryChange(e.target.value)}
                         placeholder={t('header.searchPlaceholder')}
-                        className='text-text-primary placeholder:text-text-tertiary w-full bg-transparent text-base border-none outline-none ring-0 focus:outline-none focus:ring-0 focus:border-none focus-visible:outline-none focus-visible:ring-0'
+                        className='text-text-primary placeholder:text-text-tertiary w-full border-none bg-transparent text-base ring-0 outline-none focus:border-none focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none'
                         style={{ outline: 'none', boxShadow: 'none' }}
                     />
-                    <div className='flex items-center gap-2 shrink-0'>
+                    <div className='flex shrink-0 items-center gap-2'>
                         {query && (
                             <button
                                 type='button'
@@ -132,7 +145,7 @@ export function GlobalSearchModal({
                 </div>
 
                 {/* Search Results List */}
-                <div className='scrollbar-thin flex-1 overflow-y-auto p-4'>
+                <div className='flex-1 scrollbar-thin overflow-y-auto p-4'>
                     {loading && (
                         <div className='text-text-tertiary py-10 text-center text-sm font-medium'>
                             Qidirilmoqda…
@@ -144,9 +157,12 @@ export function GlobalSearchModal({
                             <div className='border-card-border bg-background-gray-secondary/50 mb-3 flex size-12 items-center justify-center rounded-2xl border'>
                                 <Search1 className='text-icon-tertiary size-5' />
                             </div>
-                            <p className='text-text-secondary text-sm font-medium'>Tezkor qidiruv</p>
+                            <p className='text-text-secondary text-sm font-medium'>
+                                Tezkor qidiruv
+                            </p>
                             <p className='text-text-tertiary mt-1 max-w-xs text-xs'>
-                                Ism, familiya, telefon raqami yoki guruh nomini kiritib qidiring
+                                Ism, familiya, telefon raqami yoki guruh nomini
+                                kiritib qidiring
                             </p>
                         </div>
                     )}
@@ -162,7 +178,7 @@ export function GlobalSearchModal({
                             {/* Students */}
                             {students.length > 0 && (
                                 <div>
-                                    <div className='text-text-tertiary mb-2 flex items-center gap-2 px-2 text-xs font-semibold uppercase tracking-wider'>
+                                    <div className='text-text-tertiary mb-2 flex items-center gap-2 px-2 text-xs font-semibold tracking-wider uppercase'>
                                         <UserCircle1 className='size-4' />
                                         <span>{t('header.studentsGroup')}</span>
                                     </div>
@@ -171,26 +187,36 @@ export function GlobalSearchModal({
                                             <button
                                                 key={student.id}
                                                 type='button'
-                                                onClick={() => navigateTo(`/students/${student.id}`)}
+                                                onClick={() =>
+                                                    navigateTo(
+                                                        `/students/${student.id}`,
+                                                    )
+                                                }
                                                 className='hover:bg-background-gray-secondary flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition-colors'
                                             >
                                                 <div>
                                                     <div className='text-text-primary text-sm font-medium'>
-                                                        {student.first_name} {student.last_name}
+                                                        {student.first_name}{' '}
+                                                        {student.last_name}
                                                     </div>
                                                     <div className='text-text-tertiary text-xs'>
-                                                        {formatPhone(student.phone_number)}
+                                                        {formatPhone(
+                                                            student.phone_number,
+                                                        )}
                                                     </div>
                                                 </div>
                                                 <span className='text-text-tertiary text-xs'>
                                                     {student.balance != null ? (
                                                         student.balance < 0 ? (
-                                                            <span className='text-red-600 font-medium dark:text-red-400'>
-                                                                {student.balance.toLocaleString()} so'm
+                                                            <span className='font-medium text-red-600 dark:text-red-400'>
+                                                                {student.balance.toLocaleString()}{' '}
+                                                                so'm
                                                             </span>
                                                         ) : (
-                                                            <span className='text-emerald-600 font-medium dark:text-emerald-400'>
-                                                                +{student.balance.toLocaleString()} so'm
+                                                            <span className='font-medium text-emerald-600 dark:text-emerald-400'>
+                                                                +
+                                                                {student.balance.toLocaleString()}{' '}
+                                                                so'm
                                                             </span>
                                                         )
                                                     ) : null}
@@ -204,7 +230,7 @@ export function GlobalSearchModal({
                             {/* Groups */}
                             {groups.length > 0 && (
                                 <div>
-                                    <div className='text-text-tertiary mb-2 flex items-center gap-2 px-2 text-xs font-semibold uppercase tracking-wider'>
+                                    <div className='text-text-tertiary mb-2 flex items-center gap-2 px-2 text-xs font-semibold tracking-wider uppercase'>
                                         <OpenBook className='size-4' />
                                         <span>{t('header.groupsGroup')}</span>
                                     </div>
@@ -213,7 +239,11 @@ export function GlobalSearchModal({
                                             <button
                                                 key={group.id}
                                                 type='button'
-                                                onClick={() => navigateTo(`/groups/${group.id}`)}
+                                                onClick={() =>
+                                                    navigateTo(
+                                                        `/groups/${group.id}`,
+                                                    )
+                                                }
                                                 className='hover:bg-background-gray-secondary flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition-colors'
                                             >
                                                 <div>
@@ -221,11 +251,13 @@ export function GlobalSearchModal({
                                                         {group.name}
                                                     </div>
                                                     <div className='text-text-tertiary text-xs'>
-                                                        {group.course?.name || ''}
+                                                        {group.course?.name ||
+                                                            ''}
                                                     </div>
                                                 </div>
                                                 <span className='text-text-tertiary text-xs font-medium'>
-                                                    {group.students_count ?? 0} o'quvchi
+                                                    {group.students_count ?? 0}{' '}
+                                                    o'quvchi
                                                 </span>
                                             </button>
                                         ))}
@@ -236,7 +268,7 @@ export function GlobalSearchModal({
                             {/* Leads */}
                             {leads.length > 0 && (
                                 <div>
-                                    <div className='text-text-tertiary mb-2 flex items-center gap-2 px-2 text-xs font-semibold uppercase tracking-wider'>
+                                    <div className='text-text-tertiary mb-2 flex items-center gap-2 px-2 text-xs font-semibold tracking-wider uppercase'>
                                         <Funnel1 className='size-4' />
                                         <span>{t('header.leadsGroup')}</span>
                                     </div>
@@ -245,15 +277,22 @@ export function GlobalSearchModal({
                                             <button
                                                 key={lead.id}
                                                 type='button'
-                                                onClick={() => navigateTo(`/leads?search=${encodeURIComponent(lead.first_name)}`)}
+                                                onClick={() =>
+                                                    navigateTo(
+                                                        `/leads?search=${encodeURIComponent(lead.first_name)}`,
+                                                    )
+                                                }
                                                 className='hover:bg-background-gray-secondary flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition-colors'
                                             >
                                                 <div>
                                                     <div className='text-text-primary text-sm font-medium'>
-                                                        {lead.first_name} {lead.last_name || ''}
+                                                        {lead.first_name}{' '}
+                                                        {lead.last_name || ''}
                                                     </div>
                                                     <div className='text-text-tertiary text-xs'>
-                                                        {formatPhone(lead.phone_number)}
+                                                        {formatPhone(
+                                                            lead.phone_number,
+                                                        )}
                                                     </div>
                                                 </div>
                                                 <span className='bg-background-gray-secondary text-text-secondary rounded-lg px-2 py-0.5 text-xs'>

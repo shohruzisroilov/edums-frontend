@@ -74,12 +74,15 @@ export function LandingFooter() {
             <div className='border-card-border border-t'>
                 <div className='mx-auto flex max-w-6xl items-center justify-between px-5 py-5'>
                     <p className='text-text-tertiary text-sm'>
-                        © {new Date().getFullYear()} EduMS. Barcha huquqlar himoyalangan.
+                        © {new Date().getFullYear()} EduMS. Barcha huquqlar
+                        himoyalangan.
                     </p>
                     <button
                         type='button'
                         onClick={() => {
-                            document.getElementById('page-top')?.scrollTo({ top: 0, behavior: 'smooth' });
+                            document
+                                .getElementById('page-top')
+                                ?.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
                         className='border-card-border text-text-tertiary hover:text-text-primary hover:bg-card-border flex size-9 items-center justify-center rounded-lg border transition'
                         aria-label='Yuqoriga chiqish'

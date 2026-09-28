@@ -92,7 +92,13 @@ function DebtorsView() {
     const activeBranch = branches.find((b) => b.id === filters.branch_id);
     const activeCount = filters.branch_id ? 1 : 0;
     const activeChips = activeBranch
-        ? [{ key: 'branch', label: `Filial: ${activeBranch.name}`, onRemove: () => setFilter('branch_id', '') }]
+        ? [
+              {
+                  key: 'branch',
+                  label: `Filial: ${activeBranch.name}`,
+                  onRemove: () => setFilter('branch_id', ''),
+              },
+          ]
         : [];
 
     const allDebtors = query.data?.data ?? [];
@@ -100,7 +106,9 @@ function DebtorsView() {
         if (selectedIds.length === allDebtors.length) {
             setSelectedIds([]);
         } else {
-            setSelectedIds(allDebtors.map((d) => `${d.student.id}:${d.group.id}`));
+            setSelectedIds(
+                allDebtors.map((d) => `${d.student.id}:${d.group.id}`),
+            );
         }
     };
 
@@ -144,10 +152,20 @@ function DebtorsView() {
                                 onPress={() => {
                                     exportToCsv(
                                         'Qarzdorlar',
-                                        ['O\'quvchi', 'Telefon', 'Guruh', 'Hisoblangan (som)', 'To\'langan (som)', 'Qarzi (som)'],
+                                        [
+                                            "O'quvchi",
+                                            'Telefon',
+                                            'Guruh',
+                                            'Hisoblangan (som)',
+                                            "To'langan (som)",
+                                            'Qarzi (som)',
+                                        ],
                                         allDebtors.map((d) => [
                                             fullName(d.student),
-                                            formatPhone(d.student.phone_number || d.student.parent_phone),
+                                            formatPhone(
+                                                d.student.phone_number ||
+                                                    d.student.parent_phone,
+                                            ),
                                             d.group.name,
                                             d.charged,
                                             d.paid,
@@ -164,8 +182,8 @@ function DebtorsView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-3 px-4 sm:px-5 pb-4'>
-                <div className='flex-1 min-w-[200px]'>
+            <div className='flex flex-wrap items-center gap-3 px-4 pb-4 sm:px-5'>
+                <div className='min-w-[200px] flex-1'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
@@ -188,11 +206,13 @@ function DebtorsView() {
                                 }))}
                                 placeholder={t('groups.allBranches')}
                                 value={filters.branch_id}
-                                onValueChange={(next) => setFilter('branch_id', next)}
+                                onValueChange={(next) =>
+                                    setFilter('branch_id', next)
+                                }
                             />
                         </MobileFilterSheet>
 
-                        <div className='hidden sm:block w-48'>
+                        <div className='hidden w-48 sm:block'>
                             <SelectInput
                                 options={branches.map((branch) => ({
                                     value: branch.id,
@@ -200,14 +220,16 @@ function DebtorsView() {
                                 }))}
                                 placeholder={t('groups.allBranches')}
                                 value={filters.branch_id}
-                                onValueChange={(next) => setFilter('branch_id', next)}
+                                onValueChange={(next) =>
+                                    setFilter('branch_id', next)
+                                }
                             />
                         </div>
                     </>
                 )}
 
                 {query.data && query.data.total_debt > 0 && (
-                    <p className='text-badge-error-text ml-auto text-xs sm:text-sm font-semibold tabular-nums'>
+                    <p className='text-badge-error-text ml-auto text-xs font-semibold tabular-nums sm:text-sm'>
                         {t('debtors.total', {
                             amount: formatPrice(query.data.total_debt, som),
                         })}
@@ -285,7 +307,8 @@ function DebtorsView() {
                                 <TableBody>
                                     {allDebtors.map((debtor, index) => {
                                         const key = `${debtor.student.id}:${debtor.group.id}`;
-                                        const isSelected = selectedIds.includes(key);
+                                        const isSelected =
+                                            selectedIds.includes(key);
 
                                         return (
                                             <TableRow key={key}>
@@ -293,7 +316,9 @@ function DebtorsView() {
                                                     <CheckboxInput
                                                         label=''
                                                         checked={isSelected}
-                                                        onChange={() => toggleSelect(key)}
+                                                        onChange={() =>
+                                                            toggleSelect(key)
+                                                        }
                                                     />
                                                 </TableCell>
                                                 <RowNumberCell
@@ -320,8 +345,10 @@ function DebtorsView() {
                                                 <TableCell className='tabular-nums'>
                                                     <PhoneLink
                                                         phone={
-                                                            debtor.student.phone_number ??
-                                                            debtor.student.parent_phone
+                                                            debtor.student
+                                                                .phone_number ??
+                                                            debtor.student
+                                                                .parent_phone
                                                         }
                                                     />
                                                 </TableCell>
@@ -332,13 +359,19 @@ function DebtorsView() {
                                                     )}
                                                 </TableCell>
                                                 <TableCell numeric>
-                                                    {formatPrice(debtor.paid, som)}
+                                                    {formatPrice(
+                                                        debtor.paid,
+                                                        som,
+                                                    )}
                                                 </TableCell>
                                                 <TableCell
                                                     numeric
                                                     className='text-badge-error-text font-semibold'
                                                 >
-                                                    {formatPrice(debtor.debt, som)}
+                                                    {formatPrice(
+                                                        debtor.debt,
+                                                        som,
+                                                    )}
                                                 </TableCell>
                                                 {canPay && (
                                                     <TableCell>

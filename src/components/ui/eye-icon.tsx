@@ -20,7 +20,13 @@ export function EyeIcon({ className = 'size-4' }: { className?: string }) {
 }
 
 /** Amallar ustunida boshqa tugmalar bilan bir xil ko'rinishdagi "ochish" tugmasi */
-export function EyeLinkButton({ href, label = 'Ochish' }: { href: string; label?: string }) {
+export function EyeLinkButton({
+    href,
+    label = 'Ochish',
+}: {
+    href: string;
+    label?: string;
+}) {
     return (
         <Link
             href={href}

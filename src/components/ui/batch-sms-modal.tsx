@@ -30,7 +30,7 @@ export function BatchSmsModal({
             toast.success(`${recipients.length} ta qarzdorga SMS yuborildi!`);
             onClose();
         } catch (e) {
-            toast.error("SMS yuborishda xatolik yuz berdi");
+            toast.error('SMS yuborishda xatolik yuz berdi');
         } finally {
             setSending(false);
         }
@@ -40,19 +40,28 @@ export function BatchSmsModal({
         <Modal
             open={open}
             onClose={onClose}
-            title="Qarzdorlarga SMS yuborish"
+            title='Qarzdorlarga SMS yuborish'
             size='md'
         >
             <div className='space-y-4'>
                 <p className='text-text-tertiary text-sm'>
-                    Tanlangan {recipients.length} ta o'quvchiga matn jo'natiladi:
+                    Tanlangan {recipients.length} ta o'quvchiga matn
+                    jo'natiladi:
                 </p>
 
-                <div className='border-card-border bg-background-gray-secondary scrollbar-thin max-h-36 overflow-y-auto rounded-xl border p-2.5 text-xs space-y-1'>
+                <div className='border-card-border bg-background-gray-secondary max-h-36 scrollbar-thin space-y-1 overflow-y-auto rounded-xl border p-2.5 text-xs'>
                     {recipients.map((r, i) => (
-                        <div key={i} className='flex items-center justify-between'>
-                            <span className='text-text-primary font-medium'>{r.name}</span>
-                            <span className='text-text-tertiary tabular-nums'>{formatPhone(r.phone)} ({r.debt.toLocaleString()} so'm)</span>
+                        <div
+                            key={i}
+                            className='flex items-center justify-between'
+                        >
+                            <span className='text-text-primary font-medium'>
+                                {r.name}
+                            </span>
+                            <span className='text-text-tertiary tabular-nums'>
+                                {formatPhone(r.phone)} (
+                                {r.debt.toLocaleString()} so'm)
+                            </span>
                         </div>
                     ))}
                 </div>
@@ -65,17 +74,28 @@ export function BatchSmsModal({
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         rows={4}
-                        className='border-card-border bg-card-surface-area text-text-primary w-full rounded-xl border p-3 text-sm outline-none focus:border-input-primary-focus-border'
+                        className='border-card-border bg-card-surface-area text-text-primary focus:border-input-primary-focus-border w-full rounded-xl border p-3 text-sm outline-none'
                     />
                 </div>
 
                 <div className='flex items-center justify-end gap-2 pt-2'>
-                    <Button appearance='outline' onPress={onClose} isDisabled={sending}>
+                    <Button
+                        appearance='outline'
+                        onPress={onClose}
+                        isDisabled={sending}
+                    >
                         {t('common.cancel')}
                     </Button>
-                    <Button variant='primary' appearance='fill' onPress={handleSend} isDisabled={sending}>
+                    <Button
+                        variant='primary'
+                        appearance='fill'
+                        onPress={handleSend}
+                        isDisabled={sending}
+                    >
                         <Send1 className='size-4' />
-                        {sending ? 'Yuborilmoqda…' : `${recipients.length} ta SMS yuborish`}
+                        {sending
+                            ? 'Yuborilmoqda…'
+                            : `${recipients.length} ta SMS yuborish`}
                     </Button>
                 </div>
             </div>

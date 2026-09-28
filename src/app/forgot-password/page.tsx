@@ -1,6 +1,8 @@
 'use client';
 
-import { AuthHeader } from '@/components/common/auth-header';
+import { AppLogo } from '@/components/common/app-logo';
+import ThemeToggle from '@/components/common/header/theme-toggle';
+import { LocaleSwitcher } from '@/components/common/locale-switcher';
 import { Button } from '@/components/tailgrids/core/button';
 import { FormError } from '@/components/ui/form-error';
 import { TextInput } from '@/components/ui/form-field';
@@ -20,11 +22,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, type FormEvent } from 'react';
 
-/**
- * "Parolni unutdim": 1) login telefoniga SMS kod, 2) kod va yangi parol.
- * Muvaffaqiyatli bo'lsa backend login javobini qaytaradi — foydalanuvchi
- * darhol tizimga kiradi. Faqat markaz foydalanuvchilari uchun.
- */
+const SUPPORT_TELEGRAM = 'https://t.me/edumsuz';
+
+const STEPS = [
+    'Telefon raqamingizni kiriting',
+    'SMS tasdiqlash kodini qabul qiling',
+    'Yangi xavfsiz parol o‘rnating',
+];
+
 export default function ForgotPasswordPage() {
     const router = useRouter();
     const { session, loading, signIn } = useSession();
@@ -44,7 +49,7 @@ export default function ForgotPasswordPage() {
         if (!loading && session) router.replace(homeHref(session));
     }, [loading, session, router]);
 
-    // Qayta yuborish tugmasi uchun teskari sanoq.
+    // Qayta yuborish tugmasi uchun teskari sanoq
     useEffect(() => {
         if (resendIn <= 0) return;
         const timer = setTimeout(() => setResendIn((s) => s - 1), 1000);
@@ -103,143 +108,270 @@ export default function ForgotPasswordPage() {
     }
 
     return (
-        <div className='bg-background-gray-secondary_alt_2 flex h-full flex-col overflow-y-auto'>
-            <AuthHeader />
+        <div className='bg-background-gray-secondary_alt_2 flex h-full overflow-hidden'>
+            {/* ── Chap: brend paneli ── */}
+            <div className='bg-brand-500 relative hidden flex-col justify-between overflow-hidden p-12 text-white lg:flex lg:w-[45%]'>
+                {/* Gradient nurlar */}
+                <div className='absolute -top-32 -left-32 size-96 rounded-full bg-white/10 blur-[80px]' />
+                <div className='absolute -right-20 -bottom-32 size-96 rounded-full bg-white/10 blur-[80px]' />
+                <div className='absolute top-1/2 left-1/2 size-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/5 blur-2xl' />
 
-            <div className='flex flex-1 items-center justify-center p-4 py-8'>
-                <div className='border-card-border bg-card-surface-area w-full max-w-md rounded-2xl border p-8 shadow-sm'>
-                    <div className='mb-7 flex flex-col items-center gap-3 text-center'>
-                        <h1 className='text-text-primary font-display text-xl font-semibold'>
-                            {t('forgot.title')}
-                        </h1>
-                        <p className='text-text-tertiary text-sm'>
-                            {step === 'phone'
-                                ? t('forgot.subtitle')
-                                : t('register.codeSent', { phone })}
-                        </p>
-                    </div>
+                {/* Grid nuqtalari */}
+                <div
+                    className='absolute inset-0 opacity-10'
+                    style={{
+                        backgroundImage:
+                            'radial-gradient(circle, white 1px, transparent 1px)',
+                        backgroundSize: '28px 28px',
+                    }}
+                />
 
-                    {step === 'phone' ? (
-                        <form
-                            onSubmit={handlePhone}
-                            className='flex flex-col gap-4'
-                        >
-                            <PhoneInput
-                                label={t('common.phoneNumber')}
-                                required
-                                hint={t('forgot.phoneHint')}
-                                value={phone}
-                                onValueChange={setPhone}
-                            />
+                {/* Logo */}
+                <div className='relative'>
+                    <Link
+                        href='/'
+                        className='inline-block transition-opacity hover:opacity-90'
+                    >
+                        <AppLogo variant='white' />
+                    </Link>
+                </div>
 
-                            {error && <FormError message={error} />}
-
-                            <Button
-                                type='submit'
-                                variant='primary'
-                                appearance='fill'
-                                size='lg'
-                                isDisabled={pending || phone.length !== 13}
-                                className='mt-1 w-full'
+                {/* Asosiy kontent */}
+                <div className='relative space-y-6'>
+                    <h2 className='font-display text-3xl leading-tight font-bold sm:text-4xl'>
+                        Hisobingizga kirishni
+                        <br />
+                        <span className='relative inline-block'>
+                            qayta tiklang
+                            <svg
+                                className='absolute -bottom-1 left-0 w-full'
+                                viewBox='0 0 120 8'
+                                fill='none'
                             >
-                                {pending
-                                    ? t('register.sending')
-                                    : t('register.sendCode')}
-                            </Button>
-                        </form>
-                    ) : (
-                        <form
-                            onSubmit={handleReset}
-                            className='flex flex-col gap-4'
-                        >
-                            <TextInput
-                                label={t('register.code')}
-                                required
-                                inputMode='numeric'
-                                autoComplete='one-time-code'
-                                maxLength={codeLength}
-                                placeholder={'•'.repeat(codeLength)}
-                                className='text-center text-lg tracking-[0.5em]'
-                                value={code}
-                                onChange={(e) =>
-                                    setCode(e.target.value.replace(/\D/g, ''))
-                                }
-                            />
-                            <PasswordInput
-                                label={t('users.newPassword')}
-                                required
-                                minLength={8}
-                                maxLength={72}
-                                autoComplete='new-password'
-                                hint={t('users.passwordHint')}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                            <PasswordInput
-                                label={t('profile.repeatPassword')}
-                                required
-                                minLength={8}
-                                maxLength={72}
-                                autoComplete='new-password'
-                                value={repeat}
-                                onChange={(e) => setRepeat(e.target.value)}
-                            />
+                                <path
+                                    d='M2 6 C30 2, 90 2, 118 6'
+                                    stroke='white'
+                                    strokeWidth='2.5'
+                                    strokeLinecap='round'
+                                    opacity='0.5'
+                                />
+                            </svg>
+                        </span>
+                    </h2>
 
-                            {error && <FormError message={error} />}
-
-                            <Button
-                                type='submit'
-                                variant='primary'
-                                appearance='fill'
-                                size='lg'
-                                isDisabled={
-                                    pending ||
-                                    code.length !== codeLength ||
-                                    password.length < 8
-                                }
-                                className='w-full'
-                            >
-                                {pending
-                                    ? t('common.saving')
-                                    : t('forgot.submit')}
-                            </Button>
-
-                            <div className='flex items-center justify-between text-sm'>
-                                <button
-                                    type='button'
-                                    className='text-text-tertiary hover:text-text-primary'
-                                    onClick={() => {
-                                        setStep('phone');
-                                        setCode('');
-                                        setError(null);
-                                    }}
-                                >
-                                    {t('forgot.changePhone')}
-                                </button>
-                                <button
-                                    type='button'
-                                    disabled={resendIn > 0 || pending}
-                                    className='text-brand-accent disabled:text-text-tertiary font-medium'
-                                    onClick={() => void sendCode()}
-                                >
-                                    {resendIn > 0
-                                        ? t('register.resendIn', {
-                                              seconds: resendIn,
-                                          })
-                                        : t('register.resend')}
-                                </button>
-                            </div>
-                        </form>
-                    )}
-
-                    <p className='text-text-tertiary mt-6 text-center text-sm'>
-                        <Link
-                            href='/login'
-                            className='text-brand-accent font-medium hover:underline'
-                        >
-                            {t('forgot.backToLogin')}
-                        </Link>
+                    <p className='text-base leading-relaxed text-white/70'>
+                        Xavfsizlik maqsadida parolingiz faqat telefoningizga
+                        yuboriladigan bir martalik SMS kod orqali yangilanadi.
                     </p>
+
+                    <ul className='space-y-3 pt-1'>
+                        {STEPS.map((item) => (
+                            <li
+                                key={item}
+                                className='flex items-center gap-3 text-sm text-white/85'
+                            >
+                                <span className='flex size-5 shrink-0 items-center justify-center rounded-full bg-white/20'>
+                                    <svg
+                                        className='size-3'
+                                        viewBox='0 0 24 24'
+                                        fill='none'
+                                        stroke='currentColor'
+                                        strokeWidth='3'
+                                    >
+                                        <path d='M20 6 9 17l-5-5' />
+                                    </svg>
+                                </span>
+                                {item}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <p className='relative text-xs text-white/40'>
+                    © {new Date().getFullYear()} EduMS. Barcha huquqlar
+                    himoyalangan.
+                </p>
+            </div>
+
+            {/* ── O'ng: forma ── */}
+            <div className='flex flex-1 flex-col overflow-y-auto'>
+                {/* Header */}
+                <header className='flex items-center justify-between px-6 py-4'>
+                    <Link href='/' className='lg:hidden'>
+                        <AppLogo />
+                    </Link>
+                    <div className='ml-auto flex items-center gap-2'>
+                        <LocaleSwitcher />
+                        <ThemeToggle />
+                    </div>
+                </header>
+
+                {/* Forma */}
+                <div className='flex flex-1 items-center justify-center p-6'>
+                    <div className='w-full max-w-sm'>
+                        {/* Step indicator */}
+                        <div className='mb-6 flex items-center gap-2'>
+                            <div className='bg-brand-500 h-1.5 flex-1 rounded-full' />
+                            <div
+                                className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+                                    step === 'code'
+                                        ? 'bg-brand-500'
+                                        : 'bg-card-border'
+                                }`}
+                            />
+                        </div>
+
+                        <div className='mb-8 text-center'>
+                            <h1 className='text-text-primary font-display text-2xl font-bold'>
+                                {t('forgot.title')}
+                            </h1>
+                            <p className='text-text-tertiary mt-2 text-sm'>
+                                {step === 'phone'
+                                    ? t('forgot.subtitle')
+                                    : `${phone} raqamiga yuborilgan ${codeLength} xonali kodni kiriting`}
+                            </p>
+                        </div>
+
+                        {step === 'phone' ? (
+                            <form
+                                onSubmit={handlePhone}
+                                className='flex flex-col gap-4'
+                            >
+                                <PhoneInput
+                                    label={t('common.phoneNumber')}
+                                    required
+                                    hint={t('forgot.phoneHint')}
+                                    value={phone}
+                                    onValueChange={setPhone}
+                                />
+
+                                {error && <FormError message={error} />}
+
+                                <Button
+                                    type='submit'
+                                    variant='primary'
+                                    appearance='fill'
+                                    size='lg'
+                                    isDisabled={pending || phone.length !== 13}
+                                    className='shadow-brand-500/20 w-full shadow-md'
+                                >
+                                    {pending
+                                        ? t('register.sending')
+                                        : t('register.sendCode')}
+                                </Button>
+                            </form>
+                        ) : (
+                            <form
+                                onSubmit={handleReset}
+                                className='flex flex-col gap-4'
+                            >
+                                <TextInput
+                                    label={t('register.code')}
+                                    required
+                                    inputMode='numeric'
+                                    autoComplete='one-time-code'
+                                    maxLength={codeLength}
+                                    placeholder={'•'.repeat(codeLength)}
+                                    className='text-center text-lg tracking-[0.5em]'
+                                    value={code}
+                                    onChange={(e) =>
+                                        setCode(
+                                            e.target.value.replace(/\D/g, ''),
+                                        )
+                                    }
+                                />
+                                <PasswordInput
+                                    label={t('users.newPassword')}
+                                    required
+                                    minLength={8}
+                                    maxLength={72}
+                                    autoComplete='new-password'
+                                    hint={t('users.passwordHint')}
+                                    value={password}
+                                    onChange={(e) =>
+                                        setPassword(e.target.value)
+                                    }
+                                />
+                                <PasswordInput
+                                    label={t('profile.repeatPassword')}
+                                    required
+                                    minLength={8}
+                                    maxLength={72}
+                                    autoComplete='new-password'
+                                    value={repeat}
+                                    onChange={(e) => setRepeat(e.target.value)}
+                                />
+
+                                {error && <FormError message={error} />}
+
+                                <Button
+                                    type='submit'
+                                    variant='primary'
+                                    appearance='fill'
+                                    size='lg'
+                                    isDisabled={
+                                        pending ||
+                                        code.length !== codeLength ||
+                                        password.length < 8
+                                    }
+                                    className='shadow-brand-500/20 w-full shadow-md'
+                                >
+                                    {pending
+                                        ? t('common.saving')
+                                        : t('forgot.submit')}
+                                </Button>
+
+                                <div className='flex items-center justify-between text-sm'>
+                                    <button
+                                        type='button'
+                                        className='text-text-tertiary hover:text-text-primary transition-colors'
+                                        onClick={() => {
+                                            setStep('phone');
+                                            setCode('');
+                                            setError(null);
+                                        }}
+                                    >
+                                        {t('forgot.changePhone')}
+                                    </button>
+                                    <button
+                                        type='button'
+                                        disabled={resendIn > 0 || pending}
+                                        className='text-brand-accent disabled:text-text-tertiary font-medium transition-colors hover:underline'
+                                        onClick={() => void sendCode()}
+                                    >
+                                        {resendIn > 0
+                                            ? t('register.resendIn', {
+                                                  seconds: resendIn,
+                                              })
+                                            : t('register.resend')}
+                                    </button>
+                                </div>
+                            </form>
+                        )}
+
+                        <div className='mt-8 space-y-3 text-center'>
+                            <p className='text-text-secondary text-sm'>
+                                Parolingiz esingizdami?{' '}
+                                <Link
+                                    href='/login'
+                                    className='text-brand-accent font-semibold hover:underline'
+                                >
+                                    {t('auth.signIn')}
+                                </Link>
+                            </p>
+                            <p className='text-text-tertiary text-xs'>
+                                {t('auth.contact')}{' '}
+                                <a
+                                    href={SUPPORT_TELEGRAM}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className='text-brand-accent font-medium hover:underline'
+                                >
+                                    @edumsuz
+                                </a>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

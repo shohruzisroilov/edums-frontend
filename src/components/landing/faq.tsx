@@ -37,7 +37,7 @@ export function Faq({ trialDays }: { trialDays: number }) {
                                 <ChevronDown className='text-text-tertiary size-4' />
                             </span>
                         </summary>
-                        <div className='border-card-border border-t px-6 pb-5 pt-4'>
+                        <div className='border-card-border border-t px-6 pt-4 pb-5'>
                             <p className='text-text-secondary text-sm leading-relaxed'>
                                 {t(item.a, { days: trialDays })}
                             </p>

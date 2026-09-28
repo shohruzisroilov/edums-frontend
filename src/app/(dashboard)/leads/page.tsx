@@ -107,7 +107,16 @@ function LeadsView() {
     const [deleting, setDeleting] = useState<Lead | null>(null);
 
     const query = useQuery({
-        queryKey: ['leads', { search, ...filters, limit, offset: viewMode === 'kanban' ? 0 : offset, limitVal: viewMode === 'kanban' ? 100 : limit }],
+        queryKey: [
+            'leads',
+            {
+                search,
+                ...filters,
+                limit,
+                offset: viewMode === 'kanban' ? 0 : offset,
+                limitVal: viewMode === 'kanban' ? 100 : limit,
+            },
+        ],
         queryFn: () =>
             listLeads({
                 search: search || undefined,
@@ -217,7 +226,7 @@ function LeadsView() {
             />
 
             {/* Voronka: karta bosilsa shu holat bo'yicha filtrlanadi. */}
-            <div className='grid grid-cols-2 gap-3 px-4 sm:px-5 pb-4 sm:grid-cols-3 lg:grid-cols-5'>
+            <div className='grid grid-cols-2 gap-3 px-4 pb-4 sm:grid-cols-3 sm:px-5 lg:grid-cols-5'>
                 {LEAD_STATUSES.map((status) => {
                     const active = filters.status === status;
 
@@ -250,8 +259,8 @@ function LeadsView() {
                 })}
             </div>
 
-            <div className='flex flex-wrap items-center gap-2.5 px-4 sm:px-5 pb-4'>
-                <div className='flex-1 min-w-[220px]'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5'>
+                <div className='min-w-[220px] flex-1'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
@@ -260,17 +269,31 @@ function LeadsView() {
                 </div>
 
                 <MobileFilterSheet
-                    activeCount={(filters.status ? 1 : 0) + (filters.source ? 1 : 0)}
+                    activeCount={
+                        (filters.status ? 1 : 0) + (filters.source ? 1 : 0)
+                    }
                     onClear={() => {
                         setFilter('status', '');
                         setFilter('source', '');
                     }}
                     activeChips={[
                         ...(filters.status
-                            ? [{ key: 'status', label: `Holat: ${t(`leadStatus.${filters.status as LeadStatus}`)}`, onRemove: () => setFilter('status', '') }]
+                            ? [
+                                  {
+                                      key: 'status',
+                                      label: `Holat: ${t(`leadStatus.${filters.status as LeadStatus}`)}`,
+                                      onRemove: () => setFilter('status', ''),
+                                  },
+                              ]
                             : []),
                         ...(filters.source
-                            ? [{ key: 'source', label: `Manba: ${t(`leadSource.${filters.source as LeadSource}`)}`, onRemove: () => setFilter('source', '') }]
+                            ? [
+                                  {
+                                      key: 'source',
+                                      label: `Manba: ${t(`leadSource.${filters.source as LeadSource}`)}`,
+                                      onRemove: () => setFilter('source', ''),
+                                  },
+                              ]
                             : []),
                     ]}
                 >
@@ -296,7 +319,7 @@ function LeadsView() {
                     />
                 </MobileFilterSheet>
 
-                <div className='hidden sm:flex items-center gap-3'>
+                <div className='hidden items-center gap-3 sm:flex'>
                     <div className='w-44'>
                         <SelectInput
                             options={LEAD_STATUSES.map((status) => ({
@@ -333,7 +356,9 @@ function LeadsView() {
                             message={t('leads.empty')}
                             icon={<Funnel1 className='size-5' />}
                             action={
-                                Boolean(search || filters.status || filters.source) ? (
+                                Boolean(
+                                    search || filters.status || filters.source,
+                                ) ? (
                                     <Button
                                         appearance='outline'
                                         size='md'
@@ -365,7 +390,14 @@ function LeadsView() {
                 ) : viewMode === 'kanban' ? (
                     <LeadKanbanBoard
                         leads={query.data.data}
-                        onStatusChange={(id, status) => statusMutation.mutate({ id, status: status as NonNullable<LeadPayload['status']> })}
+                        onStatusChange={(id, status) =>
+                            statusMutation.mutate({
+                                id,
+                                status: status as NonNullable<
+                                    LeadPayload['status']
+                                >,
+                            })
+                        }
                         onEdit={(lead) => {
                             setEditing(lead);
                             setFormOpen(true);

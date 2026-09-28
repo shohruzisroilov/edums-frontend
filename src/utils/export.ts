@@ -8,7 +8,9 @@ export function exportToCsv(
     headers: string[],
     rows: (string | number | boolean | null | undefined)[][],
 ) {
-    const escapeCsv = (val: string | number | boolean | null | undefined): string => {
+    const escapeCsv = (
+        val: string | number | boolean | null | undefined,
+    ): string => {
         if (val === null || val === undefined) return '""';
         const str = String(val).replace(/"/g, '""');
         return `"${str}"`;

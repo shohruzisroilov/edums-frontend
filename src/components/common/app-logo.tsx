@@ -14,7 +14,11 @@ export interface AppLogoProps {
  * Mavzuga qarab to'g'ri logotipni tanlaydi. Server joriy mavzuni bilmagani
  * uchun mount'gacha yorug' variant chiziladi — bu hydration mosligini saqlaydi.
  */
-export function AppLogo({ collapsed = false, className, variant }: AppLogoProps) {
+export function AppLogo({
+    collapsed = false,
+    className,
+    variant,
+}: AppLogoProps) {
     const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 

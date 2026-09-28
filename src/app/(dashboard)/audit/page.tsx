@@ -139,7 +139,7 @@ function AuditView() {
                 description={t('audit.subtitle')}
             />
 
-            <div className='flex items-center gap-3 px-4 sm:px-5 pb-4'>
+            <div className='flex items-center gap-3 px-4 pb-4 sm:px-5'>
                 <div className='hidden sm:flex sm:flex-wrap sm:items-center sm:gap-3'>
                     {filterElements}
                 </div>
@@ -264,8 +264,15 @@ function Details({ log }: { log: AuditLog }) {
                     <dt className='text-text-tertiary font-medium'>
                         {fieldLabel(key, t)}:
                     </dt>
-                    <dd className='tabular-nums text-text-primary'>
-                        {formatValue(key, value, log.action, t, formatPrice, formatDate)}
+                    <dd className='text-text-primary tabular-nums'>
+                        {formatValue(
+                            key,
+                            value,
+                            log.action,
+                            t,
+                            formatPrice,
+                            formatDate,
+                        )}
                     </dd>
                 </div>
             ))}
@@ -295,7 +302,8 @@ function formatValue(
     }
 
     if (
-        (MONEY_FIELDS.has(key) || (key === 'value' && action.startsWith('salary.'))) &&
+        (MONEY_FIELDS.has(key) ||
+            (key === 'value' && action.startsWith('salary.'))) &&
         typeof value === 'number'
     ) {
         return formatPrice(value, t('common.som'));
@@ -321,19 +329,23 @@ function formatValue(
     if (key === 'status' && typeof value === 'string') {
         if (action.startsWith('lead.')) {
             const translated = t(`leadStatus.${value}` as TranslationKey);
-            if (translated && !translated.startsWith('leadStatus.')) return translated;
+            if (translated && !translated.startsWith('leadStatus.'))
+                return translated;
         }
         if (action.startsWith('group.')) {
             const translated = t(`groupStatus.${value}` as TranslationKey);
-            if (translated && !translated.startsWith('groupStatus.')) return translated;
+            if (translated && !translated.startsWith('groupStatus.'))
+                return translated;
         }
         if (action.startsWith('student.')) {
             const translated = t(`studentStatus.${value}` as TranslationKey);
-            if (translated && !translated.startsWith('studentStatus.')) return translated;
+            if (translated && !translated.startsWith('studentStatus.'))
+                return translated;
         }
         if (action.startsWith('education.')) {
             const translated = t(`educationStatus.${value}` as TranslationKey);
-            if (translated && !translated.startsWith('educationStatus.')) return translated;
+            if (translated && !translated.startsWith('educationStatus.'))
+                return translated;
         }
         if (value === 'active') return t('common.active');
         if (value === 'inactive') return t('common.inactive');
