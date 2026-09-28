@@ -34,8 +34,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
     title: {
-        template: '%s | EDU MS',
-        default: "EDU MS — O'quv markaz boshqaruv tizimi",
+        template: '%s | EDUMS',
+        default: "EDUMS — O'quv markaz boshqaruv tizimi",
     },
     description:
         "O'quv markazlarini boshqarish tizimi: markazlar, tariflar, xodimlar va o'quvchilar.",
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     appleWebApp: {
         capable: true,
         statusBarStyle: 'default',
-        title: 'EDU MS',
+        title: 'EDUMS',
     },
     formatDetection: {
         telephone: false,

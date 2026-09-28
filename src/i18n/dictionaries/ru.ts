@@ -86,7 +86,7 @@ export const ru: Dictionary = {
     'nav.roles': 'Роли',
     'nav.educations': 'Учебные центры',
     'nav.profile': 'Профиль',
-    'nav.home': 'EDU MS главная',
+    'nav.home': 'EDUMS главная',
     'nav.openMenu': 'Открыть меню',
     'nav.closeMenu': 'Закрыть меню',
     'nav.collapse': 'Свернуть меню',
@@ -416,7 +416,7 @@ export const ru: Dictionary = {
     'smsSettings.fromHint': 'Ник или номер от Eskiz, например 4546',
     'smsSettings.template': 'Шаблон SMS',
     'smsSettings.templateHint':
-        '{code} — место кода. Например: EduMS: tasdiqlash kodi {code}',
+        '{code} — место кода. Например: EDUMS: tasdiqlash kodi {code}',
     'smsSettings.templateMissingCode': 'В шаблоне должен быть {code}',
     'smsSettings.saved': 'Настройки SMS сохранены',
     'smsSettings.testTitle': 'Тестовое SMS',

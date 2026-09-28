@@ -187,7 +187,7 @@ export default function LoginPage() {
                 </div>
 
                 <p className='relative text-xs text-white/40'>
-                    © {new Date().getFullYear()} EduMS. Barcha huquqlar
+                    © {new Date().getFullYear()} EDUMS. Barcha huquqlar
                     himoyalangan.
                 </p>
             </div>

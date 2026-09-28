@@ -1,4 +1,4 @@
-# EDU MS Frontend — AI agent qoidalari
+# EDUMS Frontend — AI agent qoidalari
 
 > Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · TanStack Query
 
