@@ -20,7 +20,6 @@ import {
     PAGES_WITHOUT_SUBSCRIPTION,
     hasActiveSubscription,
 } from '@/utils/access';
-import { MobileBottomNav } from '@/components/common/mobile-bottom-nav';
 import { cn } from '@/utils/cn';
 import { useQuery } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
@@ -146,7 +145,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                     <Header onMenuClick={() => setIsMobileSheetOpen(true)} />
 
                     <main className='min-h-0 flex-1 scrollbar-thin overflow-y-auto'>
-                        <div className='mx-auto w-full max-w-384 pb-20 md:pb-6'>
+                        <div className='mx-auto w-full max-w-384 pb-6'>
                             <SubscriptionBanner />
                             {/* Sahifalar manzildagi parametrlarni o'qiydi
                                 (filtrlar, ?new=1) — Next buning uchun
@@ -162,7 +161,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                             </Suspense>
                         </div>
                     </main>
-                    <MobileBottomNav />
                 </div>
             </div>
         </div>
