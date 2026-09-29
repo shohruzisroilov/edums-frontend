@@ -1,5 +1,6 @@
 'use client';
 
+import { CalendarIcon } from '@/components/ui/calendar-icon';
 import {
     Select,
     SelectContent,
@@ -8,8 +9,9 @@ import {
     SelectValue,
 } from '@/components/ui/shadcn/select';
 import { cn } from '@/utils/cn';
+import { isValidISODate, normalizeDateString } from '@/utils/format';
 import type { ComponentProps, ReactNode } from 'react';
-import { useId } from 'react';
+import { useId, useRef, useState } from 'react';
 
 const controlClasses =
     'w-full rounded-lg border border-card-border bg-input-background px-4 py-2.5 text-sm text-title-50 outline-none transition placeholder:text-input-placeholder-text focus:border-input-primary-focus-border focus:ring-4 focus:ring-input-primary-focus-border/20 disabled:cursor-not-allowed disabled:opacity-60';
@@ -118,9 +120,25 @@ export function TextInput({
         /** Maydon ichida, o'ng chetda turadigan tugma: parolni ko'rsatish. */
         action?: ReactNode;
     }) {
-    const { inputId, hintId, errorId } = useFieldIds(id);
+    const ids = useFieldIds(id);
 
-    const isDateInput = props.type === 'date';
+    if (props.type === 'date') {
+        return (
+            <DateInputField
+                label={label}
+                error={error}
+                hint={hint}
+                prefix={prefix}
+                suffix={suffix}
+                action={action}
+                className={className}
+                ids={ids}
+                {...props}
+            />
+        );
+    }
+
+    const { inputId, hintId, errorId } = ids;
 
     const field = (
         <input
@@ -132,8 +150,6 @@ export function TextInput({
                 prefix && 'pl-14',
                 suffix && 'pr-16',
                 action && 'pr-11',
-                isDateInput &&
-                    '[&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-75 hover:[&::-webkit-calendar-picker-indicator]:opacity-100 dark:[&::-webkit-calendar-picker-indicator]:invert-[0.85]',
                 error &&
                     'border-red-500 focus:border-red-500 focus:ring-red-500/20',
                 className,
@@ -185,6 +201,214 @@ export function TextInput({
             ) : (
                 field
             )}
+        </FieldShell>
+    );
+}
+
+function DateInputField({
+    label,
+    error,
+    hint,
+    prefix,
+    suffix,
+    action,
+    className,
+    ids,
+    value,
+    defaultValue,
+    onChange,
+    onBlur,
+    onKeyDown,
+    placeholder = 'YYYY-MM-DD',
+    min,
+    max,
+    disabled,
+    required,
+    name,
+    ...restProps
+}: BaseProps &
+    ComponentProps<'input'> & {
+        prefix?: string;
+        suffix?: string;
+        action?: ReactNode;
+        ids: ReturnType<typeof useFieldIds>;
+    }) {
+    const { inputId, hintId, errorId } = ids;
+    const pickerRef = useRef<HTMLInputElement>(null);
+
+    const initialVal =
+        value !== undefined
+            ? String(value)
+            : defaultValue !== undefined
+              ? String(defaultValue)
+              : '';
+    const [prevPropValue, setPrevPropValue] = useState(value);
+    const [textValue, setTextValue] = useState(initialVal);
+
+    if (value !== prevPropValue) {
+        setPrevPropValue(value);
+        setTextValue(value !== undefined ? String(value) : '');
+    }
+
+    const emitChange = (nextIsoDate: string) => {
+        if (onChange) {
+            const event = {
+                target: { value: nextIsoDate, name: name || '' },
+                currentTarget: { value: nextIsoDate, name: name || '' },
+            } as unknown as React.ChangeEvent<HTMLInputElement>;
+            onChange(event);
+        }
+    };
+
+    const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const raw = e.target.value;
+        setTextValue(raw);
+
+        if (raw.trim() === '') {
+            emitChange('');
+            return;
+        }
+
+        const normalized = normalizeDateString(raw);
+        if (normalized) {
+            emitChange(normalized);
+        }
+    };
+
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+        const trimmed = textValue.trim();
+        if (!trimmed) {
+            if (value) emitChange('');
+        } else {
+            const normalized = normalizeDateString(trimmed);
+            if (normalized) {
+                setTextValue(normalized);
+                if (normalized !== value) {
+                    emitChange(normalized);
+                }
+            } else {
+                setTextValue(value !== undefined ? String(value) : '');
+            }
+        }
+        onBlur?.(e);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            const trimmed = textValue.trim();
+            const normalized = normalizeDateString(trimmed);
+            if (normalized) {
+                setTextValue(normalized);
+                if (normalized !== value) {
+                    emitChange(normalized);
+                }
+            }
+        }
+        onKeyDown?.(e);
+    };
+
+    const openCalendarPicker = () => {
+        if (pickerRef.current) {
+            try {
+                pickerRef.current.showPicker();
+            } catch {
+                pickerRef.current.focus();
+            }
+        }
+    };
+
+    const dateAction = action ?? (
+        <button
+            type='button'
+            tabIndex={-1}
+            disabled={disabled}
+            aria-label='Kalendardan tanlash'
+            title='Kalendardan tanlash'
+            onClick={openCalendarPicker}
+            className='text-text-tertiary hover:text-text-primary relative flex size-8 items-center justify-center rounded-lg transition hover:bg-black/5 dark:hover:bg-white/5'
+        >
+            <CalendarIcon className='size-4' />
+            <input
+                ref={pickerRef}
+                type='date'
+                tabIndex={-1}
+                aria-hidden='true'
+                disabled={disabled}
+                min={min}
+                max={max}
+                value={isValidISODate(textValue) ? textValue : ''}
+                onChange={(e) => {
+                    const picked = e.target.value;
+                    if (picked) {
+                        setTextValue(picked);
+                        emitChange(picked);
+                    }
+                }}
+                className='pointer-events-none absolute inset-0 size-full opacity-0'
+            />
+        </button>
+    );
+
+    const field = (
+        <input
+            {...restProps}
+            id={inputId}
+            type='text'
+            inputMode='text'
+            name={name}
+            disabled={disabled}
+            required={required}
+            placeholder={placeholder}
+            value={textValue}
+            onChange={handleTextChange}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            aria-invalid={error ? true : undefined}
+            aria-describedby={describedBy(hint, error, hintId, errorId)}
+            className={cn(
+                controlClasses,
+                prefix && 'pl-14',
+                'pr-11',
+                suffix && 'pr-20',
+                error &&
+                    'border-red-500 focus:border-red-500 focus:ring-red-500/20',
+                className,
+            )}
+        />
+    );
+
+    return (
+        <FieldShell
+            label={label}
+            htmlFor={inputId}
+            required={required}
+            error={error}
+            hint={hint}
+            hintId={hintId}
+            errorId={errorId}
+        >
+            <div className='relative'>
+                {prefix && (
+                    <span
+                        aria-hidden='true'
+                        className='text-text-secondary pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-sm'
+                    >
+                        {prefix}
+                    </span>
+                )}
+                {field}
+                {suffix && (
+                    <span
+                        aria-hidden='true'
+                        className='text-text-tertiary pointer-events-none absolute top-1/2 right-12 -translate-y-1/2 text-sm'
+                    >
+                        {suffix}
+                    </span>
+                )}
+                <div className='absolute top-1/2 right-1.5 -translate-y-1/2'>
+                    {dateAction}
+                </div>
+            </div>
         </FieldShell>
     );
 }

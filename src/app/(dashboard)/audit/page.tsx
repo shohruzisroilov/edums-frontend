@@ -68,8 +68,15 @@ function AuditView() {
     const t = useT();
     const { formatDateTime } = useFormat();
 
-    const { filters, setFilter, limit, setLimit, offset, setOffset } =
-        useListQuery({ entity_type: '', actor_id: '', from: '', to: '' });
+    const {
+        filters,
+        setFilter,
+        setFilters,
+        limit,
+        setLimit,
+        offset,
+        setOffset,
+    } = useListQuery({ entity_type: '', actor_id: '', from: '', to: '' });
 
     const query = useQuery({
         queryKey: ['audit-logs', { ...filters, limit, offset }],
@@ -123,10 +130,7 @@ function AuditView() {
             <DateRangeFilter
                 from={filters.from}
                 to={filters.to}
-                onDateChange={({ from, to }) => {
-                    setFilter('from', from);
-                    setFilter('to', to);
-                }}
+                onDateChange={(range) => setFilters(range)}
             />
         </>
     );

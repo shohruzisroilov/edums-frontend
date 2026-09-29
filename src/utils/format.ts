@@ -109,6 +109,87 @@ export function toISODate(date: Date): string {
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
+/**
+ * Har qanday kiritilgan sanani `YYYY-MM-DD` ISO formatiga o'tkazadi:
+ * - `2026-09-29`
+ * - `29.09.2026`, `29/09/2026`, `29-09-2026`
+ * - `2026.09.29`, `2026/09/29`
+ * - `29092026` yoki `20260929`
+ * - `5.9.2026` -> `2026-09-05`
+ * Noto'g'ri bo'lsa null qaytaradi; bo'sh satr bo'lsa '' qaytaradi.
+ */
+export function normalizeDateString(raw: string): string | null {
+    const trimmed = (raw || '').trim();
+    if (!trimmed) return '';
+
+    // Match YYYY-MM-DD or YYYY.MM.DD or YYYY/MM/DD
+    const isoMatch = /^(\d{4})[-./](\d{1,2})[-./](\d{1,2})$/.exec(trimmed);
+    if (isoMatch) {
+        const year = parseInt(isoMatch[1], 10);
+        const month = parseInt(isoMatch[2], 10);
+        const day = parseInt(isoMatch[3], 10);
+        if (isValidDateParts(year, month, day)) {
+            return `${String(year).padStart(4, '0')}-${pad(month)}-${pad(day)}`;
+        }
+    }
+
+    // Match DD.MM.YYYY or DD/MM/YYYY or DD-MM-YYYY
+    const dmyMatch = /^(\d{1,2})[-./](\d{1,2})[-./](\d{4})$/.exec(trimmed);
+    if (dmyMatch) {
+        const day = parseInt(dmyMatch[1], 10);
+        const month = parseInt(dmyMatch[2], 10);
+        const year = parseInt(dmyMatch[3], 10);
+        if (isValidDateParts(year, month, day)) {
+            return `${String(year).padStart(4, '0')}-${pad(month)}-${pad(day)}`;
+        }
+    }
+
+    // 8 raw digits: YYYYMMDD
+    if (/^(19|20)\d{6}$/.test(trimmed)) {
+        const year = parseInt(trimmed.slice(0, 4), 10);
+        const month = parseInt(trimmed.slice(4, 6), 10);
+        const day = parseInt(trimmed.slice(6, 8), 10);
+        if (isValidDateParts(year, month, day)) {
+            return `${String(year).padStart(4, '0')}-${pad(month)}-${pad(day)}`;
+        }
+    }
+
+    // 8 raw digits: DDMMYYYY
+    if (/^\d{4}(19|20)\d{2}$/.test(trimmed)) {
+        const day = parseInt(trimmed.slice(0, 2), 10);
+        const month = parseInt(trimmed.slice(2, 4), 10);
+        const year = parseInt(trimmed.slice(4, 8), 10);
+        if (isValidDateParts(year, month, day)) {
+            return `${String(year).padStart(4, '0')}-${pad(month)}-${pad(day)}`;
+        }
+    }
+
+    return null;
+}
+
+export function isValidDateParts(
+    year: number,
+    month: number,
+    day: number,
+): boolean {
+    if (year < 1900 || year > 2100) return false;
+    if (month < 1 || month > 12) return false;
+    if (day < 1 || day > 31) return false;
+    const d = new Date(year, month - 1, day);
+    return (
+        d.getFullYear() === year &&
+        d.getMonth() === month - 1 &&
+        d.getDate() === day
+    );
+}
+
+export function isValidISODate(
+    value?: string | number | readonly string[],
+): boolean {
+    if (typeof value !== 'string') return false;
+    return /^\d{4}-\d{2}-\d{2}$/.test(value);
+}
+
 /** Til bilan bog'liq emas — hamma joyda "Familiya Ism" tartibida. */
 export function fullName(person: {
     first_name: string;
