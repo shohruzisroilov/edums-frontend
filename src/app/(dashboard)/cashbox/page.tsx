@@ -77,6 +77,7 @@ function CashboxView() {
         setSearch,
         filters,
         setFilter,
+        setFilters,
         limit,
         setLimit,
         offset,
@@ -241,10 +242,7 @@ function CashboxView() {
                         <DateRangeFilter
                             from={filters.from}
                             to={filters.to}
-                            onDateChange={({ from, to }) => {
-                                setFilter('from', from);
-                                setFilter('to', to);
-                            }}
+                            onDateChange={(range) => setFilters(range)}
                         />
                     </div>
                 </MobileFilterSheet>
@@ -264,10 +262,7 @@ function CashboxView() {
                     <DateRangeFilter
                         from={filters.from}
                         to={filters.to}
-                        onDateChange={({ from, to }) => {
-                            setFilter('from', from);
-                            setFilter('to', to);
-                        }}
+                        onDateChange={(range) => setFilters(range)}
                     />
                 </div>
             </div>

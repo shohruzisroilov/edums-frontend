@@ -75,8 +75,15 @@ function ExpensesView() {
     const queryClient = useQueryClient();
     const canManage = can(session, 'expenses.manage');
 
-    const { filters, setFilter, limit, setLimit, offset, setOffset } =
-        useListQuery({ category: '', from: '', to: '' });
+    const {
+        filters,
+        setFilter,
+        setFilters,
+        limit,
+        setLimit,
+        offset,
+        setOffset,
+    } = useListQuery({ category: '', from: '', to: '' });
 
     const [creating, setCreating] = useState(false);
     const [deleting, setDeleting] = useState<Expense | null>(null);
@@ -216,10 +223,7 @@ function ExpensesView() {
                         <DateRangeFilter
                             from={filters.from}
                             to={filters.to}
-                            onDateChange={({ from, to }) => {
-                                setFilter('from', from);
-                                setFilter('to', to);
-                            }}
+                            onDateChange={(range) => setFilters(range)}
                         />
                     </div>
                 </MobileFilterSheet>
@@ -241,10 +245,7 @@ function ExpensesView() {
                     <DateRangeFilter
                         from={filters.from}
                         to={filters.to}
-                        onDateChange={({ from, to }) => {
-                            setFilter('from', from);
-                            setFilter('to', to);
-                        }}
+                        onDateChange={(range) => setFilters(range)}
                     />
                 </div>
             </div>

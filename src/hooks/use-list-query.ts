@@ -63,6 +63,22 @@ export function useListQuery<TFilters extends Record<string, string>>(
         [update, defaults],
     );
 
+    const setFilters = useCallback(
+        (values: Partial<TFilters>) => {
+            const changes: Record<string, string | null> = {
+                [PAGE_PARAM]: null,
+            };
+            for (const [key, value] of Object.entries(values)) {
+                changes[key] =
+                    value === undefined || value === defaults[key]
+                        ? null
+                        : (value as string);
+            }
+            update(changes);
+        },
+        [update, defaults],
+    );
+
     const setLimit = useCallback(
         (value: number) =>
             update({
@@ -85,6 +101,7 @@ export function useListQuery<TFilters extends Record<string, string>>(
         setSearch,
         filters,
         setFilter,
+        setFilters,
         limit,
         setLimit,
         offset,

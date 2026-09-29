@@ -128,13 +128,13 @@ export function DateRangeFilter({
 
             {/* Custom Range Inputs */}
             <div className='flex w-full items-center gap-2 sm:w-auto'>
-                <div className='flex-1 sm:w-36 sm:flex-none'>
+                <div className='flex-1 sm:w-40 sm:flex-none'>
                     <TextInput
                         type='date'
                         aria-label={t('common.from')}
                         title={t('common.from')}
+                        placeholder={t('common.from')}
                         value={from}
-                        max={to || undefined}
                         onChange={(e) =>
                             onDateChange({ from: e.target.value, to })
                         }
@@ -143,13 +143,13 @@ export function DateRangeFilter({
                 <span className='text-text-tertiary shrink-0 text-xs font-medium'>
                     —
                 </span>
-                <div className='flex-1 sm:w-36 sm:flex-none'>
+                <div className='flex-1 sm:w-40 sm:flex-none'>
                     <TextInput
                         type='date'
                         aria-label={t('common.to')}
                         title={t('common.to')}
+                        placeholder={t('common.to')}
                         value={to}
-                        min={from || undefined}
                         onChange={(e) =>
                             onDateChange({ from, to: e.target.value })
                         }
