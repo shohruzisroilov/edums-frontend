@@ -127,23 +127,13 @@ export function TextInput({
             id={inputId}
             aria-invalid={error ? true : undefined}
             aria-describedby={describedBy(hint, error, hintId, errorId)}
-            onClick={(e) => {
-                if (isDateInput && 'showPicker' in e.currentTarget) {
-                    try {
-                        (e.currentTarget as HTMLInputElement).showPicker();
-                    } catch {
-                        // ignore if showPicker throws
-                    }
-                }
-                props.onClick?.(e);
-            }}
             className={cn(
                 controlClasses,
                 prefix && 'pl-14',
                 suffix && 'pr-16',
                 action && 'pr-11',
                 isDateInput &&
-                    'cursor-pointer [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-75 hover:[&::-webkit-calendar-picker-indicator]:opacity-100 dark:[&::-webkit-calendar-picker-indicator]:invert-[0.85]',
+                    '[&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-75 hover:[&::-webkit-calendar-picker-indicator]:opacity-100 dark:[&::-webkit-calendar-picker-indicator]:invert-[0.85]',
                 error &&
                     'border-red-500 focus:border-red-500 focus:ring-red-500/20',
                 className,
