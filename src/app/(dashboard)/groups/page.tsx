@@ -463,11 +463,9 @@ function GroupsView() {
                                         <TableHead>
                                             {t('common.status')}
                                         </TableHead>
-                                        {(canUpdate || canDelete) && (
-                                            <TableHead className='text-right'>
-                                                {t('common.actions')}
-                                            </TableHead>
-                                        )}
+                                        <TableHead className='text-right'>
+                                            {t('common.actions')}
+                                        </TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -515,53 +513,51 @@ function GroupsView() {
                                                     status={group.status}
                                                 />
                                             </TableCell>
-                                            {(canUpdate || canDelete) && (
-                                                <TableCell>
-                                                    <div className='flex justify-end gap-2'>
-                                                        <EyeLinkButton
-                                                            href={`/groups/${group.id}`}
-                                                        />
-                                                        {canUpdate && (
-                                                            <Button
-                                                                appearance='outline'
-                                                                size='md'
-                                                                iconOnly
-                                                                aria-label={t(
-                                                                    'common.edit',
-                                                                )}
-                                                                onPress={() => {
-                                                                    setEditing(
-                                                                        group,
-                                                                    );
-                                                                    setFormOpen(
-                                                                        true,
-                                                                    );
-                                                                }}
-                                                            >
-                                                                <Pencil1 />
-                                                            </Button>
-                                                        )}
-                                                        {canDelete && (
-                                                            <Button
-                                                                variant='danger'
-                                                                appearance='outline'
-                                                                size='md'
-                                                                iconOnly
-                                                                aria-label={t(
-                                                                    'common.delete',
-                                                                )}
-                                                                onPress={() =>
-                                                                    setDeleting(
-                                                                        group,
-                                                                    )
-                                                                }
-                                                            >
-                                                                <Trash1 />
-                                                            </Button>
-                                                        )}
-                                                    </div>
-                                                </TableCell>
-                                            )}
+                                            <TableCell>
+                                                <div className='flex justify-end gap-2'>
+                                                    <EyeLinkButton
+                                                        href={`/groups/${group.id}`}
+                                                    />
+                                                    {canUpdate && (
+                                                        <Button
+                                                            appearance='outline'
+                                                            size='md'
+                                                            iconOnly
+                                                            aria-label={t(
+                                                                'common.edit',
+                                                            )}
+                                                            onPress={() => {
+                                                                setEditing(
+                                                                    group,
+                                                                );
+                                                                setFormOpen(
+                                                                    true,
+                                                                );
+                                                            }}
+                                                        >
+                                                            <Pencil1 />
+                                                        </Button>
+                                                    )}
+                                                    {canDelete && (
+                                                        <Button
+                                                            variant='danger'
+                                                            appearance='outline'
+                                                            size='md'
+                                                            iconOnly
+                                                            aria-label={t(
+                                                                'common.delete',
+                                                            )}
+                                                            onPress={() =>
+                                                                setDeleting(
+                                                                    group,
+                                                                )
+                                                            }
+                                                        >
+                                                            <Trash1 />
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>

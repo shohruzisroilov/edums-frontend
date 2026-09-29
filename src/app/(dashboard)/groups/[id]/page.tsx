@@ -21,6 +21,7 @@ import {
     AddStudentToGroupModal,
     EnrollmentEditModal,
 } from '@/components/ui/enrollment-modals';
+import { EyeLinkButton } from '@/components/ui/eye-icon';
 import { CheckboxInput } from '@/components/ui/form-field';
 import { LessonSchedule } from '@/components/ui/lesson-schedule';
 import { PageHeader } from '@/components/ui/page-header';
@@ -211,7 +212,7 @@ function GroupDetailView() {
                                     {t('students.monthlyPrice')}
                                 </TableHead>
                                 <TableHead>{t('common.status')}</TableHead>
-                                {canUpdateStudents && (
+                                {(canOpenStudents || canUpdateStudents) && (
                                     <TableHead className='text-right'>
                                         {t('common.actions')}
                                     </TableHead>
@@ -264,24 +265,31 @@ function GroupDetailView() {
                                             </Badge>
                                         )}
                                     </TableCell>
-                                    {canUpdateStudents && (
+                                    {(canOpenStudents || canUpdateStudents) && (
                                         <TableCell>
-                                            <div className='flex justify-end'>
-                                                <Button
-                                                    appearance='outline'
-                                                    size='md'
-                                                    iconOnly
-                                                    aria-label={t(
-                                                        'common.edit',
-                                                    )}
-                                                    onPress={() =>
-                                                        setEditingEnrollment(
-                                                            enrollment,
-                                                        )
-                                                    }
-                                                >
-                                                    <Pencil1 />
-                                                </Button>
+                                            <div className='flex justify-end gap-2'>
+                                                {canOpenStudents && (
+                                                    <EyeLinkButton
+                                                        href={`/students/${enrollment.student.id}`}
+                                                    />
+                                                )}
+                                                {canUpdateStudents && (
+                                                    <Button
+                                                        appearance='outline'
+                                                        size='md'
+                                                        iconOnly
+                                                        aria-label={t(
+                                                            'common.edit',
+                                                        )}
+                                                        onPress={() =>
+                                                            setEditingEnrollment(
+                                                                enrollment,
+                                                            )
+                                                        }
+                                                    >
+                                                        <Pencil1 />
+                                                    </Button>
+                                                )}
                                             </div>
                                         </TableCell>
                                     )}

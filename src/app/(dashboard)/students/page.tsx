@@ -83,7 +83,8 @@ function StudentsView() {
     const canDelete = can(session, 'students.delete');
     const canViewPayments = can(session, 'payments.view');
     const canPay = can(session, 'payments.create');
-    const hasActions = canUpdate || canDelete || canPay;
+    // Har doim ko'zcha (ochish) tugmasi ko'rinishi uchun hasActions barcha uchun true
+    const hasActions = true;
 
     const {
         search,
