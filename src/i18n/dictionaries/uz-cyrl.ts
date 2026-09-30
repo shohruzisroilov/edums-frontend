@@ -78,6 +78,8 @@ export const uzCyrl: Dictionary = {
     'auth.showPassword': 'Паролни кўрсатиш',
     'auth.hidePassword': 'Паролни яшириш',
     'auth.contact': 'Ҳисоб очиш ёки саволлар учун:',
+    'auth.demoAccount': 'Демо ҳисоб',
+    'auth.fillDemo': 'Демо маълумотларини тўлдириш',
 
     /* ── Меню ────────────────────────────────────────────────────────── */
     'nav.management': 'БОШҚАРУВ',
@@ -356,6 +358,10 @@ export const uzCyrl: Dictionary = {
     'landing.navTariffs': 'Тарифлар',
     'landing.openCabinet': 'Кабинетга ўтиш',
     'landing.startFree': 'Бепул бошлаш',
+    'landing.demoBadge': 'Демо ҳисоб',
+    'landing.demoTitle': 'Тизимни синаб кўриш учун:',
+    'landing.demoLoginBtn': 'Демога кириш',
+    'landing.demoCopied': 'Нусха олинди',
     'landing.heroTitle': 'Ўқув марказингизни битта тизимда бошқаринг',
     'landing.heroText':
         'Гуруҳлар, давомат, тўловлар, қарздорлар, лидлар ва ўқитувчи ойлиги — ҳаммаси бир жойда. Ким тўламаганини, қайси гуруҳ тўлганини ва ой охирида қанча фойда қолганини бир қарашда кўрасиз.',

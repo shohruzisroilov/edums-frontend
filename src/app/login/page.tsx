@@ -24,6 +24,8 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState, type FormEvent } from 'react';
 
 const SUPPORT_TELEGRAM = 'https://t.me/edumsuz';
+const DEMO_PHONE = '+998940080473';
+const DEMO_PASSWORD = 'shohruz2003dev';
 
 async function signInWithPhone(
     phone_number: string,
@@ -85,6 +87,18 @@ export default function LoginPage() {
         if (loading || !session) return;
         router.replace(homeHref(session));
     }, [loading, session, router]);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('demo') === '1' || params.get('demo') === 'true') {
+            const timer = setTimeout(() => {
+                setPhone(DEMO_PHONE);
+                setPassword(DEMO_PASSWORD);
+            }, 0);
+            return () => clearTimeout(timer);
+        }
+    }, []);
 
     async function handleSubmit(event: FormEvent) {
         event.preventDefault();
@@ -215,6 +229,35 @@ export default function LoginPage() {
                             <p className='text-text-tertiary mt-2 text-sm'>
                                 {t('auth.subtitle')}
                             </p>
+                        </div>
+
+                        {/* Demo hisob info qutisi */}
+                        <div className='border-brand-500/25 bg-brand-500/5 mb-5 rounded-2xl border p-3.5 text-xs shadow-xs'>
+                            <div className='flex items-center justify-between'>
+                                <span className='text-brand-accent flex items-center gap-1.5 font-semibold'>
+                                    <span className='bg-brand-500 size-1.5 animate-pulse rounded-full' />
+                                    {t('auth.demoAccount')}
+                                </span>
+                                <button
+                                    type='button'
+                                    onClick={() => {
+                                        setPhone(DEMO_PHONE);
+                                        setPassword(DEMO_PASSWORD);
+                                    }}
+                                    className='text-brand-accent cursor-pointer font-semibold hover:underline'
+                                >
+                                    {t('auth.fillDemo')}
+                                </button>
+                            </div>
+                            <div className='text-text-secondary mt-1.5 flex items-center justify-between font-mono text-[11px]'>
+                                <span className='select-all'>
+                                    +998 94 008 04 73
+                                </span>
+                                <span>•</span>
+                                <span className='select-all'>
+                                    shohruz2003dev
+                                </span>
+                            </div>
                         </div>
 
                         <form

@@ -82,6 +82,8 @@ export const uz = {
     'auth.showPassword': "Parolni ko'rsatish",
     'auth.hidePassword': 'Parolni yashirish',
     'auth.contact': 'Hisob ochish yoki savollar uchun:',
+    'auth.demoAccount': 'Demo hisob',
+    'auth.fillDemo': "Demo ma'lumotlarini to'ldirish",
 
     /* ── Menyu ───────────────────────────────────────────────────────── */
     'nav.management': 'BOSHQARUV',
@@ -360,6 +362,10 @@ export const uz = {
     'landing.navTariffs': 'Tariflar',
     'landing.openCabinet': "Kabinetga o'tish",
     'landing.startFree': 'Bepul boshlash',
+    'landing.demoBadge': 'Demo hisob',
+    'landing.demoTitle': "Tizimni sinab ko'rish uchun:",
+    'landing.demoLoginBtn': 'Demoga kirish',
+    'landing.demoCopied': 'Nusxa olindi',
     'landing.heroTitle': "O'quv markazingizni bitta tizimda boshqaring",
     'landing.heroText':
         "Guruhlar, davomat, to'lovlar, qarzdorlar, lidlar va o'qituvchi oyligi — hammasi bir joyda. Kim to'lamaganini, qaysi guruh to'lganini va oy oxirida qancha foyda qolganini bir qarashda ko'rasiz.",

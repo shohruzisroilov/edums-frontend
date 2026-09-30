@@ -2,10 +2,22 @@
 
 import { Button } from '@/components/tailgrids/core/button';
 import { useT } from '@/i18n/provider';
+import { Check, Copy1 } from '@tailgrids/icons';
+import Link from 'next/link';
+import { useState } from 'react';
 import { ImageSlot } from './image-slot';
 
 export function Hero({ onStart }: { onStart: () => void }) {
     const t = useT();
+    const [copiedField, setCopiedField] = useState<'phone' | 'pass' | null>(
+        null,
+    );
+
+    const handleCopy = (text: string, field: 'phone' | 'pass') => {
+        void navigator.clipboard.writeText(text);
+        setCopiedField(field);
+        setTimeout(() => setCopiedField(null), 2000);
+    };
 
     return (
         <section className='relative overflow-hidden'>
@@ -56,6 +68,93 @@ export function Hero({ onStart }: { onStart: () => void }) {
                     >
                         {t('landing.seeFeatures')}
                     </Button>
+                </div>
+
+                {/* Demo hisob kartasi */}
+                <div className='mx-auto mt-7 max-w-xl px-2 sm:mt-9 sm:px-0'>
+                    <div className='border-brand-500/25 bg-brand-500/5 relative overflow-hidden rounded-2xl border p-4 shadow-sm backdrop-blur-sm sm:p-5'>
+                        <div className='border-card-border/60 flex flex-wrap items-center justify-between gap-2 border-b pb-3'>
+                            <div className='flex items-center gap-2'>
+                                <span className='bg-brand-500/15 text-brand-accent inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold'>
+                                    <span className='bg-brand-500 size-1.5 animate-pulse rounded-full' />
+                                    {t('landing.demoBadge')}
+                                </span>
+                                <span className='text-text-secondary text-xs font-medium sm:text-sm'>
+                                    {t('landing.demoTitle')}
+                                </span>
+                            </div>
+                            <Link
+                                href='/login?demo=1'
+                                className='text-brand-accent inline-flex items-center gap-1 text-xs font-semibold transition hover:underline sm:text-sm'
+                            >
+                                {t('landing.demoLoginBtn')} →
+                            </Link>
+                        </div>
+
+                        <div className='mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2'>
+                            {/* Telefon */}
+                            <div className='border-card-border bg-card-surface-area flex items-center justify-between rounded-xl border px-3.5 py-2.5 shadow-xs'>
+                                <div className='flex flex-col'>
+                                    <span className='text-text-tertiary text-[11px] font-semibold tracking-wider uppercase'>
+                                        {t('common.phoneNumber')}
+                                    </span>
+                                    <span className='text-text-primary font-mono text-sm font-bold tracking-wide select-all'>
+                                        +998 94 008 04 73
+                                    </span>
+                                </div>
+                                <button
+                                    type='button'
+                                    onClick={() =>
+                                        handleCopy('+998 94 008 04 73', 'phone')
+                                    }
+                                    title={
+                                        copiedField === 'phone'
+                                            ? t('landing.demoCopied')
+                                            : 'Nusxa olish'
+                                    }
+                                    aria-label='Copy phone'
+                                    className='text-text-tertiary hover:text-text-primary hover:bg-background-gray-secondary cursor-pointer rounded-md p-1.5 transition-colors'
+                                >
+                                    {copiedField === 'phone' ? (
+                                        <Check className='size-4 text-emerald-500' />
+                                    ) : (
+                                        <Copy1 className='size-4' />
+                                    )}
+                                </button>
+                            </div>
+
+                            {/* Parol */}
+                            <div className='border-card-border bg-card-surface-area flex items-center justify-between rounded-xl border px-3.5 py-2.5 shadow-xs'>
+                                <div className='flex flex-col'>
+                                    <span className='text-text-tertiary text-[11px] font-semibold tracking-wider uppercase'>
+                                        {t('common.password')}
+                                    </span>
+                                    <span className='text-text-primary font-mono text-sm font-bold tracking-wide select-all'>
+                                        shohruz2003dev
+                                    </span>
+                                </div>
+                                <button
+                                    type='button'
+                                    onClick={() =>
+                                        handleCopy('shohruz2003dev', 'pass')
+                                    }
+                                    title={
+                                        copiedField === 'pass'
+                                            ? t('landing.demoCopied')
+                                            : 'Nusxa olish'
+                                    }
+                                    aria-label='Copy password'
+                                    className='text-text-tertiary hover:text-text-primary hover:bg-background-gray-secondary cursor-pointer rounded-md p-1.5 transition-colors'
+                                >
+                                    {copiedField === 'pass' ? (
+                                        <Check className='size-4 text-emerald-500' />
+                                    ) : (
+                                        <Copy1 className='size-4' />
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
