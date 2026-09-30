@@ -29,7 +29,6 @@ import { listAuditLogs } from '@/services/api/audit';
 import { listUserOptions } from '@/services/api/users';
 import {
     AUDIT_ENTITY_TYPES,
-    PAYMENT_METHODS,
     type AuditEntityType,
     type AuditLog,
 } from '@/types/api';
