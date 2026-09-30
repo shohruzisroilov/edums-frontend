@@ -358,19 +358,19 @@ function MarkAttendanceModal({
                 </Button>
             </div>
 
-            <ul className='divide-card-border border-card-border divide-y rounded-xl border overflow-hidden'>
+            <ul className='divide-card-border border-card-border divide-y overflow-hidden rounded-xl border'>
                 {register.students.map((row) => (
                     <li
                         key={row.student.id}
-                        className='flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3.5 sm:px-4 sm:py-3 transition-colors hover:bg-background-gray-primary/20'
+                        className='hover:bg-background-gray-primary/20 flex flex-col justify-between gap-2.5 p-3.5 transition-colors sm:flex-row sm:items-center sm:px-4 sm:py-3'
                     >
-                        <span className='text-text-primary text-sm font-semibold truncate'>
+                        <span className='text-text-primary truncate text-sm font-semibold'>
                             {fullName(row.student)}
                         </span>
                         <div
                             role='radiogroup'
                             aria-label={fullName(row.student)}
-                            className='grid grid-cols-4 sm:flex gap-1.5 w-full sm:w-auto'
+                            className='grid w-full grid-cols-4 gap-1.5 sm:flex sm:w-auto'
                         >
                             {ATTENDANCE_STATUSES.map((status) => {
                                 const selected =
@@ -398,7 +398,7 @@ function MarkAttendanceModal({
                                             })
                                         }
                                         className={cn(
-                                            'rounded-lg border px-2 py-2 sm:px-2.5 sm:py-1 text-center text-xs font-semibold transition active:scale-95',
+                                            'rounded-lg border px-2 py-2 text-center text-xs font-semibold transition active:scale-95 sm:px-2.5 sm:py-1',
                                             selected
                                                 ? activeColor
                                                 : 'border-card-border bg-card-surface-area text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary',

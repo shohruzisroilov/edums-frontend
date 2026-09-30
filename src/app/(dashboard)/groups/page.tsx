@@ -440,7 +440,7 @@ function GroupsView() {
                                 {query.data.data.map((group, index) => (
                                     <div
                                         key={group.id}
-                                        className='flex flex-col gap-3 p-4 transition-colors hover:bg-background-gray-primary/20'
+                                        className='hover:bg-background-gray-primary/20 flex flex-col gap-3 p-4 transition-colors'
                                     >
                                         <div className='flex items-start justify-between gap-3'>
                                             <div className='min-w-0 flex-1'>
@@ -450,7 +450,7 @@ function GroupsView() {
                                                     </span>
                                                     <Link
                                                         href={`/groups/${group.id}`}
-                                                        className='text-text-primary hover:text-brand-accent text-sm font-semibold truncate hover:underline'
+                                                        className='text-text-primary hover:text-brand-accent truncate text-sm font-semibold hover:underline'
                                                     >
                                                         {group.name}
                                                     </Link>
@@ -461,7 +461,9 @@ function GroupsView() {
                                                         ` · ${group.branch.name}`}
                                                 </p>
                                             </div>
-                                            <GroupStatusBadge status={group.status} />
+                                            <GroupStatusBadge
+                                                status={group.status}
+                                            />
                                         </div>
 
                                         <div className='grid grid-cols-2 gap-2 text-xs'>
@@ -471,7 +473,9 @@ function GroupsView() {
                                                 </span>
                                                 <span className='text-text-secondary font-medium'>
                                                     {group.teacher
-                                                        ? fullName(group.teacher)
+                                                        ? fullName(
+                                                              group.teacher,
+                                                          )
                                                         : '—'}
                                                 </span>
                                             </div>
@@ -491,12 +495,15 @@ function GroupsView() {
                                                     {t('groups.lessons')}
                                                 </span>
                                                 <div className='text-text-secondary font-medium'>
-                                                    <LessonSchedule group={group} />
+                                                    <LessonSchedule
+                                                        group={group}
+                                                    />
                                                 </div>
                                             </div>
                                             <div className='text-right'>
                                                 <span className='text-text-tertiary block text-[10px]'>
-                                                    {t('groups.price')} / {t('groups.students')}
+                                                    {t('groups.price')} /{' '}
+                                                    {t('groups.students')}
                                                 </span>
                                                 <span className='text-text-primary font-semibold tabular-nums'>
                                                     {formatPrice(
@@ -505,19 +512,27 @@ function GroupsView() {
                                                     )}
                                                 </span>
                                                 <span className='text-text-tertiary ml-1 text-xs'>
-                                                    (<StudentsCount group={group} />)
+                                                    (
+                                                    <StudentsCount
+                                                        group={group}
+                                                    />
+                                                    )
                                                 </span>
                                             </div>
                                         </div>
 
-                                        <div className='flex items-center justify-end gap-1.5 border-t border-card-border/60 pt-2.5'>
-                                            <EyeLinkButton href={`/groups/${group.id}`} />
+                                        <div className='border-card-border/60 flex items-center justify-end gap-1.5 border-t pt-2.5'>
+                                            <EyeLinkButton
+                                                href={`/groups/${group.id}`}
+                                            />
                                             {canUpdate && (
                                                 <Button
                                                     appearance='outline'
                                                     size='sm'
                                                     iconOnly
-                                                    aria-label={t('common.edit')}
+                                                    aria-label={t(
+                                                        'common.edit',
+                                                    )}
                                                     onPress={() => {
                                                         setEditing(group);
                                                         setFormOpen(true);
@@ -532,8 +547,12 @@ function GroupsView() {
                                                     appearance='outline'
                                                     size='sm'
                                                     iconOnly
-                                                    aria-label={t('common.delete')}
-                                                    onPress={() => setDeleting(group)}
+                                                    aria-label={t(
+                                                        'common.delete',
+                                                    )}
+                                                    onPress={() =>
+                                                        setDeleting(group)
+                                                    }
                                                 >
                                                     <Trash1 />
                                                 </Button>
@@ -551,127 +570,133 @@ function GroupsView() {
                                 >
                                     <TableHeader>
                                         <TableRow>
-                                        <RowNumberHead />
-                                        <TableHead>
-                                            {t('common.name')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('groups.teacher')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('groups.lessons')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('groups.room')}
-                                        </TableHead>
-                                        <TableHead numeric>
-                                            {t('groups.students')}
-                                        </TableHead>
-                                        <TableHead numeric>
-                                            {t('groups.price')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('common.status')}
-                                        </TableHead>
-                                        <TableHead className='text-right'>
-                                            {t('common.actions')}
-                                        </TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {query.data.data.map((group, index) => (
-                                        <TableRow key={group.id}>
-                                            <RowNumberCell
-                                                index={index}
-                                                offset={offset}
-                                            />
-                                            <TableCell primary>
-                                                <Link
-                                                    href={`/groups/${group.id}`}
-                                                    className='hover:text-brand-accent hover:underline'
-                                                >
-                                                    {group.name}
-                                                </Link>
-                                                <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
-                                                    {group.course.name}
-                                                    {branches.length > 1 &&
-                                                        ` · ${group.branch.name}`}
-                                                </p>
-                                            </TableCell>
-                                            <TableCell>
-                                                {group.teacher
-                                                    ? fullName(group.teacher)
-                                                    : '—'}
-                                            </TableCell>
-                                            <TableCell>
-                                                <LessonSchedule group={group} />
-                                            </TableCell>
-                                            <TableCell>
-                                                {group.room?.name ?? '—'}
-                                            </TableCell>
-                                            <TableCell numeric>
-                                                <StudentsCount group={group} />
-                                            </TableCell>
-                                            <TableCell numeric>
-                                                {formatPrice(
-                                                    group.price,
-                                                    t('common.som'),
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                <GroupStatusBadge
-                                                    status={group.status}
-                                                />
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className='flex justify-end gap-2'>
-                                                    <EyeLinkButton
-                                                        href={`/groups/${group.id}`}
-                                                    />
-                                                    {canUpdate && (
-                                                        <Button
-                                                            appearance='outline'
-                                                            size='md'
-                                                            iconOnly
-                                                            aria-label={t(
-                                                                'common.edit',
-                                                            )}
-                                                            onPress={() => {
-                                                                setEditing(
-                                                                    group,
-                                                                );
-                                                                setFormOpen(
-                                                                    true,
-                                                                );
-                                                            }}
-                                                        >
-                                                            <Pencil1 />
-                                                        </Button>
-                                                    )}
-                                                    {canDelete && (
-                                                        <Button
-                                                            variant='danger'
-                                                            appearance='outline'
-                                                            size='md'
-                                                            iconOnly
-                                                            aria-label={t(
-                                                                'common.delete',
-                                                            )}
-                                                            onPress={() =>
-                                                                setDeleting(
-                                                                    group,
-                                                                )
-                                                            }
-                                                        >
-                                                            <Trash1 />
-                                                        </Button>
-                                                    )}
-                                                </div>
-                                            </TableCell>
+                                            <RowNumberHead />
+                                            <TableHead>
+                                                {t('common.name')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('groups.teacher')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('groups.lessons')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('groups.room')}
+                                            </TableHead>
+                                            <TableHead numeric>
+                                                {t('groups.students')}
+                                            </TableHead>
+                                            <TableHead numeric>
+                                                {t('groups.price')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.status')}
+                                            </TableHead>
+                                            <TableHead className='text-right'>
+                                                {t('common.actions')}
+                                            </TableHead>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </TableRoot>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {query.data.data.map((group, index) => (
+                                            <TableRow key={group.id}>
+                                                <RowNumberCell
+                                                    index={index}
+                                                    offset={offset}
+                                                />
+                                                <TableCell primary>
+                                                    <Link
+                                                        href={`/groups/${group.id}`}
+                                                        className='hover:text-brand-accent hover:underline'
+                                                    >
+                                                        {group.name}
+                                                    </Link>
+                                                    <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
+                                                        {group.course.name}
+                                                        {branches.length > 1 &&
+                                                            ` · ${group.branch.name}`}
+                                                    </p>
+                                                </TableCell>
+                                                <TableCell>
+                                                    {group.teacher
+                                                        ? fullName(
+                                                              group.teacher,
+                                                          )
+                                                        : '—'}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <LessonSchedule
+                                                        group={group}
+                                                    />
+                                                </TableCell>
+                                                <TableCell>
+                                                    {group.room?.name ?? '—'}
+                                                </TableCell>
+                                                <TableCell numeric>
+                                                    <StudentsCount
+                                                        group={group}
+                                                    />
+                                                </TableCell>
+                                                <TableCell numeric>
+                                                    {formatPrice(
+                                                        group.price,
+                                                        t('common.som'),
+                                                    )}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <GroupStatusBadge
+                                                        status={group.status}
+                                                    />
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className='flex justify-end gap-2'>
+                                                        <EyeLinkButton
+                                                            href={`/groups/${group.id}`}
+                                                        />
+                                                        {canUpdate && (
+                                                            <Button
+                                                                appearance='outline'
+                                                                size='md'
+                                                                iconOnly
+                                                                aria-label={t(
+                                                                    'common.edit',
+                                                                )}
+                                                                onPress={() => {
+                                                                    setEditing(
+                                                                        group,
+                                                                    );
+                                                                    setFormOpen(
+                                                                        true,
+                                                                    );
+                                                                }}
+                                                            >
+                                                                <Pencil1 />
+                                                            </Button>
+                                                        )}
+                                                        {canDelete && (
+                                                            <Button
+                                                                variant='danger'
+                                                                appearance='outline'
+                                                                size='md'
+                                                                iconOnly
+                                                                aria-label={t(
+                                                                    'common.delete',
+                                                                )}
+                                                                onPress={() =>
+                                                                    setDeleting(
+                                                                        group,
+                                                                    )
+                                                                }
+                                                            >
+                                                                <Trash1 />
+                                                            </Button>
+                                                        )}
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </TableRoot>
                             </div>
 
                             <PaginationBar

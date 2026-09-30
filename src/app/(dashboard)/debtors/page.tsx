@@ -268,35 +268,45 @@ function DebtorsView() {
                             <div className='divide-card-border divide-y md:hidden'>
                                 {allDebtors.map((debtor, index) => {
                                     const key = `${debtor.student.id}:${debtor.group.id}`;
-                                    const isSelected = selectedIds.includes(key);
+                                    const isSelected =
+                                        selectedIds.includes(key);
 
                                     return (
                                         <div
                                             key={key}
-                                            className='flex flex-col gap-3 p-4 transition-colors hover:bg-background-gray-primary/20'
+                                            className='hover:bg-background-gray-primary/20 flex flex-col gap-3 p-4 transition-colors'
                                         >
                                             <div className='flex items-start justify-between gap-3'>
-                                                <div className='flex items-center gap-2.5 min-w-0 flex-1'>
+                                                <div className='flex min-w-0 flex-1 items-center gap-2.5'>
                                                     <CheckboxInput
                                                         label=''
                                                         checked={isSelected}
-                                                        onChange={() => toggleSelect(key)}
+                                                        onChange={() =>
+                                                            toggleSelect(key)
+                                                        }
                                                     />
                                                     <div className='min-w-0'>
                                                         <div className='flex items-center gap-2'>
                                                             <span className='text-text-tertiary text-xs font-semibold tabular-nums'>
-                                                                #{offset + index + 1}
+                                                                #
+                                                                {offset +
+                                                                    index +
+                                                                    1}
                                                             </span>
                                                             {canOpenStudents ? (
                                                                 <Link
                                                                     href={`/students/${debtor.student.id}`}
-                                                                    className='text-text-primary hover:text-brand-accent text-sm font-semibold truncate hover:underline'
+                                                                    className='text-text-primary hover:text-brand-accent truncate text-sm font-semibold hover:underline'
                                                                 >
-                                                                    {fullName(debtor.student)}
+                                                                    {fullName(
+                                                                        debtor.student,
+                                                                    )}
                                                                 </Link>
                                                             ) : (
-                                                                <span className='text-text-primary text-sm font-semibold truncate'>
-                                                                    {fullName(debtor.student)}
+                                                                <span className='text-text-primary truncate text-sm font-semibold'>
+                                                                    {fullName(
+                                                                        debtor.student,
+                                                                    )}
                                                                 </span>
                                                             )}
                                                         </div>
@@ -307,45 +317,64 @@ function DebtorsView() {
                                                 </div>
 
                                                 <div className='text-right'>
-                                                    <span className='text-badge-error-text text-sm font-bold tabular-nums block'>
-                                                        -{formatPrice(debtor.debt, som)}
+                                                    <span className='text-badge-error-text block text-sm font-bold tabular-nums'>
+                                                        -
+                                                        {formatPrice(
+                                                            debtor.debt,
+                                                            som,
+                                                        )}
                                                     </span>
                                                 </div>
                                             </div>
 
-                                            <div className='flex items-center justify-between text-xs pt-1'>
+                                            <div className='flex items-center justify-between pt-1 text-xs'>
                                                 <div>
                                                     <span className='text-text-tertiary block text-[10px]'>
                                                         {t('common.phone')}
                                                     </span>
                                                     <PhoneLink
                                                         phone={
-                                                            debtor.student.phone_number ??
-                                                            debtor.student.parent_phone
+                                                            debtor.student
+                                                                .phone_number ??
+                                                            debtor.student
+                                                                .parent_phone
                                                         }
                                                     />
                                                 </div>
 
                                                 <div className='text-right'>
-                                                    <span className='text-text-tertiary text-[11px] block'>
-                                                        {t('balance.paid')} / {t('balance.charged')}
+                                                    <span className='text-text-tertiary block text-[11px]'>
+                                                        {t('balance.paid')} /{' '}
+                                                        {t('balance.charged')}
                                                     </span>
-                                                    <span className='text-text-secondary tabular-nums text-xs'>
-                                                        {formatPrice(debtor.paid, som)} / {formatPrice(debtor.charged, som)}
+                                                    <span className='text-text-secondary text-xs tabular-nums'>
+                                                        {formatPrice(
+                                                            debtor.paid,
+                                                            som,
+                                                        )}{' '}
+                                                        /{' '}
+                                                        {formatPrice(
+                                                            debtor.charged,
+                                                            som,
+                                                        )}
                                                     </span>
                                                 </div>
                                             </div>
 
                                             {canPay && (
-                                                <div className='flex justify-end pt-2 border-t border-card-border/60'>
+                                                <div className='border-card-border/60 flex justify-end border-t pt-2'>
                                                     <Button
                                                         variant='primary'
                                                         appearance='outline'
                                                         size='sm'
-                                                        className='w-full sm:w-auto justify-center'
-                                                        onPress={() => setPaying(debtor)}
+                                                        className='w-full justify-center sm:w-auto'
+                                                        onPress={() =>
+                                                            setPaying(debtor)
+                                                        }
                                                     >
-                                                        {t('debtors.takePayment')}
+                                                        {t(
+                                                            'debtors.takePayment',
+                                                        )}
                                                     </Button>
                                                 </div>
                                             )}
@@ -362,134 +391,138 @@ function DebtorsView() {
                                 >
                                     <TableHeader>
                                         <TableRow>
-                                        <TableHead className='w-10'>
-                                            <CheckboxInput
-                                                label=''
-                                                checked={
-                                                    selectedIds.length ===
-                                                        allDebtors.length &&
-                                                    allDebtors.length > 0
-                                                }
-                                                onChange={toggleSelectAll}
-                                            />
-                                        </TableHead>
-                                        <RowNumberHead />
-                                        <TableHead>
-                                            {t('common.student')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('common.phone')}
-                                        </TableHead>
-                                        <TableHead numeric>
-                                            {t('balance.charged')}
-                                        </TableHead>
-                                        <TableHead numeric>
-                                            {t('balance.paid')}
-                                        </TableHead>
-                                        <TableHead numeric>
-                                            {t('debtors.debt')}
-                                        </TableHead>
-                                        {canPay && (
-                                            <TableHead className='text-right'>
-                                                {t('common.actions')}
-                                            </TableHead>
-                                        )}
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {allDebtors.map((debtor, index) => {
-                                        const key = `${debtor.student.id}:${debtor.group.id}`;
-                                        const isSelected =
-                                            selectedIds.includes(key);
-
-                                        return (
-                                            <TableRow key={key}>
-                                                <TableCell>
-                                                    <CheckboxInput
-                                                        label=''
-                                                        checked={isSelected}
-                                                        onChange={() =>
-                                                            toggleSelect(key)
-                                                        }
-                                                    />
-                                                </TableCell>
-                                                <RowNumberCell
-                                                    index={index}
-                                                    offset={offset}
+                                            <TableHead className='w-10'>
+                                                <CheckboxInput
+                                                    label=''
+                                                    checked={
+                                                        selectedIds.length ===
+                                                            allDebtors.length &&
+                                                        allDebtors.length > 0
+                                                    }
+                                                    onChange={toggleSelectAll}
                                                 />
-                                                <TableCell primary>
-                                                    {canOpenStudents ? (
-                                                        <Link
-                                                            href={`/students/${debtor.student.id}`}
-                                                            className='hover:text-brand-accent hover:underline'
-                                                        >
-                                                            {fullName(
-                                                                debtor.student,
-                                                            )}
-                                                        </Link>
-                                                    ) : (
-                                                        fullName(debtor.student)
-                                                    )}
-                                                    <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
-                                                        {debtor.group.name}
-                                                    </p>
-                                                </TableCell>
-                                                <TableCell className='tabular-nums'>
-                                                    <PhoneLink
-                                                        phone={
-                                                            debtor.student
-                                                                .phone_number ??
-                                                            debtor.student
-                                                                .parent_phone
-                                                        }
-                                                    />
-                                                </TableCell>
-                                                <TableCell numeric>
-                                                    {formatPrice(
-                                                        debtor.charged,
-                                                        som,
-                                                    )}
-                                                </TableCell>
-                                                <TableCell numeric>
-                                                    {formatPrice(
-                                                        debtor.paid,
-                                                        som,
-                                                    )}
-                                                </TableCell>
-                                                <TableCell
-                                                    numeric
-                                                    className='text-badge-error-text font-semibold'
-                                                >
-                                                    {formatPrice(
-                                                        debtor.debt,
-                                                        som,
-                                                    )}
-                                                </TableCell>
-                                                {canPay && (
+                                            </TableHead>
+                                            <RowNumberHead />
+                                            <TableHead>
+                                                {t('common.student')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.phone')}
+                                            </TableHead>
+                                            <TableHead numeric>
+                                                {t('balance.charged')}
+                                            </TableHead>
+                                            <TableHead numeric>
+                                                {t('balance.paid')}
+                                            </TableHead>
+                                            <TableHead numeric>
+                                                {t('debtors.debt')}
+                                            </TableHead>
+                                            {canPay && (
+                                                <TableHead className='text-right'>
+                                                    {t('common.actions')}
+                                                </TableHead>
+                                            )}
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {allDebtors.map((debtor, index) => {
+                                            const key = `${debtor.student.id}:${debtor.group.id}`;
+                                            const isSelected =
+                                                selectedIds.includes(key);
+
+                                            return (
+                                                <TableRow key={key}>
                                                     <TableCell>
-                                                        <div className='flex justify-end'>
-                                                            <Button
-                                                                variant='primary'
-                                                                appearance='outline'
-                                                                size='md'
-                                                                onPress={() =>
-                                                                    setPaying(
-                                                                        debtor,
-                                                                    )
-                                                                }
-                                                            >
-                                                                {t(
-                                                                    'debtors.takePayment',
-                                                                )}
-                                                            </Button>
-                                                        </div>
+                                                        <CheckboxInput
+                                                            label=''
+                                                            checked={isSelected}
+                                                            onChange={() =>
+                                                                toggleSelect(
+                                                                    key,
+                                                                )
+                                                            }
+                                                        />
                                                     </TableCell>
-                                                )}
-                                            </TableRow>
-                                        );
-                                    })}
-                                </TableBody>
-                            </TableRoot>
+                                                    <RowNumberCell
+                                                        index={index}
+                                                        offset={offset}
+                                                    />
+                                                    <TableCell primary>
+                                                        {canOpenStudents ? (
+                                                            <Link
+                                                                href={`/students/${debtor.student.id}`}
+                                                                className='hover:text-brand-accent hover:underline'
+                                                            >
+                                                                {fullName(
+                                                                    debtor.student,
+                                                                )}
+                                                            </Link>
+                                                        ) : (
+                                                            fullName(
+                                                                debtor.student,
+                                                            )
+                                                        )}
+                                                        <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
+                                                            {debtor.group.name}
+                                                        </p>
+                                                    </TableCell>
+                                                    <TableCell className='tabular-nums'>
+                                                        <PhoneLink
+                                                            phone={
+                                                                debtor.student
+                                                                    .phone_number ??
+                                                                debtor.student
+                                                                    .parent_phone
+                                                            }
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell numeric>
+                                                        {formatPrice(
+                                                            debtor.charged,
+                                                            som,
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell numeric>
+                                                        {formatPrice(
+                                                            debtor.paid,
+                                                            som,
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        numeric
+                                                        className='text-badge-error-text font-semibold'
+                                                    >
+                                                        {formatPrice(
+                                                            debtor.debt,
+                                                            som,
+                                                        )}
+                                                    </TableCell>
+                                                    {canPay && (
+                                                        <TableCell>
+                                                            <div className='flex justify-end'>
+                                                                <Button
+                                                                    variant='primary'
+                                                                    appearance='outline'
+                                                                    size='md'
+                                                                    onPress={() =>
+                                                                        setPaying(
+                                                                            debtor,
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    {t(
+                                                                        'debtors.takePayment',
+                                                                    )}
+                                                                </Button>
+                                                            </div>
+                                                        </TableCell>
+                                                    )}
+                                                </TableRow>
+                                            );
+                                        })}
+                                    </TableBody>
+                                </TableRoot>
                             </div>
 
                             <PaginationBar

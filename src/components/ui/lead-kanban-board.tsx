@@ -71,9 +71,11 @@ export function LeadKanbanBoard({
     return (
         <div className='flex flex-col gap-3'>
             {/* Mobile Column Tabs (< sm) */}
-            <div className='scrollbar-thin flex gap-1.5 overflow-x-auto pb-1 sm:hidden'>
+            <div className='flex scrollbar-thin gap-1.5 overflow-x-auto pb-1 sm:hidden'>
                 {LEAD_STATUSES.map((status) => {
-                    const count = leads.filter((l) => l.status === status).length;
+                    const count = leads.filter(
+                        (l) => l.status === status,
+                    ).length;
                     const isActive = activeTab === status;
 
                     return (
@@ -96,7 +98,7 @@ export function LeadKanbanBoard({
                             </span>
                             <span
                                 className={cn(
-                                    'rounded-md px-1.5 py-0.2 text-[10px] tabular-nums font-bold',
+                                    'py-0.2 rounded-md px-1.5 text-[10px] font-bold tabular-nums',
                                     isActive
                                         ? 'bg-white/20 text-white'
                                         : 'bg-background-gray-secondary text-text-tertiary',
@@ -111,7 +113,9 @@ export function LeadKanbanBoard({
 
             <div className='flex min-w-full snap-x scrollbar-thin gap-4 overflow-x-auto pt-1 pb-6 2xl:grid 2xl:grid-cols-5'>
                 {LEAD_STATUSES.map((status) => {
-                    const columnLeads = leads.filter((l) => l.status === status);
+                    const columnLeads = leads.filter(
+                        (l) => l.status === status,
+                    );
                     const isOver = dragOverColumn === status;
 
                     return (
@@ -129,184 +133,200 @@ export function LeadKanbanBoard({
                                     'border-brand-accent bg-brand-accent/10 ring-brand-accent/20 scale-[1.01] ring-2',
                             )}
                         >
-                        {/* Column Header */}
-                        <div className='border-card-border mb-3 flex items-center justify-between border-b px-1 pb-2.5'>
-                            <div className='flex items-center gap-2'>
-                                <LeadStatusDot status={status} />
-                                <h4 className='text-text-primary text-sm font-semibold'>
-                                    {t(
-                                        `leadStatus.${status}` as import('@/i18n/dictionaries/uz').TranslationKey,
-                                    )}
-                                </h4>
-                            </div>
-                            <span className='border-card-border bg-card-surface-area text-text-secondary rounded-md border px-2 py-0.5 text-xs font-semibold tabular-nums'>
-                                {columnLeads.length}
-                            </span>
-                        </div>
-
-                        {/* Column Items */}
-                        <div className='min-h-[150px] flex-1 space-y-3 overflow-y-auto'>
-                            {columnLeads.length === 0 ? (
-                                <div
-                                    className={cn(
-                                        'text-text-tertiary border-card-border flex h-28 items-center justify-center rounded-xl border border-dashed text-xs transition-colors',
-                                        isOver &&
-                                            'border-brand-accent text-brand-accent bg-brand-accent/5 font-medium',
-                                    )}
-                                >
-                                    {isOver ? 'Shu yerga tashlang' : "Lid yo'q"}
+                            {/* Column Header */}
+                            <div className='border-card-border mb-3 flex items-center justify-between border-b px-1 pb-2.5'>
+                                <div className='flex items-center gap-2'>
+                                    <LeadStatusDot status={status} />
+                                    <h4 className='text-text-primary text-sm font-semibold'>
+                                        {t(
+                                            `leadStatus.${status}` as import('@/i18n/dictionaries/uz').TranslationKey,
+                                        )}
+                                    </h4>
                                 </div>
-                            ) : (
-                                columnLeads.map((lead) => {
-                                    const isDraggingThis =
-                                        draggedLeadId === lead.id;
-                                    return (
-                                        <div
-                                            key={lead.id}
-                                            draggable={canUpdate}
-                                            onDragStart={(e) =>
-                                                handleDragStart(e, lead.id)
-                                            }
-                                            onDragEnd={() =>
-                                                setDraggedLeadId(null)
-                                            }
-                                            className={cn(
-                                                'border-card-border bg-card-surface-area hover:border-brand-accent/50 flex flex-col justify-between rounded-xl border p-3.5 shadow-xs transition-all',
-                                                canUpdate &&
-                                                    'cursor-grab active:cursor-grabbing',
-                                                isDraggingThis &&
-                                                    'border-brand-accent scale-95 border-dashed opacity-40 shadow-md',
-                                            )}
-                                        >
-                                            <div>
-                                                <div className='flex items-start justify-between gap-2'>
-                                                    <h5
-                                                        className='text-text-primary flex min-w-0 items-center gap-1.5 text-sm font-semibold'
-                                                        title={`${lead.first_name} ${lead.last_name || ''}`}
-                                                    >
+                                <span className='border-card-border bg-card-surface-area text-text-secondary rounded-md border px-2 py-0.5 text-xs font-semibold tabular-nums'>
+                                    {columnLeads.length}
+                                </span>
+                            </div>
+
+                            {/* Column Items */}
+                            <div className='min-h-[150px] flex-1 space-y-3 overflow-y-auto'>
+                                {columnLeads.length === 0 ? (
+                                    <div
+                                        className={cn(
+                                            'text-text-tertiary border-card-border flex h-28 items-center justify-center rounded-xl border border-dashed text-xs transition-colors',
+                                            isOver &&
+                                                'border-brand-accent text-brand-accent bg-brand-accent/5 font-medium',
+                                        )}
+                                    >
+                                        {isOver
+                                            ? 'Shu yerga tashlang'
+                                            : "Lid yo'q"}
+                                    </div>
+                                ) : (
+                                    columnLeads.map((lead) => {
+                                        const isDraggingThis =
+                                            draggedLeadId === lead.id;
+                                        return (
+                                            <div
+                                                key={lead.id}
+                                                draggable={canUpdate}
+                                                onDragStart={(e) =>
+                                                    handleDragStart(e, lead.id)
+                                                }
+                                                onDragEnd={() =>
+                                                    setDraggedLeadId(null)
+                                                }
+                                                className={cn(
+                                                    'border-card-border bg-card-surface-area hover:border-brand-accent/50 flex flex-col justify-between rounded-xl border p-3.5 shadow-xs transition-all',
+                                                    canUpdate &&
+                                                        'cursor-grab active:cursor-grabbing',
+                                                    isDraggingThis &&
+                                                        'border-brand-accent scale-95 border-dashed opacity-40 shadow-md',
+                                                )}
+                                            >
+                                                <div>
+                                                    <div className='flex items-start justify-between gap-2'>
+                                                        <h5
+                                                            className='text-text-primary flex min-w-0 items-center gap-1.5 text-sm font-semibold'
+                                                            title={`${lead.first_name} ${lead.last_name || ''}`}
+                                                        >
+                                                            {canUpdate && (
+                                                                <span className='text-text-tertiary shrink-0 cursor-grab text-xs opacity-60 select-none hover:opacity-100'>
+                                                                    ⋮⋮
+                                                                </span>
+                                                            )}
+                                                            <span className='truncate'>
+                                                                {
+                                                                    lead.first_name
+                                                                }{' '}
+                                                                {lead.last_name ||
+                                                                    ''}
+                                                            </span>
+                                                        </h5>
                                                         {canUpdate && (
-                                                            <span className='text-text-tertiary shrink-0 cursor-grab text-xs opacity-60 select-none hover:opacity-100'>
-                                                                ⋮⋮
+                                                            <button
+                                                                type='button'
+                                                                onClick={() =>
+                                                                    onEdit(lead)
+                                                                }
+                                                                className='text-icon-tertiary hover:text-text-primary hover:bg-background-gray-secondary shrink-0 rounded-md p-1 transition-colors'
+                                                                title='Tahrirlash'
+                                                            >
+                                                                <Pencil1 className='size-3.5' />
+                                                            </button>
+                                                        )}
+                                                    </div>
+
+                                                    <div className='mt-1 text-xs'>
+                                                        <PhoneLink
+                                                            phone={
+                                                                lead.phone_number
+                                                            }
+                                                        />
+                                                    </div>
+
+                                                    <div className='mt-2.5 flex flex-wrap items-center gap-1.5'>
+                                                        <LeadSourceBadge
+                                                            source={lead.source}
+                                                        />
+                                                        {lead.course && (
+                                                            <span
+                                                                className='bg-background-gray-secondary text-text-secondary max-w-[160px] truncate rounded-md px-1.5 py-0.5 text-[10px] font-medium'
+                                                                title={
+                                                                    lead.course
+                                                                        .name
+                                                                }
+                                                            >
+                                                                {
+                                                                    lead.course
+                                                                        .name
+                                                                }
                                                             </span>
                                                         )}
-                                                        <span className='truncate'>
-                                                            {lead.first_name}{' '}
-                                                            {lead.last_name ||
-                                                                ''}
-                                                        </span>
-                                                    </h5>
-                                                    {canUpdate && (
-                                                        <button
-                                                            type='button'
-                                                            onClick={() =>
-                                                                onEdit(lead)
-                                                            }
-                                                            className='text-icon-tertiary hover:text-text-primary hover:bg-background-gray-secondary shrink-0 rounded-md p-1 transition-colors'
-                                                            title='Tahrirlash'
-                                                        >
-                                                            <Pencil1 className='size-3.5' />
-                                                        </button>
-                                                    )}
-                                                </div>
-
-                                                <div className='mt-1 text-xs'>
-                                                    <PhoneLink
-                                                        phone={
-                                                            lead.phone_number
-                                                        }
-                                                    />
-                                                </div>
-
-                                                <div className='mt-2.5 flex flex-wrap items-center gap-1.5'>
-                                                    <LeadSourceBadge
-                                                        source={lead.source}
-                                                    />
-                                                    {lead.course && (
-                                                        <span
-                                                            className='bg-background-gray-secondary text-text-secondary max-w-[160px] truncate rounded-md px-1.5 py-0.5 text-[10px] font-medium'
-                                                            title={
-                                                                lead.course.name
-                                                            }
-                                                        >
-                                                            {lead.course.name}
-                                                        </span>
-                                                    )}
-                                                </div>
-
-                                                {lead.next_call_date && (
-                                                    <div className='text-brand-accent mt-2 flex items-center gap-1 text-[11px] font-medium'>
-                                                        <Calendar className='size-3 shrink-0' />
-                                                        <span>
-                                                            Qo'ng'iroq:{' '}
-                                                            {formatDate(
-                                                                lead.next_call_date,
-                                                            )}
-                                                        </span>
                                                     </div>
-                                                )}
-                                            </div>
 
-                                            {/* Status Switcher & Convert */}
-                                            <div className='border-card-border mt-3.5 flex items-center justify-between gap-1.5 border-t pt-2.5'>
-                                                {status !== 'won' &&
-                                                    canConvert && (
-                                                        <Button
-                                                            size='sm'
-                                                            variant='primary'
-                                                            appearance='outline'
-                                                            className='h-7.5 shrink-0 px-2.5 text-xs font-medium whitespace-nowrap'
-                                                            onPress={() =>
-                                                                onConvert(lead)
-                                                            }
-                                                        >
-                                                            O'quvchi qilish
-                                                        </Button>
+                                                    {lead.next_call_date && (
+                                                        <div className='text-brand-accent mt-2 flex items-center gap-1 text-[11px] font-medium'>
+                                                            <Calendar className='size-3 shrink-0' />
+                                                            <span>
+                                                                Qo'ng'iroq:{' '}
+                                                                {formatDate(
+                                                                    lead.next_call_date,
+                                                                )}
+                                                            </span>
+                                                        </div>
                                                     )}
+                                                </div>
 
-                                                {canUpdate &&
-                                                    status !== 'won' && (
-                                                        <select
-                                                            value={lead.status}
-                                                            onChange={(e) =>
-                                                                onStatusChange(
-                                                                    lead.id,
-                                                                    e.target
-                                                                        .value as LeadStatus,
-                                                                )
-                                                            }
-                                                            className='border-card-border bg-background-gray-secondary text-text-secondary hover:text-text-primary focus:border-brand-accent max-w-[130px] cursor-pointer truncate rounded-lg border px-2 py-1 text-xs font-medium transition outline-none'
-                                                        >
-                                                            {LEAD_STATUSES.map(
-                                                                (s) => (
-                                                                    <option
-                                                                        key={s}
-                                                                        value={
-                                                                            s
-                                                                        }
-                                                                    >
-                                                                        {t(
-                                                                            `leadStatus.${s}` as import('@/i18n/dictionaries/uz').TranslationKey,
-                                                                        )}
-                                                                    </option>
-                                                                ),
+                                                {/* Status Switcher & Convert */}
+                                                <div className='border-card-border mt-3.5 flex items-center justify-between gap-1.5 border-t pt-2.5'>
+                                                    {status !== 'won' &&
+                                                        canConvert && (
+                                                            <Button
+                                                                size='sm'
+                                                                variant='primary'
+                                                                appearance='outline'
+                                                                className='h-7.5 shrink-0 px-2.5 text-xs font-medium whitespace-nowrap'
+                                                                onPress={() =>
+                                                                    onConvert(
+                                                                        lead,
+                                                                    )
+                                                                }
+                                                            >
+                                                                O'quvchi qilish
+                                                            </Button>
+                                                        )}
+
+                                                    {canUpdate &&
+                                                        status !== 'won' && (
+                                                            <select
+                                                                value={
+                                                                    lead.status
+                                                                }
+                                                                onChange={(e) =>
+                                                                    onStatusChange(
+                                                                        lead.id,
+                                                                        e.target
+                                                                            .value as LeadStatus,
+                                                                    )
+                                                                }
+                                                                className='border-card-border bg-background-gray-secondary text-text-secondary hover:text-text-primary focus:border-brand-accent max-w-[130px] cursor-pointer truncate rounded-lg border px-2 py-1 text-xs font-medium transition outline-none'
+                                                            >
+                                                                {LEAD_STATUSES.map(
+                                                                    (s) => (
+                                                                        <option
+                                                                            key={
+                                                                                s
+                                                                            }
+                                                                            value={
+                                                                                s
+                                                                            }
+                                                                        >
+                                                                            {t(
+                                                                                `leadStatus.${s}` as import('@/i18n/dictionaries/uz').TranslationKey,
+                                                                            )}
+                                                                        </option>
+                                                                    ),
+                                                                )}
+                                                            </select>
+                                                        )}
+
+                                                    {status === 'won' && (
+                                                        <span className='text-success-600 bg-success-50 dark:bg-success-950/40 dark:text-success-400 rounded-md px-2 py-1 text-xs font-medium'>
+                                                            {t(
+                                                                'leadStatus.won',
                                                             )}
-                                                        </select>
+                                                        </span>
                                                     )}
-
-                                                {status === 'won' && (
-                                                    <span className='text-success-600 bg-success-50 dark:bg-success-950/40 dark:text-success-400 rounded-md px-2 py-1 text-xs font-medium'>
-                                                        {t('leadStatus.won')}
-                                                    </span>
-                                                )}
+                                                </div>
                                             </div>
-                                        </div>
-                                    );
-                                })
-                            )}
+                                        );
+                                    })
+                                )}
+                            </div>
                         </div>
-                    </div>
-                );
-            })}
+                    );
+                })}
             </div>
         </div>
     );

@@ -350,7 +350,7 @@ function StudentsView() {
                                 {query.data.data.map((student, index) => (
                                     <div
                                         key={student.id}
-                                        className='flex flex-col gap-3 p-4 transition-colors hover:bg-background-gray-primary/20'
+                                        className='hover:bg-background-gray-primary/20 flex flex-col gap-3 p-4 transition-colors'
                                     >
                                         <div className='flex items-start justify-between gap-3'>
                                             <div className='min-w-0 flex-1'>
@@ -360,7 +360,7 @@ function StudentsView() {
                                                     </span>
                                                     <Link
                                                         href={`/students/${student.id}`}
-                                                        className='text-text-primary hover:text-brand-accent text-sm font-semibold truncate hover:underline'
+                                                        className='text-text-primary hover:text-brand-accent truncate text-sm font-semibold hover:underline'
                                                     >
                                                         {fullName(student)}
                                                     </Link>
@@ -371,7 +371,9 @@ function StudentsView() {
                                                     </p>
                                                 )}
                                             </div>
-                                            <StudentStatusBadge status={student.status} />
+                                            <StudentStatusBadge
+                                                status={student.status}
+                                            />
                                         </div>
 
                                         <div className='flex items-center justify-between text-xs'>
@@ -384,13 +386,17 @@ function StudentsView() {
                                                     </span>
                                                     <span
                                                         className={cn(
-                                                            'font-semibold tabular-nums text-xs sm:text-sm',
-                                                            balanceTone(student.balance ?? 0) ??
+                                                            'text-xs font-semibold tabular-nums sm:text-sm',
+                                                            balanceTone(
+                                                                student.balance ??
+                                                                    0,
+                                                            ) ??
                                                                 'text-text-tertiary',
                                                         )}
                                                     >
                                                         {formatPrice(
-                                                            student.balance ?? 0,
+                                                            student.balance ??
+                                                                0,
                                                             t('common.som'),
                                                         )}
                                                     </span>
@@ -401,11 +407,16 @@ function StudentsView() {
                                         {student.groups.length > 0 && (
                                             <div className='flex flex-wrap gap-1.5 pt-0.5'>
                                                 {student.groups.map((group) => {
-                                                    const match = /^(.*?)\s*\((.+)\)$/.exec(
-                                                        group.name.trim(),
-                                                    );
-                                                    const title = match ? match[1].trim() : group.name;
-                                                    const schedule = match ? match[2].trim() : null;
+                                                    const match =
+                                                        /^(.*?)\s*\((.+)\)$/.exec(
+                                                            group.name.trim(),
+                                                        );
+                                                    const title = match
+                                                        ? match[1].trim()
+                                                        : group.name;
+                                                    const schedule = match
+                                                        ? match[2].trim()
+                                                        : null;
 
                                                     const content = (
                                                         <>
@@ -413,7 +424,7 @@ function StudentsView() {
                                                                 {title}
                                                             </span>
                                                             {schedule && (
-                                                                <span className='text-text-tertiary text-[10px] ml-1.5'>
+                                                                <span className='text-text-tertiary ml-1.5 text-[10px]'>
                                                                     {schedule}
                                                                 </span>
                                                             )}
@@ -441,17 +452,25 @@ function StudentsView() {
                                         )}
 
                                         {hasActions && (
-                                            <div className='flex items-center justify-end gap-1.5 border-t border-card-border/60 pt-2.5'>
-                                                <EyeLinkButton href={`/students/${student.id}`} />
+                                            <div className='border-card-border/60 flex items-center justify-end gap-1.5 border-t pt-2.5'>
+                                                <EyeLinkButton
+                                                    href={`/students/${student.id}`}
+                                                />
                                                 {canPay && (
                                                     <Button
                                                         appearance='outline'
                                                         size='sm'
-                                                        onPress={() => setPaying(student)}
+                                                        onPress={() =>
+                                                            setPaying(student)
+                                                        }
                                                         className='gap-1.5 text-xs'
                                                     >
                                                         <Wallet2 className='size-3.5 text-emerald-600 dark:text-emerald-400' />
-                                                        <span>{t('header.quickPayment')}</span>
+                                                        <span>
+                                                            {t(
+                                                                'header.quickPayment',
+                                                            )}
+                                                        </span>
                                                     </Button>
                                                 )}
                                                 {canUpdate && (
@@ -459,7 +478,9 @@ function StudentsView() {
                                                         appearance='outline'
                                                         size='sm'
                                                         iconOnly
-                                                        aria-label={t('common.edit')}
+                                                        aria-label={t(
+                                                            'common.edit',
+                                                        )}
                                                         onPress={() => {
                                                             setEditing(student);
                                                             setFormOpen(true);
@@ -474,8 +495,12 @@ function StudentsView() {
                                                         appearance='outline'
                                                         size='sm'
                                                         iconOnly
-                                                        aria-label={t('common.delete')}
-                                                        onPress={() => setDeleting(student)}
+                                                        aria-label={t(
+                                                            'common.delete',
+                                                        )}
+                                                        onPress={() =>
+                                                            setDeleting(student)
+                                                        }
                                                     >
                                                         <Trash1 />
                                                     </Button>
@@ -494,214 +519,229 @@ function StudentsView() {
                                 >
                                     <TableHeader>
                                         <TableRow>
-                                        <RowNumberHead />
-                                        <TableHead>
-                                            {t('common.fullName')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('common.phone')}
-                                        </TableHead>
-                                        <TableHead className='min-w-[190px]'>
-                                            {t('students.groups')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('common.status')}
-                                        </TableHead>
-                                        {canViewPayments && (
-                                            <TableHead numeric>
-                                                {t('balance.title')}
+                                            <RowNumberHead />
+                                            <TableHead>
+                                                {t('common.fullName')}
                                             </TableHead>
-                                        )}
-                                        {hasActions && (
-                                            <TableHead className='text-right'>
-                                                {t('common.actions')}
+                                            <TableHead>
+                                                {t('common.phone')}
                                             </TableHead>
-                                        )}
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {query.data.data.map((student, index) => (
-                                        <TableRow key={student.id}>
-                                            <RowNumberCell
-                                                index={index}
-                                                offset={offset}
-                                            />
-                                            <TableCell primary>
-                                                <Link
-                                                    href={`/students/${student.id}`}
-                                                    className='hover:text-brand-accent hover:underline'
-                                                >
-                                                    {fullName(student)}
-                                                </Link>
-                                                {branches.length > 1 && (
-                                                    <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
-                                                        {student.branch.name}
-                                                    </p>
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                <PhoneLines student={student} />
-                                            </TableCell>
-                                            <TableCell className='max-w-[280px] min-w-[190px] whitespace-normal'>
-                                                {student.groups.length === 0 ? (
-                                                    <span className='text-text-tertiary text-xs'>
-                                                        {t('students.noGroups')}
-                                                    </span>
-                                                ) : (
-                                                    <div className='flex flex-col gap-1.5 py-0.5'>
-                                                        {student.groups.map(
-                                                            (group) => {
-                                                                const match =
-                                                                    /^(.*?)\s*\((.+)\)$/.exec(
-                                                                        group.name.trim(),
-                                                                    );
-                                                                const title =
-                                                                    match
-                                                                        ? match[1].trim()
-                                                                        : group.name;
-                                                                const schedule =
-                                                                    match
-                                                                        ? match[2].trim()
-                                                                        : null;
-
-                                                                const content =
-                                                                    (
-                                                                        <>
-                                                                            <span className='text-text-primary group-hover/item:text-brand-accent text-xs leading-snug font-semibold transition-colors'>
-                                                                                {
-                                                                                    title
-                                                                                }
-                                                                            </span>
-                                                                            {schedule && (
-                                                                                <span className='text-text-tertiary text-[11px] leading-tight font-normal'>
-                                                                                    {
-                                                                                        schedule
-                                                                                    }
-                                                                                </span>
-                                                                            )}
-                                                                        </>
-                                                                    );
-
-                                                                return canViewGroups ? (
-                                                                    <Link
-                                                                        key={
-                                                                            group.id
-                                                                        }
-                                                                        href={`/groups/${group.id}`}
-                                                                        className='group/item border-card-border bg-background-gray-secondary/60 hover:bg-background-gray-secondary hover:border-brand-accent/40 flex flex-col gap-0.5 rounded-lg border px-2.5 py-1.5 transition-all'
-                                                                    >
-                                                                        {
-                                                                            content
-                                                                        }
-                                                                    </Link>
-                                                                ) : (
-                                                                    <div
-                                                                        key={
-                                                                            group.id
-                                                                        }
-                                                                        className='border-card-border bg-background-gray-secondary/60 flex flex-col gap-0.5 rounded-lg border px-2.5 py-1.5'
-                                                                    >
-                                                                        {
-                                                                            content
-                                                                        }
-                                                                    </div>
-                                                                );
-                                                            },
-                                                        )}
-                                                    </div>
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                <StudentStatusBadge
-                                                    status={student.status}
-                                                />
-                                            </TableCell>
+                                            <TableHead className='min-w-[190px]'>
+                                                {t('students.groups')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.status')}
+                                            </TableHead>
                                             {canViewPayments && (
-                                                <TableCell
-                                                    numeric
-                                                    className={cn(
-                                                        'font-medium',
-                                                        balanceTone(
-                                                            student.balance ??
-                                                                0,
-                                                        ) ??
-                                                            'text-text-tertiary',
-                                                    )}
-                                                >
-                                                    {formatPrice(
-                                                        student.balance ?? 0,
-                                                        t('common.som'),
-                                                    )}
-                                                </TableCell>
+                                                <TableHead numeric>
+                                                    {t('balance.title')}
+                                                </TableHead>
                                             )}
                                             {hasActions && (
-                                                <TableCell>
-                                                    <div className='flex justify-end gap-2'>
-                                                        <EyeLinkButton
-                                                            href={`/students/${student.id}`}
-                                                        />
-                                                        {canPay && (
-                                                            <Button
-                                                                appearance='outline'
-                                                                size='md'
-                                                                iconOnly
-                                                                aria-label={t(
-                                                                    'cashbox.new',
-                                                                )}
-                                                                onPress={() =>
-                                                                    setPaying(
-                                                                        student,
-                                                                    )
-                                                                }
-                                                            >
-                                                                <Wallet2 />
-                                                            </Button>
-                                                        )}
-                                                        {canUpdate && (
-                                                            <Button
-                                                                appearance='outline'
-                                                                size='md'
-                                                                iconOnly
-                                                                aria-label={t(
-                                                                    'common.edit',
-                                                                )}
-                                                                onPress={() => {
-                                                                    setEditing(
-                                                                        student,
-                                                                    );
-                                                                    setFormOpen(
-                                                                        true,
-                                                                    );
-                                                                }}
-                                                            >
-                                                                <Pencil1 />
-                                                            </Button>
-                                                        )}
-                                                        {canDelete && (
-                                                            <Button
-                                                                variant='danger'
-                                                                appearance='outline'
-                                                                size='md'
-                                                                iconOnly
-                                                                aria-label={t(
-                                                                    'common.delete',
-                                                                )}
-                                                                onPress={() =>
-                                                                    setDeleting(
-                                                                        student,
-                                                                    )
-                                                                }
-                                                            >
-                                                                <Trash1 />
-                                                            </Button>
-                                                        )}
-                                                    </div>
-                                                </TableCell>
+                                                <TableHead className='text-right'>
+                                                    {t('common.actions')}
+                                                </TableHead>
                                             )}
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </TableRoot>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {query.data.data.map(
+                                            (student, index) => (
+                                                <TableRow key={student.id}>
+                                                    <RowNumberCell
+                                                        index={index}
+                                                        offset={offset}
+                                                    />
+                                                    <TableCell primary>
+                                                        <Link
+                                                            href={`/students/${student.id}`}
+                                                            className='hover:text-brand-accent hover:underline'
+                                                        >
+                                                            {fullName(student)}
+                                                        </Link>
+                                                        {branches.length >
+                                                            1 && (
+                                                            <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
+                                                                {
+                                                                    student
+                                                                        .branch
+                                                                        .name
+                                                                }
+                                                            </p>
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <PhoneLines
+                                                            student={student}
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell className='max-w-[280px] min-w-[190px] whitespace-normal'>
+                                                        {student.groups
+                                                            .length === 0 ? (
+                                                            <span className='text-text-tertiary text-xs'>
+                                                                {t(
+                                                                    'students.noGroups',
+                                                                )}
+                                                            </span>
+                                                        ) : (
+                                                            <div className='flex flex-col gap-1.5 py-0.5'>
+                                                                {student.groups.map(
+                                                                    (group) => {
+                                                                        const match =
+                                                                            /^(.*?)\s*\((.+)\)$/.exec(
+                                                                                group.name.trim(),
+                                                                            );
+                                                                        const title =
+                                                                            match
+                                                                                ? match[1].trim()
+                                                                                : group.name;
+                                                                        const schedule =
+                                                                            match
+                                                                                ? match[2].trim()
+                                                                                : null;
+
+                                                                        const content =
+                                                                            (
+                                                                                <>
+                                                                                    <span className='text-text-primary group-hover/item:text-brand-accent text-xs leading-snug font-semibold transition-colors'>
+                                                                                        {
+                                                                                            title
+                                                                                        }
+                                                                                    </span>
+                                                                                    {schedule && (
+                                                                                        <span className='text-text-tertiary text-[11px] leading-tight font-normal'>
+                                                                                            {
+                                                                                                schedule
+                                                                                            }
+                                                                                        </span>
+                                                                                    )}
+                                                                                </>
+                                                                            );
+
+                                                                        return canViewGroups ? (
+                                                                            <Link
+                                                                                key={
+                                                                                    group.id
+                                                                                }
+                                                                                href={`/groups/${group.id}`}
+                                                                                className='group/item border-card-border bg-background-gray-secondary/60 hover:bg-background-gray-secondary hover:border-brand-accent/40 flex flex-col gap-0.5 rounded-lg border px-2.5 py-1.5 transition-all'
+                                                                            >
+                                                                                {
+                                                                                    content
+                                                                                }
+                                                                            </Link>
+                                                                        ) : (
+                                                                            <div
+                                                                                key={
+                                                                                    group.id
+                                                                                }
+                                                                                className='border-card-border bg-background-gray-secondary/60 flex flex-col gap-0.5 rounded-lg border px-2.5 py-1.5'
+                                                                            >
+                                                                                {
+                                                                                    content
+                                                                                }
+                                                                            </div>
+                                                                        );
+                                                                    },
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <StudentStatusBadge
+                                                            status={
+                                                                student.status
+                                                            }
+                                                        />
+                                                    </TableCell>
+                                                    {canViewPayments && (
+                                                        <TableCell
+                                                            numeric
+                                                            className={cn(
+                                                                'font-medium',
+                                                                balanceTone(
+                                                                    student.balance ??
+                                                                        0,
+                                                                ) ??
+                                                                    'text-text-tertiary',
+                                                            )}
+                                                        >
+                                                            {formatPrice(
+                                                                student.balance ??
+                                                                    0,
+                                                                t('common.som'),
+                                                            )}
+                                                        </TableCell>
+                                                    )}
+                                                    {hasActions && (
+                                                        <TableCell>
+                                                            <div className='flex justify-end gap-2'>
+                                                                <EyeLinkButton
+                                                                    href={`/students/${student.id}`}
+                                                                />
+                                                                {canPay && (
+                                                                    <Button
+                                                                        appearance='outline'
+                                                                        size='md'
+                                                                        iconOnly
+                                                                        aria-label={t(
+                                                                            'cashbox.new',
+                                                                        )}
+                                                                        onPress={() =>
+                                                                            setPaying(
+                                                                                student,
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <Wallet2 />
+                                                                    </Button>
+                                                                )}
+                                                                {canUpdate && (
+                                                                    <Button
+                                                                        appearance='outline'
+                                                                        size='md'
+                                                                        iconOnly
+                                                                        aria-label={t(
+                                                                            'common.edit',
+                                                                        )}
+                                                                        onPress={() => {
+                                                                            setEditing(
+                                                                                student,
+                                                                            );
+                                                                            setFormOpen(
+                                                                                true,
+                                                                            );
+                                                                        }}
+                                                                    >
+                                                                        <Pencil1 />
+                                                                    </Button>
+                                                                )}
+                                                                {canDelete && (
+                                                                    <Button
+                                                                        variant='danger'
+                                                                        appearance='outline'
+                                                                        size='md'
+                                                                        iconOnly
+                                                                        aria-label={t(
+                                                                            'common.delete',
+                                                                        )}
+                                                                        onPress={() =>
+                                                                            setDeleting(
+                                                                                student,
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <Trash1 />
+                                                                    </Button>
+                                                                )}
+                                                            </div>
+                                                        </TableCell>
+                                                    )}
+                                                </TableRow>
+                                            ),
+                                        )}
+                                    </TableBody>
+                                </TableRoot>
                             </div>
 
                             <PaginationBar

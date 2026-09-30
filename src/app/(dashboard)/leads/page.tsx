@@ -416,7 +416,7 @@ function LeadsView() {
                                 {query.data.data.map((lead, index) => (
                                     <div
                                         key={lead.id}
-                                        className='flex flex-col gap-3 p-4 transition-colors hover:bg-background-gray-primary/20'
+                                        className='hover:bg-background-gray-primary/20 flex flex-col gap-3 p-4 transition-colors'
                                     >
                                         <div className='flex items-start justify-between gap-3'>
                                             <div className='min-w-0 flex-1'>
@@ -424,7 +424,7 @@ function LeadsView() {
                                                     <span className='text-text-tertiary text-xs font-semibold tabular-nums'>
                                                         #{offset + index + 1}
                                                     </span>
-                                                    <span className='text-text-primary text-sm font-semibold truncate'>
+                                                    <span className='text-text-primary truncate text-sm font-semibold'>
                                                         {leadName(lead)}
                                                     </span>
                                                 </div>
@@ -432,49 +432,59 @@ function LeadsView() {
                                                     {lead.phone_number}
                                                 </p>
                                             </div>
-                                            <LeadStatusBadge status={lead.status} />
+                                            <LeadStatusBadge
+                                                status={lead.status}
+                                            />
                                         </div>
 
                                         <div className='flex items-center justify-between text-xs'>
                                             <div className='flex items-center gap-2'>
-                                                <LeadSourceBadge source={lead.source} />
+                                                <LeadSourceBadge
+                                                    source={lead.source}
+                                                />
                                                 {lead.course && (
                                                     <span className='text-text-secondary text-xs'>
                                                         {lead.course.name}
                                                     </span>
                                                 )}
                                             </div>
-                                            <span className='text-text-tertiary tabular-nums text-[11px]'>
+                                            <span className='text-text-tertiary text-[11px] tabular-nums'>
                                                 {formatDate(lead.created_at)}
                                             </span>
                                         </div>
 
-                                        <div className='flex items-center justify-end gap-1.5 border-t border-card-border/60 pt-2.5'>
-                                            {lead.student && canOpenStudents && (
-                                                <Link
-                                                    href={`/students/${lead.student.id}`}
-                                                    className='text-brand-accent text-xs font-medium hover:underline mr-auto'
-                                                >
-                                                    {t('leads.openStudent')}
-                                                </Link>
-                                            )}
-                                            {canConvert && lead.status !== 'won' && (
-                                                <Button
-                                                    variant='primary'
-                                                    appearance='outline'
-                                                    size='sm'
-                                                    onPress={() => setConverting(lead)}
-                                                    className='text-xs'
-                                                >
-                                                    {t('leads.convert')}
-                                                </Button>
-                                            )}
+                                        <div className='border-card-border/60 flex items-center justify-end gap-1.5 border-t pt-2.5'>
+                                            {lead.student &&
+                                                canOpenStudents && (
+                                                    <Link
+                                                        href={`/students/${lead.student.id}`}
+                                                        className='text-brand-accent mr-auto text-xs font-medium hover:underline'
+                                                    >
+                                                        {t('leads.openStudent')}
+                                                    </Link>
+                                                )}
+                                            {canConvert &&
+                                                lead.status !== 'won' && (
+                                                    <Button
+                                                        variant='primary'
+                                                        appearance='outline'
+                                                        size='sm'
+                                                        onPress={() =>
+                                                            setConverting(lead)
+                                                        }
+                                                        className='text-xs'
+                                                    >
+                                                        {t('leads.convert')}
+                                                    </Button>
+                                                )}
                                             {canUpdate && (
                                                 <Button
                                                     appearance='outline'
                                                     size='sm'
                                                     iconOnly
-                                                    aria-label={t('common.edit')}
+                                                    aria-label={t(
+                                                        'common.edit',
+                                                    )}
                                                     onPress={() => {
                                                         setEditing(lead);
                                                         setFormOpen(true);
@@ -489,8 +499,12 @@ function LeadsView() {
                                                     appearance='outline'
                                                     size='sm'
                                                     iconOnly
-                                                    aria-label={t('common.delete')}
-                                                    onPress={() => setDeleting(lead)}
+                                                    aria-label={t(
+                                                        'common.delete',
+                                                    )}
+                                                    onPress={() =>
+                                                        setDeleting(lead)
+                                                    }
                                                 >
                                                     <Trash1 className='size-3.5' />
                                                 </Button>
@@ -506,168 +520,176 @@ function LeadsView() {
                                     fullBleed
                                     className='border-x-0 border-t-0'
                                 >
-                                <TableHeader>
-                                    <TableRow>
-                                        <RowNumberHead />
-                                        <TableHead>
-                                            {t('common.fullName')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('leads.source')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('leads.interest')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('common.status')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('common.createdAt')}
-                                        </TableHead>
-                                        <TableHead className='text-right'>
-                                            {t('common.actions')}
-                                        </TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {query.data.data.map((lead, index) => (
-                                        <TableRow key={lead.id}>
-                                            <RowNumberCell
-                                                index={index}
-                                                offset={offset}
-                                            />
-                                            <TableCell primary>
-                                                {leadName(lead)}
-                                                <p className='text-text-tertiary mt-0.5 text-xs font-normal tabular-nums'>
-                                                    {lead.phone_number}
-                                                </p>
-                                            </TableCell>
-                                            <TableCell>
-                                                <LeadSourceBadge
-                                                    source={lead.source}
+                                    <TableHeader>
+                                        <TableRow>
+                                            <RowNumberHead />
+                                            <TableHead>
+                                                {t('common.fullName')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('leads.source')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('leads.interest')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.status')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.createdAt')}
+                                            </TableHead>
+                                            <TableHead className='text-right'>
+                                                {t('common.actions')}
+                                            </TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {query.data.data.map((lead, index) => (
+                                            <TableRow key={lead.id}>
+                                                <RowNumberCell
+                                                    index={index}
+                                                    offset={offset}
                                                 />
-                                            </TableCell>
-                                            <TableCell>
-                                                {lead.course?.name ?? '—'}
-                                            </TableCell>
-                                            <TableCell>
-                                                {canUpdate &&
-                                                lead.status !== 'won' ? (
-                                                    <div className='flex w-44 items-center gap-2'>
-                                                        <LeadStatusDot
+                                                <TableCell primary>
+                                                    {leadName(lead)}
+                                                    <p className='text-text-tertiary mt-0.5 text-xs font-normal tabular-nums'>
+                                                        {lead.phone_number}
+                                                    </p>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <LeadSourceBadge
+                                                        source={lead.source}
+                                                    />
+                                                </TableCell>
+                                                <TableCell>
+                                                    {lead.course?.name ?? '—'}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {canUpdate &&
+                                                    lead.status !== 'won' ? (
+                                                        <div className='flex w-44 items-center gap-2'>
+                                                            <LeadStatusDot
+                                                                status={
+                                                                    lead.status
+                                                                }
+                                                            />
+                                                            <SelectInput
+                                                                options={EDITABLE_LEAD_STATUSES.map(
+                                                                    (
+                                                                        status,
+                                                                    ) => ({
+                                                                        value: status,
+                                                                        label: t(
+                                                                            `leadStatus.${status}`,
+                                                                        ),
+                                                                    }),
+                                                                )}
+                                                                value={
+                                                                    lead.status
+                                                                }
+                                                                disabled={
+                                                                    statusMutation.isPending
+                                                                }
+                                                                onValueChange={(
+                                                                    status,
+                                                                ) =>
+                                                                    statusMutation.mutate(
+                                                                        {
+                                                                            id: lead.id,
+                                                                            status: status as NonNullable<
+                                                                                LeadPayload['status']
+                                                                            >,
+                                                                        },
+                                                                    )
+                                                                }
+                                                            />
+                                                        </div>
+                                                    ) : (
+                                                        <LeadStatusBadge
                                                             status={lead.status}
                                                         />
-                                                        <SelectInput
-                                                            options={EDITABLE_LEAD_STATUSES.map(
-                                                                (status) => ({
-                                                                    value: status,
-                                                                    label: t(
-                                                                        `leadStatus.${status}`,
-                                                                    ),
-                                                                }),
+                                                    )}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {formatDate(
+                                                        lead.created_at,
+                                                    )}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className='flex justify-end gap-2'>
+                                                        {lead.student &&
+                                                            canOpenStudents && (
+                                                                <Link
+                                                                    href={`/students/${lead.student.id}`}
+                                                                    className='text-brand-accent self-center text-sm font-medium hover:underline'
+                                                                >
+                                                                    {t(
+                                                                        'leads.openStudent',
+                                                                    )}
+                                                                </Link>
                                                             )}
-                                                            value={lead.status}
-                                                            disabled={
-                                                                statusMutation.isPending
-                                                            }
-                                                            onValueChange={(
-                                                                status,
-                                                            ) =>
-                                                                statusMutation.mutate(
-                                                                    {
-                                                                        id: lead.id,
-                                                                        status: status as NonNullable<
-                                                                            LeadPayload['status']
-                                                                        >,
-                                                                    },
-                                                                )
-                                                            }
-                                                        />
-                                                    </div>
-                                                ) : (
-                                                    <LeadStatusBadge
-                                                        status={lead.status}
-                                                    />
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                {formatDate(lead.created_at)}
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className='flex justify-end gap-2'>
-                                                    {lead.student &&
-                                                        canOpenStudents && (
-                                                            <Link
-                                                                href={`/students/${lead.student.id}`}
-                                                                className='text-brand-accent self-center text-sm font-medium hover:underline'
-                                                            >
-                                                                {t(
-                                                                    'leads.openStudent',
-                                                                )}
-                                                            </Link>
-                                                        )}
-                                                    {canConvert &&
-                                                        lead.status !==
-                                                            'won' && (
+                                                        {canConvert &&
+                                                            lead.status !==
+                                                                'won' && (
+                                                                <Button
+                                                                    variant='primary'
+                                                                    appearance='outline'
+                                                                    size='md'
+                                                                    onPress={() =>
+                                                                        setConverting(
+                                                                            lead,
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    {t(
+                                                                        'leads.convert',
+                                                                    )}
+                                                                </Button>
+                                                            )}
+                                                        {canUpdate && (
                                                             <Button
-                                                                variant='primary'
                                                                 appearance='outline'
                                                                 size='md'
+                                                                iconOnly
+                                                                aria-label={t(
+                                                                    'common.edit',
+                                                                )}
+                                                                onPress={() => {
+                                                                    setEditing(
+                                                                        lead,
+                                                                    );
+                                                                    setFormOpen(
+                                                                        true,
+                                                                    );
+                                                                }}
+                                                            >
+                                                                <Pencil1 />
+                                                            </Button>
+                                                        )}
+                                                        {canDelete && (
+                                                            <Button
+                                                                variant='danger'
+                                                                appearance='outline'
+                                                                size='md'
+                                                                iconOnly
+                                                                aria-label={t(
+                                                                    'common.delete',
+                                                                )}
                                                                 onPress={() =>
-                                                                    setConverting(
+                                                                    setDeleting(
                                                                         lead,
                                                                     )
                                                                 }
                                                             >
-                                                                {t(
-                                                                    'leads.convert',
-                                                                )}
+                                                                <Trash1 />
                                                             </Button>
                                                         )}
-                                                    {canUpdate && (
-                                                        <Button
-                                                            appearance='outline'
-                                                            size='md'
-                                                            iconOnly
-                                                            aria-label={t(
-                                                                'common.edit',
-                                                            )}
-                                                            onPress={() => {
-                                                                setEditing(
-                                                                    lead,
-                                                                );
-                                                                setFormOpen(
-                                                                    true,
-                                                                );
-                                                            }}
-                                                        >
-                                                            <Pencil1 />
-                                                        </Button>
-                                                    )}
-                                                    {canDelete && (
-                                                        <Button
-                                                            variant='danger'
-                                                            appearance='outline'
-                                                            size='md'
-                                                            iconOnly
-                                                            aria-label={t(
-                                                                'common.delete',
-                                                            )}
-                                                            onPress={() =>
-                                                                setDeleting(
-                                                                    lead,
-                                                                )
-                                                            }
-                                                        >
-                                                            <Trash1 />
-                                                        </Button>
-                                                    )}
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </TableRoot>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </TableRoot>
                             </div>
 
                             <PaginationBar
