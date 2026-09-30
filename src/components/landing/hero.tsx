@@ -2,7 +2,6 @@
 
 import { Button } from '@/components/tailgrids/core/button';
 import { useT } from '@/i18n/provider';
-import { ImageSlot } from './image-slot';
 
 export function Hero({ onStart }: { onStart: () => void }) {
     const t = useT();
@@ -59,19 +58,39 @@ export function Hero({ onStart }: { onStart: () => void }) {
                 </div>
             </div>
 
-            {/* Hero screenshot */}
+            {/* Hero video */}
             <div className='relative mx-auto max-w-5xl px-4 pb-12 sm:px-5 sm:pb-16'>
                 <div
                     aria-hidden='true'
                     className='bg-brand-500/15 absolute inset-x-8 top-4 bottom-0 rounded-full blur-3xl sm:inset-x-24 sm:top-8'
                 />
                 <div className='relative'>
-                    <ImageSlot
-                        image='hero'
-                        label={t('landing.image.hero')}
-                        sizes='(min-width: 1024px) 1024px, 100vw'
-                        priority
-                    />
+                    <div className='border-card-border bg-card-background overflow-hidden rounded-2xl border shadow-2xl shadow-black/10'>
+                        <div
+                            aria-hidden='true'
+                            className='border-card-border bg-background-gray-secondary/70 flex items-center justify-between border-b px-4 py-3'
+                        >
+                            <div className='flex items-center gap-2'>
+                                <span className='size-3 rounded-full bg-[#EC6A5E]' />
+                                <span className='size-3 rounded-full bg-[#F5BF4F]' />
+                                <span className='size-3 rounded-full bg-[#61C554]' />
+                            </div>
+                            <span className='text-text-tertiary text-xs font-mono select-none'>
+                                youtube.com · EDUMS Taqdimoti
+                            </span>
+                            <div className='w-12' />
+                        </div>
+                        <div className='relative aspect-video w-full bg-black'>
+                            <iframe
+                                className='h-full w-full'
+                                src='https://www.youtube.com/embed/ByVbY2w7kMQ'
+                                title='EDUMS — O‘quv markazlari uchun to‘liq CRM tizimi'
+                                allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+                                referrerPolicy='strict-origin-when-cross-origin'
+                                allowFullScreen
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
