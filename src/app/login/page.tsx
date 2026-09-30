@@ -25,7 +25,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 
 const SUPPORT_TELEGRAM = 'https://t.me/edumsuz';
 const DEMO_PHONE = '+998940080473';
-const DEMO_PASSWORD = 'shohruz2003dev';
+const DEMO_PASSWORD = 'edums@2026';
 
 async function signInWithPhone(
     phone_number: string,
@@ -254,9 +254,7 @@ export default function LoginPage() {
                                     +998 94 008 04 73
                                 </span>
                                 <span>•</span>
-                                <span className='select-all'>
-                                    shohruz2003dev
-                                </span>
+                                <span className='select-all'>edums@2026</span>
                             </div>
                         </div>
 

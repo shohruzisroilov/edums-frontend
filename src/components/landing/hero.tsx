@@ -130,13 +130,13 @@ export function Hero({ onStart }: { onStart: () => void }) {
                                         {t('common.password')}
                                     </span>
                                     <span className='text-text-primary font-mono text-sm font-bold tracking-wide select-all'>
-                                        shohruz2003dev
+                                        edums@2026
                                     </span>
                                 </div>
                                 <button
                                     type='button'
                                     onClick={() =>
-                                        handleCopy('shohruz2003dev', 'pass')
+                                        handleCopy('edums@2026', 'pass')
                                     }
                                     title={
                                         copiedField === 'pass'
