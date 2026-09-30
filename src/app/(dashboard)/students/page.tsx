@@ -1,6 +1,5 @@
 'use client';
 
-import { Badge } from '@/components/tailgrids/core/badge';
 import { Button } from '@/components/tailgrids/core/button';
 import {
     TableBody,
@@ -83,6 +82,7 @@ function StudentsView() {
     const canDelete = can(session, 'students.delete');
     const canViewPayments = can(session, 'payments.view');
     const canPay = can(session, 'payments.create');
+    const canViewGroups = can(session, 'groups.view');
     // Har doim ko'zcha (ochish) tugmasi ko'rinishi uchun hasActions barcha uchun true
     const hasActions = true;
 
@@ -358,7 +358,7 @@ function StudentsView() {
                                         <TableHead>
                                             {t('common.phone')}
                                         </TableHead>
-                                        <TableHead>
+                                        <TableHead className='min-w-[190px]'>
                                             {t('students.groups')}
                                         </TableHead>
                                         <TableHead>
@@ -399,25 +399,71 @@ function StudentsView() {
                                             <TableCell>
                                                 <PhoneLines student={student} />
                                             </TableCell>
-                                            <TableCell className='whitespace-normal'>
+                                            <TableCell className='max-w-[280px] min-w-[190px] whitespace-normal'>
                                                 {student.groups.length === 0 ? (
                                                     <span className='text-text-tertiary text-xs'>
                                                         {t('students.noGroups')}
                                                     </span>
                                                 ) : (
-                                                    <div className='flex flex-wrap gap-1'>
+                                                    <div className='flex flex-col gap-1.5 py-0.5'>
                                                         {student.groups.map(
-                                                            (group) => (
-                                                                <Badge
-                                                                    key={
-                                                                        group.id
-                                                                    }
-                                                                    size='sm'
-                                                                    color='gray'
-                                                                >
-                                                                    {group.name}
-                                                                </Badge>
-                                                            ),
+                                                            (group) => {
+                                                                const match =
+                                                                    /^(.*?)\s*\((.+)\)$/.exec(
+                                                                        group.name.trim(),
+                                                                    );
+                                                                const title =
+                                                                    match
+                                                                        ? match[1].trim()
+                                                                        : group.name;
+                                                                const schedule =
+                                                                    match
+                                                                        ? match[2].trim()
+                                                                        : null;
+
+                                                                const content =
+                                                                    (
+                                                                        <>
+                                                                            <span className='text-text-primary group-hover/item:text-brand-accent text-xs leading-snug font-semibold transition-colors'>
+                                                                                {
+                                                                                    title
+                                                                                }
+                                                                            </span>
+                                                                            {schedule && (
+                                                                                <span className='text-text-tertiary text-[11px] leading-tight font-normal'>
+                                                                                    {
+                                                                                        schedule
+                                                                                    }
+                                                                                </span>
+                                                                            )}
+                                                                        </>
+                                                                    );
+
+                                                                return canViewGroups ? (
+                                                                    <Link
+                                                                        key={
+                                                                            group.id
+                                                                        }
+                                                                        href={`/groups/${group.id}`}
+                                                                        className='group/item border-card-border bg-background-gray-secondary/60 hover:bg-background-gray-secondary hover:border-brand-accent/40 flex flex-col gap-0.5 rounded-lg border px-2.5 py-1.5 transition-all'
+                                                                    >
+                                                                        {
+                                                                            content
+                                                                        }
+                                                                    </Link>
+                                                                ) : (
+                                                                    <div
+                                                                        key={
+                                                                            group.id
+                                                                        }
+                                                                        className='border-card-border bg-background-gray-secondary/60 flex flex-col gap-0.5 rounded-lg border px-2.5 py-1.5'
+                                                                    >
+                                                                        {
+                                                                            content
+                                                                        }
+                                                                    </div>
+                                                                );
+                                                            },
                                                         )}
                                                     </div>
                                                 )}

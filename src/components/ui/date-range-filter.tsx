@@ -1,7 +1,7 @@
 'use client';
 
 import { DatePicker } from '@/components/ui/date-picker';
-import { useLocale, useT } from '@/i18n/provider';
+import { useT } from '@/i18n/provider';
 import { cn } from '@/utils/cn';
 import { toISODate } from '@/utils/format';
 
@@ -67,7 +67,6 @@ export function DateRangeFilter({
     className?: string;
 }) {
     const t = useT();
-    const { locale } = useLocale();
 
     // Determine active preset
     const activePreset = (() => {
@@ -97,20 +96,6 @@ export function DateRangeFilter({
     const applyPreset = (preset: DatePreset) => {
         onDateChange(getPresetDateRange(preset));
     };
-
-    const fromPlaceholder =
-        locale === 'ru'
-            ? 'С (ДД.ММ.ГГГГ)'
-            : locale === 'en'
-              ? 'From (DD.MM.YYYY)'
-              : 'Dan (KK.OO.YYYY)';
-
-    const toPlaceholder =
-        locale === 'ru'
-            ? 'По (ДД.ММ.ГГГГ)'
-            : locale === 'en'
-              ? 'To (DD.MM.YYYY)'
-              : 'Gacha (KK.OO.YYYY)';
 
     return (
         <div
@@ -143,13 +128,12 @@ export function DateRangeFilter({
 
             {/* Custom Range Inputs */}
             <div className='flex w-full items-center gap-2 sm:w-auto'>
-                <div className='w-full sm:w-36 md:w-40'>
+                <div className='w-full sm:w-34 md:w-36'>
                     <DatePicker
                         size='sm'
                         align='left'
                         aria-label={t('common.from')}
                         title={t('common.from')}
-                        placeholder={fromPlaceholder}
                         value={from}
                         max={to || undefined}
                         onDateChange={(val) => onDateChange({ from: val, to })}
@@ -158,13 +142,12 @@ export function DateRangeFilter({
                 <span className='text-text-tertiary shrink-0 text-xs font-medium'>
                     —
                 </span>
-                <div className='w-full sm:w-36 md:w-40'>
+                <div className='w-full sm:w-34 md:w-36'>
                     <DatePicker
                         size='sm'
                         align='right'
                         aria-label={t('common.to')}
                         title={t('common.to')}
-                        placeholder={toPlaceholder}
                         value={to}
                         min={from || undefined}
                         onDateChange={(val) => onDateChange({ from, to: val })}

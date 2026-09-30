@@ -214,18 +214,6 @@ function CashboxView() {
                                   },
                               ]
                             : []),
-                        ...(filters.from || filters.to
-                            ? [
-                                  {
-                                      key: 'date',
-                                      label: `Sana: ${filters.from || '…'} — ${filters.to || '…'}`,
-                                      onRemove: () => {
-                                          setFilter('from', '');
-                                          setFilter('to', '');
-                                      },
-                                  },
-                              ]
-                            : []),
                     ]}
                 >
                     <SelectInput

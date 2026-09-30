@@ -1047,6 +1047,8 @@ export const ru: Dictionary = {
     'auditField.category': 'Категория',
     'auditField.type': 'Тип',
     'auditField.value': 'Значение',
+    'auditField.notify_absence': 'Уведомление об отсутствии',
+    'auditField.notify_debtors': 'Уведомление о долге',
 
     /* ── Saytdan lid qabul qilish ── */
     'common.copy': 'Копировать',

@@ -1046,6 +1046,8 @@ export const en: Dictionary = {
     'auditField.category': 'Category',
     'auditField.type': 'Type',
     'auditField.value': 'Value',
+    'auditField.notify_absence': 'Absence notification',
+    'auditField.notify_debtors': 'Debt notification',
 
     /* ── Saytdan lid qabul qilish ── */
     'common.copy': 'Copy',

@@ -34,7 +34,7 @@ import {
     type AuditLog,
 } from '@/types/api';
 import { can } from '@/utils/access';
-import { fullName } from '@/utils/format';
+import { formatPhone, fullName } from '@/utils/format';
 import { FileText } from '@tailgrids/icons';
 import { useQuery } from '@tanstack/react-query';
 
@@ -318,10 +318,26 @@ function formatValue(
     }
 
     if (
-        key === 'method' &&
-        PAYMENT_METHODS.includes(value as (typeof PAYMENT_METHODS)[number])
+        (key === 'phone' || key === 'phone_number' || key === 'parent_phone') &&
+        typeof value === 'string'
     ) {
-        return t(`paymentMethod.${value as (typeof PAYMENT_METHODS)[number]}`);
+        return formatPhone(value);
+    }
+
+    if (key === 'category' && typeof value === 'string') {
+        const catKey = `expenseCategory.${value}` as TranslationKey;
+        const translated = t(catKey);
+        if (translated && !translated.startsWith('expenseCategory.')) {
+            return translated;
+        }
+    }
+
+    if (key === 'method' && typeof value === 'string') {
+        const methodKey = `paymentMethod.${value}` as TranslationKey;
+        const translated = t(methodKey);
+        if (translated && !translated.startsWith('paymentMethod.')) {
+            return translated;
+        }
     }
 
     if (key === 'source' && typeof value === 'string') {

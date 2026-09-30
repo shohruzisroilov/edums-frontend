@@ -1060,6 +1060,8 @@ export const uz = {
     'auditField.category': 'Toifa',
     'auditField.type': 'Turi',
     'auditField.value': 'Qiymati',
+    'auditField.notify_absence': 'Kelmaganlik xabarnomasi',
+    'auditField.notify_debtors': 'Qarzdorlik xabarnomasi',
 
     /* ── Saytdan lid qabul qilish ── */
     'common.copy': 'Nusxa olish',

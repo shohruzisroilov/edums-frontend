@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)" />
+  <g transform="translate(64, 64) scale(12)">
+    <!-- Graduation Cap Top Diamond -->
+    <path d="M 16 2 L 28.5 7 L 16 12 L 3.5 7 Z" fill="#60A5FA" />
+    <!-- Cap Underside Shadow/Band -->
+    <path d="M 7.5 8.8 L 16 12 L 24.5 8.8 L 27 9.8 L 16 13.8 L 5 9.8 Z" fill="#3B82F6" opacity="0.4" />
+    <!-- Tassel -->
+    <path d="M 25.5 8.2 L 26.5 13.5" stroke="#93C5FD" stroke-width="1.2" stroke-linecap="round" />
+    <circle cx="26.5" cy="14.8" r="1.2" fill="#93C5FD" />
+    <!-- Left 3D Face - "E" Shape -->
+    <path d="M 4 10.8 L 15 15.2 L 15 17.2 L 6.5 13.8 L 6.5 16.2 L 15 19.6 L 15 21.6 L 6.5 18.2 L 6.5 20.6 L 15 24 L 15 28.2 L 4 23.8 Z" fill="#3B82F6" />
+    <!-- Right 3D Face - "M" / Arch Shape -->
+    <path d="M 17 15.2 L 28 10.8 L 28 23.8 L 24.8 25.1 L 24.8 20.8 C 24.8 19 20.2 20.8 20.2 22.6 L 20.2 26.9 L 17 28.2 Z" fill="#38BDF8" />
+  </g>
+</svg>
