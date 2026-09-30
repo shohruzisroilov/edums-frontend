@@ -78,6 +78,8 @@ export const ru: Dictionary = {
     'auth.showPassword': 'Показать пароль',
     'auth.hidePassword': 'Скрыть пароль',
     'auth.contact': 'Для регистрации или вопросов:',
+    'auth.demoAccount': 'Демо аккаунт',
+    'auth.fillDemo': 'Заполнить демо-данные',
 
     /* ── Меню ────────────────────────────────────────────────────────── */
     'nav.management': 'УПРАВЛЕНИЕ',
@@ -355,6 +357,10 @@ export const ru: Dictionary = {
     'landing.navTariffs': 'Тарифы',
     'landing.openCabinet': 'Перейти в кабинет',
     'landing.startFree': 'Начать бесплатно',
+    'landing.demoBadge': 'Демо аккаунт',
+    'landing.demoTitle': 'Для тестирования системы:',
+    'landing.demoLoginBtn': 'Войти в демо',
+    'landing.demoCopied': 'Скопировано',
     'landing.heroTitle': 'Управляйте учебным центром в одной системе',
     'landing.heroText':
         'Группы, посещаемость, оплаты, должники, лиды и зарплаты преподавателей — всё в одном месте. Кто не заплатил, какая группа заполнена и сколько прибыли осталось в конце месяца — видно с одного взгляда.',

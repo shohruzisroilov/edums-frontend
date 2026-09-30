@@ -78,6 +78,8 @@ export const en: Dictionary = {
     'auth.showPassword': 'Show password',
     'auth.hidePassword': 'Hide password',
     'auth.contact': 'To open an account or ask a question:',
+    'auth.demoAccount': 'Demo account',
+    'auth.fillDemo': 'Fill demo credentials',
 
     /* ── Navigation ──────────────────────────────────────────────────── */
     'nav.management': 'MANAGEMENT',
@@ -357,6 +359,10 @@ export const en: Dictionary = {
     'landing.navTariffs': 'Pricing',
     'landing.openCabinet': 'Open dashboard',
     'landing.startFree': 'Start free',
+    'landing.demoBadge': 'Demo account',
+    'landing.demoTitle': 'To try out the system:',
+    'landing.demoLoginBtn': 'Try demo',
+    'landing.demoCopied': 'Copied',
     'landing.heroTitle': 'Run your learning centre in one system',
     'landing.heroText':
         "Groups, attendance, payments, debtors, leads and teacher pay — all in one place. See at a glance who hasn't paid, which group is full and how much profit is left at the end of the month.",
