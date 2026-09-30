@@ -232,15 +232,15 @@ export default function LoginPage() {
                         </div>
 
                         {/* Demo hisob info qutisi */}
-                        <div className='border-card-border/80 bg-card-surface-area/80 shadow-md shadow-brand-500/5 relative mb-6 overflow-hidden rounded-2xl border p-3.5 sm:p-4 text-xs backdrop-blur-md transition-all hover:border-brand-500/40'>
+                        <div className='border-card-border/80 bg-card-surface-area/80 shadow-brand-500/5 hover:border-brand-500/40 relative mb-6 overflow-hidden rounded-2xl border p-3.5 text-xs shadow-md backdrop-blur-md transition-all sm:p-4'>
                             {/* Yuqori nozik gradient chiziq */}
                             <div
                                 aria-hidden='true'
                                 className='from-brand-500/10 via-brand-500 to-brand-500/10 absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r'
                             />
 
-                            <div className='flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-card-border/60'>
-                                <span className='border-brand-500/25 bg-brand-500/10 text-brand-accent inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-semibold shadow-2xs whitespace-nowrap'>
+                            <div className='border-card-border/60 flex flex-wrap items-center justify-between gap-2 border-b pb-3'>
+                                <span className='border-brand-500/25 bg-brand-500/10 text-brand-accent inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-semibold whitespace-nowrap shadow-2xs'>
                                     <span className='bg-brand-500 size-1.5 animate-pulse rounded-full' />
                                     {t('auth.demoAccount')}
                                 </span>
@@ -250,22 +250,22 @@ export default function LoginPage() {
                                         setPhone(DEMO_PHONE);
                                         setPassword(DEMO_PASSWORD);
                                     }}
-                                    className='bg-brand-accent/10 hover:bg-brand-accent text-brand-accent hover:text-white border border-brand-accent/20 cursor-pointer rounded-lg px-2.5 py-1 text-xs font-semibold transition-all active:scale-95 shadow-2xs whitespace-nowrap'
+                                    className='bg-brand-accent/10 hover:bg-brand-accent text-brand-accent border-brand-accent/20 cursor-pointer rounded-lg border px-2.5 py-1 text-xs font-semibold whitespace-nowrap shadow-2xs transition-all hover:text-white active:scale-95'
                                 >
                                     {t('auth.fillDemo')} →
                                 </button>
                             </div>
 
-                            <div className='mt-2.5 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs'>
+                            <div className='mt-2.5 grid grid-cols-1 gap-2 text-xs sm:grid-cols-2'>
                                 <div
                                     onClick={() => setPhone(DEMO_PHONE)}
                                     title='To`ldirish uchun bosing'
                                     className='border-card-border/70 bg-background-gray-secondary/50 hover:bg-background-gray-secondary hover:border-brand-accent/40 flex cursor-pointer items-center justify-between rounded-xl border px-3 py-2 transition-all'
                                 >
-                                    <span className='text-text-tertiary text-[10px] font-bold uppercase tracking-wider'>
+                                    <span className='text-text-tertiary text-[10px] font-bold tracking-wider uppercase'>
                                         {t('common.phoneNumber')}:
                                     </span>
-                                    <span className='text-text-primary font-mono text-[11px] font-bold select-all tabular-nums'>
+                                    <span className='text-text-primary font-mono text-[11px] font-bold tabular-nums select-all'>
                                         +998 94 008 04 73
                                     </span>
                                 </div>
@@ -275,7 +275,7 @@ export default function LoginPage() {
                                     title='To`ldirish uchun bosing'
                                     className='border-card-border/70 bg-background-gray-secondary/50 hover:bg-background-gray-secondary hover:border-brand-accent/40 flex cursor-pointer items-center justify-between rounded-xl border px-3 py-2 transition-all'
                                 >
-                                    <span className='text-text-tertiary text-[10px] font-bold uppercase tracking-wider'>
+                                    <span className='text-text-tertiary text-[10px] font-bold tracking-wider uppercase'>
                                         {t('common.password')}:
                                     </span>
                                     <span className='text-text-primary font-mono text-[11px] font-bold select-all'>

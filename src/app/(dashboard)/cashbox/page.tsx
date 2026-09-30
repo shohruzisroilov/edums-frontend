@@ -304,7 +304,7 @@ function CashboxView() {
                                 {query.data.data.map((payment, index) => (
                                     <div
                                         key={payment.id}
-                                        className='flex flex-col gap-2.5 p-4 transition-colors hover:bg-background-gray-primary/20'
+                                        className='hover:bg-background-gray-primary/20 flex flex-col gap-2.5 p-4 transition-colors'
                                     >
                                         <div className='flex items-start justify-between gap-3'>
                                             <div className='min-w-0 flex-1'>
@@ -315,39 +315,59 @@ function CashboxView() {
                                                     {canOpenStudents ? (
                                                         <Link
                                                             href={`/students/${payment.student.id}`}
-                                                            className='text-text-primary hover:text-brand-accent text-sm font-semibold truncate hover:underline'
+                                                            className='text-text-primary hover:text-brand-accent truncate text-sm font-semibold hover:underline'
                                                         >
-                                                            {fullName(payment.student)}
+                                                            {fullName(
+                                                                payment.student,
+                                                            )}
                                                         </Link>
                                                     ) : (
-                                                        <span className='text-text-primary text-sm font-semibold truncate'>
-                                                            {fullName(payment.student)}
+                                                        <span className='text-text-primary truncate text-sm font-semibold'>
+                                                            {fullName(
+                                                                payment.student,
+                                                            )}
                                                         </span>
                                                     )}
                                                 </div>
                                                 <p className='text-text-tertiary mt-0.5 text-xs'>
                                                     {payment.group.name}
-                                                    {payment.note && ` · ${payment.note}`}
+                                                    {payment.note &&
+                                                        ` · ${payment.note}`}
                                                 </p>
                                             </div>
                                             <div className='text-right'>
-                                                <span className={cn(TONE_TEXT.success, 'text-sm font-bold tabular-nums')}>
-                                                    +{formatPrice(payment.amount, t('common.som'))}
+                                                <span
+                                                    className={cn(
+                                                        TONE_TEXT.success,
+                                                        'text-sm font-bold tabular-nums',
+                                                    )}
+                                                >
+                                                    +
+                                                    {formatPrice(
+                                                        payment.amount,
+                                                        t('common.som'),
+                                                    )}
                                                 </span>
                                             </div>
                                         </div>
 
-                                        <div className='flex items-center justify-between text-xs pt-1'>
+                                        <div className='flex items-center justify-between pt-1 text-xs'>
                                             <div className='flex items-center gap-2'>
-                                                <PaymentMethodBadge method={payment.method} />
+                                                <PaymentMethodBadge
+                                                    method={payment.method}
+                                                />
                                                 <span className='text-text-tertiary tabular-nums'>
-                                                    {formatDate(payment.paid_at)}
+                                                    {formatDate(
+                                                        payment.paid_at,
+                                                    )}
                                                 </span>
                                             </div>
 
                                             {payment.received_by && (
-                                                <span className='text-text-tertiary text-[11px] truncate max-w-[140px]'>
-                                                    {fullName(payment.received_by)}
+                                                <span className='text-text-tertiary max-w-[140px] truncate text-[11px]'>
+                                                    {fullName(
+                                                        payment.received_by,
+                                                    )}
                                                 </span>
                                             )}
 
@@ -357,8 +377,12 @@ function CashboxView() {
                                                     appearance='outline'
                                                     size='sm'
                                                     iconOnly
-                                                    aria-label={t('common.delete')}
-                                                    onPress={() => setDeleting(payment)}
+                                                    aria-label={t(
+                                                        'common.delete',
+                                                    )}
+                                                    onPress={() =>
+                                                        setDeleting(payment)
+                                                    }
                                                 >
                                                     <Trash1 className='size-3.5' />
                                                 </Button>
@@ -376,108 +400,116 @@ function CashboxView() {
                                 >
                                     <TableHeader>
                                         <TableRow>
-                                        <RowNumberHead />
-                                        <TableHead>
-                                            {t('cashbox.paidAt')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('common.student')}
-                                        </TableHead>
-                                        <TableHead numeric>
-                                            {t('cashbox.amount')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('cashbox.method')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('cashbox.receivedBy')}
-                                        </TableHead>
-                                        {canDelete && (
-                                            <TableHead className='text-right'>
-                                                {t('common.actions')}
+                                            <RowNumberHead />
+                                            <TableHead>
+                                                {t('cashbox.paidAt')}
                                             </TableHead>
-                                        )}
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {query.data.data.map((payment, index) => (
-                                        <TableRow key={payment.id}>
-                                            <RowNumberCell
-                                                index={index}
-                                                offset={offset}
-                                            />
-                                            <TableCell>
-                                                {formatDate(payment.paid_at)}
-                                            </TableCell>
-                                            <TableCell primary>
-                                                {canOpenStudents ? (
-                                                    <Link
-                                                        href={`/students/${payment.student.id}`}
-                                                        className='hover:text-brand-accent hover:underline'
-                                                    >
-                                                        {fullName(
-                                                            payment.student,
-                                                        )}
-                                                    </Link>
-                                                ) : (
-                                                    fullName(payment.student)
-                                                )}
-                                                <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
-                                                    {payment.group.name}
-                                                    {payment.note &&
-                                                        ` · ${payment.note}`}
-                                                </p>
-                                            </TableCell>
-                                            <TableCell
-                                                numeric
-                                                className={cn(
-                                                    TONE_TEXT.success,
-                                                    'font-medium',
-                                                )}
-                                            >
-                                                {formatPrice(
-                                                    payment.amount,
-                                                    t('common.som'),
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                <PaymentMethodBadge
-                                                    method={payment.method}
-                                                />
-                                            </TableCell>
-                                            <TableCell>
-                                                {payment.received_by
-                                                    ? fullName(
-                                                          payment.received_by,
-                                                      )
-                                                    : '—'}
-                                            </TableCell>
+                                            <TableHead>
+                                                {t('common.student')}
+                                            </TableHead>
+                                            <TableHead numeric>
+                                                {t('cashbox.amount')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('cashbox.method')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('cashbox.receivedBy')}
+                                            </TableHead>
                                             {canDelete && (
-                                                <TableCell>
-                                                    <div className='flex justify-end'>
-                                                        <Button
-                                                            variant='danger'
-                                                            appearance='outline'
-                                                            size='md'
-                                                            iconOnly
-                                                            aria-label={t(
-                                                                'common.delete',
-                                                            )}
-                                                            onPress={() =>
-                                                                setDeleting(
-                                                                    payment,
-                                                                )
-                                                            }
-                                                        >
-                                                            <Trash1 />
-                                                        </Button>
-                                                    </div>
-                                                </TableCell>
+                                                <TableHead className='text-right'>
+                                                    {t('common.actions')}
+                                                </TableHead>
                                             )}
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </TableRoot>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {query.data.data.map(
+                                            (payment, index) => (
+                                                <TableRow key={payment.id}>
+                                                    <RowNumberCell
+                                                        index={index}
+                                                        offset={offset}
+                                                    />
+                                                    <TableCell>
+                                                        {formatDate(
+                                                            payment.paid_at,
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell primary>
+                                                        {canOpenStudents ? (
+                                                            <Link
+                                                                href={`/students/${payment.student.id}`}
+                                                                className='hover:text-brand-accent hover:underline'
+                                                            >
+                                                                {fullName(
+                                                                    payment.student,
+                                                                )}
+                                                            </Link>
+                                                        ) : (
+                                                            fullName(
+                                                                payment.student,
+                                                            )
+                                                        )}
+                                                        <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
+                                                            {payment.group.name}
+                                                            {payment.note &&
+                                                                ` · ${payment.note}`}
+                                                        </p>
+                                                    </TableCell>
+                                                    <TableCell
+                                                        numeric
+                                                        className={cn(
+                                                            TONE_TEXT.success,
+                                                            'font-medium',
+                                                        )}
+                                                    >
+                                                        {formatPrice(
+                                                            payment.amount,
+                                                            t('common.som'),
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <PaymentMethodBadge
+                                                            method={
+                                                                payment.method
+                                                            }
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {payment.received_by
+                                                            ? fullName(
+                                                                  payment.received_by,
+                                                              )
+                                                            : '—'}
+                                                    </TableCell>
+                                                    {canDelete && (
+                                                        <TableCell>
+                                                            <div className='flex justify-end'>
+                                                                <Button
+                                                                    variant='danger'
+                                                                    appearance='outline'
+                                                                    size='md'
+                                                                    iconOnly
+                                                                    aria-label={t(
+                                                                        'common.delete',
+                                                                    )}
+                                                                    onPress={() =>
+                                                                        setDeleting(
+                                                                            payment,
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <Trash1 />
+                                                                </Button>
+                                                            </div>
+                                                        </TableCell>
+                                                    )}
+                                                </TableRow>
+                                            ),
+                                        )}
+                                    </TableBody>
+                                </TableRoot>
                             </div>
 
                             <PaginationBar

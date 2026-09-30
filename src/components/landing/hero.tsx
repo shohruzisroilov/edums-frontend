@@ -72,7 +72,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
 
                 {/* Demo hisob kartasi */}
                 <div className='mx-auto mt-7 max-w-xl px-2 sm:mt-9 sm:px-0'>
-                    <div className='border-card-border/80 bg-card-surface-area/85 shadow-lg shadow-brand-500/5 relative overflow-hidden rounded-2xl border p-4 sm:p-5 backdrop-blur-md transition-all hover:shadow-brand-500/10'>
+                    <div className='border-card-border/80 bg-card-surface-area/85 shadow-brand-500/5 hover:shadow-brand-500/10 relative overflow-hidden rounded-2xl border p-4 shadow-lg backdrop-blur-md transition-all sm:p-5'>
                         {/* Yuqori nozik neon gradient chiziq */}
                         <div
                             aria-hidden='true'
@@ -80,20 +80,20 @@ export function Hero({ onStart }: { onStart: () => void }) {
                         />
 
                         {/* Sarlavha qismi */}
-                        <div className='border-card-border/60 flex flex-col gap-3 pb-3 sm:flex-row sm:items-center sm:justify-between border-b'>
-                            <div className='flex items-center gap-2.5 flex-wrap'>
+                        <div className='border-card-border/60 flex flex-col gap-3 border-b pb-3 sm:flex-row sm:items-center sm:justify-between'>
+                            <div className='flex flex-wrap items-center gap-2.5'>
                                 <span className='border-brand-500/25 bg-brand-500/10 text-brand-accent inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold whitespace-nowrap shadow-xs'>
                                     <span className='bg-brand-500 size-1.5 animate-pulse rounded-full' />
                                     {t('landing.demoBadge')}
                                 </span>
-                                <span className='text-text-secondary text-xs sm:text-sm font-medium'>
+                                <span className='text-text-secondary text-xs font-medium sm:text-sm'>
                                     {t('landing.demoTitle')}
                                 </span>
                             </div>
 
                             <Link
                                 href='/login?demo=1'
-                                className='bg-brand-accent hover:bg-brand-accent/90 text-white inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-semibold shadow-xs transition-all active:scale-95'
+                                className='bg-brand-accent hover:bg-brand-accent/90 inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition-all active:scale-95'
                             >
                                 <span>{t('landing.demoLoginBtn')}</span>
                                 <span aria-hidden='true'>→</span>
@@ -109,11 +109,11 @@ export function Hero({ onStart }: { onStart: () => void }) {
                                 }
                                 className='group border-card-border/80 bg-background-gray-secondary/50 hover:bg-background-gray-secondary hover:border-brand-accent/50 flex cursor-pointer items-center justify-between rounded-xl border p-3 transition-all active:scale-[0.98]'
                             >
-                                <div className='flex flex-col min-w-0'>
+                                <div className='flex min-w-0 flex-col'>
                                     <span className='text-text-tertiary text-[10px] font-bold tracking-wider uppercase'>
                                         {t('common.phoneNumber')}
                                     </span>
-                                    <span className='text-text-primary font-mono text-sm font-bold tracking-wide select-all truncate'>
+                                    <span className='text-text-primary truncate font-mono text-sm font-bold tracking-wide select-all'>
                                         +998 94 008 04 73
                                     </span>
                                 </div>
@@ -126,7 +126,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
                                     }
                                 >
                                     {copiedField === 'phone' ? (
-                                        <div className='flex items-center gap-1 text-emerald-600 dark:text-emerald-400 text-xs font-semibold'>
+                                        <div className='flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400'>
                                             <Check className='size-4' />
                                         </div>
                                     ) : (
@@ -137,16 +137,14 @@ export function Hero({ onStart }: { onStart: () => void }) {
 
                             {/* Parol */}
                             <div
-                                onClick={() =>
-                                    handleCopy('edums@2026', 'pass')
-                                }
+                                onClick={() => handleCopy('edums@2026', 'pass')}
                                 className='group border-card-border/80 bg-background-gray-secondary/50 hover:bg-background-gray-secondary hover:border-brand-accent/50 flex cursor-pointer items-center justify-between rounded-xl border p-3 transition-all active:scale-[0.98]'
                             >
-                                <div className='flex flex-col min-w-0'>
+                                <div className='flex min-w-0 flex-col'>
                                     <span className='text-text-tertiary text-[10px] font-bold tracking-wider uppercase'>
                                         {t('common.password')}
                                     </span>
-                                    <span className='text-text-primary font-mono text-sm font-bold tracking-wide select-all truncate'>
+                                    <span className='text-text-primary truncate font-mono text-sm font-bold tracking-wide select-all'>
                                         edums@2026
                                     </span>
                                 </div>
@@ -159,7 +157,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
                                     }
                                 >
                                     {copiedField === 'pass' ? (
-                                        <div className='flex items-center gap-1 text-emerald-600 dark:text-emerald-400 text-xs font-semibold'>
+                                        <div className='flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400'>
                                             <Check className='size-4' />
                                         </div>
                                     ) : (

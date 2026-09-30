@@ -62,10 +62,10 @@ export function BottomNav({ onMenuClick }: BottomNavProps) {
             {quickActionsOpen && (
                 <div className='fixed inset-0 z-50 flex items-end justify-center md:hidden'>
                     <div
-                        className='fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200'
+                        className='animate-in fade-in fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-200'
                         onClick={() => setQuickActionsOpen(false)}
                     />
-                    <div className='border-card-border bg-card-surface-area relative z-10 w-full max-w-lg rounded-t-3xl border-t border-x p-5 pb-8 shadow-2xl animate-in slide-in-from-bottom-6 duration-200'>
+                    <div className='border-card-border bg-card-surface-area animate-in slide-in-from-bottom-6 relative z-10 w-full max-w-lg rounded-t-3xl border-x border-t p-5 pb-8 shadow-2xl duration-200'>
                         <div className='bg-border-primary/80 mx-auto mb-4 h-1.5 w-12 rounded-full opacity-70' />
 
                         <div className='mb-4 flex items-center justify-between'>
@@ -215,7 +215,7 @@ export function BottomNav({ onMenuClick }: BottomNavProps) {
                                 className='text-text-tertiary hover:text-text-primary flex flex-col items-center justify-center gap-1 py-1 transition-colors'
                             >
                                 <MenuIcon />
-                                <span className='text-[10px] font-medium leading-none'>
+                                <span className='text-[10px] leading-none font-medium'>
                                     {t('nav.more')}
                                 </span>
                             </button>
@@ -226,7 +226,9 @@ export function BottomNav({ onMenuClick }: BottomNavProps) {
                                 <NavItem
                                     href='/dashboard'
                                     label={t('nav.dashboard')}
-                                    icon={<DashboardSquare1 className='size-5' />}
+                                    icon={
+                                        <DashboardSquare1 className='size-5' />
+                                    }
                                     isActive={pathname === '/dashboard'}
                                 />
                             ) : (
@@ -251,18 +253,22 @@ export function BottomNav({ onMenuClick }: BottomNavProps) {
                                 {hasAnyQuickAction ? (
                                     <button
                                         type='button'
-                                        onClick={() => setQuickActionsOpen(true)}
+                                        onClick={() =>
+                                            setQuickActionsOpen(true)
+                                        }
                                         aria-label={t('nav.quickActions')}
-                                        className='bg-brand-accent text-white flex size-12 items-center justify-center rounded-full shadow-lg shadow-brand-accent/30 transition-transform active:scale-90 hover:brightness-105'
+                                        className='bg-brand-accent shadow-brand-accent/30 flex size-12 items-center justify-center rounded-full text-white shadow-lg transition-transform hover:brightness-105 active:scale-90'
                                     >
-                                        <Plus className='size-6 text-white stroke-[2.2]' />
+                                        <Plus className='size-6 stroke-[2.2] text-white' />
                                     </button>
                                 ) : (
                                     <NavItem
                                         href='/cashbox'
                                         label={t('nav.cashbox')}
                                         icon={<Wallet2 className='size-5' />}
-                                        isActive={pathname.startsWith('/cashbox')}
+                                        isActive={pathname.startsWith(
+                                            '/cashbox',
+                                        )}
                                         disabled={!canCashbox}
                                     />
                                 )}
@@ -282,7 +288,7 @@ export function BottomNav({ onMenuClick }: BottomNavProps) {
                                 className='text-text-tertiary hover:text-text-primary flex flex-col items-center justify-center gap-1 py-1 transition-colors'
                             >
                                 <MenuIcon />
-                                <span className='text-[10px] font-medium leading-none'>
+                                <span className='text-[10px] leading-none font-medium'>
                                     {t('nav.more')}
                                 </span>
                             </button>
@@ -309,9 +315,9 @@ function NavItem({
 }) {
     if (disabled) {
         return (
-            <div className='text-text-tertiary/40 flex flex-col items-center justify-center gap-1 py-1 cursor-not-allowed'>
+            <div className='text-text-tertiary/40 flex cursor-not-allowed flex-col items-center justify-center gap-1 py-1'>
                 {icon}
-                <span className='text-[10px] font-medium leading-none'>
+                <span className='text-[10px] leading-none font-medium'>
                     {label}
                 </span>
             </div>
@@ -328,10 +334,12 @@ function NavItem({
                     : 'text-text-tertiary hover:text-text-primary',
             )}
         >
-            <div className={cn(
-                'flex items-center justify-center transition-transform',
-                isActive && 'scale-110'
-            )}>
+            <div
+                className={cn(
+                    'flex items-center justify-center transition-transform',
+                    isActive && 'scale-110',
+                )}
+            >
                 {icon}
             </div>
             <span className='text-[10px] leading-none tracking-tight'>
