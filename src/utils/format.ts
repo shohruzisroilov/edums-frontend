@@ -190,6 +190,28 @@ export function isValidISODate(
     return /^\d{4}-\d{2}-\d{2}$/.test(value);
 }
 
+/** `YYYY-MM-DD` ISO sanasini foydalanuvchiga ko'rsatiladigan `DD.MM.YYYY` formatiga o'tkazadi */
+export function isoToDisplayDate(iso: string | null | undefined): string {
+    if (!iso) return '';
+    const trimmed = iso.trim();
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(trimmed);
+    if (match) {
+        return `${match[3]}.${match[2]}.${match[1]}`;
+    }
+    // Agar allaqachon DD.MM.YYYY bo'lsa
+    if (/^\d{2}\.\d{2}\.\d{4}$/.test(trimmed)) {
+        return trimmed;
+    }
+    return trimmed;
+}
+
+/** `DD.MM.YYYY` yoki boshqa erkin sanani `YYYY-MM-DD` ISO formatiga o'tkazadi */
+export function displayToISODate(display: string | null | undefined): string {
+    if (!display) return '';
+    const normalized = normalizeDateString(display);
+    return normalized || '';
+}
+
 /** Til bilan bog'liq emas — hamma joyda "Familiya Ism" tartibida. */
 export function fullName(person: {
     first_name: string;
