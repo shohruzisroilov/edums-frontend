@@ -33,6 +33,7 @@ export function LeadKanbanBoard({
     const [dragOverColumn, setDragOverColumn] = useState<LeadStatus | null>(
         null,
     );
+    const [activeTab, setActiveTab] = useState<LeadStatus>('new');
 
     function handleDragStart(e: DragEvent<HTMLDivElement>, leadId: string) {
         e.dataTransfer.setData('text/plain', leadId);
@@ -68,25 +69,66 @@ export function LeadKanbanBoard({
     }
 
     return (
-        <div className='flex min-w-full snap-x scrollbar-thin gap-4 overflow-x-auto pt-1 pb-6 2xl:grid 2xl:grid-cols-5'>
-            {LEAD_STATUSES.map((status) => {
-                const columnLeads = leads.filter((l) => l.status === status);
-                const isOver = dragOverColumn === status;
+        <div className='flex flex-col gap-3'>
+            {/* Mobile Column Tabs (< sm) */}
+            <div className='scrollbar-thin flex gap-1.5 overflow-x-auto pb-1 sm:hidden'>
+                {LEAD_STATUSES.map((status) => {
+                    const count = leads.filter((l) => l.status === status).length;
+                    const isActive = activeTab === status;
 
-                return (
-                    <div
-                        key={status}
-                        onDragOver={(e) =>
-                            canUpdate && handleDragOver(e, status)
-                        }
-                        onDragLeave={handleDragLeave}
-                        onDrop={(e) => canUpdate && handleDrop(e, status)}
-                        className={cn(
-                            'border-card-border bg-background-gray-secondary/40 flex min-h-[450px] w-[300px] shrink-0 snap-start flex-col rounded-2xl border p-3.5 transition-all duration-150 sm:w-[320px] 2xl:w-auto 2xl:min-w-0 2xl:shrink',
-                            isOver &&
-                                'border-brand-accent bg-brand-accent/10 ring-brand-accent/20 scale-[1.01] ring-2',
-                        )}
-                    >
+                    return (
+                        <button
+                            key={status}
+                            type='button'
+                            onClick={() => setActiveTab(status)}
+                            className={cn(
+                                'flex shrink-0 items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition-all',
+                                isActive
+                                    ? 'border-brand-accent bg-brand-accent text-white shadow-xs'
+                                    : 'border-card-border bg-card-surface-area text-text-tertiary hover:text-text-primary',
+                            )}
+                        >
+                            <LeadStatusDot status={status} />
+                            <span>
+                                {t(
+                                    `leadStatus.${status}` as import('@/i18n/dictionaries/uz').TranslationKey,
+                                )}
+                            </span>
+                            <span
+                                className={cn(
+                                    'rounded-md px-1.5 py-0.2 text-[10px] tabular-nums font-bold',
+                                    isActive
+                                        ? 'bg-white/20 text-white'
+                                        : 'bg-background-gray-secondary text-text-tertiary',
+                                )}
+                            >
+                                {count}
+                            </span>
+                        </button>
+                    );
+                })}
+            </div>
+
+            <div className='flex min-w-full snap-x scrollbar-thin gap-4 overflow-x-auto pt-1 pb-6 2xl:grid 2xl:grid-cols-5'>
+                {LEAD_STATUSES.map((status) => {
+                    const columnLeads = leads.filter((l) => l.status === status);
+                    const isOver = dragOverColumn === status;
+
+                    return (
+                        <div
+                            key={status}
+                            onDragOver={(e) =>
+                                canUpdate && handleDragOver(e, status)
+                            }
+                            onDragLeave={handleDragLeave}
+                            onDrop={(e) => canUpdate && handleDrop(e, status)}
+                            className={cn(
+                                'border-card-border bg-background-gray-secondary/40 flex min-h-[450px] w-full shrink-0 snap-start flex-col rounded-2xl border p-3.5 transition-all duration-150 sm:w-[320px] 2xl:w-auto 2xl:min-w-0 2xl:shrink',
+                                status !== activeTab && 'hidden sm:flex',
+                                isOver &&
+                                    'border-brand-accent bg-brand-accent/10 ring-brand-accent/20 scale-[1.01] ring-2',
+                            )}
+                        >
                         {/* Column Header */}
                         <div className='border-card-border mb-3 flex items-center justify-between border-b px-1 pb-2.5'>
                             <div className='flex items-center gap-2'>
@@ -265,6 +307,7 @@ export function LeadKanbanBoard({
                     </div>
                 );
             })}
+            </div>
         </div>
     );
 }

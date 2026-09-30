@@ -72,86 +72,100 @@ export function Hero({ onStart }: { onStart: () => void }) {
 
                 {/* Demo hisob kartasi */}
                 <div className='mx-auto mt-7 max-w-xl px-2 sm:mt-9 sm:px-0'>
-                    <div className='border-brand-500/25 bg-brand-500/5 relative overflow-hidden rounded-2xl border p-4 shadow-sm backdrop-blur-sm sm:p-5'>
-                        <div className='border-card-border/60 flex flex-wrap items-center justify-between gap-2 border-b pb-3'>
-                            <div className='flex items-center gap-2'>
-                                <span className='bg-brand-500/15 text-brand-accent inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold'>
+                    <div className='border-card-border/80 bg-card-surface-area/85 shadow-lg shadow-brand-500/5 relative overflow-hidden rounded-2xl border p-4 sm:p-5 backdrop-blur-md transition-all hover:shadow-brand-500/10'>
+                        {/* Yuqori nozik neon gradient chiziq */}
+                        <div
+                            aria-hidden='true'
+                            className='from-brand-500/10 via-brand-500 to-brand-500/10 absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r'
+                        />
+
+                        {/* Sarlavha qismi */}
+                        <div className='border-card-border/60 flex flex-col gap-3 pb-3 sm:flex-row sm:items-center sm:justify-between border-b'>
+                            <div className='flex items-center gap-2.5 flex-wrap'>
+                                <span className='border-brand-500/25 bg-brand-500/10 text-brand-accent inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold whitespace-nowrap shadow-xs'>
                                     <span className='bg-brand-500 size-1.5 animate-pulse rounded-full' />
                                     {t('landing.demoBadge')}
                                 </span>
-                                <span className='text-text-secondary text-xs font-medium sm:text-sm'>
+                                <span className='text-text-secondary text-xs sm:text-sm font-medium'>
                                     {t('landing.demoTitle')}
                                 </span>
                             </div>
+
                             <Link
                                 href='/login?demo=1'
-                                className='text-brand-accent inline-flex items-center gap-1 text-xs font-semibold transition hover:underline sm:text-sm'
+                                className='bg-brand-accent hover:bg-brand-accent/90 text-white inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-semibold shadow-xs transition-all active:scale-95'
                             >
-                                {t('landing.demoLoginBtn')} →
+                                <span>{t('landing.demoLoginBtn')}</span>
+                                <span aria-hidden='true'>→</span>
                             </Link>
                         </div>
 
-                        <div className='mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2'>
+                        {/* Ma'lumotlar kataklari */}
+                        <div className='mt-3.5 grid grid-cols-1 gap-2.5 sm:grid-cols-2'>
                             {/* Telefon */}
-                            <div className='border-card-border bg-card-surface-area flex items-center justify-between rounded-xl border px-3.5 py-2.5 shadow-xs'>
-                                <div className='flex flex-col'>
-                                    <span className='text-text-tertiary text-[11px] font-semibold tracking-wider uppercase'>
+                            <div
+                                onClick={() =>
+                                    handleCopy('+998 94 008 04 73', 'phone')
+                                }
+                                className='group border-card-border/80 bg-background-gray-secondary/50 hover:bg-background-gray-secondary hover:border-brand-accent/50 flex cursor-pointer items-center justify-between rounded-xl border p-3 transition-all active:scale-[0.98]'
+                            >
+                                <div className='flex flex-col min-w-0'>
+                                    <span className='text-text-tertiary text-[10px] font-bold tracking-wider uppercase'>
                                         {t('common.phoneNumber')}
                                     </span>
-                                    <span className='text-text-primary font-mono text-sm font-bold tracking-wide select-all'>
+                                    <span className='text-text-primary font-mono text-sm font-bold tracking-wide select-all truncate'>
                                         +998 94 008 04 73
                                     </span>
                                 </div>
-                                <button
-                                    type='button'
-                                    onClick={() =>
-                                        handleCopy('+998 94 008 04 73', 'phone')
-                                    }
+                                <div
+                                    className='text-text-tertiary group-hover:text-text-primary group-hover:bg-card-surface-area shrink-0 rounded-lg p-2 transition-all'
                                     title={
                                         copiedField === 'phone'
                                             ? t('landing.demoCopied')
                                             : 'Nusxa olish'
                                     }
-                                    aria-label='Copy phone'
-                                    className='text-text-tertiary hover:text-text-primary hover:bg-background-gray-secondary cursor-pointer rounded-md p-1.5 transition-colors'
                                 >
                                     {copiedField === 'phone' ? (
-                                        <Check className='size-4 text-emerald-500' />
+                                        <div className='flex items-center gap-1 text-emerald-600 dark:text-emerald-400 text-xs font-semibold'>
+                                            <Check className='size-4' />
+                                        </div>
                                     ) : (
                                         <Copy1 className='size-4' />
                                     )}
-                                </button>
+                                </div>
                             </div>
 
                             {/* Parol */}
-                            <div className='border-card-border bg-card-surface-area flex items-center justify-between rounded-xl border px-3.5 py-2.5 shadow-xs'>
-                                <div className='flex flex-col'>
-                                    <span className='text-text-tertiary text-[11px] font-semibold tracking-wider uppercase'>
+                            <div
+                                onClick={() =>
+                                    handleCopy('edums@2026', 'pass')
+                                }
+                                className='group border-card-border/80 bg-background-gray-secondary/50 hover:bg-background-gray-secondary hover:border-brand-accent/50 flex cursor-pointer items-center justify-between rounded-xl border p-3 transition-all active:scale-[0.98]'
+                            >
+                                <div className='flex flex-col min-w-0'>
+                                    <span className='text-text-tertiary text-[10px] font-bold tracking-wider uppercase'>
                                         {t('common.password')}
                                     </span>
-                                    <span className='text-text-primary font-mono text-sm font-bold tracking-wide select-all'>
+                                    <span className='text-text-primary font-mono text-sm font-bold tracking-wide select-all truncate'>
                                         edums@2026
                                     </span>
                                 </div>
-                                <button
-                                    type='button'
-                                    onClick={() =>
-                                        handleCopy('edums@2026', 'pass')
-                                    }
+                                <div
+                                    className='text-text-tertiary group-hover:text-text-primary group-hover:bg-card-surface-area shrink-0 rounded-lg p-2 transition-all'
                                     title={
                                         copiedField === 'pass'
                                             ? t('landing.demoCopied')
                                             : 'Nusxa olish'
                                     }
-                                    aria-label='Copy password'
-                                    className='text-text-tertiary hover:text-text-primary hover:bg-background-gray-secondary cursor-pointer rounded-md p-1.5 transition-colors'
                                 >
                                     {copiedField === 'pass' ? (
-                                        <Check className='size-4 text-emerald-500' />
+                                        <div className='flex items-center gap-1 text-emerald-600 dark:text-emerald-400 text-xs font-semibold'>
+                                            <Check className='size-4' />
+                                        </div>
                                     ) : (
                                         <Copy1 className='size-4' />
                                     )}
-                                </button>
+                                </div>
                             </div>
                         </div>
                     </div>

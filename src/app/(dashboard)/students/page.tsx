@@ -345,12 +345,155 @@ function StudentsView() {
                         />
                     ) : (
                         <>
-                            <TableRoot
-                                fullBleed
-                                className='border-x-0 border-t-0'
-                            >
-                                <TableHeader>
-                                    <TableRow>
+                            {/* Mobil kartalar (< md) */}
+                            <div className='divide-card-border divide-y md:hidden'>
+                                {query.data.data.map((student, index) => (
+                                    <div
+                                        key={student.id}
+                                        className='flex flex-col gap-3 p-4 transition-colors hover:bg-background-gray-primary/20'
+                                    >
+                                        <div className='flex items-start justify-between gap-3'>
+                                            <div className='min-w-0 flex-1'>
+                                                <div className='flex items-center gap-2'>
+                                                    <span className='text-text-tertiary text-xs font-semibold tabular-nums'>
+                                                        #{offset + index + 1}
+                                                    </span>
+                                                    <Link
+                                                        href={`/students/${student.id}`}
+                                                        className='text-text-primary hover:text-brand-accent text-sm font-semibold truncate hover:underline'
+                                                    >
+                                                        {fullName(student)}
+                                                    </Link>
+                                                </div>
+                                                {branches.length > 1 && (
+                                                    <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
+                                                        {student.branch.name}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            <StudentStatusBadge status={student.status} />
+                                        </div>
+
+                                        <div className='flex items-center justify-between text-xs'>
+                                            <PhoneLines student={student} />
+
+                                            {canViewPayments && (
+                                                <div className='text-right'>
+                                                    <span className='text-text-tertiary block text-[11px]'>
+                                                        {t('balance.title')}
+                                                    </span>
+                                                    <span
+                                                        className={cn(
+                                                            'font-semibold tabular-nums text-xs sm:text-sm',
+                                                            balanceTone(student.balance ?? 0) ??
+                                                                'text-text-tertiary',
+                                                        )}
+                                                    >
+                                                        {formatPrice(
+                                                            student.balance ?? 0,
+                                                            t('common.som'),
+                                                        )}
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {student.groups.length > 0 && (
+                                            <div className='flex flex-wrap gap-1.5 pt-0.5'>
+                                                {student.groups.map((group) => {
+                                                    const match = /^(.*?)\s*\((.+)\)$/.exec(
+                                                        group.name.trim(),
+                                                    );
+                                                    const title = match ? match[1].trim() : group.name;
+                                                    const schedule = match ? match[2].trim() : null;
+
+                                                    const content = (
+                                                        <>
+                                                            <span className='text-text-primary text-xs font-medium'>
+                                                                {title}
+                                                            </span>
+                                                            {schedule && (
+                                                                <span className='text-text-tertiary text-[10px] ml-1.5'>
+                                                                    {schedule}
+                                                                </span>
+                                                            )}
+                                                        </>
+                                                    );
+
+                                                    return canViewGroups ? (
+                                                        <Link
+                                                            key={group.id}
+                                                            href={`/groups/${group.id}`}
+                                                            className='border-card-border bg-background-gray-secondary/60 hover:bg-background-gray-secondary flex items-center rounded-md border px-2 py-1 transition-colors'
+                                                        >
+                                                            {content}
+                                                        </Link>
+                                                    ) : (
+                                                        <div
+                                                            key={group.id}
+                                                            className='border-card-border bg-background-gray-secondary/60 flex items-center rounded-md border px-2 py-1'
+                                                        >
+                                                            {content}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+
+                                        {hasActions && (
+                                            <div className='flex items-center justify-end gap-1.5 border-t border-card-border/60 pt-2.5'>
+                                                <EyeLinkButton href={`/students/${student.id}`} />
+                                                {canPay && (
+                                                    <Button
+                                                        appearance='outline'
+                                                        size='sm'
+                                                        onPress={() => setPaying(student)}
+                                                        className='gap-1.5 text-xs'
+                                                    >
+                                                        <Wallet2 className='size-3.5 text-emerald-600 dark:text-emerald-400' />
+                                                        <span>{t('header.quickPayment')}</span>
+                                                    </Button>
+                                                )}
+                                                {canUpdate && (
+                                                    <Button
+                                                        appearance='outline'
+                                                        size='sm'
+                                                        iconOnly
+                                                        aria-label={t('common.edit')}
+                                                        onPress={() => {
+                                                            setEditing(student);
+                                                            setFormOpen(true);
+                                                        }}
+                                                    >
+                                                        <Pencil1 />
+                                                    </Button>
+                                                )}
+                                                {canDelete && (
+                                                    <Button
+                                                        variant='danger'
+                                                        appearance='outline'
+                                                        size='sm'
+                                                        iconOnly
+                                                        aria-label={t('common.delete')}
+                                                        onPress={() => setDeleting(student)}
+                                                    >
+                                                        <Trash1 />
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Desktop / Tablet jadval (>= md) */}
+                            <div className='hidden md:block'>
+                                <TableRoot
+                                    fullBleed
+                                    className='border-x-0 border-t-0'
+                                >
+                                    <TableHeader>
+                                        <TableRow>
                                         <RowNumberHead />
                                         <TableHead>
                                             {t('common.fullName')}
@@ -559,6 +702,7 @@ function StudentsView() {
                                     ))}
                                 </TableBody>
                             </TableRoot>
+                            </div>
 
                             <PaginationBar
                                 count={query.data.count}

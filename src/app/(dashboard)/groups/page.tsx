@@ -435,12 +435,122 @@ function GroupsView() {
                         />
                     ) : (
                         <>
-                            <TableRoot
-                                fullBleed
-                                className='border-x-0 border-t-0'
-                            >
-                                <TableHeader>
-                                    <TableRow>
+                            {/* Mobil kartalar (< md) */}
+                            <div className='divide-card-border divide-y md:hidden'>
+                                {query.data.data.map((group, index) => (
+                                    <div
+                                        key={group.id}
+                                        className='flex flex-col gap-3 p-4 transition-colors hover:bg-background-gray-primary/20'
+                                    >
+                                        <div className='flex items-start justify-between gap-3'>
+                                            <div className='min-w-0 flex-1'>
+                                                <div className='flex items-center gap-2'>
+                                                    <span className='text-text-tertiary text-xs font-semibold tabular-nums'>
+                                                        #{offset + index + 1}
+                                                    </span>
+                                                    <Link
+                                                        href={`/groups/${group.id}`}
+                                                        className='text-text-primary hover:text-brand-accent text-sm font-semibold truncate hover:underline'
+                                                    >
+                                                        {group.name}
+                                                    </Link>
+                                                </div>
+                                                <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
+                                                    {group.course.name}
+                                                    {branches.length > 1 &&
+                                                        ` · ${group.branch.name}`}
+                                                </p>
+                                            </div>
+                                            <GroupStatusBadge status={group.status} />
+                                        </div>
+
+                                        <div className='grid grid-cols-2 gap-2 text-xs'>
+                                            <div>
+                                                <span className='text-text-tertiary block text-[10px]'>
+                                                    {t('groups.teacher')}
+                                                </span>
+                                                <span className='text-text-secondary font-medium'>
+                                                    {group.teacher
+                                                        ? fullName(group.teacher)
+                                                        : '—'}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <span className='text-text-tertiary block text-[10px]'>
+                                                    {t('groups.room')}
+                                                </span>
+                                                <span className='text-text-secondary font-medium'>
+                                                    {group.room?.name ?? '—'}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div className='flex items-center justify-between text-xs'>
+                                            <div className='min-w-0 flex-1 pr-2'>
+                                                <span className='text-text-tertiary block text-[10px]'>
+                                                    {t('groups.lessons')}
+                                                </span>
+                                                <div className='text-text-secondary font-medium'>
+                                                    <LessonSchedule group={group} />
+                                                </div>
+                                            </div>
+                                            <div className='text-right'>
+                                                <span className='text-text-tertiary block text-[10px]'>
+                                                    {t('groups.price')} / {t('groups.students')}
+                                                </span>
+                                                <span className='text-text-primary font-semibold tabular-nums'>
+                                                    {formatPrice(
+                                                        group.price,
+                                                        t('common.som'),
+                                                    )}
+                                                </span>
+                                                <span className='text-text-tertiary ml-1 text-xs'>
+                                                    (<StudentsCount group={group} />)
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div className='flex items-center justify-end gap-1.5 border-t border-card-border/60 pt-2.5'>
+                                            <EyeLinkButton href={`/groups/${group.id}`} />
+                                            {canUpdate && (
+                                                <Button
+                                                    appearance='outline'
+                                                    size='sm'
+                                                    iconOnly
+                                                    aria-label={t('common.edit')}
+                                                    onPress={() => {
+                                                        setEditing(group);
+                                                        setFormOpen(true);
+                                                    }}
+                                                >
+                                                    <Pencil1 />
+                                                </Button>
+                                            )}
+                                            {canDelete && (
+                                                <Button
+                                                    variant='danger'
+                                                    appearance='outline'
+                                                    size='sm'
+                                                    iconOnly
+                                                    aria-label={t('common.delete')}
+                                                    onPress={() => setDeleting(group)}
+                                                >
+                                                    <Trash1 />
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Desktop / Tablet jadval (>= md) */}
+                            <div className='hidden md:block'>
+                                <TableRoot
+                                    fullBleed
+                                    className='border-x-0 border-t-0'
+                                >
+                                    <TableHeader>
+                                        <TableRow>
                                         <RowNumberHead />
                                         <TableHead>
                                             {t('common.name')}
@@ -562,6 +672,7 @@ function GroupsView() {
                                     ))}
                                 </TableBody>
                             </TableRoot>
+                            </div>
 
                             <PaginationBar
                                 count={query.data.count}

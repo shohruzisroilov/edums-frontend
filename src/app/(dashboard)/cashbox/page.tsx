@@ -299,12 +299,83 @@ function CashboxView() {
                         />
                     ) : (
                         <>
-                            <TableRoot
-                                fullBleed
-                                className='border-x-0 border-t-0'
-                            >
-                                <TableHeader>
-                                    <TableRow>
+                            {/* Mobil kartalar (< md) */}
+                            <div className='divide-card-border divide-y md:hidden'>
+                                {query.data.data.map((payment, index) => (
+                                    <div
+                                        key={payment.id}
+                                        className='flex flex-col gap-2.5 p-4 transition-colors hover:bg-background-gray-primary/20'
+                                    >
+                                        <div className='flex items-start justify-between gap-3'>
+                                            <div className='min-w-0 flex-1'>
+                                                <div className='flex items-center gap-2'>
+                                                    <span className='text-text-tertiary text-xs font-semibold tabular-nums'>
+                                                        #{offset + index + 1}
+                                                    </span>
+                                                    {canOpenStudents ? (
+                                                        <Link
+                                                            href={`/students/${payment.student.id}`}
+                                                            className='text-text-primary hover:text-brand-accent text-sm font-semibold truncate hover:underline'
+                                                        >
+                                                            {fullName(payment.student)}
+                                                        </Link>
+                                                    ) : (
+                                                        <span className='text-text-primary text-sm font-semibold truncate'>
+                                                            {fullName(payment.student)}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <p className='text-text-tertiary mt-0.5 text-xs'>
+                                                    {payment.group.name}
+                                                    {payment.note && ` · ${payment.note}`}
+                                                </p>
+                                            </div>
+                                            <div className='text-right'>
+                                                <span className={cn(TONE_TEXT.success, 'text-sm font-bold tabular-nums')}>
+                                                    +{formatPrice(payment.amount, t('common.som'))}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div className='flex items-center justify-between text-xs pt-1'>
+                                            <div className='flex items-center gap-2'>
+                                                <PaymentMethodBadge method={payment.method} />
+                                                <span className='text-text-tertiary tabular-nums'>
+                                                    {formatDate(payment.paid_at)}
+                                                </span>
+                                            </div>
+
+                                            {payment.received_by && (
+                                                <span className='text-text-tertiary text-[11px] truncate max-w-[140px]'>
+                                                    {fullName(payment.received_by)}
+                                                </span>
+                                            )}
+
+                                            {canDelete && (
+                                                <Button
+                                                    variant='danger'
+                                                    appearance='outline'
+                                                    size='sm'
+                                                    iconOnly
+                                                    aria-label={t('common.delete')}
+                                                    onPress={() => setDeleting(payment)}
+                                                >
+                                                    <Trash1 className='size-3.5' />
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Desktop / Tablet jadval (>= md) */}
+                            <div className='hidden md:block'>
+                                <TableRoot
+                                    fullBleed
+                                    className='border-x-0 border-t-0'
+                                >
+                                    <TableHeader>
+                                        <TableRow>
                                         <RowNumberHead />
                                         <TableHead>
                                             {t('cashbox.paidAt')}
@@ -407,6 +478,7 @@ function CashboxView() {
                                     ))}
                                 </TableBody>
                             </TableRoot>
+                            </div>
 
                             <PaginationBar
                                 count={query.data.count}

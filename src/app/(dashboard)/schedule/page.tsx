@@ -94,8 +94,17 @@ export default function SchedulePage() {
 
 function ScheduleView() {
     const t = useT();
-    const [viewMode, setViewMode] = useState<ViewMode>('grid');
-    const [selectedDay, setSelectedDay] = useState<Weekday>(1);
+    const todayWeekday = (() => {
+        const d = new Date().getDay();
+        return (d === 0 ? 7 : d) as Weekday;
+    })();
+    const [viewMode, setViewMode] = useState<ViewMode>(() => {
+        if (typeof window !== 'undefined' && window.innerWidth < 768) {
+            return 'day';
+        }
+        return 'grid';
+    });
+    const [selectedDay, setSelectedDay] = useState<Weekday>(todayWeekday);
     const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
 
     const [filters, setFilters] = useState({
