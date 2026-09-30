@@ -1049,6 +1049,8 @@ export const uzCyrl: Dictionary = {
     'auditField.category': 'Тоифа',
     'auditField.type': 'Тури',
     'auditField.value': 'Қиймати',
+    'auditField.notify_absence': 'Келмаганлик хабарномаси',
+    'auditField.notify_debtors': 'Қарздорлик хабарномаси',
 
     /* ── Saytdan lid qabul qilish ── */
     'common.copy': 'Нусха олиш',
