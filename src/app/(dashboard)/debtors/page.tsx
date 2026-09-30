@@ -264,12 +264,104 @@ function DebtorsView() {
                         />
                     ) : (
                         <>
-                            <TableRoot
-                                fullBleed
-                                className='border-x-0 border-t-0'
-                            >
-                                <TableHeader>
-                                    <TableRow>
+                            {/* Mobil kartalar (< md) */}
+                            <div className='divide-card-border divide-y md:hidden'>
+                                {allDebtors.map((debtor, index) => {
+                                    const key = `${debtor.student.id}:${debtor.group.id}`;
+                                    const isSelected = selectedIds.includes(key);
+
+                                    return (
+                                        <div
+                                            key={key}
+                                            className='flex flex-col gap-3 p-4 transition-colors hover:bg-background-gray-primary/20'
+                                        >
+                                            <div className='flex items-start justify-between gap-3'>
+                                                <div className='flex items-center gap-2.5 min-w-0 flex-1'>
+                                                    <CheckboxInput
+                                                        label=''
+                                                        checked={isSelected}
+                                                        onChange={() => toggleSelect(key)}
+                                                    />
+                                                    <div className='min-w-0'>
+                                                        <div className='flex items-center gap-2'>
+                                                            <span className='text-text-tertiary text-xs font-semibold tabular-nums'>
+                                                                #{offset + index + 1}
+                                                            </span>
+                                                            {canOpenStudents ? (
+                                                                <Link
+                                                                    href={`/students/${debtor.student.id}`}
+                                                                    className='text-text-primary hover:text-brand-accent text-sm font-semibold truncate hover:underline'
+                                                                >
+                                                                    {fullName(debtor.student)}
+                                                                </Link>
+                                                            ) : (
+                                                                <span className='text-text-primary text-sm font-semibold truncate'>
+                                                                    {fullName(debtor.student)}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <p className='text-text-tertiary mt-0.5 text-xs'>
+                                                            {debtor.group.name}
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div className='text-right'>
+                                                    <span className='text-badge-error-text text-sm font-bold tabular-nums block'>
+                                                        -{formatPrice(debtor.debt, som)}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div className='flex items-center justify-between text-xs pt-1'>
+                                                <div>
+                                                    <span className='text-text-tertiary block text-[10px]'>
+                                                        {t('common.phone')}
+                                                    </span>
+                                                    <PhoneLink
+                                                        phone={
+                                                            debtor.student.phone_number ??
+                                                            debtor.student.parent_phone
+                                                        }
+                                                    />
+                                                </div>
+
+                                                <div className='text-right'>
+                                                    <span className='text-text-tertiary text-[11px] block'>
+                                                        {t('balance.paid')} / {t('balance.charged')}
+                                                    </span>
+                                                    <span className='text-text-secondary tabular-nums text-xs'>
+                                                        {formatPrice(debtor.paid, som)} / {formatPrice(debtor.charged, som)}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            {canPay && (
+                                                <div className='flex justify-end pt-2 border-t border-card-border/60'>
+                                                    <Button
+                                                        variant='primary'
+                                                        appearance='outline'
+                                                        size='sm'
+                                                        className='w-full sm:w-auto justify-center'
+                                                        onPress={() => setPaying(debtor)}
+                                                    >
+                                                        {t('debtors.takePayment')}
+                                                    </Button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            {/* Desktop / Tablet jadval (>= md) */}
+                            <div className='hidden md:block'>
+                                <TableRoot
+                                    fullBleed
+                                    className='border-x-0 border-t-0'
+                                >
+                                    <TableHeader>
+                                        <TableRow>
                                         <TableHead className='w-10'>
                                             <CheckboxInput
                                                 label=''
@@ -398,6 +490,7 @@ function DebtorsView() {
                                     })}
                                 </TableBody>
                             </TableRoot>
+                            </div>
 
                             <PaginationBar
                                 count={query.data.count}

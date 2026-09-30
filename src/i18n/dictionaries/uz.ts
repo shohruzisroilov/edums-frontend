@@ -930,6 +930,12 @@ export const uz = {
     'nav.main': 'ASOSIY',
     'nav.dashboard': 'Bosh sahifa',
     'nav.overview': "Umumiy ko'rinish",
+    'nav.more': 'Yana',
+    'nav.quickActions': 'Tezkor amallar',
+    'nav.quickPaymentDesc': "O'quvchidan to'lov qabul qilish",
+    'nav.quickStudentDesc': "Yangi o'quvchi ro'yxatdan o'tkazish",
+    'nav.quickGroupDesc': 'Yangi dars guruhini shakllantirish',
+    'nav.quickLeadDesc': 'Yangi qiziqqan lidni kiritish',
     'permissionModule.reports': 'Hisobotlar',
     'permission.reports.view':
         "Bosh sahifa va hisobotlarni ko'rish (tushum, qarz)",

@@ -358,23 +358,32 @@ function MarkAttendanceModal({
                 </Button>
             </div>
 
-            <ul className='divide-card-border border-card-border divide-y rounded-lg border'>
+            <ul className='divide-card-border border-card-border divide-y rounded-xl border overflow-hidden'>
                 {register.students.map((row) => (
                     <li
                         key={row.student.id}
-                        className='flex flex-wrap items-center justify-between gap-2 px-4 py-2.5'
+                        className='flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3.5 sm:px-4 sm:py-3 transition-colors hover:bg-background-gray-primary/20'
                     >
-                        <span className='text-text-primary text-sm font-medium'>
+                        <span className='text-text-primary text-sm font-semibold truncate'>
                             {fullName(row.student)}
                         </span>
                         <div
                             role='radiogroup'
                             aria-label={fullName(row.student)}
-                            className='flex gap-1'
+                            className='grid grid-cols-4 sm:flex gap-1.5 w-full sm:w-auto'
                         >
                             {ATTENDANCE_STATUSES.map((status) => {
                                 const selected =
                                     statuses[row.student.id] === status;
+
+                                const activeColor =
+                                    status === 'present'
+                                        ? 'bg-emerald-600 text-white border-transparent shadow-xs'
+                                        : status === 'absent'
+                                          ? 'bg-rose-600 text-white border-transparent shadow-xs'
+                                          : status === 'late'
+                                            ? 'bg-amber-600 text-white border-transparent shadow-xs'
+                                            : 'bg-slate-600 text-white border-transparent shadow-xs';
 
                                 return (
                                     <button
@@ -389,10 +398,10 @@ function MarkAttendanceModal({
                                             })
                                         }
                                         className={cn(
-                                            'rounded-md border px-2.5 py-1 text-xs font-medium transition',
+                                            'rounded-lg border px-2 py-2 sm:px-2.5 sm:py-1 text-center text-xs font-semibold transition active:scale-95',
                                             selected
-                                                ? 'bg-brand-500 border-transparent text-white'
-                                                : 'border-card-border text-text-secondary hover:text-text-primary',
+                                                ? activeColor
+                                                : 'border-card-border bg-card-surface-area text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary',
                                         )}
                                     >
                                         {t(`attendanceStatus.${status}`)}

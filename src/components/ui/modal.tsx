@@ -139,7 +139,7 @@ export function Modal({
                 {children}
 
                 {footer && (
-                    <div className='mt-6 flex items-center justify-end gap-2'>
+                    <div className='sticky bottom-0 z-10 -mx-4.5 mt-4 flex items-center justify-end gap-2 border-t border-card-border/80 bg-card-surface-area/95 px-4.5 pt-3 pb-1 backdrop-blur-xs sm:static sm:z-auto sm:mx-0 sm:mt-6 sm:border-t-0 sm:bg-transparent sm:p-0'>
                         {footer}
                     </div>
                 )}

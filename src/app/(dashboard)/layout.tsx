@@ -23,6 +23,7 @@ import {
 import { cn } from '@/utils/cn';
 import { useQuery } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
+import { BottomNav } from '@/components/common/bottom-nav';
 import { Suspense, useEffect, useState, type ReactNode } from 'react';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
@@ -35,6 +36,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         if (typeof window !== 'undefined') {
             const stored = localStorage.getItem('edums_sidebar_open');
             if (stored !== null) return stored === 'true';
+            return window.innerWidth >= 1280;
         }
         return true;
     });
@@ -106,7 +108,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                     transition:
                         'width 300ms cubic-bezier(0.4,0,0.2,1), min-width 300ms cubic-bezier(0.4,0,0.2,1)',
                 }}
-                className='hidden shrink-0 overflow-hidden xl:block'
+                className='hidden shrink-0 overflow-hidden md:block'
             >
                 <Sidebar
                     isSidebarOpen={isSidebarOpen}
@@ -145,7 +147,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                     <Header onMenuClick={() => setIsMobileSheetOpen(true)} />
 
                     <main className='min-h-0 flex-1 scrollbar-thin overflow-y-auto'>
-                        <div className='mx-auto w-full max-w-384 pb-6'>
+                        <div className='mx-auto w-full max-w-384 pb-20 md:pb-6'>
                             <SubscriptionBanner />
                             {/* Sahifalar manzildagi parametrlarni o'qiydi
                                 (filtrlar, ?new=1) — Next buning uchun
@@ -163,6 +165,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                     </main>
                 </div>
             </div>
+
+            <BottomNav onMenuClick={() => setIsMobileSheetOpen(true)} />
         </div>
     );
 }

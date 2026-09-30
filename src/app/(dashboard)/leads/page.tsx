@@ -411,10 +411,101 @@ function LeadsView() {
                 ) : (
                     <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                         <>
-                            <TableRoot
-                                fullBleed
-                                className='border-x-0 border-t-0'
-                            >
+                            {/* Mobil kartalar (< md) */}
+                            <div className='divide-card-border divide-y md:hidden'>
+                                {query.data.data.map((lead, index) => (
+                                    <div
+                                        key={lead.id}
+                                        className='flex flex-col gap-3 p-4 transition-colors hover:bg-background-gray-primary/20'
+                                    >
+                                        <div className='flex items-start justify-between gap-3'>
+                                            <div className='min-w-0 flex-1'>
+                                                <div className='flex items-center gap-2'>
+                                                    <span className='text-text-tertiary text-xs font-semibold tabular-nums'>
+                                                        #{offset + index + 1}
+                                                    </span>
+                                                    <span className='text-text-primary text-sm font-semibold truncate'>
+                                                        {leadName(lead)}
+                                                    </span>
+                                                </div>
+                                                <p className='text-text-tertiary mt-0.5 text-xs tabular-nums'>
+                                                    {lead.phone_number}
+                                                </p>
+                                            </div>
+                                            <LeadStatusBadge status={lead.status} />
+                                        </div>
+
+                                        <div className='flex items-center justify-between text-xs'>
+                                            <div className='flex items-center gap-2'>
+                                                <LeadSourceBadge source={lead.source} />
+                                                {lead.course && (
+                                                    <span className='text-text-secondary text-xs'>
+                                                        {lead.course.name}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <span className='text-text-tertiary tabular-nums text-[11px]'>
+                                                {formatDate(lead.created_at)}
+                                            </span>
+                                        </div>
+
+                                        <div className='flex items-center justify-end gap-1.5 border-t border-card-border/60 pt-2.5'>
+                                            {lead.student && canOpenStudents && (
+                                                <Link
+                                                    href={`/students/${lead.student.id}`}
+                                                    className='text-brand-accent text-xs font-medium hover:underline mr-auto'
+                                                >
+                                                    {t('leads.openStudent')}
+                                                </Link>
+                                            )}
+                                            {canConvert && lead.status !== 'won' && (
+                                                <Button
+                                                    variant='primary'
+                                                    appearance='outline'
+                                                    size='sm'
+                                                    onPress={() => setConverting(lead)}
+                                                    className='text-xs'
+                                                >
+                                                    {t('leads.convert')}
+                                                </Button>
+                                            )}
+                                            {canUpdate && (
+                                                <Button
+                                                    appearance='outline'
+                                                    size='sm'
+                                                    iconOnly
+                                                    aria-label={t('common.edit')}
+                                                    onPress={() => {
+                                                        setEditing(lead);
+                                                        setFormOpen(true);
+                                                    }}
+                                                >
+                                                    <Pencil1 className='size-3.5' />
+                                                </Button>
+                                            )}
+                                            {canDelete && (
+                                                <Button
+                                                    variant='danger'
+                                                    appearance='outline'
+                                                    size='sm'
+                                                    iconOnly
+                                                    aria-label={t('common.delete')}
+                                                    onPress={() => setDeleting(lead)}
+                                                >
+                                                    <Trash1 className='size-3.5' />
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Desktop / Tablet jadval (>= md) */}
+                            <div className='hidden md:block'>
+                                <TableRoot
+                                    fullBleed
+                                    className='border-x-0 border-t-0'
+                                >
                                 <TableHeader>
                                     <TableRow>
                                         <RowNumberHead />
@@ -577,6 +668,7 @@ function LeadsView() {
                                     ))}
                                 </TableBody>
                             </TableRoot>
+                            </div>
 
                             <PaginationBar
                                 count={query.data.count}
