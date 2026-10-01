@@ -222,6 +222,7 @@ function EditProfileCard({ profile }: { profile: AuthUser }) {
 function ChangePasswordCard() {
     const t = useT();
     const toastError = useApiErrorToast();
+    const { session, signIn } = useSession();
 
     const [form, setForm] = useState({ current: '', next: '', repeat: '' });
     const mismatch = form.repeat !== '' && form.next !== form.repeat;
@@ -232,7 +233,9 @@ function ChangePasswordCard() {
                 current_password: form.current,
                 new_password: form.next,
             }),
-        onSuccess: () => {
+        onSuccess: (res) => {
+            // Eski token endi rad etiladi — sessiya yangisi bilan davom etadi.
+            if (session) signIn({ ...session, token: res.token });
             setForm({ current: '', next: '', repeat: '' });
             toast.success(t('profile.passwordChanged'));
         },

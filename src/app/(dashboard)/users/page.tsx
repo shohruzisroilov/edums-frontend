@@ -111,6 +111,9 @@ function UsersView() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['users'] });
             queryClient.invalidateQueries({ queryKey: ['roles'] });
+            // O'qituvchi tanlash ro'yxati va oylik varaqasi ham xodimlardan.
+            queryClient.invalidateQueries({ queryKey: ['user-options'] });
+            queryClient.invalidateQueries({ queryKey: ['salary-sheet'] });
             toast.success(t('users.deleted'));
             setDeleting(null);
         },
@@ -132,7 +135,10 @@ function UsersView() {
             ? [
                   {
                       key: 'role',
-                      label: `Rol: ${activeRole.name}`,
+                      label: t('filters.chip', {
+                          label: t('users.role'),
+                          value: activeRole.name,
+                      }),
                       onRemove: () => setFilter('role_id', ''),
                   },
               ]
@@ -141,7 +147,10 @@ function UsersView() {
             ? [
                   {
                       key: 'status',
-                      label: `Holat: ${activeStatus}`,
+                      label: t('filters.chip', {
+                          label: t('common.status'),
+                          value: activeStatus,
+                      }),
                       onRemove: () => setFilter('is_active', ''),
                   },
               ]

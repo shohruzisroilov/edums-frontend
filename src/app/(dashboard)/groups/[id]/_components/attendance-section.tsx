@@ -21,6 +21,7 @@ import {
     type AttendanceStatus,
     type GroupAttendance,
 } from '@/types/api';
+import { wasInGroupOn } from '@/utils/attendance';
 import { cn } from '@/utils/cn';
 import { fullName, toISODate } from '@/utils/format';
 import { CheckCircle1 } from '@tailgrids/icons';
@@ -219,12 +220,21 @@ export function AttendanceSection({
                                                 (date) => {
                                                     const status =
                                                         row.records[date];
+                                                    // Guruhga kelmasidan oldingi
+                                                    // yoki ketgandan keyingi kun.
+                                                    const outside =
+                                                        !status &&
+                                                        !wasInGroupOn(
+                                                            row,
+                                                            date,
+                                                        );
 
                                                     return (
                                                         <td
                                                             key={date}
-                                                            className='px-1 py-2 text-center'
+                                                            className='text-text-tertiary px-1 py-2 text-center'
                                                         >
+                                                            {outside && '·'}
                                                             {status && (
                                                                 <Badge
                                                                     size='sm'
@@ -302,11 +312,15 @@ function MarkAttendanceModal({
     const toastError = useApiErrorToast();
     const queryClient = useQueryClient();
 
+    // Faqat shu kuni guruhda bo'lganlar: oy o'rtasida kelgan yoki ketgan
+    // o'quvchi boshqa kunlarga belgilanmaydi — backend buni rad etadi.
+    const rows = register.students.filter((row) => wasInGroupOn(row, date));
+
     // Belgilanmaganlar "keldi" bilan boshlanadi — odatda ko'pchilik keladi.
     const [statuses, setStatuses] = useState<Record<string, AttendanceStatus>>(
         () =>
             Object.fromEntries(
-                register.students.map((row) => [
+                rows.map((row) => [
                     row.student.id,
                     row.records[date] ?? 'present',
                 ]),
@@ -326,6 +340,8 @@ function MarkAttendanceModal({
             queryClient.invalidateQueries({
                 queryKey: ['student-attendance'],
             });
+            // Dashboard'dagi "bugungi darslar" va davomat foizi.
+            queryClient.invalidateQueries({ queryKey: ['dashboard'] });
             toast.success(t('attendance.saved'));
             onClose();
         },
@@ -359,7 +375,7 @@ function MarkAttendanceModal({
             </div>
 
             <ul className='divide-card-border border-card-border divide-y overflow-hidden rounded-xl border'>
-                {register.students.map((row) => (
+                {rows.map((row) => (
                     <li
                         key={row.student.id}
                         className='hover:bg-background-gray-primary/20 flex flex-col justify-between gap-2.5 p-3.5 transition-colors sm:flex-row sm:items-center sm:px-4 sm:py-3'
@@ -427,7 +443,7 @@ function MarkAttendanceModal({
                     appearance='fill'
                     size='md'
                     onPress={() => mutation.mutate()}
-                    isDisabled={mutation.isPending}
+                    isDisabled={mutation.isPending || rows.length === 0}
                 >
                     {t(mutation.isPending ? 'common.saving' : 'common.save')}
                 </Button>

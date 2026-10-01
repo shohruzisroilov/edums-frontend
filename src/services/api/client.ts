@@ -64,8 +64,10 @@ function handleUnauthorized() {
     } catch {
         /* localStorage yopiq bo'lishi mumkin */
     }
+    // To'liq qayta yuklash ataylab: eski foydalanuvchining so'rov keshi
+    // xotirada qolmasin. replace — "orqaga" himoyalangan sahifaga qaytarmaydi.
     if (!window.location.pathname.startsWith('/login')) {
-        window.location.href = '/login';
+        window.location.replace('/login');
     }
 }
 
@@ -76,7 +78,7 @@ function handleUnauthorized() {
 function handlePaymentRequired() {
     if (typeof window === 'undefined') return;
     if (!window.location.pathname.startsWith('/billing')) {
-        window.location.href = '/billing';
+        window.location.replace('/billing');
     }
 }
 

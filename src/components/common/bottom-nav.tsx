@@ -176,7 +176,7 @@ export function BottomNav({ onMenuClick }: BottomNavProps) {
 
             {/* Bottom Nav Bar */}
             <nav
-                aria-label='Mobile navigation'
+                aria-label={t('nav.mobile')}
                 className='border-card-border bg-card-surface-area/95 supports-backdrop-filter:bg-card-surface-area/85 fixed right-0 bottom-0 left-0 z-40 border-t backdrop-blur-md md:hidden'
                 style={{
                     paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 8px)',

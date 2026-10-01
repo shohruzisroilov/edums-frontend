@@ -29,6 +29,7 @@ import {
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useListQuery } from '@/hooks/use-list-query';
+import { useUrlParam } from '@/hooks/use-url-state';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import {
@@ -100,21 +101,26 @@ function LeadsView() {
         setOffset,
     } = useListQuery({ status: '', source: '' });
 
-    const [viewMode, setViewMode] = useState<'table' | 'kanban'>('kanban');
+    // Ko'rinish ham manzilda — "orqaga" qaytganda va yangilanganda saqlanadi.
+    const [view, setView] = useUrlParam('view', 'kanban');
+    const viewMode: 'table' | 'kanban' = view === 'table' ? 'table' : 'kanban';
+    const setViewMode = (next: 'table' | 'kanban') => setView(next);
     const [formOpen, setFormOpen] = useState(false);
     const [editing, setEditing] = useState<Lead | null>(null);
     const [converting, setConverting] = useState<Lead | null>(null);
     const [deleting, setDeleting] = useState<Lead | null>(null);
 
+    // Kanban ustunlari o'z ma'lumotini o'zi yuklaydi — bu yerda unda faqat
+    // jami son va "umuman bormi" kerak, shuning uchun bitta yozuv so'raladi.
+    const kanban = viewMode === 'kanban';
     const query = useQuery({
         queryKey: [
             'leads',
             {
                 search,
                 ...filters,
-                limit,
-                offset: viewMode === 'kanban' ? 0 : offset,
-                limitVal: viewMode === 'kanban' ? 100 : limit,
+                limit: kanban ? 1 : limit,
+                offset: kanban ? 0 : offset,
             },
         ],
         queryFn: () =>
@@ -122,8 +128,8 @@ function LeadsView() {
                 search: search || undefined,
                 status: (filters.status || undefined) as LeadStatus | undefined,
                 source: (filters.source || undefined) as LeadSource | undefined,
-                limit: viewMode === 'kanban' ? 100 : limit,
-                offset: viewMode === 'kanban' ? 0 : offset,
+                limit: kanban ? 1 : limit,
+                offset: kanban ? 0 : offset,
             }),
     });
     const statsQuery = useQuery({
@@ -181,7 +187,7 @@ function LeadsView() {
                                 )}
                             >
                                 <Column className='size-3.5' />
-                                Kanban
+                                {t('leads.viewKanban')}
                             </button>
                             <button
                                 type='button'
@@ -194,7 +200,7 @@ function LeadsView() {
                                 )}
                             >
                                 <Table2 className='size-3.5' />
-                                Jadval
+                                {t('leads.viewTable')}
                             </button>
                         </div>
                         {canManageSettings && (
@@ -283,7 +289,12 @@ function LeadsView() {
                             ? [
                                   {
                                       key: 'status',
-                                      label: `Holat: ${t(`leadStatus.${filters.status as LeadStatus}`)}`,
+                                      label: t('filters.chip', {
+                                          label: t('common.status'),
+                                          value: t(
+                                              `leadStatus.${filters.status as LeadStatus}`,
+                                          ),
+                                      }),
                                       onRemove: () => setFilter('status', ''),
                                   },
                               ]
@@ -292,7 +303,12 @@ function LeadsView() {
                             ? [
                                   {
                                       key: 'source',
-                                      label: `Manba: ${t(`leadSource.${filters.source as LeadSource}`)}`,
+                                      label: t('filters.chip', {
+                                          label: t('leads.source'),
+                                          value: t(
+                                              `leadSource.${filters.source as LeadSource}`,
+                                          ),
+                                      }),
                                       onRemove: () => setFilter('source', ''),
                                   },
                               ]
@@ -370,7 +386,7 @@ function LeadsView() {
                                             setFilter('source', '');
                                         }}
                                     >
-                                        Filtrni tozalash
+                                        {t('filters.reset')}
                                     </Button>
                                 ) : canCreate ? (
                                     <Button
@@ -383,7 +399,7 @@ function LeadsView() {
                                         }}
                                     >
                                         <Plus />
-                                        Birinchi lidni qo'shish
+                                        {t('leads.addFirst')}
                                     </Button>
                                 ) : null
                             }
@@ -391,14 +407,19 @@ function LeadsView() {
                     </div>
                 ) : viewMode === 'kanban' ? (
                     <LeadKanbanBoard
-                        leads={query.data.data}
+                        filters={{
+                            search: search || undefined,
+                            source: (filters.source || undefined) as
+                                | LeadSource
+                                | undefined,
+                        }}
+                        onlyStatus={
+                            (filters.status || undefined) as
+                                | LeadStatus
+                                | undefined
+                        }
                         onStatusChange={(id, status) =>
-                            statusMutation.mutate({
-                                id,
-                                status: status as NonNullable<
-                                    LeadPayload['status']
-                                >,
-                            })
+                            statusMutation.mutate({ id, status })
                         }
                         onEdit={(lead) => {
                             setEditing(lead);

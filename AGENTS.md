@@ -260,6 +260,17 @@ bo'sh qiymatni qabul qilmaydi.
   `Button` emas: yangi oynada ochish ishlashi kerak.
 - Server holati — TanStack Query; mahalliy holat — `useState`/context.
   Yangi state kutubxonasi qo'shilmaydi.
+- **Kim qaysi guruhda o'qishi yoki qancha to'lagani o'zgarsa** (to'lov,
+  guruhga qo'shish/chiqarish, chegirma, arxivlash, guruhni tugatish, lidni
+  aylantirish) — `invalidateStudyData(queryClient)` (`utils/query-cache.ts`).
+  Balans, qarzdorlar, guruh sonlari, jadval va dashboard shu ro'yxatda;
+  bitta-ikkita kalitni qo'lda eskirtirish boshqa sahifada eski balans qoldiradi.
+- Davomat faqat o'quvchi o'sha kuni guruhda bo'lgan sanaga qo'yiladi:
+  `wasInGroupOn(row, date)` (`utils/attendance.ts`), aks holda backend 400.
+- Parol almashtirilganda backend eski tokenlarni rad etadi; o'z parolini
+  almashtirish javobidagi yangi `token` sessiyaga yoziladi.
+- Interfeysda hech narsa "bo'lgandek" ko'rsatilmaydi: backendda endpointi
+  yo'q amal uchun soxta muvaffaqiyat xabari chiqarilmaydi.
 - Xatolar `toastApiError()` orqali sonner toast'iga chiqadi.
 - Formatlash — Prettier (`.prettierrc`: 4 probel, single quote, 80 belgi).
   ESLint formatlashga aralashmaydi (`eslint-config-prettier` o'chirib qo'ygan).
@@ -297,3 +308,13 @@ Agar kerak bo'lsa, ularni servis fayliga qo'shish oson — tip `types/api.ts` da
 - `src/components/tailgrids/core/` primitivlarini so'rovsiz o'zgartirish.
 - Yangi CSS utility klasslari yaratish.
 - Inglizcha interfeys matni yozish.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

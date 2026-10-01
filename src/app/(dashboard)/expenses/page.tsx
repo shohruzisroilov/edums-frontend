@@ -135,17 +135,17 @@ function ExpensesView() {
                                 size='md'
                                 onPress={() => {
                                     exportToCsv(
-                                        'Xarajatlar',
+                                        t('expenses.title'),
                                         [
-                                            'Sana',
-                                            'Kategoriya',
-                                            'Summa (som)',
-                                            'Kiritdi',
-                                            'Izoh',
+                                            t('expenses.date'),
+                                            t('expenses.category'),
+                                            `${t('cashbox.amount')} (${t('common.som')})`,
+                                            t('expenses.createdBy'),
+                                            t('common.note'),
                                         ],
                                         query.data.data.map((e) => [
                                             formatDate(e.spent_at),
-                                            e.category,
+                                            t(`expenseCategory.${e.category}`),
                                             e.amount,
                                             e.created_by
                                                 ? fullName(e.created_by)
@@ -156,7 +156,7 @@ function ExpensesView() {
                                 }}
                             >
                                 <Download1 />
-                                Eksport (Excel)
+                                {t('common.export')}
                             </Button>
                         )}
                         {canManage && (
@@ -190,7 +190,12 @@ function ExpensesView() {
                             ? [
                                   {
                                       key: 'category',
-                                      label: `Kategoriya: ${t(`expenseCategory.${filters.category as ExpenseCategory}`)}`,
+                                      label: t('filters.chip', {
+                                          label: t('expenses.category'),
+                                          value: t(
+                                              `expenseCategory.${filters.category as ExpenseCategory}`,
+                                          ),
+                                      }),
                                       onRemove: () => setFilter('category', ''),
                                   },
                               ]
@@ -263,7 +268,7 @@ function ExpensesView() {
                                             setFilter('to', '');
                                         }}
                                     >
-                                        Filtrni tozalash
+                                        {t('filters.reset')}
                                     </Button>
                                 ) : canManage ? (
                                     <Button
@@ -273,7 +278,7 @@ function ExpensesView() {
                                         onPress={() => setCreating(true)}
                                     >
                                         <Plus />
-                                        Yangi xarajat kiritish
+                                        {t('expenses.new')}
                                     </Button>
                                 ) : null
                             }

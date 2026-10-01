@@ -11,6 +11,7 @@ import { PhoneInput } from '@/components/ui/phone-input';
 import { apiErrorMessage } from '@/hooks/use-api-error';
 import { useSession } from '@/hooks/use-session';
 import { useTrialDays } from '@/hooks/use-trial-days';
+import type { TranslationKey } from '@/i18n/dictionaries/uz';
 import { useT } from '@/i18n/provider';
 import {
     register,
@@ -41,21 +42,21 @@ const EMPTY: FormState = {
     password: '',
 };
 
-const STEPS_INFO: { num: string; icon: ReactNode; text: string }[] = [
+const STEPS_INFO: { num: string; icon: ReactNode; text: TranslationKey }[] = [
     {
         num: '1',
         icon: <Buildings11 className='size-5' />,
-        text: "Ma'lumotlarni kiriting",
+        text: 'register.step1',
     },
     {
         num: '2',
         icon: <Message1 className='size-5' />,
-        text: 'SMS kodni tasdiqlang',
+        text: 'register.step2',
     },
     {
         num: '3',
         icon: <Send1 className='size-5' />,
-        text: 'Markazingizni boshqaring',
+        text: 'register.step3',
     },
 ];
 
@@ -164,15 +165,15 @@ export default function RegisterPage() {
                 {/* Asosiy kontent */}
                 <div className='relative space-y-6'>
                     <h2 className='font-display text-3xl leading-tight font-bold sm:text-4xl'>
-                        Bugun boshlang —<br />
+                        {t('register.hero.line1')}
+                        <br />
                         <span className='text-white/80'>
-                            hisob ochish bepul
+                            {t('register.hero.line2')}
                         </span>
                     </h2>
 
                     <p className='text-base leading-relaxed text-white/65'>
-                        Kredit karta talab qilinmaydi. Sinov muddati tugagach
-                        tarif tanlaysiz.
+                        {t('register.hero.text')}
                     </p>
 
                     {/* Qadamlar */}
@@ -201,7 +202,7 @@ export default function RegisterPage() {
                                                 : 'text-white/65'
                                         }`}
                                     >
-                                        {s.text}
+                                        {t(s.text)}
                                     </p>
                                 </div>
                             </div>
@@ -210,8 +211,9 @@ export default function RegisterPage() {
                 </div>
 
                 <p className='relative text-xs text-white/40'>
-                    © {new Date().getFullYear()} EDUMS. Barcha huquqlar
-                    himoyalangan.
+                    {t('common.copyright', {
+                        year: new Date().getFullYear(),
+                    })}
                 </p>
             </div>
 
@@ -243,12 +245,15 @@ export default function RegisterPage() {
                             <h1 className='text-text-primary font-display text-2xl font-bold'>
                                 {step === 'details'
                                     ? t('register.title', { days: trialDays })
-                                    : 'SMS kodni kiriting'}
+                                    : t('register.codeTitle')}
                             </h1>
                             <p className='text-text-tertiary mt-2 text-sm'>
                                 {step === 'details'
                                     ? t('register.subtitle')
-                                    : `${form.phone_number} raqamiga ${codeLength} xonali kod yuborildi`}
+                                    : t('register.codeSent', {
+                                          phone: form.phone_number,
+                                          length: codeLength,
+                                      })}
                             </p>
                         </div>
 
@@ -304,7 +309,7 @@ export default function RegisterPage() {
                                     hint={
                                         form.phone_number.length === 13 &&
                                         !isValidUzbekMobile(form.phone_number)
-                                            ? "Noto'g'ri mobil raqam (faqat O'zbekiston mobil operatorlari)"
+                                            ? t('error.notUzbekMobile')
                                             : t('register.phoneHint')
                                     }
                                     value={form.phone_number}
@@ -353,9 +358,6 @@ export default function RegisterPage() {
                             >
                                 {/* Kod inputi */}
                                 <div className='border-brand-500/20 bg-brand-500/5 rounded-2xl border p-6 text-center'>
-                                    <p className='text-text-tertiary mb-4 text-xs'>
-                                        Kodni kiriting:
-                                    </p>
                                     <TextInput
                                         label={t('register.code')}
                                         required

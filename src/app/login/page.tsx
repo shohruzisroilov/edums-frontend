@@ -24,54 +24,49 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState, type FormEvent } from 'react';
 
 const SUPPORT_TELEGRAM = 'https://t.me/edumsuz';
-const DEMO_PHONE = '+998940080473';
-const DEMO_PASSWORD = 'edums@2026';
 
+/**
+ * Bitta forma ikkala kirish uchun: avval markaz foydalanuvchisi
+ * (/auth/login), faqat 401 kelsa — super admin (/super_admin/login).
+ * Boshqa xato (403 — markaz faol emas, 429 — urinishlar ko'p) shu zahoti
+ * ko'rsatiladi: u foydalanuvchining o'ziga tegishli.
+ */
 async function signInWithPhone(
     phone_number: string,
     password: string,
 ): Promise<Session> {
     try {
-        const res = await loginSuperAdmin({ phone_number, password });
-        return {
-            token: res.token,
-            kind: 'super_admin',
-            id: res.super_admin.id,
-            phone_number: res.super_admin.phone_number,
-            first_name: 'Super',
-            last_name: 'Admin',
-            avatar_url: null,
-            education: null,
-            roles: [],
-            is_owner: false,
-            permissions: [],
-            subscription: null,
-        };
-    } catch (superAdminError) {
-        if (
-            superAdminError instanceof ApiError &&
-            superAdminError.statusCode === 429
-        ) {
-            throw superAdminError;
-        }
-        try {
-            const res = await loginUser({ phone_number, password });
-            return sessionFromAuthUser(res.token, res.user);
-        } catch (userError) {
-            if (userError instanceof ApiError && userError.statusCode === 429) {
-                throw userError;
-            }
+        const res = await loginUser({ phone_number, password });
+        return sessionFromAuthUser(res.token, res.user);
+    } catch (userError) {
+        if (!(userError instanceof ApiError) || userError.statusCode !== 401) {
             throw userError;
         }
     }
+
+    const res = await loginSuperAdmin({ phone_number, password });
+    return {
+        token: res.token,
+        kind: 'super_admin',
+        id: res.super_admin.id,
+        phone_number: res.super_admin.phone_number,
+        first_name: 'Super',
+        last_name: 'Admin',
+        avatar_url: null,
+        education: null,
+        roles: [],
+        is_owner: false,
+        permissions: [],
+        subscription: null,
+    };
 }
 
 const FEATURES = [
-    "O'quvchilar va guruhlar boshqaruvi",
-    "To'lovlar va moliyaviy hisobotlar",
-    'Davomat va dars jadvali',
-    'Lidlar va CRM tizimi',
-];
+    'auth.feature.students',
+    'auth.feature.finance',
+    'auth.feature.attendance',
+    'auth.feature.leads',
+] as const;
 
 export default function LoginPage() {
     const router = useRouter();
@@ -87,18 +82,6 @@ export default function LoginPage() {
         if (loading || !session) return;
         router.replace(homeHref(session));
     }, [loading, session, router]);
-
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('demo') === '1' || params.get('demo') === 'true') {
-            const timer = setTimeout(() => {
-                setPhone(DEMO_PHONE);
-                setPassword(DEMO_PASSWORD);
-            }, 0);
-            return () => clearTimeout(timer);
-        }
-    }, []);
 
     async function handleSubmit(event: FormEvent) {
         event.preventDefault();
@@ -151,10 +134,10 @@ export default function LoginPage() {
                 {/* Asosiy kontent */}
                 <div className='relative space-y-6'>
                     <h2 className='font-display text-3xl leading-tight font-bold sm:text-4xl'>
-                        O&apos;quv markazingizni
+                        {t('auth.hero.line1')}
                         <br />
                         <span className='relative inline-block'>
-                            bir joyda
+                            {t('auth.hero.highlight')}
                             <svg
                                 className='absolute -bottom-1 left-0 w-full'
                                 viewBox='0 0 120 8'
@@ -169,12 +152,11 @@ export default function LoginPage() {
                                 />
                             </svg>
                         </span>{' '}
-                        boshqaring
+                        {t('auth.hero.line2')}
                     </h2>
 
                     <p className='text-base leading-relaxed text-white/70'>
-                        Guruhlar, to&apos;lovlar, davomat va lidlar — hammasi
-                        bitta tizimda.
+                        {t('auth.hero.text')}
                     </p>
 
                     <ul className='space-y-3 pt-1'>
@@ -194,15 +176,16 @@ export default function LoginPage() {
                                         <path d='M20 6 9 17l-5-5' />
                                     </svg>
                                 </span>
-                                {item}
+                                {t(item)}
                             </li>
                         ))}
                     </ul>
                 </div>
 
                 <p className='relative text-xs text-white/40'>
-                    © {new Date().getFullYear()} EDUMS. Barcha huquqlar
-                    himoyalangan.
+                    {t('common.copyright', {
+                        year: new Date().getFullYear(),
+                    })}
                 </p>
             </div>
 

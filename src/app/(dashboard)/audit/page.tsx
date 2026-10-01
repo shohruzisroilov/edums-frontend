@@ -331,6 +331,10 @@ function formatValue(
         }
     }
 
+    if (key === 'period' && (value === 'month' || value === 'year')) {
+        return t(`billingPeriod.${value}`);
+    }
+
     if (key === 'method' && typeof value === 'string') {
         const methodKey = `paymentMethod.${value}` as TranslationKey;
         const translated = t(methodKey);
@@ -370,10 +374,12 @@ function formatValue(
         if (value === 'inactive') return t('common.inactive');
     }
 
-    if (key === 'type' && action.startsWith('salary.')) {
-        if (value === 'per_student') return "O'quvchi boshiga";
-        if (value === 'fixed') return 'Fikslangan oylik';
-        if (value === 'per_hour') return 'Soatbay dars haqisidan';
+    if (
+        key === 'type' &&
+        action.startsWith('salary.') &&
+        (value === 'fixed' || value === 'percent' || value === 'per_student')
+    ) {
+        return t(`salaryRateType.${value}`);
     }
 
     if (key === 'lesson_days' && Array.isArray(value)) {

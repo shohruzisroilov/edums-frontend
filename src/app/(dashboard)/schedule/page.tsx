@@ -8,8 +8,10 @@ import {
     TableSkeleton,
 } from '@/components/ui/data-state';
 import { SelectInput } from '@/components/ui/form-field';
+import { LinkButton } from '@/components/ui/link-button';
 import { Modal } from '@/components/ui/modal';
 import { PageHeader } from '@/components/ui/page-header';
+import { useListQuery } from '@/hooks/use-list-query';
 import { useT } from '@/i18n/provider';
 import { listBranches } from '@/services/api/branches';
 import { getSchedule } from '@/services/api/groups';
@@ -22,7 +24,6 @@ import { fullName } from '@/utils/format';
 import type { TranslationKey } from '@/i18n/dictionaries/uz';
 import { CalendarTime, Eye, Layout20 } from '@tailgrids/icons';
 import { useQuery } from '@tanstack/react-query';
-import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
 type ViewMode = 'grid' | 'cards' | 'day';
@@ -82,7 +83,21 @@ function getGroupPalette(id: string) {
     return COLOR_PALETTES[index];
 }
 
-const HOURS = Array.from({ length: 14 }, (_, i) => i + 8); // 08:00 to 21:00
+/**
+ * Jadval soatlari: odatda 08:00–21:00, lekin undan oldin yoki keyin
+ * boshlanadigan dars bo'lsa, oraliq kengayadi — aks holda u jadvalda
+ * umuman ko'rinmay qolardi.
+ */
+function hourRange(groups: Group[]): number[] {
+    let first = 8;
+    let last = 21;
+    for (const group of groups) {
+        const hour = parseInt(group.lesson_start.split(':')[0], 10);
+        if (hour < first) first = hour;
+        if (hour > last) last = hour;
+    }
+    return Array.from({ length: last - first + 1 }, (_, i) => i + first);
+}
 
 export default function SchedulePage() {
     return (
@@ -107,7 +122,8 @@ function ScheduleView() {
     const [selectedDay, setSelectedDay] = useState<Weekday>(todayWeekday);
     const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
 
-    const [filters, setFilters] = useState({
+    // Filtrlar manzilda: guruhni ochib "orqaga" qaytganda saqlanadi.
+    const { filters, setFilter, setFilters } = useListQuery({
         branch_id: '',
         teacher_id: '',
         room_id: '',
@@ -157,7 +173,7 @@ function ScheduleView() {
                             )}
                         >
                             <Layout20 className='size-3.5' />
-                            Vaqt jadvali
+                            {t('schedule.viewGrid')}
                         </button>
                         <button
                             type='button'
@@ -170,7 +186,7 @@ function ScheduleView() {
                             )}
                         >
                             <CalendarTime className='size-3.5' />
-                            Haftalik ro'yxat
+                            {t('schedule.viewWeek')}
                         </button>
                         <button
                             type='button'
@@ -182,7 +198,7 @@ function ScheduleView() {
                                     : 'text-text-tertiary hover:text-text-primary',
                             )}
                         >
-                            Kunlik
+                            {t('schedule.viewDay')}
                         </button>
                     </div>
                 }
@@ -200,11 +216,8 @@ function ScheduleView() {
                                 placeholder={t('groups.allBranches')}
                                 value={filters.branch_id}
                                 onValueChange={(branch_id) =>
-                                    setFilters({
-                                        ...filters,
-                                        branch_id,
-                                        room_id: '',
-                                    })
+                                    // Xona filialga tegishli — filial o'zgarsa tushadi.
+                                    setFilters({ branch_id, room_id: '' })
                                 }
                             />
                         </div>
@@ -218,7 +231,7 @@ function ScheduleView() {
                             placeholder={t('groups.allTeachers')}
                             value={filters.teacher_id}
                             onValueChange={(teacher_id) =>
-                                setFilters({ ...filters, teacher_id })
+                                setFilter('teacher_id', teacher_id)
                             }
                         />
                     </div>
@@ -231,7 +244,7 @@ function ScheduleView() {
                             placeholder={t('groups.allRooms')}
                             value={filters.room_id}
                             onValueChange={(room_id) =>
-                                setFilters({ ...filters, room_id })
+                                setFilter('room_id', room_id)
                             }
                         />
                     </div>
@@ -318,7 +331,7 @@ function ScheduleView() {
                         <div className='grid grid-cols-2 gap-3 text-sm'>
                             <div className='border-card-border bg-card-surface-area rounded-lg border p-3'>
                                 <p className='text-text-tertiary text-xs font-medium'>
-                                    Dars vaqti
+                                    {t('schedule.lessonTime')}
                                 </p>
                                 <p className='text-text-primary mt-1 font-semibold tabular-nums'>
                                     {selectedGroup.lesson_start} –{' '}
@@ -327,7 +340,7 @@ function ScheduleView() {
                             </div>
                             <div className='border-card-border bg-card-surface-area rounded-lg border p-3'>
                                 <p className='text-text-tertiary text-xs font-medium'>
-                                    Xona
+                                    {t('groups.room')}
                                 </p>
                                 <p className='text-text-primary mt-1 font-semibold'>
                                     {selectedGroup.room?.name ?? '—'}
@@ -335,7 +348,7 @@ function ScheduleView() {
                             </div>
                             <div className='border-card-border bg-card-surface-area rounded-lg border p-3'>
                                 <p className='text-text-tertiary text-xs font-medium'>
-                                    O'qituvchi
+                                    {t('groups.teacher')}
                                 </p>
                                 <p className='text-text-primary mt-1 font-semibold'>
                                     {selectedGroup.teacher
@@ -345,10 +358,10 @@ function ScheduleView() {
                             </div>
                             <div className='border-card-border bg-card-surface-area rounded-lg border p-3'>
                                 <p className='text-text-tertiary text-xs font-medium'>
-                                    O'quvchilar soni
+                                    {t('groups.students')}
                                 </p>
-                                <p className='text-text-primary mt-1 font-semibold'>
-                                    {selectedGroup.students_count} ta
+                                <p className='text-text-primary mt-1 font-semibold tabular-nums'>
+                                    {selectedGroup.students_count}
                                 </p>
                             </div>
                         </div>
@@ -359,18 +372,15 @@ function ScheduleView() {
                                 size='md'
                                 onPress={() => setSelectedGroup(null)}
                             >
-                                Yopish
+                                {t('common.close')}
                             </Button>
-                            <Link href={`/groups/${selectedGroup.id}`}>
-                                <Button
-                                    variant='primary'
-                                    appearance='fill'
-                                    size='md'
-                                >
-                                    <Eye className='size-4' />
-                                    Guruhga o'tish
-                                </Button>
-                            </Link>
+                            <LinkButton
+                                href={`/groups/${selectedGroup.id}`}
+                                appearance='fill'
+                            >
+                                <Eye />
+                                {t('schedule.openGroup')}
+                            </LinkButton>
                         </div>
                     </div>
                 </Modal>
@@ -390,6 +400,7 @@ function TimetableGrid({
     showBranch: boolean;
 }) {
     const t = useT();
+    const hours = useMemo(() => hourRange(groups), [groups]);
 
     // Group lessons mapped by hour and day
     const lessonsByCell = useMemo(() => {
@@ -412,7 +423,7 @@ function TimetableGrid({
                 <thead>
                     <tr className='border-card-border bg-card-surface-area text-text-primary border-b text-xs font-semibold'>
                         <th className='border-card-border w-20 border-r p-3 text-center'>
-                            Vaqt
+                            {t('schedule.time')}
                         </th>
                         {WEEKDAYS.map((day) => (
                             <th
@@ -425,7 +436,7 @@ function TimetableGrid({
                     </tr>
                 </thead>
                 <tbody className='divide-card-border divide-y text-xs'>
-                    {HOURS.map((hour) => {
+                    {hours.map((hour) => {
                         const hourFormatted = `${String(hour).padStart(2, '0')}:00`;
                         return (
                             <tr
@@ -442,7 +453,7 @@ function TimetableGrid({
                                     return (
                                         <td
                                             key={day}
-                                            className='border-card-border vertical-top min-w-[150px] border-r p-1.5 last:border-r-0'
+                                            className='border-card-border min-w-[150px] border-r p-1.5 align-top last:border-r-0'
                                         >
                                             <div className='flex flex-col gap-1.5'>
                                                 {cellGroups.map((group) => {
@@ -483,7 +494,7 @@ function TimetableGrid({
                                                                 {group.room && (
                                                                     <span
                                                                         className={cn(
-                                                                            'py-0.2 rounded border px-1 text-[10px] font-medium',
+                                                                            'rounded border px-1 py-0.5 text-[10px] font-medium',
                                                                             palette.border,
                                                                             palette.subtext,
                                                                         )}
@@ -515,7 +526,9 @@ function TimetableGrid({
                                                                         ? fullName(
                                                                               group.teacher,
                                                                           )
-                                                                        : "O'qituvchi yo'q"}
+                                                                        : t(
+                                                                              'schedule.noTeacher',
+                                                                          )}
                                                                 </span>
                                                             </div>
                                                         </button>
@@ -551,24 +564,27 @@ function DayView({
     return (
         <div className='border-card-border bg-card-background rounded-xl border p-6 shadow-xs'>
             <h2 className='font-display text-text-primary mb-4 text-base font-semibold'>
-                {t(`weekdayLong.${day}` as TranslationKey)} darslari (
-                {groups.length} ta guruh)
+                {t('schedule.dayTitle', {
+                    day: t(`weekdayLong.${day}` as TranslationKey),
+                    count: groups.length,
+                })}
             </h2>
 
             {groups.length === 0 ? (
                 <p className='text-text-tertiary py-6 text-center text-sm'>
-                    Ushbu kunda darslar yo'q
+                    {t('schedule.noLessonsDay')}
                 </p>
             ) : (
                 <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
                     {groups.map((group) => {
                         const palette = getGroupPalette(group.id);
                         return (
-                            <div
+                            <button
+                                type='button'
                                 key={group.id}
                                 onClick={() => onSelectGroup(group)}
                                 className={cn(
-                                    'cursor-pointer rounded-xl border p-4 transition-all hover:scale-[1.01] hover:shadow-sm',
+                                    'cursor-pointer rounded-xl border p-4 text-left transition-all hover:scale-[1.01] hover:shadow-sm',
                                     palette.bg,
                                     palette.border,
                                 )}
@@ -616,7 +632,7 @@ function DayView({
                                         👤{' '}
                                         {group.teacher
                                             ? fullName(group.teacher)
-                                            : "O'qituvchi tayinlanmagan"}
+                                            : t('schedule.noTeacher')}
                                     </span>
                                     <span
                                         className={cn(
@@ -624,10 +640,12 @@ function DayView({
                                             palette.text,
                                         )}
                                     >
-                                        {group.students_count} ta o'quvchi
+                                        {t('schedule.studentsCount', {
+                                            count: group.students_count,
+                                        })}
                                     </span>
                                 </div>
-                            </div>
+                            </button>
                         );
                     })}
                 </div>

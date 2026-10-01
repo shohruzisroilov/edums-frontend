@@ -141,6 +141,10 @@ export interface Tariff {
     /** null — cheksiz */
     max_students: number | null;
     max_users?: number | null;
+    /** Yillik xarid chegirmasi (%); null — tarif yillik sotilmaydi. */
+    yearly_discount_percent: number | null;
+    /** Bir yil (365 kun) narxi — backend hisoblaydi; null — yillik yo'q. */
+    yearly_price: number | null;
     is_active: boolean;
     sort_order: number;
     created_at: string;
@@ -154,9 +158,14 @@ export interface TariffPayload {
     duration_days: number;
     max_students?: number | null;
     max_users?: number | null;
+    yearly_discount_percent?: number | null;
     is_active?: boolean;
     sort_order?: number;
 }
+
+/** Tarif qanday muddatga sotib olinadi. */
+export const BILLING_PERIODS = ['month', 'year'] as const;
+export type BillingPeriod = (typeof BILLING_PERIODS)[number];
 
 /** Markaz hozir tizimdan foydalana oladimi va qachongacha. */
 export interface SubscriptionStatus {
@@ -197,6 +206,8 @@ export interface PaymentRequest {
     duration_days: number;
     max_students: number | null;
     max_users?: number | null;
+    /** year — bir yillik (365 kun) xarid. */
+    period: BillingPeriod;
     status: PaymentRequestStatus;
     requested_by_id: string | null;
     /** Rad etish sababi. */
@@ -594,9 +605,9 @@ export const EDITABLE_LEAD_STATUSES = [
     'new',
     'contacted',
     'trial',
-    'won',
     'lost',
 ] as const satisfies readonly LeadStatus[];
+export type EditableLeadStatus = (typeof EDITABLE_LEAD_STATUSES)[number];
 
 export const LEAD_SOURCES = [
     'instagram',
@@ -633,7 +644,7 @@ export interface LeadPayload {
     last_name?: string | null;
     phone_number: string;
     source?: LeadSource;
-    status?: Exclude<LeadStatus, 'won'>;
+    status?: EditableLeadStatus;
     branch_id?: string | null;
     course_id?: string | null;
     next_call_date?: string | null;
@@ -764,6 +775,8 @@ export interface GroupAttendance {
     /** Shu oyda guruhda bo'lganlar; belgilanmagan kunlar `records` da yo'q. */
     students: {
         student: PersonRef;
+        /** Shu oyga tegadigan davrlari — belgi faqat shu kunlarga qo'yiladi. */
+        stays: { joined_at: string; left_at: string | null }[];
         records: Record<string, AttendanceStatus>;
     }[];
 }

@@ -19,6 +19,7 @@ import {
     type Weekday,
 } from '@/types/api';
 import { fullName, toISODate } from '@/utils/format';
+import { invalidateStudyData } from '@/utils/query-cache';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
@@ -153,9 +154,9 @@ export function GroupFormModal({
                 : createGroup(payload);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['groups'] });
-            queryClient.invalidateQueries({ queryKey: ['group'] });
-            queryClient.invalidateQueries({ queryKey: ['schedule'] });
+            // Tugatilgan guruh o'quvchilarini chiqaradi — balans va qarzdorlar
+            // ham o'zgaradi.
+            invalidateStudyData(queryClient);
             toast.success(t(isEdit ? 'groups.updated' : 'groups.created'));
             onClose();
         },

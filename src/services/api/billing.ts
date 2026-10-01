@@ -1,6 +1,7 @@
 import { buildQuery, request } from './client';
 import type {
     BillingOverview,
+    BillingPeriod,
     DataResponse,
     PaginatedResponse,
     PaymentRequest,
@@ -15,11 +16,17 @@ export async function getBillingOverview() {
     return res.data;
 }
 
-/** Kutilayotgan eski so'rov bo'lsa, backend uni bekor qilib yangisini ochadi. */
-export async function createPaymentRequest(tariff_id: string) {
+/**
+ * Kutilayotgan eski so'rov bo'lsa, backend uni bekor qilib yangisini ochadi.
+ * `year` — bir yillik xarid, tarifning yillik chegirmasi bilan.
+ */
+export async function createPaymentRequest(
+    tariff_id: string,
+    period: BillingPeriod = 'month',
+) {
     const res = await request<DataResponse<PaymentRequest>>(
         '/billing/requests',
-        { method: 'POST', body: { tariff_id } },
+        { method: 'POST', body: { tariff_id, period } },
     );
     return res.data;
 }

@@ -180,7 +180,7 @@ export function LeadFormModal({
                 </div>
                 <div className='grid gap-4 sm:grid-cols-2'>
                     <TextInput
-                        label="Keyingi qo'ng'iroq sanasi"
+                        label={t('leads.nextCallDate')}
                         type='date'
                         value={form.next_call_date}
                         onChange={(e) =>

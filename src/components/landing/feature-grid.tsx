@@ -151,7 +151,7 @@ export function FeatureGrid() {
                 <button
                     type='button'
                     onClick={() => scroll('left')}
-                    aria-label='Previous'
+                    aria-label={t('common.previous')}
                     className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary absolute top-1/2 -left-1 z-20 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-lg transition-all active:scale-95 sm:left-0 sm:size-12'
                 >
                     <ChevronLeft className='size-4 sm:size-6' />
@@ -161,7 +161,7 @@ export function FeatureGrid() {
                 <button
                     type='button'
                     onClick={() => scroll('right')}
-                    aria-label='Next'
+                    aria-label={t('common.next')}
                     className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary absolute top-1/2 -right-1 z-20 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-lg transition-all active:scale-95 sm:right-0 sm:size-12'
                 >
                     <ChevronRight className='size-4 sm:size-6' />

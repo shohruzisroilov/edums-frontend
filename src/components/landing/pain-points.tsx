@@ -18,7 +18,7 @@ export function PainPoints() {
     return (
         <section className='mx-auto max-w-6xl px-4 py-12 sm:px-5 sm:py-20'>
             <SectionHeading
-                eyebrow='Muammo va yechim'
+                eyebrow={t('landing.eyebrowPain')}
                 title={t('landing.painTitle')}
                 text={t('landing.painText')}
             />
@@ -43,7 +43,7 @@ export function PainPoints() {
                         <div className='my-3.5 flex items-center gap-2 sm:my-5 sm:gap-3'>
                             <div className='border-card-border h-px flex-1 border-t border-dashed' />
                             <span className='text-brand-500 text-[11px] font-semibold whitespace-nowrap'>
-                                EDUMS bilan
+                                {t('landing.withEdums')}
                             </span>
                             <div className='border-card-border h-px flex-1 border-t border-dashed' />
                         </div>

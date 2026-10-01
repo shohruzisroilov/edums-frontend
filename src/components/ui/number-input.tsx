@@ -29,18 +29,24 @@ function groupInteger(digits: string, separator: string): string {
     return digits.replace(/\B(?=(\d{3})+(?!\d))/g, separator);
 }
 
-/** Kursorni formatlashdan keyin ham o'sha raqam yonida ushlab turadi. */
-function keepCaret(event: ChangeEvent<HTMLInputElement>) {
+/**
+ * Kursorni formatlashdan keyin ham o'sha belgi yonida ushlab turadi.
+ * `significant` — sanaladigan belgilar (raqamlar, kasrli maydonda nuqta ham):
+ * ajratgich probellari qo'shilib-olinsa ham kursor siljimaydi.
+ */
+function keepCaret(event: ChangeEvent<HTMLInputElement>, significant: RegExp) {
     const input = event.target;
     const caret = input.selectionStart ?? input.value.length;
-    const digitIndex = digitsOnly(input.value.slice(0, caret)).length;
+    const count = (text: string) =>
+        [...text].filter((char) => significant.test(char)).length;
+    const digitIndex = count(input.value.slice(0, caret));
 
     requestAnimationFrame(() => {
         if (!input.isConnected) return;
         let seen = 0;
         let next = input.value.length;
         for (let i = 0; i < input.value.length; i += 1) {
-            if (/\d/.test(input.value[i])) seen += 1;
+            if (significant.test(input.value[i])) seen += 1;
             if (seen === digitIndex) {
                 next = i + 1;
                 break;
@@ -50,26 +56,63 @@ function keepCaret(event: ChangeEvent<HTMLInputElement>) {
     });
 }
 
-/** Butun son. `unit` — o'ng tomondagi birlik ("kun", "ta"). */
+/**
+ * Kiritilgan matndan xom qiymat: `12 000` → `12000`, kasrli maydonda
+ * `12,5` / `12.5` → `12.5` (ko'pi bilan `decimals` xona). Vergul kasr
+ * belgisi faqat u minglik ajratgichi bo'lmagan tilda.
+ */
+function toRawValue(
+    text: string,
+    decimals: number,
+    commaIsDecimal: boolean,
+): string {
+    if (!decimals) return digitsOnly(text).replace(/^0+(?=\d)/, '');
+
+    const normalized = commaIsDecimal ? text.replace(',', '.') : text;
+    const dot = normalized.indexOf('.');
+    const whole = digitsOnly(
+        dot === -1 ? normalized : normalized.slice(0, dot),
+    );
+    const integer = whole.replace(/^0+(?=\d)/, '');
+    if (dot === -1) return integer;
+
+    const fraction = digitsOnly(normalized.slice(dot + 1)).slice(0, decimals);
+    return `${integer || '0'}.${fraction}`;
+}
+
+/** Xom qiymat → ko'rinish: butun qismi minglarga bo'linadi. */
+function toDisplayValue(value: string, separator: string): string {
+    const [integer, fraction] = value.split('.');
+    const grouped = groupInteger(integer, separator);
+    return fraction === undefined ? grouped : `${grouped}.${fraction}`;
+}
+
+/**
+ * Son. `unit` — o'ng tomondagi birlik ("kun", "ta", "%"). `decimals` —
+ * kasr xonalari (standart 0 — butun son), masalan foiz stavkasi uchun 2.
+ */
 export function NumberInput({
     value,
     onValueChange,
     unit,
+    decimals = 0,
     ...rest
-}: BaseProps & { unit?: string }) {
+}: BaseProps & { unit?: string; decimals?: number }) {
     const { groupSeparator } = useFormat();
+    const commaIsDecimal = groupSeparator !== ',';
+    const significant = !decimals ? /\d/ : commaIsDecimal ? /[\d.,]/ : /[\d.]/;
 
     return (
         <TextInput
             {...rest}
             type='text'
-            inputMode='numeric'
+            inputMode={decimals ? 'decimal' : 'numeric'}
             autoComplete='off'
-            value={groupInteger(value, groupSeparator)}
+            value={toDisplayValue(value, groupSeparator)}
             onChange={(event) => {
-                keepCaret(event);
+                keepCaret(event, significant);
                 onValueChange(
-                    digitsOnly(event.target.value).replace(/^0+(?=\d)/, ''),
+                    toRawValue(event.target.value, decimals, commaIsDecimal),
                 );
             }}
             suffix={unit}

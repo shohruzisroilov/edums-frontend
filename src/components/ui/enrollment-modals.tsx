@@ -16,28 +16,10 @@ import {
 } from '@/services/api/students';
 import type { Enrollment, Group, Student } from '@/types/api';
 import { fullName, toISODate } from '@/utils/format';
-import {
-    useMutation,
-    useQuery,
-    useQueryClient,
-    type QueryClient,
-} from '@tanstack/react-query';
+import { invalidateStudyData } from '@/utils/query-cache';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
-
-/** Guruh tarkibi o'zgarganda eskiradigan hamma narsa. */
-function invalidateEnrollments(queryClient: QueryClient) {
-    for (const key of [
-        'group-students',
-        'student-enrollments',
-        'groups',
-        'group',
-        'students',
-        'student',
-    ]) {
-        queryClient.invalidateQueries({ queryKey: [key] });
-    }
-}
 
 /**
  * O'quvchining guruhdagi davrini o'zgartirish: qo'shilgan sana, oylik narx
@@ -69,7 +51,7 @@ export function EnrollmentEditModal({
                 left_at: form.left_at || undefined,
             }),
         onSuccess: () => {
-            invalidateEnrollments(queryClient);
+            invalidateStudyData(queryClient);
             toast.success(
                 t(
                     form.left_at && !enrollment.left_at
@@ -236,7 +218,7 @@ export function EnrollToGroupModal({
                     fields.price === '' ? undefined : Number(fields.price),
             }),
         onSuccess: () => {
-            invalidateEnrollments(queryClient);
+            invalidateStudyData(queryClient);
             toast.success(t('students.enrolled'));
             onClose();
         },
@@ -339,7 +321,7 @@ export function AddStudentToGroupModal({
                     fields.price === '' ? undefined : Number(fields.price),
             }),
         onSuccess: () => {
-            invalidateEnrollments(queryClient);
+            invalidateStudyData(queryClient);
             toast.success(t('students.enrolled'));
             onClose();
         },

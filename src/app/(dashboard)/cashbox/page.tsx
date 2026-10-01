@@ -45,6 +45,7 @@ import { cn } from '@/utils/cn';
 import { fullName } from '@/utils/format';
 import { TONE_TEXT } from '@/utils/tone';
 import { exportToCsv } from '@/utils/export';
+import { invalidateStudyData } from '@/utils/query-cache';
 import { Download1, Plus, Trash1, Wallet2 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
@@ -107,14 +108,7 @@ function CashboxView() {
     const removeMutation = useMutation({
         mutationFn: (id: string) => deleteStudentPayment(id),
         onSuccess: () => {
-            for (const key of [
-                'student-payments',
-                'student-balance',
-                'debtors',
-                'dashboard',
-            ]) {
-                queryClient.invalidateQueries({ queryKey: [key] });
-            }
+            invalidateStudyData(queryClient);
             toast.success(t('cashbox.deleted'));
             setDeleting(null);
         },
@@ -144,21 +138,21 @@ function CashboxView() {
                                 size='md'
                                 onPress={() => {
                                     exportToCsv(
-                                        'Kassa_Tushumlari',
+                                        t('cashbox.title'),
                                         [
-                                            'Sana',
-                                            "O'quvchi",
-                                            'Guruh',
-                                            'Summa (som)',
-                                            "To'lov turi",
-                                            'Qabul qildi',
+                                            t('receipt.date'),
+                                            t('common.student'),
+                                            t('common.group'),
+                                            `${t('cashbox.amount')} (${t('common.som')})`,
+                                            t('cashbox.method'),
+                                            t('cashbox.receivedBy'),
                                         ],
                                         query.data.data.map((p) => [
                                             formatDate(p.paid_at),
                                             fullName(p.student),
                                             p.group.name,
                                             p.amount,
-                                            p.method,
+                                            t(`paymentMethod.${p.method}`),
                                             p.received_by
                                                 ? fullName(p.received_by)
                                                 : '',
@@ -167,7 +161,7 @@ function CashboxView() {
                                 }}
                             >
                                 <Download1 />
-                                Eksport (Excel)
+                                {t('common.export')}
                             </Button>
                         )}
                         {canCreate && (
@@ -209,7 +203,12 @@ function CashboxView() {
                             ? [
                                   {
                                       key: 'method',
-                                      label: `To'lov turi: ${t(`paymentMethod.${filters.method as PaymentMethod}`)}`,
+                                      label: t('filters.chip', {
+                                          label: t('cashbox.method'),
+                                          value: t(
+                                              `paymentMethod.${filters.method as PaymentMethod}`,
+                                          ),
+                                      }),
                                       onRemove: () => setFilter('method', ''),
                                   },
                               ]
@@ -282,7 +281,7 @@ function CashboxView() {
                                             setFilter('to', '');
                                         }}
                                     >
-                                        Filtrni tozalash
+                                        {t('filters.reset')}
                                     </Button>
                                 ) : canCreate ? (
                                     <Button
@@ -292,7 +291,7 @@ function CashboxView() {
                                         onPress={() => setCreating(true)}
                                     >
                                         <Plus />
-                                        Birinchi to'lovni qabul qilish
+                                        {t('cashbox.addFirst')}
                                     </Button>
                                 ) : null
                             }

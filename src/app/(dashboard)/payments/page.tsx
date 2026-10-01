@@ -77,6 +77,7 @@ function PaymentsView() {
         mutationFn: (id: string) => approvePaymentRequest(id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['payment-requests'] });
+            queryClient.invalidateQueries({ queryKey: ['platform-stats'] });
             queryClient.invalidateQueries({ queryKey: ['educations'] });
             toast.success(t('payments.approved'));
             setApproving(null);
@@ -194,6 +195,10 @@ function PaymentsView() {
                                                 {item.tariff_name}
                                                 <span className='text-text-tertiary block text-xs'>
                                                     {t(
+                                                        `billingPeriod.${item.period}`,
+                                                    )}{' '}
+                                                    ·{' '}
+                                                    {t(
                                                         'tariffs.durationValue',
                                                         {
                                                             days: item.duration_days,
@@ -278,7 +283,9 @@ function PaymentsView() {
                 title={t('payments.approveTitle')}
                 message={t('payments.approveMessage', {
                     education: approving?.education?.name ?? '',
-                    tariff: approving?.tariff_name ?? '',
+                    tariff: approving
+                        ? `${approving.tariff_name} · ${t(`billingPeriod.${approving.period}`)}`
+                        : '',
                     amount: approving
                         ? formatPrice(approving.price, t('common.som'))
                         : '',
@@ -317,6 +324,7 @@ function RejectModal({
         mutationFn: () => rejectPaymentRequest(request.id, note),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['payment-requests'] });
+            queryClient.invalidateQueries({ queryKey: ['platform-stats'] });
             toast.success(t('payments.rejected'));
             onClose();
         },
