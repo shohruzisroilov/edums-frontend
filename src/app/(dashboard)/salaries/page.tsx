@@ -392,8 +392,14 @@ function RateModal({
     const queryClient = useQueryClient();
 
     const [type, setType] = useState<SalaryRateType>(row.rate?.type ?? 'fixed');
-    const [value, setValue] = useState(
-        row.rate ? String(Math.round(row.rate.value)) : '',
+    // Foiz kasr bo'lishi mumkin (12.5) — yaxlitlansa, qayta saqlashda
+    // stavka o'zgarib ketardi.
+    const [value, setValue] = useState(() =>
+        !row.rate
+            ? ''
+            : row.rate.type === 'percent'
+              ? String(row.rate.value)
+              : String(Math.round(row.rate.value)),
     );
 
     const saveMutation = useMutation({
@@ -440,13 +446,20 @@ function RateModal({
                     }))}
                     hint={t(`salaryRateType.${type}Hint`)}
                     value={type}
-                    onValueChange={(next) => setType(next as SalaryRateType)}
+                    onValueChange={(next) => {
+                        setType(next as SalaryRateType);
+                        // So'mda kasr yo'q — foizdan o'tganda kasr qismi tushadi.
+                        if (next !== 'percent') {
+                            setValue((prev) => prev.split('.')[0]);
+                        }
+                    }}
                 />
                 {type === 'percent' ? (
                     <NumberInput
                         label={t('salaries.rateValue')}
                         required
                         unit='%'
+                        decimals={2}
                         error={percentTooHigh ? '0–100' : undefined}
                         value={value}
                         onValueChange={setValue}

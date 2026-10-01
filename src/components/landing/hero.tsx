@@ -75,8 +75,8 @@ export function Hero({ onStart }: { onStart: () => void }) {
                                 <span className='size-3 rounded-full bg-[#F5BF4F]' />
                                 <span className='size-3 rounded-full bg-[#61C554]' />
                             </div>
-                            <span className='text-text-tertiary text-xs font-mono select-none'>
-                                youtube.com · EDUMS Taqdimoti
+                            <span className='text-text-tertiary font-mono text-xs select-none'>
+                                {t('landing.videoCaption')}
                             </span>
                             <div className='w-12' />
                         </div>
@@ -84,7 +84,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
                             <iframe
                                 className='h-full w-full'
                                 src='https://www.youtube.com/embed/ByVbY2w7kMQ'
-                                title='EDUMS — O‘quv markazlari uchun to‘liq CRM tizimi'
+                                title={t('landing.videoTitle')}
                                 allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
                                 referrerPolicy='strict-origin-when-cross-origin'
                                 allowFullScreen

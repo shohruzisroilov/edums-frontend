@@ -115,6 +115,9 @@ export function UserFormModal({
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['users'] });
             queryClient.invalidateQueries({ queryKey: ['roles'] });
+            // O'qituvchi tanlash ro'yxati va oylik varaqasi ham xodimlardan.
+            queryClient.invalidateQueries({ queryKey: ['user-options'] });
+            queryClient.invalidateQueries({ queryKey: ['salary-sheet'] });
             toast.success(t(isEdit ? 'users.updated' : 'users.created'));
             onClose();
         },

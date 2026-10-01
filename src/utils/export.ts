@@ -12,8 +12,15 @@ export function exportToCsv(
         val: string | number | boolean | null | undefined,
     ): string => {
         if (val === null || val === undefined) return '""';
-        const str = String(val).replace(/"/g, '""');
-        return `"${str}"`;
+        let str = String(val);
+        // `=`, `+`, `-`, `@` bilan boshlangan matnni Excel formula deb
+        // o'qiydi: `+998 90 …` telefoni xatoga aylanadi, saytdagi formadan
+        // kelgan `=HYPERLINK(…)` kabi ism esa ishga tushib ketadi. Oldiga
+        // qo'yilgan tabulyatsiya uni oddiy matn qiladi. Sonlar tegmaydi.
+        if (typeof val === 'string' && /^[=+\-@\t\r]/.test(str)) {
+            str = `\t${str}`;
+        }
+        return `"${str.replace(/"/g, '""')}"`;
     };
 
     const headerLine = headers.map(escapeCsv).join(',');

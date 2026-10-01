@@ -107,6 +107,9 @@ function TariffsView() {
                                         {t('tariffs.duration')}
                                     </TableHead>
                                     <TableHead numeric>
+                                        {t('tariffs.yearly')}
+                                    </TableHead>
+                                    <TableHead numeric>
                                         {t('tariffs.maxStudents')}
                                     </TableHead>
                                     <TableHead>{t('common.status')}</TableHead>
@@ -132,6 +135,25 @@ function TariffsView() {
                                             {t('tariffs.durationValue', {
                                                 days: tariff.duration_days,
                                             })}
+                                        </TableCell>
+                                        <TableCell numeric>
+                                            {tariff.yearly_price === null ? (
+                                                '—'
+                                            ) : (
+                                                <>
+                                                    {formatPrice(
+                                                        tariff.yearly_price,
+                                                        t('common.som'),
+                                                    )}
+                                                    <span className='text-badge-success-text block text-xs'>
+                                                        −
+                                                        {
+                                                            tariff.yearly_discount_percent
+                                                        }
+                                                        %
+                                                    </span>
+                                                </>
+                                            )}
                                         </TableCell>
                                         <TableCell numeric>
                                             {(tariff.max_students ??

@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/tailgrids/core/button';
 import { Modal } from '@/components/ui/modal';
+import { useT } from '@/i18n/provider';
 import { Funnel1, Close } from '@tailgrids/icons';
 import { useState, type ReactNode } from 'react';
 
@@ -22,6 +23,7 @@ export function MobileFilterSheet({
     onClear,
     activeChips = [],
 }: MobileFilterSheetProps) {
+    const t = useT();
     const [open, setOpen] = useState(false);
 
     return (
@@ -34,9 +36,9 @@ export function MobileFilterSheet({
                 className='shrink-0 sm:hidden'
             >
                 <Funnel1 className='size-4' />
-                <span>Filtrlar</span>
+                <span>{t('filters.title')}</span>
                 {activeCount > 0 && (
-                    <span className='text-brand-accent py-0.2 ml-1 rounded-full bg-white px-1.5 text-[11px] font-bold tabular-nums dark:bg-slate-950'>
+                    <span className='text-brand-accent bg-card-background ml-1 rounded-full px-1.5 py-0.5 text-[11px] font-bold tabular-nums'>
                         {activeCount}
                     </span>
                 )}
@@ -46,8 +48,8 @@ export function MobileFilterSheet({
                 <Modal
                     open={open}
                     onClose={() => setOpen(false)}
-                    title='Filtrlar'
-                    description='Qidiruv va saralash mezonlarini tanlang'
+                    title={t('filters.title')}
+                    description={t('filters.description')}
                     footer={
                         <div className='flex w-full items-center justify-between gap-2'>
                             {onClear && (
@@ -60,7 +62,7 @@ export function MobileFilterSheet({
                                         setOpen(false);
                                     }}
                                 >
-                                    Tozalash
+                                    {t('filters.clear')}
                                 </Button>
                             )}
                             <Button
@@ -70,7 +72,7 @@ export function MobileFilterSheet({
                                 className='flex-1'
                                 onPress={() => setOpen(false)}
                             >
-                                Qo'llash
+                                {t('filters.apply')}
                             </Button>
                         </div>
                     }
@@ -92,7 +94,7 @@ export function MobileFilterSheet({
                                 type='button'
                                 onClick={chip.onRemove}
                                 className='text-text-tertiary hover:text-badge-error-text ml-0.5 rounded-full p-0.5 transition-colors'
-                                aria-label='Filtrni o’chirish'
+                                aria-label={t('filters.remove')}
                             >
                                 <Close className='size-3' />
                             </button>
@@ -104,7 +106,7 @@ export function MobileFilterSheet({
                             onClick={onClear}
                             className='text-badge-error-text shrink-0 px-1 text-xs font-medium hover:underline'
                         >
-                            Barchasini tozalash
+                            {t('filters.clearAll')}
                         </button>
                     )}
                 </div>

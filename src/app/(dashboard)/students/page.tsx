@@ -39,7 +39,7 @@ import {
 import { can } from '@/utils/access';
 import { cn } from '@/utils/cn';
 import { formatPhone, fullName } from '@/utils/format';
-import { balanceTone } from '@/utils/tone';
+import { TONE_TEXT, balanceTone } from '@/utils/tone';
 import { exportToCsv } from '@/utils/export';
 import { StudentImportModal } from '@/components/ui/student-import-modal';
 import {
@@ -148,7 +148,10 @@ function StudentsView() {
             ? [
                   {
                       key: 'branch',
-                      label: `Filial: ${activeBranch.name}`,
+                      label: t('filters.chip', {
+                          label: t('groups.branch'),
+                          value: activeBranch.name,
+                      }),
                       onRemove: () => setFilter('branch_id', ''),
                   },
               ]
@@ -157,7 +160,12 @@ function StudentsView() {
             ? [
                   {
                       key: 'status',
-                      label: `Holat: ${t(`studentStatus.${activeStatus as StudentStatus}`)}`,
+                      label: t('filters.chip', {
+                          label: t('common.status'),
+                          value: t(
+                              `studentStatus.${activeStatus as StudentStatus}`,
+                          ),
+                      }),
                       onRemove: () => setFilter('status', 'active'),
                   },
               ]
@@ -177,25 +185,38 @@ function StudentsView() {
                                 appearance='outline'
                                 size='md'
                                 onPress={() => {
+                                    // Balans faqat to'lovlarni ko'ra oladiganlarga.
                                     exportToCsv(
-                                        'Oquvchilar',
+                                        t('students.title'),
                                         [
-                                            'F.I.Sh.',
-                                            'Telefon',
-                                            'Balans (som)',
-                                            'Holati',
+                                            t('common.fullName'),
+                                            t('common.phone'),
+                                            t('students.parentPhone'),
+                                            ...(canViewPayments
+                                                ? [
+                                                      `${t('balance.title')} (${t('common.som')})`,
+                                                  ]
+                                                : []),
+                                            t('common.status'),
                                         ],
                                         query.data.data.map((s) => [
                                             fullName(s),
-                                            formatPhone(s.phone_number),
-                                            s.balance ?? 0,
-                                            s.status,
+                                            s.phone_number
+                                                ? formatPhone(s.phone_number)
+                                                : '',
+                                            s.parent_phone
+                                                ? formatPhone(s.parent_phone)
+                                                : '',
+                                            ...(canViewPayments
+                                                ? [s.balance ?? 0]
+                                                : []),
+                                            t(`studentStatus.${s.status}`),
                                         ]),
                                     );
                                 }}
                             >
                                 <Download1 />
-                                Eksport (Excel)
+                                {t('common.export')}
                             </Button>
                         )}
                         {canCreate && (
@@ -206,7 +227,7 @@ function StudentsView() {
                                     onPress={() => setImportOpen(true)}
                                 >
                                     <UploadCloud />
-                                    Import (Excel)
+                                    {t('students.import')}
                                 </Button>
                                 <Button
                                     variant='primary'
@@ -325,7 +346,7 @@ function StudentsView() {
                                             setFilter('status', 'active');
                                         }}
                                     >
-                                        Filtrni tozalash
+                                        {t('filters.reset')}
                                     </Button>
                                 ) : canCreate ? (
                                     <Button
@@ -338,7 +359,7 @@ function StudentsView() {
                                         }}
                                     >
                                         <Plus className='size-4' />
-                                        Birinchi o'quvchini qo'shish
+                                        {t('students.addFirst')}
                                     </Button>
                                 ) : null
                             }
@@ -465,7 +486,12 @@ function StudentsView() {
                                                         }
                                                         className='gap-1.5 text-xs'
                                                     >
-                                                        <Wallet2 className='size-3.5 text-emerald-600 dark:text-emerald-400' />
+                                                        <Wallet2
+                                                            className={cn(
+                                                                'size-3.5',
+                                                                TONE_TEXT.success,
+                                                            )}
+                                                        />
                                                         <span>
                                                             {t(
                                                                 'header.quickPayment',

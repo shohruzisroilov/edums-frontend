@@ -153,7 +153,10 @@ function GroupsView() {
             ? [
                   {
                       key: 'branch',
-                      label: `Filial: ${activeBranch.name}`,
+                      label: t('filters.chip', {
+                          label: t('groups.branch'),
+                          value: activeBranch.name,
+                      }),
                       onRemove: () => setFilter('branch_id', ''),
                   },
               ]
@@ -162,7 +165,10 @@ function GroupsView() {
             ? [
                   {
                       key: 'course',
-                      label: `Kurs: ${activeCourse.name}`,
+                      label: t('filters.chip', {
+                          label: t('groups.course'),
+                          value: activeCourse.name,
+                      }),
                       onRemove: () => setFilter('course_id', ''),
                   },
               ]
@@ -171,7 +177,10 @@ function GroupsView() {
             ? [
                   {
                       key: 'teacher',
-                      label: `O'qituvchi: ${fullName(activeTeacher)}`,
+                      label: t('filters.chip', {
+                          label: t('groups.teacher'),
+                          value: fullName(activeTeacher),
+                      }),
                       onRemove: () => setFilter('teacher_id', ''),
                   },
               ]
@@ -180,7 +189,12 @@ function GroupsView() {
             ? [
                   {
                       key: 'status',
-                      label: `Holat: ${t(`groupStatus.${activeStatus as GroupStatus}`)}`,
+                      label: t('filters.chip', {
+                          label: t('common.status'),
+                          value: t(
+                              `groupStatus.${activeStatus as GroupStatus}`,
+                          ),
+                      }),
                       onRemove: () => setFilter('status', 'active'),
                   },
               ]
@@ -254,7 +268,7 @@ function GroupsView() {
                                     )
                                 }
                             >
-                                Mening guruhlarim
+                                {t('groups.mine')}
                             </Button>
                         </div>
                     )}
@@ -379,7 +393,7 @@ function GroupsView() {
                                 )
                             }
                         >
-                            Mening guruhlarim
+                            {t('groups.mine')}
                         </Button>
                     )}
                 </div>
@@ -415,7 +429,7 @@ function GroupsView() {
                                             setFilter('status', 'active');
                                         }}
                                     >
-                                        Filtrni tozalash
+                                        {t('filters.reset')}
                                     </Button>
                                 ) : canCreate ? (
                                     <Button
@@ -428,7 +442,7 @@ function GroupsView() {
                                         }}
                                     >
                                         <Plus />
-                                        Yangi guruh ochish
+                                        {t('groups.new')}
                                     </Button>
                                 ) : null
                             }

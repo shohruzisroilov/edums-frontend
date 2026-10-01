@@ -17,6 +17,7 @@ import {
     type Student,
     type StudentStatus,
 } from '@/types/api';
+import { invalidateStudyData } from '@/utils/query-cache';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
@@ -80,8 +81,9 @@ export function StudentFormModal({
                 : createStudent(payload);
         },
         onSuccess: (saved) => {
-            queryClient.invalidateQueries({ queryKey: ['students'] });
-            queryClient.invalidateQueries({ queryKey: ['student', saved.id] });
+            // Arxivlash o'quvchini guruhlaridan chiqaradi — balans, guruh va
+            // qarzdorlar ham o'zgaradi.
+            invalidateStudyData(queryClient);
             toast.success(t(isEdit ? 'students.updated' : 'students.created'));
             onClose();
             if (!isEdit) onCreated?.(saved);

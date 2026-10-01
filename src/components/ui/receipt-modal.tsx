@@ -2,10 +2,17 @@
 
 import { Button } from '@/components/tailgrids/core/button';
 import { Modal } from '@/components/ui/modal';
+import { useFormat } from '@/hooks/use-format';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
+import { fullName } from '@/utils/format';
+import { TONE_TEXT } from '@/utils/tone';
 import { Printer } from '@tailgrids/icons';
 
+/**
+ * To'lov cheki. Chop etishda faqat `#printable-receipt` qoladi — qolgan
+ * sahifa globals.css'dagi print qoidasi bilan yashiriladi.
+ */
 export function ReceiptModal({
     open,
     onClose,
@@ -23,14 +30,21 @@ export function ReceiptModal({
     };
 }) {
     const t = useT();
+    const { formatDate, formatPrice } = useFormat();
     const { session } = useSession();
 
-    const handlePrint = () => {
-        window.print();
-    };
+    // To'lovni hozirgi foydalanuvchi qabul qildi.
+    const receivedBy =
+        receiptData.receivedBy ??
+        (session?.kind === 'user' ? fullName(session) : undefined);
 
     return (
-        <Modal open={open} onClose={onClose} title="To'lov cheki" size='md'>
+        <Modal
+            open={open}
+            onClose={onClose}
+            title={t('receipt.title')}
+            size='md'
+        >
             <div className='space-y-4'>
                 <div
                     id='printable-receipt'
@@ -38,57 +52,59 @@ export function ReceiptModal({
                 >
                     <div className='border-b pb-4 text-center'>
                         <h3 className='font-display text-text-primary text-base font-bold tracking-wide uppercase'>
-                            {session?.education?.name || "O'quv Markaz"}
+                            {session?.education?.name || t('receipt.education')}
                         </h3>
-                        <p className='text-text-tertiary mt-0.5 text-xs'>
-                            TO'LOV KVTANSIYASI
+                        <p className='text-text-tertiary mt-0.5 text-xs uppercase'>
+                            {t('receipt.heading')}
                         </p>
                         <p className='text-text-secondary mt-1 text-xs tabular-nums'>
-                            Sana: {receiptData.date}
+                            {t('receipt.date')}: {formatDate(receiptData.date)}
                         </p>
                     </div>
 
                     <div className='space-y-2 border-b py-4 text-xs'>
-                        <div className='flex justify-between'>
+                        <div className='flex justify-between gap-4'>
                             <span className='text-text-tertiary'>
-                                O'quvchi:
+                                {t('common.student')}:
                             </span>
-                            <span className='text-text-primary font-bold'>
+                            <span className='text-text-primary text-right font-bold'>
                                 {receiptData.studentName}
                             </span>
                         </div>
-                        <div className='flex justify-between'>
-                            <span className='text-text-tertiary'>Guruh:</span>
-                            <span className='text-text-primary font-medium'>
+                        <div className='flex justify-between gap-4'>
+                            <span className='text-text-tertiary'>
+                                {t('common.group')}:
+                            </span>
+                            <span className='text-text-primary text-right font-medium'>
                                 {receiptData.groupName}
                             </span>
                         </div>
-                        <div className='flex justify-between'>
+                        <div className='flex justify-between gap-4'>
                             <span className='text-text-tertiary'>
-                                To'lov turi:
+                                {t('cashbox.method')}:
                             </span>
-                            <span className='text-text-primary uppercase'>
+                            <span className='text-text-primary text-right uppercase'>
                                 {receiptData.method}
                             </span>
                         </div>
-                        {receiptData.receivedBy && (
-                            <div className='flex justify-between'>
+                        {receivedBy && (
+                            <div className='flex justify-between gap-4'>
                                 <span className='text-text-tertiary'>
-                                    Kassir:
+                                    {t('receipt.cashier')}:
                                 </span>
-                                <span className='text-text-primary'>
-                                    {receiptData.receivedBy}
+                                <span className='text-text-primary text-right'>
+                                    {receivedBy}
                                 </span>
                             </div>
                         )}
                     </div>
 
-                    <div className='flex items-center justify-between pt-4 text-base font-bold'>
+                    <div className='flex items-center justify-between gap-4 pt-4 text-base font-bold'>
                         <span className='text-text-primary uppercase'>
-                            Jami to'landi:
+                            {t('receipt.total')}:
                         </span>
-                        <span className='text-emerald-600 tabular-nums dark:text-emerald-400'>
-                            {receiptData.amount.toLocaleString()} so'm
+                        <span className={`tabular-nums ${TONE_TEXT.success}`}>
+                            {formatPrice(receiptData.amount, t('common.som'))}
                         </span>
                     </div>
                 </div>
@@ -100,10 +116,10 @@ export function ReceiptModal({
                     <Button
                         variant='primary'
                         appearance='fill'
-                        onPress={handlePrint}
+                        onPress={() => window.print()}
                     >
                         <Printer className='size-4' />
-                        Chop etish / PDF
+                        {t('receipt.print')}
                     </Button>
                 </div>
             </div>

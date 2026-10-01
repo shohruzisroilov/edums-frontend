@@ -25,11 +25,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 
 const SUPPORT_TELEGRAM = 'https://t.me/edumsuz';
 
-const STEPS = [
-    'Telefon raqamingizni kiriting',
-    'SMS tasdiqlash kodini qabul qiling',
-    'Yangi xavfsiz parol o‘rnating',
-];
+const STEPS = ['forgot.step1', 'forgot.step2', 'forgot.step3'] as const;
 
 export default function ForgotPasswordPage() {
     const router = useRouter();
@@ -140,10 +136,10 @@ export default function ForgotPasswordPage() {
                 {/* Asosiy kontent */}
                 <div className='relative space-y-6'>
                     <h2 className='font-display text-3xl leading-tight font-bold sm:text-4xl'>
-                        Hisobingizga kirishni
+                        {t('forgot.hero.line1')}
                         <br />
                         <span className='relative inline-block'>
-                            qayta tiklang
+                            {t('forgot.hero.highlight')}
                             <svg
                                 className='absolute -bottom-1 left-0 w-full'
                                 viewBox='0 0 120 8'
@@ -161,8 +157,7 @@ export default function ForgotPasswordPage() {
                     </h2>
 
                     <p className='text-base leading-relaxed text-white/70'>
-                        Xavfsizlik maqsadida parolingiz faqat telefoningizga
-                        yuboriladigan bir martalik SMS kod orqali yangilanadi.
+                        {t('forgot.hero.text')}
                     </p>
 
                     <ul className='space-y-3 pt-1'>
@@ -182,15 +177,16 @@ export default function ForgotPasswordPage() {
                                         <path d='M20 6 9 17l-5-5' />
                                     </svg>
                                 </span>
-                                {item}
+                                {t(item)}
                             </li>
                         ))}
                     </ul>
                 </div>
 
                 <p className='relative text-xs text-white/40'>
-                    © {new Date().getFullYear()} EDUMS. Barcha huquqlar
-                    himoyalangan.
+                    {t('common.copyright', {
+                        year: new Date().getFullYear(),
+                    })}
                 </p>
             </div>
 
@@ -229,7 +225,10 @@ export default function ForgotPasswordPage() {
                             <p className='text-text-tertiary mt-2 text-sm'>
                                 {step === 'phone'
                                     ? t('forgot.subtitle')
-                                    : `${phone} raqamiga yuborilgan ${codeLength} xonali kodni kiriting`}
+                                    : t('register.codeSent', {
+                                          phone,
+                                          length: codeLength,
+                                      })}
                             </p>
                         </div>
 
@@ -244,7 +243,7 @@ export default function ForgotPasswordPage() {
                                     hint={
                                         phone.length === 13 &&
                                         !isValidUzbekMobile(phone)
-                                            ? "Noto'g'ri mobil raqam (faqat O'zbekiston mobil operatorlari)"
+                                            ? t('error.notUzbekMobile')
                                             : t('forgot.phoneHint')
                                     }
                                     value={phone}
@@ -359,7 +358,7 @@ export default function ForgotPasswordPage() {
 
                         <div className='mt-8 space-y-3 text-center'>
                             <p className='text-text-secondary text-sm'>
-                                Parolingiz esingizdami?{' '}
+                                {t('forgot.remember')}{' '}
                                 <Link
                                     href='/login'
                                     className='text-brand-accent font-semibold hover:underline'

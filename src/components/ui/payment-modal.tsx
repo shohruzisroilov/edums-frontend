@@ -25,6 +25,7 @@ import {
     type PersonRef,
 } from '@/types/api';
 import { fullName, toISODate } from '@/utils/format';
+import { invalidateStudyData } from '@/utils/query-cache';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
@@ -121,36 +122,22 @@ export function PaymentModal({
                 note: form.note.trim() || null,
             }),
         onSuccess: () => {
-            for (const key of [
-                'students',
-                'groups',
-                'student-payments',
-                'student-balance',
-                'debtors',
-                'dashboard',
-            ]) {
-                queryClient.invalidateQueries({ queryKey: [key] });
-            }
+            // Kirmagan guruh uchun to'lov o'quvchini o'sha guruhga ham qo'shadi.
+            invalidateStudyData(queryClient);
             toast.success(t('cashbox.created'));
 
             const enrolledGrp = groups.find(
                 (g) => g.group.id === form.group_id,
             );
             const otherGrp = allGroups.find((g) => g.id === form.group_id);
-            const groupName = enrolledGrp
-                ? enrolledGrp.group.name
-                : otherGrp
-                  ? otherGrp.name
-                  : 'Guruh';
+            const groupName =
+                enrolledGrp?.group.name ?? otherGrp?.name ?? t('common.group');
 
             setReceiptData({
                 studentName: student ? fullName(student) : '',
                 groupName,
                 amount: Number(form.amount),
-                method:
-                    t(
-                        `paymentMethod.${form.method}` as import('@/i18n/dictionaries/uz').TranslationKey,
-                    ) || form.method,
+                method: t(`paymentMethod.${form.method}`),
                 date: form.paid_at,
             });
         },

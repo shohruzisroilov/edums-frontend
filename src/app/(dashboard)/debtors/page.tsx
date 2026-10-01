@@ -10,13 +10,12 @@ import {
     TableRow,
 } from '@/components/tailgrids/core/table';
 import { AccessGuard } from '@/components/ui/access-guard';
-import { BatchSmsModal } from '@/components/ui/batch-sms-modal';
 import {
     EmptyState,
     ErrorState,
     TableSkeleton,
 } from '@/components/ui/data-state';
-import { CheckboxInput, SelectInput } from '@/components/ui/form-field';
+import { SelectInput } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
 import { PaymentModal } from '@/components/ui/payment-modal';
@@ -33,7 +32,7 @@ import type { Debtor } from '@/types/api';
 import { can } from '@/utils/access';
 import { exportToCsv } from '@/utils/export';
 import { formatPhone, fullName } from '@/utils/format';
-import { Download1, Message1, SackDollar } from '@tailgrids/icons';
+import { Download1, SackDollar } from '@tailgrids/icons';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -68,8 +67,6 @@ function DebtorsView() {
     } = useListQuery({ branch_id: '' });
 
     const [paying, setPaying] = useState<Debtor | null>(null);
-    const [selectedIds, setSelectedIds] = useState<string[]>([]);
-    const [smsModalOpen, setSmsModalOpen] = useState(false);
 
     const query = useQuery({
         queryKey: ['debtors', { search, ...filters, limit, offset }],
@@ -95,36 +92,16 @@ function DebtorsView() {
         ? [
               {
                   key: 'branch',
-                  label: `Filial: ${activeBranch.name}`,
+                  label: t('filters.chip', {
+                      label: t('groups.branch'),
+                      value: activeBranch.name,
+                  }),
                   onRemove: () => setFilter('branch_id', ''),
               },
           ]
         : [];
 
     const allDebtors = query.data?.data ?? [];
-    const toggleSelectAll = () => {
-        if (selectedIds.length === allDebtors.length) {
-            setSelectedIds([]);
-        } else {
-            setSelectedIds(
-                allDebtors.map((d) => `${d.student.id}:${d.group.id}`),
-            );
-        }
-    };
-
-    const toggleSelect = (id: string) => {
-        setSelectedIds((prev) =>
-            prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
-        );
-    };
-
-    const selectedDebtors = allDebtors
-        .filter((d) => selectedIds.includes(`${d.student.id}:${d.group.id}`))
-        .map((d) => ({
-            name: fullName(d.student),
-            phone: d.student.phone_number || d.student.parent_phone || '',
-            debt: d.debt,
-        }));
 
     return (
         <>
@@ -134,31 +111,20 @@ function DebtorsView() {
                 description={t('debtors.subtitle')}
                 actions={
                     <div className='flex flex-wrap items-center gap-2'>
-                        {selectedIds.length > 0 && (
-                            <Button
-                                variant='primary'
-                                appearance='fill'
-                                size='md'
-                                onPress={() => setSmsModalOpen(true)}
-                            >
-                                <Message1 />
-                                SMS yuborish ({selectedIds.length})
-                            </Button>
-                        )}
                         {allDebtors.length > 0 && (
                             <Button
                                 appearance='outline'
                                 size='md'
                                 onPress={() => {
                                     exportToCsv(
-                                        'Qarzdorlar',
+                                        t('debtors.title'),
                                         [
-                                            "O'quvchi",
-                                            'Telefon',
-                                            'Guruh',
-                                            'Hisoblangan (som)',
-                                            "To'langan (som)",
-                                            'Qarzi (som)',
+                                            t('common.student'),
+                                            t('common.phone'),
+                                            t('common.group'),
+                                            `${t('balance.charged')} (${som})`,
+                                            `${t('balance.paid')} (${som})`,
+                                            `${t('debtors.debt')} (${som})`,
                                         ],
                                         allDebtors.map((d) => [
                                             fullName(d.student),
@@ -175,7 +141,7 @@ function DebtorsView() {
                                 }}
                             >
                                 <Download1 />
-                                Eksport (Excel)
+                                {t('common.export')}
                             </Button>
                         )}
                     </div>
@@ -257,7 +223,7 @@ function DebtorsView() {
                                             setFilter('branch_id', '');
                                         }}
                                     >
-                                        Filtrni tozalash
+                                        {t('filters.reset')}
                                     </Button>
                                 ) : null
                             }
@@ -268,8 +234,6 @@ function DebtorsView() {
                             <div className='divide-card-border divide-y md:hidden'>
                                 {allDebtors.map((debtor, index) => {
                                     const key = `${debtor.student.id}:${debtor.group.id}`;
-                                    const isSelected =
-                                        selectedIds.includes(key);
 
                                     return (
                                         <div
@@ -278,13 +242,6 @@ function DebtorsView() {
                                         >
                                             <div className='flex items-start justify-between gap-3'>
                                                 <div className='flex min-w-0 flex-1 items-center gap-2.5'>
-                                                    <CheckboxInput
-                                                        label=''
-                                                        checked={isSelected}
-                                                        onChange={() =>
-                                                            toggleSelect(key)
-                                                        }
-                                                    />
                                                     <div className='min-w-0'>
                                                         <div className='flex items-center gap-2'>
                                                             <span className='text-text-tertiary text-xs font-semibold tabular-nums'>
@@ -391,17 +348,6 @@ function DebtorsView() {
                                 >
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead className='w-10'>
-                                                <CheckboxInput
-                                                    label=''
-                                                    checked={
-                                                        selectedIds.length ===
-                                                            allDebtors.length &&
-                                                        allDebtors.length > 0
-                                                    }
-                                                    onChange={toggleSelectAll}
-                                                />
-                                            </TableHead>
                                             <RowNumberHead />
                                             <TableHead>
                                                 {t('common.student')}
@@ -428,22 +374,9 @@ function DebtorsView() {
                                     <TableBody>
                                         {allDebtors.map((debtor, index) => {
                                             const key = `${debtor.student.id}:${debtor.group.id}`;
-                                            const isSelected =
-                                                selectedIds.includes(key);
 
                                             return (
                                                 <TableRow key={key}>
-                                                    <TableCell>
-                                                        <CheckboxInput
-                                                            label=''
-                                                            checked={isSelected}
-                                                            onChange={() =>
-                                                                toggleSelect(
-                                                                    key,
-                                                                )
-                                                            }
-                                                        />
-                                                    </TableCell>
                                                     <RowNumberCell
                                                         index={index}
                                                         offset={offset}
@@ -543,14 +476,6 @@ function DebtorsView() {
                     groupId={paying.group.id}
                     amount={paying.debt}
                     onClose={() => setPaying(null)}
-                />
-            )}
-
-            {smsModalOpen && (
-                <BatchSmsModal
-                    open={smsModalOpen}
-                    recipients={selectedDebtors}
-                    onClose={() => setSmsModalOpen(false)}
                 />
             )}
         </>

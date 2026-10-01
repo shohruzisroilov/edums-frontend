@@ -1,27 +1,91 @@
 'use client';
 
 import { Button } from '@/components/tailgrids/core/button';
+import { SelectInput } from '@/components/ui/form-field';
 import { PhoneLink } from '@/components/ui/phone-link';
-import { LeadSourceBadge, LeadStatusDot } from '@/components/ui/status-badge';
+import {
+    LeadSourceBadge,
+    LeadStatusBadge,
+    LeadStatusDot,
+} from '@/components/ui/status-badge';
 import { useFormat } from '@/hooks/use-format';
 import { useT } from '@/i18n/provider';
-import type { Lead, LeadStatus } from '@/types/api';
-import { LEAD_STATUSES } from '@/types/api';
+import { listLeads } from '@/services/api/leads';
+import type {
+    EditableLeadStatus,
+    Lead,
+    LeadSource,
+    LeadStatus,
+} from '@/types/api';
+import { EDITABLE_LEAD_STATUSES, LEAD_STATUSES } from '@/types/api';
 import { cn } from '@/utils/cn';
 import { Calendar, Pencil1 } from '@tailgrids/icons';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { useState, type DragEvent } from 'react';
 
+/** Ustunga bir martada yuklanadigan lidlar soni. */
+const COLUMN_PAGE = 30;
+
+interface KanbanFilters {
+    search?: string;
+    source?: LeadSource;
+}
+
+/**
+ * Bitta ustun — o'z holatidagi lidlar, sahifalab. Har ustun alohida
+ * so'raladi: aks holda bir ro'yxatning birinchi N tasi qaysidir ustunni
+ * to'ldirib, boshqalarini bo'sh qoldirardi, sanoqlar ham noto'g'ri chiqardi.
+ */
+function useLeadColumn(
+    status: LeadStatus,
+    filters: KanbanFilters,
+    enabled: boolean,
+) {
+    const query = useInfiniteQuery({
+        queryKey: ['leads', 'kanban', status, filters],
+        queryFn: ({ pageParam }) =>
+            listLeads({
+                ...filters,
+                status,
+                limit: COLUMN_PAGE,
+                offset: pageParam,
+            }),
+        initialPageParam: 0,
+        getNextPageParam: (last, pages) => {
+            const loaded = pages.reduce(
+                (sum, page) => sum + page.data.length,
+                0,
+            );
+            return loaded < last.count ? loaded : undefined;
+        },
+        enabled,
+    });
+
+    return {
+        leads: query.data?.pages.flatMap((page) => page.data) ?? [],
+        count: query.data?.pages[0]?.count ?? 0,
+        isPending: enabled && query.isPending,
+        hasMore: query.hasNextPage,
+        loadingMore: query.isFetchingNextPage,
+        loadMore: () => void query.fetchNextPage(),
+    };
+}
+
 export function LeadKanbanBoard({
-    leads,
+    filters,
+    onlyStatus,
     onStatusChange,
     onEdit,
     onConvert,
     canUpdate,
     canConvert,
 }: {
-    leads: Lead[];
-    onStatusChange: (leadId: string, status: LeadStatus) => void;
+    filters: KanbanFilters;
+    /** Holat filtri tanlangan bo'lsa — faqat shu ustun. */
+    onlyStatus?: LeadStatus;
+    /** "O'quvchi bo'ldi" bu yerga kelmaydi — u faqat onConvert orqali. */
+    onStatusChange: (leadId: string, status: EditableLeadStatus) => void;
     onEdit: (lead: Lead) => void;
     onConvert: (lead: Lead) => void;
     canUpdate: boolean;
@@ -29,11 +93,25 @@ export function LeadKanbanBoard({
 }) {
     const t = useT();
     const { formatDate } = useFormat();
+
+    const shown = (status: LeadStatus) => !onlyStatus || onlyStatus === status;
+    // Hook'lar doim bir xil tartibda chaqirilishi uchun — har biri alohida.
+    const columns: Record<LeadStatus, ReturnType<typeof useLeadColumn>> = {
+        new: useLeadColumn('new', filters, shown('new')),
+        contacted: useLeadColumn('contacted', filters, shown('contacted')),
+        trial: useLeadColumn('trial', filters, shown('trial')),
+        won: useLeadColumn('won', filters, shown('won')),
+        lost: useLeadColumn('lost', filters, shown('lost')),
+    };
+    const statuses = LEAD_STATUSES.filter(shown);
+    const leads = statuses.flatMap((status) => columns[status].leads);
+
     const [draggedLeadId, setDraggedLeadId] = useState<string | null>(null);
     const [dragOverColumn, setDragOverColumn] = useState<LeadStatus | null>(
         null,
     );
-    const [activeTab, setActiveTab] = useState<LeadStatus>('new');
+    const [tab, setActiveTab] = useState<LeadStatus>('new');
+    const activeTab = onlyStatus ?? tab;
 
     function handleDragStart(e: DragEvent<HTMLDivElement>, leadId: string) {
         e.dataTransfer.setData('text/plain', leadId);
@@ -55,27 +133,40 @@ export function LeadKanbanBoard({
         }
     }
 
+    /**
+     * Shu ustunga tashlash mumkinmi. "O'quvchi bo'ldi" ustuniga tashlash —
+     * o'quvchiga aylantirish oynasini ochadi, holatni to'g'ridan-to'g'ri
+     * o'zgartirmaydi: bu holat faqat aylantirish bilan qo'yiladi.
+     */
+    function canDropOn(status: LeadStatus) {
+        return status === 'won' ? canConvert : canUpdate;
+    }
+
     function handleDrop(
         e: DragEvent<HTMLDivElement>,
         targetStatus: LeadStatus,
     ) {
         e.preventDefault();
         setDragOverColumn(null);
-        const leadId = e.dataTransfer.getData('text/plain');
-        if (leadId) {
-            onStatusChange(leadId, targetStatus);
-        }
         setDraggedLeadId(null);
+
+        const lead = leads.find(
+            (item) => item.id === e.dataTransfer.getData('text/plain'),
+        );
+        if (!lead || lead.status === targetStatus || lead.status === 'won') {
+            return;
+        }
+
+        if (targetStatus === 'won') onConvert(lead);
+        else onStatusChange(lead.id, targetStatus);
     }
 
     return (
         <div className='flex flex-col gap-3'>
             {/* Mobile Column Tabs (< sm) */}
             <div className='flex scrollbar-thin gap-1.5 overflow-x-auto pb-1 sm:hidden'>
-                {LEAD_STATUSES.map((status) => {
-                    const count = leads.filter(
-                        (l) => l.status === status,
-                    ).length;
+                {statuses.map((status) => {
+                    const count = columns[status].count;
                     const isActive = activeTab === status;
 
                     return (
@@ -98,7 +189,7 @@ export function LeadKanbanBoard({
                             </span>
                             <span
                                 className={cn(
-                                    'py-0.2 rounded-md px-1.5 text-[10px] font-bold tabular-nums',
+                                    'rounded-md px-1.5 py-0.5 text-[10px] font-bold tabular-nums',
                                     isActive
                                         ? 'bg-white/20 text-white'
                                         : 'bg-background-gray-secondary text-text-tertiary',
@@ -111,21 +202,27 @@ export function LeadKanbanBoard({
                 })}
             </div>
 
-            <div className='flex min-w-full snap-x scrollbar-thin gap-4 overflow-x-auto pt-1 pb-6 2xl:grid 2xl:grid-cols-5'>
-                {LEAD_STATUSES.map((status) => {
-                    const columnLeads = leads.filter(
-                        (l) => l.status === status,
-                    );
+            <div
+                className={cn(
+                    'flex min-w-full snap-x scrollbar-thin gap-4 overflow-x-auto pt-1 pb-6',
+                    !onlyStatus && '2xl:grid 2xl:grid-cols-5',
+                )}
+            >
+                {statuses.map((status) => {
+                    const column = columns[status];
+                    const columnLeads = column.leads;
                     const isOver = dragOverColumn === status;
 
                     return (
                         <div
                             key={status}
                             onDragOver={(e) =>
-                                canUpdate && handleDragOver(e, status)
+                                canDropOn(status) && handleDragOver(e, status)
                             }
                             onDragLeave={handleDragLeave}
-                            onDrop={(e) => canUpdate && handleDrop(e, status)}
+                            onDrop={(e) =>
+                                canDropOn(status) && handleDrop(e, status)
+                            }
                             className={cn(
                                 'border-card-border bg-background-gray-secondary/40 flex min-h-[450px] w-full shrink-0 snap-start flex-col rounded-2xl border p-3.5 transition-all duration-150 sm:w-[320px] 2xl:w-auto 2xl:min-w-0 2xl:shrink',
                                 status !== activeTab && 'hidden sm:flex',
@@ -144,13 +241,15 @@ export function LeadKanbanBoard({
                                     </h4>
                                 </div>
                                 <span className='border-card-border bg-card-surface-area text-text-secondary rounded-md border px-2 py-0.5 text-xs font-semibold tabular-nums'>
-                                    {columnLeads.length}
+                                    {column.count}
                                 </span>
                             </div>
 
                             {/* Column Items */}
                             <div className='min-h-[150px] flex-1 space-y-3 overflow-y-auto'>
-                                {columnLeads.length === 0 ? (
+                                {column.isPending ? (
+                                    <div className='bg-background-gray-secondary h-28 animate-pulse rounded-xl' />
+                                ) : columnLeads.length === 0 ? (
                                     <div
                                         className={cn(
                                             'text-text-tertiary border-card-border flex h-28 items-center justify-center rounded-xl border border-dashed text-xs transition-colors',
@@ -159,17 +258,20 @@ export function LeadKanbanBoard({
                                         )}
                                     >
                                         {isOver
-                                            ? 'Shu yerga tashlang'
-                                            : "Lid yo'q"}
+                                            ? t('leads.dropHere')
+                                            : t('leads.columnEmpty')}
                                     </div>
                                 ) : (
                                     columnLeads.map((lead) => {
                                         const isDraggingThis =
                                             draggedLeadId === lead.id;
+                                        // Aylantirilgan lid joyidan siljimaydi.
+                                        const draggable =
+                                            canUpdate && lead.status !== 'won';
                                         return (
                                             <div
                                                 key={lead.id}
-                                                draggable={canUpdate}
+                                                draggable={draggable}
                                                 onDragStart={(e) =>
                                                     handleDragStart(e, lead.id)
                                                 }
@@ -178,7 +280,7 @@ export function LeadKanbanBoard({
                                                 }
                                                 className={cn(
                                                     'border-card-border bg-card-surface-area hover:border-brand-accent/50 flex flex-col justify-between rounded-xl border p-3.5 shadow-xs transition-all',
-                                                    canUpdate &&
+                                                    draggable &&
                                                         'cursor-grab active:cursor-grabbing',
                                                     isDraggingThis &&
                                                         'border-brand-accent scale-95 border-dashed opacity-40 shadow-md',
@@ -190,7 +292,7 @@ export function LeadKanbanBoard({
                                                             className='text-text-primary flex min-w-0 items-center gap-1.5 text-sm font-semibold'
                                                             title={`${lead.first_name} ${lead.last_name || ''}`}
                                                         >
-                                                            {canUpdate && (
+                                                            {draggable && (
                                                                 <span className='text-text-tertiary shrink-0 cursor-grab text-xs opacity-60 select-none hover:opacity-100'>
                                                                     ⋮⋮
                                                                 </span>
@@ -210,7 +312,12 @@ export function LeadKanbanBoard({
                                                                     onEdit(lead)
                                                                 }
                                                                 className='text-icon-tertiary hover:text-text-primary hover:bg-background-gray-secondary shrink-0 rounded-md p-1 transition-colors'
-                                                                title='Tahrirlash'
+                                                                title={t(
+                                                                    'common.edit',
+                                                                )}
+                                                                aria-label={t(
+                                                                    'common.edit',
+                                                                )}
                                                             >
                                                                 <Pencil1 className='size-3.5' />
                                                             </button>
@@ -249,9 +356,13 @@ export function LeadKanbanBoard({
                                                         <div className='text-brand-accent mt-2 flex items-center gap-1 text-[11px] font-medium'>
                                                             <Calendar className='size-3 shrink-0' />
                                                             <span>
-                                                                Qo'ng'iroq:{' '}
-                                                                {formatDate(
-                                                                    lead.next_call_date,
+                                                                {t(
+                                                                    'leads.nextCall',
+                                                                    {
+                                                                        date: formatDate(
+                                                                            lead.next_call_date,
+                                                                        ),
+                                                                    },
                                                                 )}
                                                             </span>
                                                         </div>
@@ -273,55 +384,65 @@ export function LeadKanbanBoard({
                                                                     )
                                                                 }
                                                             >
-                                                                O'quvchi qilish
+                                                                {t(
+                                                                    'leads.convert',
+                                                                )}
                                                             </Button>
                                                         )}
 
                                                     {canUpdate &&
                                                         status !== 'won' && (
-                                                            <select
-                                                                value={
-                                                                    lead.status
-                                                                }
-                                                                onChange={(e) =>
-                                                                    onStatusChange(
-                                                                        lead.id,
-                                                                        e.target
-                                                                            .value as LeadStatus,
-                                                                    )
-                                                                }
-                                                                className='border-card-border bg-background-gray-secondary text-text-secondary hover:text-text-primary focus:border-brand-accent max-w-[130px] cursor-pointer truncate rounded-lg border px-2 py-1 text-xs font-medium transition outline-none'
-                                                            >
-                                                                {LEAD_STATUSES.map(
-                                                                    (s) => (
-                                                                        <option
-                                                                            key={
-                                                                                s
-                                                                            }
-                                                                            value={
-                                                                                s
-                                                                            }
-                                                                        >
-                                                                            {t(
-                                                                                `leadStatus.${s}` as import('@/i18n/dictionaries/uz').TranslationKey,
-                                                                            )}
-                                                                        </option>
-                                                                    ),
-                                                                )}
-                                                            </select>
+                                                            <div className='w-32 max-w-full'>
+                                                                <SelectInput
+                                                                    className='h-7.5 text-xs'
+                                                                    options={EDITABLE_LEAD_STATUSES.map(
+                                                                        (
+                                                                            s,
+                                                                        ) => ({
+                                                                            value: s,
+                                                                            label: t(
+                                                                                `leadStatus.${s}`,
+                                                                            ),
+                                                                        }),
+                                                                    )}
+                                                                    value={
+                                                                        lead.status
+                                                                    }
+                                                                    onValueChange={(
+                                                                        next,
+                                                                    ) =>
+                                                                        next !==
+                                                                            lead.status &&
+                                                                        onStatusChange(
+                                                                            lead.id,
+                                                                            next as EditableLeadStatus,
+                                                                        )
+                                                                    }
+                                                                />
+                                                            </div>
                                                         )}
 
                                                     {status === 'won' && (
-                                                        <span className='text-success-600 bg-success-50 dark:bg-success-950/40 dark:text-success-400 rounded-md px-2 py-1 text-xs font-medium'>
-                                                            {t(
-                                                                'leadStatus.won',
-                                                            )}
-                                                        </span>
+                                                        <LeadStatusBadge status='won' />
                                                     )}
                                                 </div>
                                             </div>
                                         );
                                     })
+                                )}
+                                {column.hasMore && (
+                                    <Button
+                                        appearance='ghost'
+                                        size='sm'
+                                        className='w-full justify-center'
+                                        isDisabled={column.loadingMore}
+                                        onPress={column.loadMore}
+                                    >
+                                        {t('leads.loadMore', {
+                                            shown: columnLeads.length,
+                                            total: column.count,
+                                        })}
+                                    </Button>
                                 )}
                             </div>
                         </div>

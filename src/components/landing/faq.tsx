@@ -21,7 +21,7 @@ export function Faq({ trialDays }: { trialDays: number }) {
     return (
         <section id='faq' className='mx-auto max-w-3xl scroll-mt-20 px-5 py-20'>
             <SectionHeading
-                eyebrow="Ko'p so'raladigan savollar"
+                eyebrow={t('landing.eyebrowFaq')}
                 title={t('landing.faqTitle')}
             />
 

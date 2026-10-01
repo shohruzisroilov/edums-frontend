@@ -96,7 +96,7 @@ export function LandingHeader({
                         type='button'
                         className='border-card-border text-text-secondary hover:bg-background-gray-secondary flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border transition lg:hidden'
                         onClick={() => setMobileOpen(!mobileOpen)}
-                        aria-label='Menu'
+                        aria-label={t('landing.menu')}
                     >
                         {mobileOpen ? (
                             <svg

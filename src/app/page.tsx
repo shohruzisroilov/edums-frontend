@@ -11,16 +11,18 @@ import { PainPoints } from '@/components/landing/pain-points';
 import { SectionHeading } from '@/components/landing/section-heading';
 import { Showcases } from '@/components/landing/showcases';
 import { Button } from '@/components/tailgrids/core/button';
+import { BillingPeriodSwitch } from '@/components/ui/billing-period-switch';
 import { TariffCard } from '@/components/ui/tariff-card';
 import { useSession } from '@/hooks/use-session';
 import { useTrialDays } from '@/hooks/use-trial-days';
 import { useT } from '@/i18n/provider';
 import { listPublicTariffs } from '@/services/api/tariffs';
+import type { BillingPeriod } from '@/types/api';
 import { homeHref } from '@/utils/access';
 import { ChevronLeft, ChevronRight, Wallet2 } from '@tailgrids/icons';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 /**
  * Landing page. Bo'limlar `components/landing/` da; rasmlar
@@ -66,6 +68,7 @@ function Tariffs({
 }) {
     const t = useT();
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [period, setPeriod] = useState<BillingPeriod>('month');
 
     const tariffsQuery = useQuery({
         queryKey: ['public-tariffs'],
@@ -107,57 +110,67 @@ function Tariffs({
                     </p>
                 </div>
             ) : (
-                <div className='relative mt-8 px-0 sm:mt-10 sm:px-4'>
-                    {/* Previous Button */}
-                    <button
-                        type='button'
-                        onClick={() => scroll('left')}
-                        aria-label='Previous'
-                        className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary absolute top-1/2 -left-1 z-20 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-lg transition-all active:scale-95 sm:left-0 sm:size-12'
-                    >
-                        <ChevronLeft className='size-4 sm:size-6' />
-                    </button>
-
-                    {/* Next Button */}
-                    <button
-                        type='button'
-                        onClick={() => scroll('right')}
-                        aria-label='Next'
-                        className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary absolute top-1/2 -right-1 z-20 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-lg transition-all active:scale-95 sm:right-0 sm:size-12'
-                    >
-                        <ChevronRight className='size-4 sm:size-6' />
-                    </button>
-
-                    {/* Horizontal Slider Track */}
-                    <div
-                        ref={scrollContainerRef}
-                        className='flex snap-x snap-mandatory scrollbar-none gap-4 overflow-x-auto scroll-smooth rounded-2xl px-4 py-3 sm:gap-5 sm:px-12'
-                        style={{
-                            scrollbarWidth: 'none',
-                            msOverflowStyle: 'none',
-                        }}
-                    >
-                        {tariffsQuery.data.map((tariff) => (
-                            <div
-                                key={tariff.id}
-                                className='w-[260px] shrink-0 snap-center sm:w-[320px] lg:w-[330px]'
-                            >
-                                <TariffCard
-                                    tariff={tariff}
-                                    action={
-                                        <Button
-                                            size='lg'
-                                            className='w-full'
-                                            onPress={onStart}
-                                        >
-                                            {t('landing.startFree')}
-                                        </Button>
-                                    }
-                                />
-                            </div>
-                        ))}
+                <>
+                    <div className='mt-8 flex justify-center sm:mt-10'>
+                        <BillingPeriodSwitch
+                            tariffs={tariffsQuery.data}
+                            value={period}
+                            onChange={setPeriod}
+                        />
                     </div>
-                </div>
+                    <div className='relative mt-6 px-0 sm:px-4'>
+                        {/* Previous Button */}
+                        <button
+                            type='button'
+                            onClick={() => scroll('left')}
+                            aria-label={t('common.previous')}
+                            className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary absolute top-1/2 -left-1 z-20 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-lg transition-all active:scale-95 sm:left-0 sm:size-12'
+                        >
+                            <ChevronLeft className='size-4 sm:size-6' />
+                        </button>
+
+                        {/* Next Button */}
+                        <button
+                            type='button'
+                            onClick={() => scroll('right')}
+                            aria-label={t('common.next')}
+                            className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary absolute top-1/2 -right-1 z-20 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-lg transition-all active:scale-95 sm:right-0 sm:size-12'
+                        >
+                            <ChevronRight className='size-4 sm:size-6' />
+                        </button>
+
+                        {/* Horizontal Slider Track */}
+                        <div
+                            ref={scrollContainerRef}
+                            className='flex snap-x snap-mandatory scrollbar-none gap-4 overflow-x-auto scroll-smooth rounded-2xl px-4 py-3 sm:gap-5 sm:px-12'
+                            style={{
+                                scrollbarWidth: 'none',
+                                msOverflowStyle: 'none',
+                            }}
+                        >
+                            {tariffsQuery.data.map((tariff) => (
+                                <div
+                                    key={tariff.id}
+                                    className='w-[260px] shrink-0 snap-center sm:w-[320px] lg:w-[330px]'
+                                >
+                                    <TariffCard
+                                        tariff={tariff}
+                                        period={period}
+                                        action={
+                                            <Button
+                                                size='lg'
+                                                className='w-full'
+                                                onPress={onStart}
+                                            >
+                                                {t('landing.startFree')}
+                                            </Button>
+                                        }
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </>
             )}
         </section>
     );

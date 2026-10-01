@@ -74,11 +74,15 @@ export async function updateMe(payload: UpdateOwnProfilePayload) {
 }
 
 /** PATCH /api/auth/me/password — joriy parol noto'g'ri bo'lsa 400. */
+/**
+ * Boshqa qurilmalardagi sessiyalar tugaydi; javobdagi yangi token bilan
+ * shu sessiya davom etadi — uni sessiyaga yozish kerak.
+ */
 export function changeMyPassword(payload: {
     current_password: string;
     new_password: string;
 }) {
-    return request<MessageResponse>('/auth/me/password', {
+    return request<MessageResponse & { token: string }>('/auth/me/password', {
         method: 'PATCH',
         body: payload,
     });

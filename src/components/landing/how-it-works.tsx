@@ -42,7 +42,7 @@ export function HowItWorks({ trialDays }: { trialDays: number }) {
     return (
         <section id='how' className='mx-auto max-w-6xl scroll-mt-20 px-5 py-20'>
             <SectionHeading
-                eyebrow='Qanday ishlaydi'
+                eyebrow={t('landing.eyebrowHow')}
                 title={t('landing.stepsTitle')}
                 text={t('landing.stepsText', { days: trialDays })}
             />

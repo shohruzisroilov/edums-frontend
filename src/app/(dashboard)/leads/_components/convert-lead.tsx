@@ -14,6 +14,7 @@ import { listGroups } from '@/services/api/groups';
 import { convertLead } from '@/services/api/leads';
 import type { Lead } from '@/types/api';
 import { can } from '@/utils/access';
+import { invalidateStudyData } from '@/utils/query-cache';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
@@ -94,8 +95,7 @@ export function ConvertLeadModal({
         onSuccess: (converted) => {
             queryClient.invalidateQueries({ queryKey: ['leads'] });
             queryClient.invalidateQueries({ queryKey: ['lead-stats'] });
-            queryClient.invalidateQueries({ queryKey: ['students'] });
-            queryClient.invalidateQueries({ queryKey: ['groups'] });
+            invalidateStudyData(queryClient);
             toast.success(t('leads.converted'));
             onClose();
             if (converted.student && can(session, 'students.view')) {

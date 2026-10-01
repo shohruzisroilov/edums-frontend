@@ -18,11 +18,13 @@ import {
 import { PageHeader } from '@/components/ui/page-header';
 import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { PaymentStatusBadge } from '@/components/ui/status-badge';
-import { TariffCard } from '@/components/ui/tariff-card';
+import { BillingPeriodSwitch } from '@/components/ui/billing-period-switch';
+import { TariffCard, isYearly } from '@/components/ui/tariff-card';
 import { Shield1Check } from '@tailgrids/icons';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useSession } from '@/hooks/use-session';
+import { useUrlParam } from '@/hooks/use-url-state';
 import { useT } from '@/i18n/provider';
 import { getMe, sessionFromAuthUser } from '@/services/api/auth';
 import {
@@ -30,7 +32,7 @@ import {
     createPaymentRequest,
     getBillingOverview,
 } from '@/services/api/billing';
-import type { SubscriptionStatus } from '@/types/api';
+import type { BillingPeriod, SubscriptionStatus } from '@/types/api';
 import { can } from '@/utils/access';
 import { cn } from '@/utils/cn';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -75,6 +77,10 @@ function BillingView() {
         queryFn: getBillingOverview,
     });
 
+    // Oylik yoki yillik — manzilda, sahifa yangilanganda ham saqlanadi.
+    const [periodParam, setPeriod] = useUrlParam('period', 'month');
+    const period: BillingPeriod = periodParam === 'year' ? 'year' : 'month';
+
     const refresh = async () => {
         await queryClient.invalidateQueries({ queryKey: ['billing'] });
         // Banner va bloklash sessiyadagi obunaga qaraydi — uni ham yangilaymiz.
@@ -82,7 +88,8 @@ function BillingView() {
     };
 
     const requestMutation = useMutation({
-        mutationFn: (tariffId: string) => createPaymentRequest(tariffId),
+        mutationFn: (args: { tariffId: string; period: BillingPeriod }) =>
+            createPaymentRequest(args.tariffId, args.period),
         onSuccess: async () => {
             toast.success(t('billing.requestSent'));
             await refresh();
@@ -122,7 +129,7 @@ function BillingView() {
                             <div>
                                 <p className='text-text-primary font-semibold'>
                                     {t('billing.pendingTitle', {
-                                        name: pending.tariff_name,
+                                        name: `${pending.tariff_name} · ${t(`billingPeriod.${pending.period}`)}`,
                                     })}
                                 </p>
                                 <p className='text-text-secondary mt-1 text-sm'>
@@ -162,9 +169,16 @@ function BillingView() {
                 )}
 
                 <section>
-                    <h2 className='text-text-primary font-display mb-4 text-base font-semibold'>
-                        {t('billing.tariffs')}
-                    </h2>
+                    <div className='mb-4 flex flex-wrap items-center justify-between gap-3'>
+                        <h2 className='text-text-primary font-display text-base font-semibold'>
+                            {t('billing.tariffs')}
+                        </h2>
+                        <BillingPeriodSwitch
+                            tariffs={tariffs}
+                            value={period}
+                            onChange={setPeriod}
+                        />
+                    </div>
                     {tariffs.length === 0 ? (
                         <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                             <EmptyState message={t('billing.noTariffs')} />
@@ -177,14 +191,24 @@ function BillingView() {
                                     subscription.kind === 'paid' &&
                                     subscription.tariff_name?.toLowerCase() ===
                                         tariff.name.toLowerCase();
+                                // Yillik sotilmaydigan tarif "Yillik"da ham
+                                // oylik so'raladi — karta shuni ko'rsatadi.
+                                const buyPeriod: BillingPeriod = isYearly(
+                                    tariff,
+                                    period,
+                                )
+                                    ? 'year'
+                                    : 'month';
 
                                 return (
                                     <TariffCard
                                         key={tariff.id}
                                         tariff={tariff}
                                         isCurrent={isCurrent}
+                                        period={period}
                                         action={
-                                            pending?.tariff_id === tariff.id ? (
+                                            pending?.tariff_id === tariff.id &&
+                                            pending.period === buyPeriod ? (
                                                 <Button
                                                     appearance='outline'
                                                     size='md'
@@ -207,9 +231,10 @@ function BillingView() {
                                                         requestMutation.isPending
                                                     }
                                                     onPress={() =>
-                                                        requestMutation.mutate(
-                                                            tariff.id,
-                                                        )
+                                                        requestMutation.mutate({
+                                                            tariffId: tariff.id,
+                                                            period: buyPeriod,
+                                                        })
                                                     }
                                                 >
                                                     {isCurrent
@@ -265,6 +290,11 @@ function BillingView() {
                                             <RowNumberCell index={index} />
                                             <TableCell primary>
                                                 {item.tariff_name}
+                                                <span className='text-text-tertiary block text-xs font-normal'>
+                                                    {t(
+                                                        `billingPeriod.${item.period}`,
+                                                    )}
+                                                </span>
                                             </TableCell>
                                             <TableCell numeric>
                                                 {formatPrice(
@@ -400,7 +430,10 @@ function StatusCard({ subscription }: { subscription: SubscriptionStatus }) {
                             </span>
                             <span className='text-text-primary block text-xs font-semibold'>
                                 {formatDate(subscription.ends_at)} (
-                                {subscription.days_left} kun)
+                                {t('tariffs.durationValue', {
+                                    days: subscription.days_left,
+                                })}
+                                )
                             </span>
                         </div>
                     )}

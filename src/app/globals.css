@@ -753,3 +753,30 @@
         scroll-behavior: auto !important;
     }
 }
+
+/*
+ * To'lov chekini chop etish (receipt-modal.tsx): sahifada faqat chek qoladi.
+ * visibility — display emas: chek yashirilgan ota-elementlar ichida bo'lsa
+ * ham ko'rinaveradi. Rang mavzudan qat'i nazar oq qog'ozga qora.
+ */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #printable-receipt,
+    #printable-receipt * {
+        visibility: visible;
+        color: black !important;
+        background: white !important;
+        box-shadow: none !important;
+    }
+
+    #printable-receipt {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        border: 0;
+    }
+}

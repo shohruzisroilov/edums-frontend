@@ -85,12 +85,12 @@ export function DateRangeFilter({
     })();
 
     const presets: { id: DatePreset; label: string }[] = [
-        { id: 'today', label: 'Bugun' },
-        { id: 'yesterday', label: 'Kechagi' },
-        { id: 'this_week', label: 'Shu hafta' },
-        { id: 'this_month', label: 'Shu oy' },
-        { id: 'last_month', label: "O'tgan oy" },
-        { id: 'all', label: 'Barchasi' },
+        { id: 'today', label: t('dateRange.today') },
+        { id: 'yesterday', label: t('dateRange.yesterday') },
+        { id: 'this_week', label: t('dateRange.thisWeek') },
+        { id: 'this_month', label: t('dateRange.thisMonth') },
+        { id: 'last_month', label: t('dateRange.lastMonth') },
+        { id: 'all', label: t('dateRange.all') },
     ];
 
     const applyPreset = (preset: DatePreset) => {

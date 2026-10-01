@@ -9,6 +9,7 @@ import {
 import { Modal } from '@/components/ui/modal';
 import { MoneyInput, NumberInput } from '@/components/ui/number-input';
 import { useApiErrorToast } from '@/hooks/use-api-error';
+import { useFormat } from '@/hooks/use-format';
 import { useT } from '@/i18n/provider';
 import { createTariff, updateTariff } from '@/services/api/tariffs';
 import type { Tariff } from '@/types/api';
@@ -23,6 +24,8 @@ interface FormState {
     price: string;
     duration_days: string;
     max_students: string;
+    /** Yillik chegirma (%); bo'sh — tarif yillik sotilmaydi. */
+    yearly_discount: string;
     sort_order: string;
     is_active: boolean;
 }
@@ -33,9 +36,20 @@ const EMPTY: FormState = {
     price: '',
     duration_days: '30',
     max_students: '',
+    yearly_discount: '15',
     sort_order: '0',
     is_active: true,
 };
+
+/** Backenddagi tariff yearlyPrice() bilan bir xil — faqat oldindan ko'rish uchun. */
+function previewYearlyPrice(
+    price: number,
+    durationDays: number,
+    discount: number,
+) {
+    const value = (((price * 30 * 12) / durationDays) * (100 - discount)) / 100;
+    return value >= 1000 ? Math.round(value / 1000) * 1000 : Math.round(value);
+}
 
 /** Faqat ochilganda mount qilinadi — boshlang'ich holat bir marta hisoblanadi. */
 export function TariffFormModal({
@@ -47,6 +61,7 @@ export function TariffFormModal({
 }) {
     const isEdit = tariff !== null;
     const t = useT();
+    const { formatPrice } = useFormat();
     const toastError = useApiErrorToast();
     const queryClient = useQueryClient();
 
@@ -61,11 +76,27 @@ export function TariffFormModal({
                       (tariff.max_students ?? tariff.max_users) == null
                           ? ''
                           : String(tariff.max_students ?? tariff.max_users),
+                  yearly_discount:
+                      tariff.yearly_discount_percent === null
+                          ? ''
+                          : String(tariff.yearly_discount_percent),
                   sort_order: String(tariff.sort_order),
                   is_active: tariff.is_active,
               }
             : EMPTY,
     );
+
+    const discount =
+        form.yearly_discount === '' ? null : Number(form.yearly_discount);
+    const discountTooHigh = discount !== null && discount > 90;
+    const yearlyPreview =
+        discount !== null && !discountTooHigh && Number(form.duration_days) > 0
+            ? previewYearlyPrice(
+                  Number(form.price || 0),
+                  Number(form.duration_days),
+                  discount,
+              )
+            : null;
 
     const mutation = useMutation({
         mutationFn: () => {
@@ -79,6 +110,7 @@ export function TariffFormModal({
                 duration_days: Number(form.duration_days),
                 max_students: studentCap,
                 max_users: studentCap,
+                yearly_discount_percent: discount,
                 sort_order: Number(form.sort_order || 0),
                 is_active: form.is_active,
             };
@@ -152,6 +184,25 @@ export function TariffFormModal({
                         }
                     />
                     <NumberInput
+                        label={t('tariffs.yearlyDiscount')}
+                        unit='%'
+                        error={discountTooHigh ? '0–90' : undefined}
+                        hint={
+                            yearlyPreview === null
+                                ? t('tariffs.yearlyDiscountHint')
+                                : t('tariffs.yearlyPreview', {
+                                      price: formatPrice(
+                                          yearlyPreview,
+                                          t('common.som'),
+                                      ),
+                                  })
+                        }
+                        value={form.yearly_discount}
+                        onValueChange={(yearly_discount) =>
+                            setForm({ ...form, yearly_discount })
+                        }
+                    />
+                    <NumberInput
                         label={t('tariffs.sortOrder')}
                         hint={t('tariffs.sortOrderHint')}
                         value={form.sort_order}
@@ -182,7 +233,11 @@ export function TariffFormModal({
                         variant='primary'
                         appearance='fill'
                         size='md'
-                        isDisabled={mutation.isPending || !form.duration_days}
+                        isDisabled={
+                            mutation.isPending ||
+                            !form.duration_days ||
+                            discountTooHigh
+                        }
                     >
                         {t(
                             mutation.isPending
