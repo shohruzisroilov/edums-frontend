@@ -496,6 +496,7 @@ export const uz = {
     'permission.courses.update': 'Kursni tahrirlash',
     'permission.courses.delete': "Kursni o'chirish",
     'permission.groups.view': "Guruhlar va dars jadvalini ko'rish",
+    'permission.groups.view_own': "Faqat o'ziga tegishli guruhlarni ko'rish",
     'permission.groups.create': 'Guruh ochish',
     'permission.groups.update': 'Guruhni tahrirlash',
     'permission.groups.delete': "Guruhni o'chirish",
@@ -602,6 +603,7 @@ export const uz = {
     'permissionModule.students': "O'quvchilar",
     'permissionModule.leads': 'Lidlar',
     'permission.students.view': "O'quvchilarni ko'rish",
+    'permission.students.view_own': "Own view (temp translation)",
     'permission.students.create': "O'quvchi qo'shish",
     'permission.students.update':
         "O'quvchini tahrirlash va guruhlarga qo'shish",
@@ -717,7 +719,9 @@ export const uz = {
     'permission.payments.create': "To'lov qabul qilish",
     'permission.payments.delete': "To'lovni o'chirish",
     'permission.attendance.view': "Davomatni ko'rish",
+    'permission.attendance.view_own': "Own view (temp translation)",
     'permission.attendance.mark': 'Davomat belgilash',
+    'permission.attendance.mark_own': "Own view (temp translation)",
     'paymentMethod.cash': 'Naqd',
     'paymentMethod.card': 'Karta',
     'paymentMethod.transfer': "O'tkazma",
@@ -940,6 +944,8 @@ export const uz = {
     'permissionModule.reports': 'Hisobotlar',
     'permission.reports.view':
         "Bosh sahifa va hisobotlarni ko'rish (tushum, qarz)",
+    'permission.reports.view_own':
+        "Faqat o'ziga tegishli hisobotlarni ko'rish",
     'units.thousand': 'ming',
     'units.million': 'mln',
     'units.billion': 'mlrd',

@@ -218,12 +218,12 @@ export function AttendanceSection({
                                             </td>
                                             {query.data.lesson_dates.map(
                                                 (date) => {
-                                                    const status =
+                                                    const lessons =
                                                         row.records[date];
                                                     // Guruhga kelmasidan oldingi
                                                     // yoki ketgandan keyingi kun.
                                                     const outside =
-                                                        !status &&
+                                                        (!lessons || lessons.length === 0) &&
                                                         !wasInGroupOn(
                                                             row,
                                                             date,
@@ -232,26 +232,28 @@ export function AttendanceSection({
                                                     return (
                                                         <td
                                                             key={date}
-                                                            className='text-text-tertiary px-1 py-2 text-center'
+                                                            className='text-text-tertiary px-1 py-2 text-center align-top'
                                                         >
                                                             {outside && '·'}
-                                                            {status && (
+                                                            {lessons?.map((lesson, i) => (
                                                                 <Badge
+                                                                    key={i}
                                                                     size='sm'
                                                                     color={
                                                                         STATUS_COLORS[
-                                                                            status
+                                                                            lesson.status
                                                                         ]
                                                                     }
                                                                     title={t(
-                                                                        `attendanceStatus.${status}`,
+                                                                        `attendanceStatus.${lesson.status}`,
                                                                     )}
+                                                                    className={cn(i > 0 && 'mt-1')}
                                                                 >
                                                                     {t(
-                                                                        `attendanceShort.${status}`,
+                                                                        `attendanceShort.${lesson.status}`,
                                                                     )}
                                                                 </Badge>
-                                                            )}
+                                                            ))}
                                                         </td>
                                                     );
                                                 },
@@ -316,21 +318,36 @@ function MarkAttendanceModal({
     // o'quvchi boshqa kunlarga belgilanmaydi — backend buni rad etadi.
     const rows = register.students.filter((row) => wasInGroupOn(row, date));
 
+    const [lessonOrder, setLessonOrder] = useState<number>(1);
+
     // Belgilanmaganlar "keldi" bilan boshlanadi — odatda ko'pchilik keladi.
     const [statuses, setStatuses] = useState<Record<string, AttendanceStatus>>(
         () =>
             Object.fromEntries(
                 rows.map((row) => [
                     row.student.id,
-                    row.records[date] ?? 'present',
+                    row.records[date]?.find(r => r.order === 1)?.status ?? 'present',
                 ]),
             ),
     );
+
+    const handleLessonOrderChange = (newOrder: number) => {
+        setLessonOrder(newOrder);
+        setStatuses(
+            Object.fromEntries(
+                rows.map((row) => [
+                    row.student.id,
+                    row.records[date]?.find(r => r.order === newOrder)?.status ?? 'present',
+                ]),
+            )
+        );
+    };
 
     const mutation = useMutation({
         mutationFn: () =>
             markAttendance(groupId, {
                 date,
+                lesson_order: lessonOrder,
                 records: Object.entries(statuses).map(
                     ([student_id, status]) => ({ student_id, status }),
                 ),
@@ -355,7 +372,19 @@ function MarkAttendanceModal({
             title={t('attendance.markTitle', { date: formatDate(date) })}
             size='lg'
         >
-            <div className='mb-3 flex justify-end'>
+            <div className='mb-3 flex flex-wrap items-center justify-between gap-3'>
+                <div className='flex items-center gap-2'>
+                    <label className='text-sm text-text-secondary'>Dars tartibi:</label>
+                    <select
+                        className='rounded-md border border-card-border bg-card-background px-2 py-1 text-sm outline-none focus:border-brand-primary'
+                        value={lessonOrder}
+                        onChange={(e) => handleLessonOrderChange(Number(e.target.value))}
+                    >
+                        <option value={1}>1-dars</option>
+                        <option value={2}>2-dars</option>
+                        <option value={3}>3-dars</option>
+                    </select>
+                </div>
                 <Button
                     appearance='outline'
                     size='sm'
