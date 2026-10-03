@@ -232,7 +232,7 @@ function LeadsView() {
             />
 
             {/* Voronka: karta bosilsa shu holat bo'yicha filtrlanadi. */}
-            <div className='grid grid-cols-2 gap-3 px-4 pb-4 sm:grid-cols-3 sm:px-5 lg:grid-cols-5'>
+            <div className='grid grid-cols-2 gap-2.5 px-4 pb-4 sm:grid-cols-3 sm:gap-3.5 sm:px-5 lg:grid-cols-5'>
                 {LEAD_STATUSES.map((status) => {
                     const active = filters.status === status;
 
@@ -245,19 +245,21 @@ function LeadsView() {
                                 setFilter('status', active ? '' : status)
                             }
                             className={cn(
-                                'bg-card-background rounded-xl border p-3.5 text-left transition sm:p-4',
+                                'bg-card-background relative overflow-hidden rounded-xl border p-3 text-left transition-all duration-200 hover:-translate-y-0.5 sm:p-3.5',
                                 active
-                                    ? 'border-brand-accent ring-brand-accent/20 ring-2'
-                                    : 'border-card-border hover:border-text-tertiary',
+                                    ? 'border-brand-accent ring-brand-accent/20 shadow-sm ring-2'
+                                    : 'border-card-border hover:border-brand-accent/40 hover:shadow-2xs',
                             )}
                         >
-                            <p className='text-text-tertiary flex items-center gap-1.5 text-xs font-medium'>
-                                <LeadStatusDot status={status} />
-                                <span className='truncate'>
-                                    {t(`leadStatus.${status}`)}
-                                </span>
-                            </p>
-                            <p className='text-text-primary font-display mt-1 text-2xl font-semibold tabular-nums'>
+                            <div className='flex items-center justify-between gap-1'>
+                                <p className='text-text-tertiary flex min-w-0 items-center gap-1.5 text-xs font-medium'>
+                                    <LeadStatusDot status={status} />
+                                    <span className='truncate'>
+                                        {t(`leadStatus.${status}`)}
+                                    </span>
+                                </p>
+                            </div>
+                            <p className='text-text-primary font-display mt-1.5 text-xl font-bold tabular-nums sm:text-2xl'>
                                 {statsQuery.data
                                     ? formatNumber(statsQuery.data[status])
                                     : '—'}

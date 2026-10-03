@@ -204,8 +204,9 @@ export function LeadKanbanBoard({
 
             <div
                 className={cn(
-                    'flex min-w-full snap-x scrollbar-thin gap-4 overflow-x-auto pt-1 pb-6',
-                    !onlyStatus && '2xl:grid 2xl:grid-cols-5',
+                    'flex min-w-full snap-x snap-mandatory scrollbar-thin gap-3.5 overflow-x-auto pt-1 pb-6 transition-all duration-300',
+                    !onlyStatus &&
+                        'lg:grid lg:grid-cols-5 lg:gap-3.5 lg:overflow-x-visible 2xl:gap-4',
                 )}
             >
                 {statuses.map((status) => {
@@ -224,37 +225,37 @@ export function LeadKanbanBoard({
                                 canDropOn(status) && handleDrop(e, status)
                             }
                             className={cn(
-                                'border-card-border bg-background-gray-secondary/40 flex min-h-[450px] w-full shrink-0 snap-start flex-col rounded-2xl border p-3.5 transition-all duration-150 sm:w-[320px] 2xl:w-auto 2xl:min-w-0 2xl:shrink',
+                                'border-card-border bg-background-gray-secondary/40 flex min-h-[480px] w-[280px] shrink-0 snap-start flex-col rounded-2xl border p-3 transition-all duration-200 ease-out sm:w-[300px] lg:w-full lg:min-w-0 lg:shrink',
                                 status !== activeTab && 'hidden sm:flex',
                                 isOver &&
-                                    'border-brand-accent bg-brand-accent/10 ring-brand-accent/20 scale-[1.01] ring-2',
+                                    'border-brand-accent/80 bg-brand-accent/5 ring-brand-accent/20 scale-[1.008] shadow-md ring-4',
                             )}
                         >
                             {/* Column Header */}
                             <div className='border-card-border mb-3 flex items-center justify-between border-b px-1 pb-2.5'>
-                                <div className='flex items-center gap-2'>
+                                <div className='flex min-w-0 items-center gap-2'>
                                     <LeadStatusDot status={status} />
-                                    <h4 className='text-text-primary text-sm font-semibold'>
+                                    <h4 className='text-text-primary truncate text-sm font-semibold'>
                                         {t(
                                             `leadStatus.${status}` as import('@/i18n/dictionaries/uz').TranslationKey,
                                         )}
                                     </h4>
                                 </div>
-                                <span className='border-card-border bg-card-surface-area text-text-secondary rounded-md border px-2 py-0.5 text-xs font-semibold tabular-nums'>
+                                <span className='border-card-border bg-card-surface-area text-text-secondary shrink-0 rounded-md border px-2 py-0.5 text-xs font-semibold tabular-nums shadow-2xs'>
                                     {column.count}
                                 </span>
                             </div>
 
                             {/* Column Items */}
-                            <div className='min-h-[150px] flex-1 space-y-3 overflow-y-auto'>
+                            <div className='min-h-[150px] flex-1 scrollbar-thin space-y-2.5 overflow-y-auto pr-0.5'>
                                 {column.isPending ? (
-                                    <div className='bg-background-gray-secondary h-28 animate-pulse rounded-xl' />
+                                    <div className='bg-background-gray-secondary/80 h-28 animate-pulse rounded-xl' />
                                 ) : columnLeads.length === 0 ? (
                                     <div
                                         className={cn(
-                                            'text-text-tertiary border-card-border flex h-28 items-center justify-center rounded-xl border border-dashed text-xs transition-colors',
+                                            'text-text-tertiary border-card-border flex h-28 items-center justify-center rounded-xl border border-dashed text-xs transition-all duration-200',
                                             isOver &&
-                                                'border-brand-accent text-brand-accent bg-brand-accent/5 font-medium',
+                                                'border-brand-accent text-brand-accent bg-brand-accent/10 scale-[0.99] font-medium',
                                         )}
                                     >
                                         {isOver
@@ -279,21 +280,21 @@ export function LeadKanbanBoard({
                                                     setDraggedLeadId(null)
                                                 }
                                                 className={cn(
-                                                    'border-card-border bg-card-surface-area hover:border-brand-accent/50 flex flex-col justify-between rounded-xl border p-3.5 shadow-xs transition-all',
+                                                    'border-card-border bg-card-surface-area hover:border-brand-accent/40 flex flex-col justify-between rounded-xl border p-3 transition-all duration-200 hover:shadow-sm',
                                                     draggable &&
-                                                        'cursor-grab active:cursor-grabbing',
+                                                        'cursor-grab hover:-translate-y-0.5 active:cursor-grabbing',
                                                     isDraggingThis &&
-                                                        'border-brand-accent scale-95 border-dashed opacity-40 shadow-md',
+                                                        'border-brand-accent bg-brand-accent/5 scale-95 border-dashed opacity-40 shadow-xl',
                                                 )}
                                             >
                                                 <div>
-                                                    <div className='flex items-start justify-between gap-2'>
+                                                    <div className='flex items-start justify-between gap-1.5'>
                                                         <h5
-                                                            className='text-text-primary flex min-w-0 items-center gap-1.5 text-sm font-semibold'
+                                                            className='text-text-primary flex min-w-0 items-center gap-1.5 text-xs font-bold sm:text-sm'
                                                             title={`${lead.first_name} ${lead.last_name || ''}`}
                                                         >
                                                             {draggable && (
-                                                                <span className='text-text-tertiary shrink-0 cursor-grab text-xs opacity-60 select-none hover:opacity-100'>
+                                                                <span className='text-text-tertiary shrink-0 cursor-grab text-xs opacity-50 select-none hover:opacity-100'>
                                                                     ⋮⋮
                                                                 </span>
                                                             )}
@@ -332,13 +333,13 @@ export function LeadKanbanBoard({
                                                         />
                                                     </div>
 
-                                                    <div className='mt-2.5 flex flex-wrap items-center gap-1.5'>
+                                                    <div className='mt-2 flex flex-wrap items-center gap-1.5'>
                                                         <LeadSourceBadge
                                                             source={lead.source}
                                                         />
                                                         {lead.course && (
                                                             <span
-                                                                className='bg-background-gray-secondary text-text-secondary max-w-[160px] truncate rounded-md px-1.5 py-0.5 text-[10px] font-medium'
+                                                                className='bg-background-gray-secondary text-text-secondary max-w-[140px] truncate rounded-md px-1.5 py-0.5 text-[10px] font-medium'
                                                                 title={
                                                                     lead.course
                                                                         .name
@@ -355,7 +356,7 @@ export function LeadKanbanBoard({
                                                     {lead.next_call_date && (
                                                         <div className='text-brand-accent mt-2 flex items-center gap-1 text-[11px] font-medium'>
                                                             <Calendar className='size-3 shrink-0' />
-                                                            <span>
+                                                            <span className='truncate'>
                                                                 {t(
                                                                     'leads.nextCall',
                                                                     {
@@ -370,14 +371,14 @@ export function LeadKanbanBoard({
                                                 </div>
 
                                                 {/* Status Switcher & Convert */}
-                                                <div className='border-card-border mt-3.5 flex items-center justify-between gap-1.5 border-t pt-2.5'>
+                                                <div className='border-card-border mt-3 flex flex-wrap items-center justify-between gap-1.5 border-t pt-2'>
                                                     {status !== 'won' &&
                                                         canConvert && (
                                                             <Button
                                                                 size='sm'
                                                                 variant='primary'
                                                                 appearance='outline'
-                                                                className='h-7.5 shrink-0 px-2.5 text-xs font-medium whitespace-nowrap'
+                                                                className='h-7 min-w-0 flex-1 px-2 text-[11px] font-medium whitespace-nowrap'
                                                                 onPress={() =>
                                                                     onConvert(
                                                                         lead,
@@ -392,9 +393,9 @@ export function LeadKanbanBoard({
 
                                                     {canUpdate &&
                                                         status !== 'won' && (
-                                                            <div className='w-32 max-w-full'>
+                                                            <div className='min-w-[100px] flex-1'>
                                                                 <SelectInput
-                                                                    className='h-7.5 text-xs'
+                                                                    className='h-7 text-[11px]'
                                                                     options={EDITABLE_LEAD_STATUSES.map(
                                                                         (
                                                                             s,
@@ -434,7 +435,7 @@ export function LeadKanbanBoard({
                                     <Button
                                         appearance='ghost'
                                         size='sm'
-                                        className='w-full justify-center'
+                                        className='w-full justify-center text-xs'
                                         isDisabled={column.loadingMore}
                                         onPress={column.loadMore}
                                     >
