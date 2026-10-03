@@ -88,6 +88,7 @@ export const PERMISSION_KEYS = [
     'audit.view',
     'settings.manage',
     'reports.view',
+    'reports.view_own',
     'expenses.view',
     'expenses.manage',
     'salaries.view',
