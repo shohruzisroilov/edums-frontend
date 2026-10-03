@@ -113,6 +113,9 @@ function ExpensesView() {
         onError: (error) => toastError(error),
     });
 
+    // Filtr qo'llanmagan bo'sh ro'yxat — yangi markaz: nima ekani tushuntiriladi.
+    const filtered = Boolean(filters.category || filters.from || filters.to);
+
     return (
         <>
             <PageHeader
@@ -237,13 +240,12 @@ function ExpensesView() {
                     ) : query.data.data.length === 0 ? (
                         <EmptyState
                             message={t('expenses.empty')}
+                            hint={
+                                filtered ? undefined : t('expenses.emptyHint')
+                            }
                             icon={<SackDollar className='size-5' />}
                             action={
-                                Boolean(
-                                    filters.category ||
-                                    filters.from ||
-                                    filters.to,
-                                ) ? (
+                                filtered ? (
                                     <Button
                                         appearance='outline'
                                         size='md'

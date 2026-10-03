@@ -517,6 +517,9 @@ export const ru: Dictionary = {
     'courses.new': 'Новый курс',
     'courses.edit': 'Изменить курс',
     'courses.empty': 'Курсов нет',
+    'courses.emptyHint':
+        'Курс — предмет и его стоимость в месяц, например «Английский — 500 000 сум». Группы открываются по курсу.',
+    'courses.addFirst': 'Создать первый курс',
     'courses.namePlaceholder': 'Например, Английский — Beginner',
     'courses.price': 'Цена в месяц',
     'courses.priceHint':
@@ -553,6 +556,12 @@ export const ru: Dictionary = {
     'groups.new': 'Новая группа',
     'groups.edit': 'Изменить группу',
     'groups.empty': 'Группы не найдены',
+    'groups.emptyFirst': 'Групп пока нет',
+    'groups.emptyHint':
+        'Группа — курс, преподаватель, кабинет и дни занятий. Ученики добавляются в группу, оплата и посещаемость ведутся по ней.',
+    'groups.addFirst': 'Открыть первую группу',
+    'groups.needsCourse':
+        'Группа открывается по курсу — сначала создайте курс.',
     'groups.search': 'Название группы…',
     'groups.namePlaceholder': 'Например, IELTS-1 (Пн-Ср-Пт 14:00)',
     'groups.course': 'Курс',
@@ -575,7 +584,6 @@ export const ru: Dictionary = {
     'groups.priceHint': 'Берётся из цены курса, можно изменить',
     'groups.statusHint':
         'Завершённая группа уходит из расписания, освобождает кабинет и преподавателя, начисления ученикам прекращаются',
-    'groups.noCourses': 'Сначала добавьте курс в разделе «Курсы»',
     'groups.deleteTitle': 'Удалить группу',
     'groups.deleteMessage':
         'Группа «{name}» будет удалена. Группу с учениками удалить нельзя — отметьте её завершённой.',
@@ -583,9 +591,11 @@ export const ru: Dictionary = {
     'groups.updated': 'Группа обновлена',
     'groups.deleted': 'Группа удалена',
     'schedule.title': 'Расписание',
-    'schedule.subtitle': 'Занятия активных групп — по дням, неделям и месяцам',
-    'schedule.noLessons': 'Нет занятий',
+    'schedule.subtitle':
+        'Выберите день в календаре — занятия этого дня по времени',
     'schedule.empty': 'Нет активных групп',
+    'schedule.emptyHint':
+        'Расписание строится автоматически из дней и времени занятий групп — откройте первую группу.',
 
     /* ── Menyu bo'limi ── */
     'nav.learning': 'ОБУЧЕНИЕ',
@@ -626,6 +636,9 @@ export const ru: Dictionary = {
     'students.new': 'Новый ученик',
     'students.edit': 'Изменить ученика',
     'students.empty': 'Ученики не найдены',
+    'students.emptyFirst': 'Учеников пока нет',
+    'students.emptyHint':
+        'Добавьте ученика вручную или, если список в Excel, импортируйте всех сразу.',
     'students.search': 'Имя, фамилия или телефон…',
     'students.phone': 'Телефон ученика',
     'students.parentName': 'Родитель (Ф.И.О.)',
@@ -676,6 +689,9 @@ export const ru: Dictionary = {
     'leads.new': 'Новый лид',
     'leads.edit': 'Изменить лид',
     'leads.empty': 'Лиды не найдены',
+    'leads.emptyFirst': 'Лидов пока нет',
+    'leads.emptyHint':
+        'Лид — заинтересованный человек, который ещё не учится: позвонил, написал в Instagram или оставил заявку на сайте. Вы ведёте его и превращаете в ученика.',
     'leads.search': 'Имя или телефон…',
     'leads.source': 'Источник',
     'leads.allSources': 'Все источники',
@@ -749,6 +765,9 @@ export const ru: Dictionary = {
     'cashbox.subtitle': 'Оплаты, принятые от учеников',
     'cashbox.new': 'Принять оплату',
     'cashbox.empty': 'Оплаты не найдены',
+    'cashbox.emptyFirst': 'Оплат пока нет',
+    'cashbox.emptyHint':
+        'Оплата принимается по ученику и группе. Из неё считаются баланс, должники и выручка.',
     'cashbox.search': 'Имя ученика…',
     'cashbox.allMethods': 'Все способы',
     'cashbox.method': 'Способ оплаты',
@@ -1010,6 +1029,8 @@ export const ru: Dictionary = {
         'Расходы центра. Зарплаты попадают сюда автоматически со страницы зарплат',
     'expenses.new': 'Добавить расход',
     'expenses.empty': 'Расходов нет',
+    'expenses.emptyHint':
+        'Вносите расходы: аренда, коммунальные услуги, реклама — из них считается прибыль за месяц на главной.',
     'expenses.category': 'Категория',
     'expenses.allCategories': 'Все категории',
     'expenses.date': 'Дата',
@@ -1404,17 +1425,13 @@ export const ru: Dictionary = {
     'import.partial': 'Сохранено: {count}, ошибок: {failed}',
     'expenses.createdBy': 'Внёс',
     'groups.mine': 'Мои группы',
-    'schedule.viewWeek': 'Неделя',
-    'schedule.viewDay': 'День',
-    'schedule.viewMonth': 'Месяц',
-    'schedule.viewList': 'Список',
     'schedule.today': 'Сегодня',
-    'schedule.previous': 'Назад',
-    'schedule.next': 'Вперёд',
-    'schedule.more': 'ещё {count}',
+    'schedule.now': 'Сейчас',
+    'schedule.ended': 'Завершено',
+    'schedule.previousDay': 'Предыдущий день',
+    'schedule.nextDay': 'Следующий день',
+    'schedule.calendarHint': 'Число под датой — количество занятий в этот день',
     'schedule.lessonsCount': 'Занятий: {count}',
-    'schedule.lessonTime': 'Время занятия',
-    'schedule.openGroup': 'Открыть группу',
     'schedule.noTeacher': 'Преподаватель не назначен',
     'schedule.noLessonsDay': 'В этот день занятий нет',
     'schedule.studentsCount': 'Учеников: {count}',

@@ -518,6 +518,9 @@ export const en: Dictionary = {
     'courses.new': 'New course',
     'courses.edit': 'Edit course',
     'courses.empty': 'No courses',
+    'courses.emptyHint':
+        'A course is a subject and its monthly price, e.g. “English — 500,000 som”. Groups are opened for a course.',
+    'courses.addFirst': 'Create the first course',
     'courses.namePlaceholder': 'E.g. English — Beginner',
     'courses.price': 'Monthly price',
     'courses.priceHint':
@@ -553,6 +556,12 @@ export const en: Dictionary = {
     'groups.new': 'New group',
     'groups.edit': 'Edit group',
     'groups.empty': 'No groups found',
+    'groups.emptyFirst': 'No groups yet',
+    'groups.emptyHint':
+        'A group is a course, a teacher, a room and lesson days. Students join a group; payments and attendance are kept per group.',
+    'groups.addFirst': 'Open the first group',
+    'groups.needsCourse':
+        'A group is opened for a course — create a course first.',
     'groups.search': 'Group name…',
     'groups.namePlaceholder': 'E.g. IELTS-1 (Mon-Wed-Fri 2pm)',
     'groups.course': 'Course',
@@ -575,7 +584,6 @@ export const en: Dictionary = {
     'groups.priceHint': 'Taken from the course price, can be changed',
     'groups.statusHint':
         'A finished group leaves the timetable, frees its room and teacher, and stops charging its students',
-    'groups.noCourses': 'Add a course in Courses first',
     'groups.deleteTitle': 'Delete group',
     'groups.deleteMessage':
         "Group “{name}” will be deleted. A group with students can't be deleted — mark it finished instead.",
@@ -583,9 +591,11 @@ export const en: Dictionary = {
     'groups.updated': 'Group updated',
     'groups.deleted': 'Group deleted',
     'schedule.title': 'Schedule',
-    'schedule.subtitle': 'Lessons of active groups by day, week and month',
-    'schedule.noLessons': 'No lessons',
+    'schedule.subtitle':
+        'Pick a day in the calendar to see its lessons by time',
     'schedule.empty': 'No active groups',
+    'schedule.emptyHint':
+        "The schedule is built automatically from groups' lesson days and times — open your first group.",
 
     /* ── Menyu bo'limi ── */
     'nav.learning': 'LEARNING',
@@ -626,6 +636,9 @@ export const en: Dictionary = {
     'students.new': 'New student',
     'students.edit': 'Edit student',
     'students.empty': 'No students found',
+    'students.emptyFirst': 'No students yet',
+    'students.emptyHint':
+        'Add a student by hand, or if your list is in Excel, import everyone at once.',
     'students.search': 'Name or phone…',
     'students.phone': "Student's phone",
     'students.parentName': 'Parent (full name)',
@@ -677,6 +690,9 @@ export const en: Dictionary = {
     'leads.new': 'New lead',
     'leads.edit': 'Edit lead',
     'leads.empty': 'No leads found',
+    'leads.emptyFirst': 'No leads yet',
+    'leads.emptyHint':
+        "A lead is someone interested who isn't studying yet: they called, wrote on Instagram or left a request on your website. You follow up and turn them into a student.",
     'leads.search': 'Name or phone…',
     'leads.source': 'Source',
     'leads.allSources': 'All sources',
@@ -748,6 +764,9 @@ export const en: Dictionary = {
     'cashbox.subtitle': 'Payments taken from students',
     'cashbox.new': 'Take a payment',
     'cashbox.empty': 'No payments found',
+    'cashbox.emptyFirst': 'No payments yet',
+    'cashbox.emptyHint':
+        'Payments are taken per student and group. Balances, debtors and revenue are calculated from them.',
     'cashbox.search': 'Student name…',
     'cashbox.allMethods': 'All methods',
     'cashbox.method': 'Method',
@@ -1010,6 +1029,8 @@ export const en: Dictionary = {
         "The center's expenses. Salaries land here automatically from the salaries page",
     'expenses.new': 'Add expense',
     'expenses.empty': 'No expenses',
+    'expenses.emptyHint':
+        'Enter costs such as rent, utilities and advertising — the monthly profit on the home page is calculated from them.',
     'expenses.category': 'Category',
     'expenses.allCategories': 'All categories',
     'expenses.date': 'Date',
@@ -1402,17 +1423,14 @@ export const en: Dictionary = {
     'import.partial': '{count} saved, {failed} failed',
     'expenses.createdBy': 'Entered by',
     'groups.mine': 'My groups',
-    'schedule.viewWeek': 'Week',
-    'schedule.viewDay': 'Day',
-    'schedule.viewMonth': 'Month',
-    'schedule.viewList': 'List',
     'schedule.today': 'Today',
-    'schedule.previous': 'Previous',
-    'schedule.next': 'Next',
-    'schedule.more': '+{count} more',
+    'schedule.now': 'Now',
+    'schedule.ended': 'Ended',
+    'schedule.previousDay': 'Previous day',
+    'schedule.nextDay': 'Next day',
+    'schedule.calendarHint':
+        'The number under a date is how many lessons it has',
     'schedule.lessonsCount': '{count} lessons',
-    'schedule.lessonTime': 'Lesson time',
-    'schedule.openGroup': 'Open the group',
     'schedule.noTeacher': 'No teacher assigned',
     'schedule.noLessonsDay': 'No lessons on this day',
     'schedule.studentsCount': '{count} students',

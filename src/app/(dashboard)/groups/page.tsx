@@ -26,7 +26,7 @@ import { GroupStatusBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useListQuery, useOffsetInRange } from '@/hooks/use-list-query';
-import { useOpenOnNewParam } from '@/hooks/use-new-param';
+import { useOpenOnNewParam, withNewParam } from '@/hooks/use-new-param';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { listBranches } from '@/services/api/branches';
@@ -46,6 +46,7 @@ import { toast } from 'sonner';
 import { GroupFormModal } from './_components/group-form';
 import { EyeLinkButton } from '@/components/ui/eye-icon';
 
+import { LinkButton } from '@/components/ui/link-button';
 import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
 
 export default function GroupsPage() {
@@ -161,6 +162,18 @@ function GroupsView() {
         (filters.course_id ? 1 : 0) +
         (filters.teacher_id ? 1 : 0) +
         (activeStatus ? 1 : 0);
+
+    // Filtr qo'llanmagan bo'sh ro'yxat — yangi markaz: nima ekani tushuntiriladi.
+    // Guruh kurs asosida ochiladi — kurs yo'q bo'lsa, avval kursga yo'llanadi.
+    const needsCourse = coursesQuery.isSuccess && courses.length === 0;
+    const canCreateCourse = can(session, 'courses.create');
+    const filtered = Boolean(
+        search ||
+        filters.branch_id ||
+        filters.course_id ||
+        filters.teacher_id ||
+        (filters.status && filters.status !== 'active'),
+    );
 
     return (
         <>
@@ -339,17 +352,19 @@ function GroupsView() {
                         <ErrorState error={query.error} />
                     ) : query.data.data.length === 0 ? (
                         <EmptyState
-                            message={t('groups.empty')}
+                            message={t(
+                                filtered ? 'groups.empty' : 'groups.emptyFirst',
+                            )}
+                            hint={
+                                filtered
+                                    ? undefined
+                                    : needsCourse
+                                      ? t('groups.needsCourse')
+                                      : t('groups.emptyHint')
+                            }
                             icon={<UserMultiple1 className='size-5' />}
                             action={
-                                Boolean(
-                                    search ||
-                                    filters.branch_id ||
-                                    filters.course_id ||
-                                    filters.teacher_id ||
-                                    (filters.status &&
-                                        filters.status !== 'active'),
-                                ) ? (
+                                filtered ? (
                                     <Button
                                         appearance='outline'
                                         size='md'
@@ -363,6 +378,14 @@ function GroupsView() {
                                     >
                                         {t('filters.reset')}
                                     </Button>
+                                ) : needsCourse && canCreateCourse ? (
+                                    <LinkButton
+                                        href={withNewParam('/courses')}
+                                        appearance='fill'
+                                    >
+                                        <Plus />
+                                        {t('courses.addFirst')}
+                                    </LinkButton>
                                 ) : canCreate ? (
                                     <Button
                                         variant='primary'
@@ -374,7 +397,7 @@ function GroupsView() {
                                         }}
                                     >
                                         <Plus />
-                                        {t('groups.new')}
+                                        {t('groups.addFirst')}
                                     </Button>
                                 ) : null
                             }

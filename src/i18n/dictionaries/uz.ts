@@ -522,6 +522,9 @@ export const uz = {
     'courses.new': 'Yangi kurs',
     'courses.edit': 'Kursni tahrirlash',
     'courses.empty': "Kurs yo'q",
+    'courses.emptyHint':
+        "Kurs — o'qitiladigan fan va uning oylik narxi, masalan «Ingliz tili — 500 000 so'm». Guruhlar kurs asosida ochiladi.",
+    'courses.addFirst': 'Birinchi kursni yaratish',
     'courses.namePlaceholder': 'Masalan, Ingliz tili — Beginner',
     'courses.price': 'Oylik narx',
     'courses.priceHint':
@@ -558,6 +561,11 @@ export const uz = {
     'groups.new': 'Yangi guruh',
     'groups.edit': 'Guruhni tahrirlash',
     'groups.empty': 'Guruh topilmadi',
+    'groups.emptyFirst': "Hali guruh yo'q",
+    'groups.emptyHint':
+        "Guruh — kurs, o'qituvchi, xona va dars kunlari. O'quvchilar guruhga qo'shiladi, to'lov va davomat shu guruh bo'yicha yuritiladi.",
+    'groups.addFirst': 'Birinchi guruhni ochish',
+    'groups.needsCourse': 'Guruh kurs asosida ochiladi — avval kurs yarating.',
     'groups.search': 'Guruh nomi…',
     'groups.namePlaceholder': 'Masalan, IELTS-1 (Du-Chor-Ju 14:00)',
     'groups.course': 'Kurs',
@@ -580,7 +588,6 @@ export const uz = {
     'groups.priceHint': "Kurs narxidan olinadi, o'zgartirish mumkin",
     'groups.statusHint':
         "Tugagan guruh jadvaldan chiqadi, xona/o'qituvchini band qilmaydi va o'quvchilariga to'lov hisoblanmaydi",
-    'groups.noCourses': "Avval «Kurslar» bo'limida kurs qo'shing",
     'groups.deleteTitle': "Guruhni o'chirish",
     'groups.deleteMessage':
         "«{name}» guruhi o'chiriladi. O'quvchilari bor guruhni o'chirib bo'lmaydi — uni tugagan deb belgilang.",
@@ -588,9 +595,11 @@ export const uz = {
     'groups.updated': 'Guruh yangilandi',
     'groups.deleted': "Guruh o'chirildi",
     'schedule.title': 'Dars jadvali',
-    'schedule.subtitle': "Faol guruhlar darslari — kun, hafta va oy bo'yicha",
-    'schedule.noLessons': "Dars yo'q",
+    'schedule.subtitle':
+        "Kalendarda kunni tanlang — o'sha kungi darslar soat bo'yicha",
     'schedule.empty': "Faol guruh yo'q",
+    'schedule.emptyHint':
+        'Jadval guruhlarning dars kunlari va vaqtidan avtomatik tuziladi — birinchi guruhni oching.',
 
     /* ── Menyu bo'limi ── */
     'nav.learning': "O'QUV JARAYONI",
@@ -634,6 +643,9 @@ export const uz = {
     'students.new': "Yangi o'quvchi",
     'students.edit': "O'quvchini tahrirlash",
     'students.empty': "O'quvchi topilmadi",
+    'students.emptyFirst': "Hali o'quvchi yo'q",
+    'students.emptyHint':
+        "O'quvchini qo'lda qo'shing yoki ro'yxatingiz Excel'da bo'lsa, hammasini bir yo'la import qiling.",
     'students.search': 'Ism, familiya yoki telefon…',
     'students.phone': "O'quvchi telefoni",
     'students.parentName': 'Ota-onasi (F.I.Sh.)',
@@ -686,6 +698,9 @@ export const uz = {
     'leads.new': 'Yangi lid',
     'leads.edit': 'Lidni tahrirlash',
     'leads.empty': 'Lid topilmadi',
+    'leads.emptyFirst': "Hali lid yo'q",
+    'leads.emptyHint':
+        "Lid — hali o'quvchi bo'lmagan qiziquvchi: qo'ng'iroq qilgan, Instagram'dan yozgan yoki saytda ariza qoldirgan. Ularni kuzatib, o'quvchiga aylantirasiz.",
     'leads.search': 'Ism yoki telefon…',
     'leads.source': 'Manba',
     'leads.allSources': 'Barcha manbalar',
@@ -757,6 +772,9 @@ export const uz = {
     'cashbox.subtitle': "O'quvchilardan qabul qilingan to'lovlar",
     'cashbox.new': "To'lov qabul qilish",
     'cashbox.empty': "To'lov topilmadi",
+    'cashbox.emptyFirst': "Hali to'lov yo'q",
+    'cashbox.emptyHint':
+        "To'lov o'quvchi va guruh bo'yicha qabul qilinadi. Balans, qarzdorlar va tushum shundan hisoblanadi.",
     'cashbox.search': "O'quvchi ismi…",
     'cashbox.allMethods': 'Barcha usullar',
     'cashbox.method': "To'lov usuli",
@@ -1020,6 +1038,8 @@ export const uz = {
         'Markaz xarajatlari. Oyliklar oyliklar sahifasidan avtomatik yoziladi',
     'expenses.new': "Xarajat qo'shish",
     'expenses.empty': "Xarajat yo'q",
+    'expenses.emptyHint':
+        "Ijara, kommunal to'lovlar, reklama kabi chiqimlarni kiriting — bosh sahifadagi oylik foyda shundan hisoblanadi.",
     'expenses.category': 'Toifa',
     'expenses.allCategories': 'Barcha toifalar',
     'expenses.date': 'Sana',
@@ -1419,17 +1439,13 @@ export const uz = {
     'import.partial': '{count} ta saqlandi, {failed} ta xato',
     'expenses.createdBy': 'Kiritgan',
     'groups.mine': 'Mening guruhlarim',
-    'schedule.viewWeek': 'Hafta',
-    'schedule.viewDay': 'Kun',
-    'schedule.viewMonth': 'Oy',
-    'schedule.viewList': "Ro'yxat",
     'schedule.today': 'Bugun',
-    'schedule.previous': 'Oldingi',
-    'schedule.next': 'Keyingi',
-    'schedule.more': '+{count} ta',
+    'schedule.now': 'Hozir',
+    'schedule.ended': 'Tugadi',
+    'schedule.previousDay': 'Oldingi kun',
+    'schedule.nextDay': 'Keyingi kun',
+    'schedule.calendarHint': "Sana ostidagi son — o'sha kungi darslar soni",
     'schedule.lessonsCount': '{count} ta dars',
-    'schedule.lessonTime': 'Dars vaqti',
-    'schedule.openGroup': "Guruhga o'tish",
     'schedule.noTeacher': "O'qituvchi biriktirilmagan",
     'schedule.noLessonsDay': "Bu kunda dars yo'q",
     'schedule.studentsCount': "{count} ta o'quvchi",

@@ -147,6 +147,13 @@ function StudentsView() {
         filters.status && filters.status !== 'active' ? filters.status : null;
     const activeCount = (filters.branch_id ? 1 : 0) + (activeStatus ? 1 : 0);
 
+    // Filtr qo'llanmagan bo'sh ro'yxat — yangi markaz: nima ekani tushuntiriladi.
+    const filtered = Boolean(
+        search ||
+        filters.branch_id ||
+        (filters.status && filters.status !== 'active'),
+    );
+
     return (
         <>
             <PageHeader
@@ -302,15 +309,17 @@ function StudentsView() {
                         <ErrorState error={query.error} />
                     ) : query.data.data.length === 0 ? (
                         <EmptyState
-                            message={t('students.empty')}
+                            message={t(
+                                filtered
+                                    ? 'students.empty'
+                                    : 'students.emptyFirst',
+                            )}
+                            hint={
+                                filtered ? undefined : t('students.emptyHint')
+                            }
                             icon={<UserCircle1 className='size-5' />}
                             action={
-                                Boolean(
-                                    search ||
-                                    filters.branch_id ||
-                                    (filters.status &&
-                                        filters.status !== 'active'),
-                                ) ? (
+                                filtered ? (
                                     <Button
                                         appearance='outline'
                                         size='md'
@@ -323,18 +332,28 @@ function StudentsView() {
                                         {t('filters.reset')}
                                     </Button>
                                 ) : canCreate ? (
-                                    <Button
-                                        variant='primary'
-                                        appearance='fill'
-                                        size='md'
-                                        onPress={() => {
-                                            setEditing(null);
-                                            setFormOpen(true);
-                                        }}
-                                    >
-                                        <Plus className='size-4' />
-                                        {t('students.addFirst')}
-                                    </Button>
+                                    <div className='flex flex-wrap justify-center gap-2'>
+                                        <Button
+                                            variant='primary'
+                                            appearance='fill'
+                                            size='md'
+                                            onPress={() => {
+                                                setEditing(null);
+                                                setFormOpen(true);
+                                            }}
+                                        >
+                                            <Plus className='size-4' />
+                                            {t('students.addFirst')}
+                                        </Button>
+                                        <Button
+                                            appearance='outline'
+                                            size='md'
+                                            onPress={() => setImportOpen(true)}
+                                        >
+                                            <UploadCloud />
+                                            {t('students.import')}
+                                        </Button>
+                                    </div>
                                 ) : null
                             }
                         />

@@ -2,10 +2,12 @@
 
 import { Button } from '@/components/tailgrids/core/button';
 import { SelectInput, TextInput } from '@/components/ui/form-field';
+import { LinkButton } from '@/components/ui/link-button';
 import { Modal } from '@/components/ui/modal';
 import { MoneyInput } from '@/components/ui/number-input';
 import { WeekdayPicker } from '@/components/ui/weekday-picker';
 import { useApiErrorToast } from '@/hooks/use-api-error';
+import { withNewParam } from '@/hooks/use-new-param';
 import { useT } from '@/i18n/provider';
 import { listBranches } from '@/services/api/branches';
 import { listCourses } from '@/services/api/courses';
@@ -201,6 +203,23 @@ export function GroupFormModal({
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                 />
 
+                {/* Kurssiz guruh ochib bo'lmaydi — foydalanuvchi bu yerda
+                    to'xtab qolmasin, kurs yaratishga to'g'ridan-to'g'ri o'tadi. */}
+                {coursesQuery.isSuccess && courses.length === 0 && (
+                    <div className='border-badge-warning-text/30 bg-badge-warning-background flex flex-wrap items-center justify-between gap-3 rounded-lg border px-3.5 py-3'>
+                        <p className='text-badge-warning-text text-sm font-medium'>
+                            {t('groups.needsCourse')}
+                        </p>
+                        <LinkButton
+                            href={withNewParam('/courses')}
+                            appearance='fill'
+                            className='h-8 px-3'
+                        >
+                            {t('setup.courses.action')}
+                        </LinkButton>
+                    </div>
+                )}
+
                 <div className='grid gap-4 sm:grid-cols-2'>
                     <SelectInput
                         label={t('groups.course')}
@@ -209,11 +228,6 @@ export function GroupFormModal({
                             value: course.id,
                             label: course.name,
                         }))}
-                        hint={
-                            coursesQuery.isSuccess && courses.length === 0
-                                ? t('groups.noCourses')
-                                : undefined
-                        }
                         value={form.course_id}
                         onValueChange={selectCourse}
                     />
