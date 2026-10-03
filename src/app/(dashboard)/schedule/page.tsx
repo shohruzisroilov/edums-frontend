@@ -101,7 +101,11 @@ function hourRange(groups: Group[]): number[] {
 
 export default function SchedulePage() {
     return (
-        <AccessGuard allow={(session) => canAny(session, 'groups.view', 'groups.view_own')}>
+        <AccessGuard
+            allow={(session) =>
+                canAny(session, 'groups.view', 'groups.view_own')
+            }
+        >
             <ScheduleView />
         </AccessGuard>
     );

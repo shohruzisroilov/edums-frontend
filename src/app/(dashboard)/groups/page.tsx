@@ -50,7 +50,11 @@ import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
 
 export default function GroupsPage() {
     return (
-        <AccessGuard allow={(session) => canAny(session, 'groups.view', 'groups.view_own')}>
+        <AccessGuard
+            allow={(session) =>
+                canAny(session, 'groups.view', 'groups.view_own')
+            }
+        >
             <GroupsView />
         </AccessGuard>
     );

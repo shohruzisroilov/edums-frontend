@@ -223,7 +223,9 @@ export function AttendanceSection({
                                                     // Guruhga kelmasidan oldingi
                                                     // yoki ketgandan keyingi kun.
                                                     const outside =
-                                                        (!lessons || lessons.length === 0) &&
+                                                        (!lessons ||
+                                                            lessons.length ===
+                                                                0) &&
                                                         !wasInGroupOn(
                                                             row,
                                                             date,
@@ -235,25 +237,32 @@ export function AttendanceSection({
                                                             className='text-text-tertiary px-1 py-2 text-center align-top'
                                                         >
                                                             {outside && '·'}
-                                                            {lessons?.map((lesson, i) => (
-                                                                <Badge
-                                                                    key={i}
-                                                                    size='sm'
-                                                                    color={
-                                                                        STATUS_COLORS[
-                                                                            lesson.status
-                                                                        ]
-                                                                    }
-                                                                    title={t(
-                                                                        `attendanceStatus.${lesson.status}`,
-                                                                    )}
-                                                                    className={cn(i > 0 && 'mt-1')}
-                                                                >
-                                                                    {t(
-                                                                        `attendanceShort.${lesson.status}`,
-                                                                    )}
-                                                                </Badge>
-                                                            ))}
+                                                            {lessons?.map(
+                                                                (lesson, i) => (
+                                                                    <Badge
+                                                                        key={i}
+                                                                        size='sm'
+                                                                        color={
+                                                                            STATUS_COLORS[
+                                                                                lesson
+                                                                                    .status
+                                                                            ]
+                                                                        }
+                                                                        title={t(
+                                                                            `attendanceStatus.${lesson.status}`,
+                                                                        )}
+                                                                        className={cn(
+                                                                            i >
+                                                                                0 &&
+                                                                                'mt-1',
+                                                                        )}
+                                                                    >
+                                                                        {t(
+                                                                            `attendanceShort.${lesson.status}`,
+                                                                        )}
+                                                                    </Badge>
+                                                                ),
+                                                            )}
                                                         </td>
                                                     );
                                                 },
@@ -326,7 +335,8 @@ function MarkAttendanceModal({
             Object.fromEntries(
                 rows.map((row) => [
                     row.student.id,
-                    row.records[date]?.find(r => r.order === 1)?.status ?? 'present',
+                    row.records[date]?.find((r) => r.order === 1)?.status ??
+                        'present',
                 ]),
             ),
     );
@@ -337,9 +347,10 @@ function MarkAttendanceModal({
             Object.fromEntries(
                 rows.map((row) => [
                     row.student.id,
-                    row.records[date]?.find(r => r.order === newOrder)?.status ?? 'present',
+                    row.records[date]?.find((r) => r.order === newOrder)
+                        ?.status ?? 'present',
                 ]),
-            )
+            ),
         );
     };
 
@@ -374,11 +385,15 @@ function MarkAttendanceModal({
         >
             <div className='mb-3 flex flex-wrap items-center justify-between gap-3'>
                 <div className='flex items-center gap-2'>
-                    <label className='text-sm text-text-secondary'>Dars tartibi:</label>
+                    <label className='text-text-secondary text-sm'>
+                        Dars tartibi:
+                    </label>
                     <select
-                        className='rounded-md border border-card-border bg-card-background px-2 py-1 text-sm outline-none focus:border-brand-primary'
+                        className='border-card-border bg-card-background focus:border-brand-primary rounded-md border px-2 py-1 text-sm outline-none'
                         value={lessonOrder}
-                        onChange={(e) => handleLessonOrderChange(Number(e.target.value))}
+                        onChange={(e) =>
+                            handleLessonOrderChange(Number(e.target.value))
+                        }
                     >
                         <option value={1}>1-dars</option>
                         <option value={2}>2-dars</option>

@@ -53,7 +53,8 @@ export function homeHref(session: Session | null): string {
     if (isSuperAdmin(session)) return '/overview';
     if (!hasActiveSubscription(session)) return '/billing';
     if (can(session, 'reports.view')) return '/dashboard';
-    if (canAny(session, 'students.view', 'students.view_own')) return '/students';
+    if (canAny(session, 'students.view', 'students.view_own'))
+        return '/students';
     if (canAny(session, 'groups.view', 'groups.view_own')) return '/groups';
     if (can(session, 'leads.view')) return '/leads';
     if (can(session, 'payments.view')) return '/cashbox';

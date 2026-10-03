@@ -26,7 +26,11 @@ import { GettingStarted } from './_components/getting-started';
 
 export default function DashboardPage() {
     return (
-        <AccessGuard allow={(session) => canAny(session, 'reports.view', 'reports.view_own')}>
+        <AccessGuard
+            allow={(session) =>
+                canAny(session, 'reports.view', 'reports.view_own')
+            }
+        >
             <DashboardView />
         </AccessGuard>
     );

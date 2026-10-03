@@ -45,7 +45,11 @@ import { FinanceSection } from './_components/finance-section';
 
 export default function StudentDetailPage() {
     return (
-        <AccessGuard allow={(session) => canAny(session, 'students.view', 'students.view_own')}>
+        <AccessGuard
+            allow={(session) =>
+                canAny(session, 'students.view', 'students.view_own')
+            }
+        >
             <StudentDetailView />
         </AccessGuard>
     );
