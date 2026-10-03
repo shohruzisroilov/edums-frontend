@@ -36,7 +36,7 @@ import {
     type Student,
     type StudentStatus,
 } from '@/types/api';
-import { can } from '@/utils/access';
+import { can, canAny } from '@/utils/access';
 import { cn } from '@/utils/cn';
 import { formatPhone, fullName } from '@/utils/format';
 import { TONE_TEXT, balanceTone } from '@/utils/tone';
@@ -63,7 +63,7 @@ import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
 
 export default function StudentsPage() {
     return (
-        <AccessGuard allow={(session) => can(session, 'students.view')}>
+        <AccessGuard allow={(session) => canAny(session, 'students.view', 'students.view_own')}>
             <StudentsView />
         </AccessGuard>
     );
@@ -82,7 +82,7 @@ function StudentsView() {
     const canDelete = can(session, 'students.delete');
     const canViewPayments = can(session, 'payments.view');
     const canPay = can(session, 'payments.create');
-    const canViewGroups = can(session, 'groups.view');
+    const canViewGroups = canAny(session, 'groups.view', 'groups.view_own');
     // Har doim ko'zcha (ochish) tugmasi ko'rinishi uchun hasActions barcha uchun true
     const hasActions = true;
 

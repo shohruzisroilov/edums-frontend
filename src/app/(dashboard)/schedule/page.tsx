@@ -18,7 +18,7 @@ import { getSchedule } from '@/services/api/groups';
 import { listRooms } from '@/services/api/rooms';
 import { listUserOptions } from '@/services/api/users';
 import { WEEKDAYS, type Group, type Weekday } from '@/types/api';
-import { can } from '@/utils/access';
+import { can, canAny } from '@/utils/access';
 import { cn } from '@/utils/cn';
 import { fullName } from '@/utils/format';
 import type { TranslationKey } from '@/i18n/dictionaries/uz';
@@ -101,7 +101,7 @@ function hourRange(groups: Group[]): number[] {
 
 export default function SchedulePage() {
     return (
-        <AccessGuard allow={(session) => can(session, 'groups.view')}>
+        <AccessGuard allow={(session) => canAny(session, 'groups.view', 'groups.view_own')}>
             <ScheduleView />
         </AccessGuard>
     );

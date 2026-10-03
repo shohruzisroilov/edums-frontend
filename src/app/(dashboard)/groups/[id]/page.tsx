@@ -36,7 +36,7 @@ import { useT } from '@/i18n/provider';
 import { getGroup } from '@/services/api/groups';
 import { listGroupStudents } from '@/services/api/students';
 import type { Enrollment } from '@/types/api';
-import { can } from '@/utils/access';
+import { can, canAny } from '@/utils/access';
 import { fullName } from '@/utils/format';
 import { CheckCircle1, Pencil1, Plus } from '@tailgrids/icons';
 import { useQuery } from '@tanstack/react-query';
@@ -48,7 +48,7 @@ import { AttendanceSection } from './_components/attendance-section';
 
 export default function GroupDetailPage() {
     return (
-        <AccessGuard allow={(session) => can(session, 'groups.view')}>
+        <AccessGuard allow={(session) => canAny(session, 'groups.view', 'groups.view_own')}>
             <GroupDetailView />
         </AccessGuard>
     );
@@ -64,9 +64,9 @@ function GroupDetailView() {
     const canUpdateStudents = can(session, 'students.update');
     // O'quvchi qidirish GET /students dan.
     const canAddStudent = canUpdateStudents && can(session, 'students.view');
-    const canOpenStudents = can(session, 'students.view');
+    const canOpenStudents = canAny(session, 'students.view', 'students.view_own');
     const canMarkAttendance =
-        can(session, 'attendance.view') && can(session, 'attendance.mark');
+        canAny(session, 'attendance.view', 'attendance.view_own') && canAny(session, 'attendance.mark', 'attendance.mark_own');
     const { update: updateUrl } = useUrlParams();
 
     const [editOpen, setEditOpen] = useState(false);
@@ -300,7 +300,7 @@ function GroupDetailView() {
                 )}
             </DetailSection>
 
-            {can(session, 'attendance.view') && (
+            {canAny(session, 'attendance.view', 'attendance.view_own') && (
                 <AttendanceSection
                     groupId={group.id}
                     canMark={canMarkAttendance}
