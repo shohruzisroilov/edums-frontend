@@ -31,7 +31,7 @@ import { useT } from '@/i18n/provider';
 import { PhoneLink } from '@/components/ui/phone-link';
 import { getStudent, listStudentEnrollments } from '@/services/api/students';
 import type { Enrollment } from '@/types/api';
-import { can } from '@/utils/access';
+import { can, canAny } from '@/utils/access';
 import { fullName } from '@/utils/format';
 import { Pencil1, Plus } from '@tailgrids/icons';
 import { useQuery } from '@tanstack/react-query';
@@ -45,7 +45,7 @@ import { FinanceSection } from './_components/finance-section';
 
 export default function StudentDetailPage() {
     return (
-        <AccessGuard allow={(session) => can(session, 'students.view')}>
+        <AccessGuard allow={(session) => canAny(session, 'students.view', 'students.view_own')}>
             <StudentDetailView />
         </AccessGuard>
     );
@@ -60,7 +60,7 @@ function StudentDetailView() {
     const canUpdate = can(session, 'students.update');
     // Guruh tanlash ro'yxati GET /groups dan keladi.
     const canEnroll = canUpdate && can(session, 'groups.view');
-    const canOpenGroups = can(session, 'groups.view');
+    const canOpenGroups = canAny(session, 'groups.view', 'groups.view_own');
     const canViewPayments = can(session, 'payments.view');
     const canPay = can(session, 'payments.create');
 
@@ -274,7 +274,7 @@ function StudentDetailView() {
                 )}
             </DetailSection>
 
-            {can(session, 'attendance.view') && (
+            {canAny(session, 'attendance.view', 'attendance.view_own') && (
                 <StudentAttendanceSection studentId={student.id} />
             )}
 

@@ -19,6 +19,17 @@ export function can(
     );
 }
 
+export function canAny(
+    session: Session | null,
+    ...permissions: PermissionKey[]
+): boolean {
+    if (session?.kind !== 'user') return false;
+    if (session.is_owner) return true;
+    return permissions.some((permission) =>
+        session.permissions.includes(permission),
+    );
+}
+
 export function isSuperAdmin(session: Session | null): boolean {
     return session?.kind === 'super_admin';
 }
@@ -42,8 +53,8 @@ export function homeHref(session: Session | null): string {
     if (isSuperAdmin(session)) return '/overview';
     if (!hasActiveSubscription(session)) return '/billing';
     if (can(session, 'reports.view')) return '/dashboard';
-    if (can(session, 'students.view')) return '/students';
-    if (can(session, 'groups.view')) return '/groups';
+    if (canAny(session, 'students.view', 'students.view_own')) return '/students';
+    if (canAny(session, 'groups.view', 'groups.view_own')) return '/groups';
     if (can(session, 'leads.view')) return '/leads';
     if (can(session, 'payments.view')) return '/cashbox';
     if (can(session, 'expenses.view')) return '/expenses';

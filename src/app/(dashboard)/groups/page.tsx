@@ -34,7 +34,7 @@ import { listCourses } from '@/services/api/courses';
 import { deleteGroup, listGroups } from '@/services/api/groups';
 import { listUserOptions } from '@/services/api/users';
 import { GROUP_STATUSES, type Group, type GroupStatus } from '@/types/api';
-import { can } from '@/utils/access';
+import { can, canAny } from '@/utils/access';
 import { cn } from '@/utils/cn';
 import { fullName } from '@/utils/format';
 import { TONE_TEXT } from '@/utils/tone';
@@ -50,7 +50,7 @@ import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
 
 export default function GroupsPage() {
     return (
-        <AccessGuard allow={(session) => can(session, 'groups.view')}>
+        <AccessGuard allow={(session) => canAny(session, 'groups.view', 'groups.view_own')}>
             <GroupsView />
         </AccessGuard>
     );
