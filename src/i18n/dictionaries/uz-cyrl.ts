@@ -517,6 +517,9 @@ export const uzCyrl: Dictionary = {
     'courses.new': 'Янги курс',
     'courses.edit': 'Курсни таҳрирлаш',
     'courses.empty': 'Курс йўқ',
+    'courses.emptyHint':
+        'Курс — ўқитиладиган фан ва унинг ойлик нархи, масалан «Инглиз тили — 500 000 сўм». Гуруҳлар курс асосида очилади.',
+    'courses.addFirst': 'Биринчи курсни яратиш',
     'courses.namePlaceholder': 'Масалан, Инглиз тили — Beginner',
     'courses.price': 'Ойлик нарх',
     'courses.priceHint':
@@ -553,6 +556,11 @@ export const uzCyrl: Dictionary = {
     'groups.new': 'Янги гуруҳ',
     'groups.edit': 'Гуруҳни таҳрирлаш',
     'groups.empty': 'Гуруҳ топилмади',
+    'groups.emptyFirst': 'Ҳали гуруҳ йўқ',
+    'groups.emptyHint':
+        'Гуруҳ — курс, ўқитувчи, хона ва дарс кунлари. Ўқувчилар гуруҳга қўшилади, тўлов ва давомат шу гуруҳ бўйича юритилади.',
+    'groups.addFirst': 'Биринчи гуруҳни очиш',
+    'groups.needsCourse': 'Гуруҳ курс асосида очилади — аввал курс яратинг.',
     'groups.search': 'Гуруҳ номи…',
     'groups.namePlaceholder': 'Масалан, IELTS-1 (Ду-Чор-Жу 14:00)',
     'groups.course': 'Курс',
@@ -575,7 +583,6 @@ export const uzCyrl: Dictionary = {
     'groups.priceHint': 'Курс нархидан олинади, ўзгартириш мумкин',
     'groups.statusHint':
         'Тугаган гуруҳ жадвалдан чиқади, хона/ўқитувчини банд қилмайди ва ўқувчиларига тўлов ҳисобланмайди',
-    'groups.noCourses': 'Аввал «Курслар» бўлимида курс қўшинг',
     'groups.deleteTitle': 'Гуруҳни ўчириш',
     'groups.deleteMessage':
         '«{name}» гуруҳи ўчирилади. Ўқувчилари бор гуруҳни ўчириб бўлмайди — уни тугаган деб белгиланг.',
@@ -583,9 +590,11 @@ export const uzCyrl: Dictionary = {
     'groups.updated': 'Гуруҳ янгиланди',
     'groups.deleted': 'Гуруҳ ўчирилди',
     'schedule.title': 'Дарс жадвали',
-    'schedule.subtitle': 'Фаол гуруҳлар дарслари — кун, ҳафта ва ой бўйича',
-    'schedule.noLessons': 'Дарс йўқ',
+    'schedule.subtitle':
+        'Календарда кунни танланг — ўша кунги дарслар соат бўйича',
     'schedule.empty': 'Фаол гуруҳ йўқ',
+    'schedule.emptyHint':
+        'Жадвал гуруҳларнинг дарс кунлари ва вақтидан автоматик тузилади — биринчи гуруҳни очинг.',
 
     /* ── Menyu bo'limi ── */
     'nav.learning': 'ЎҚУВ ЖАРАЁНИ',
@@ -627,6 +636,9 @@ export const uzCyrl: Dictionary = {
     'students.new': 'Янги ўқувчи',
     'students.edit': 'Ўқувчини таҳрирлаш',
     'students.empty': 'Ўқувчи топилмади',
+    'students.emptyFirst': 'Ҳали ўқувчи йўқ',
+    'students.emptyHint':
+        "Ўқувчини қўлда қўшинг ёки рўйхатингиз Excel'да бўлса, ҳаммасини бир йўла импорт қилинг.",
     'students.search': 'Исм, фамилия ёки телефон…',
     'students.phone': 'Ўқувчи телефони',
     'students.parentName': 'Ота-онаси (Ф.И.Ш.)',
@@ -677,6 +689,9 @@ export const uzCyrl: Dictionary = {
     'leads.new': 'Янги лид',
     'leads.edit': 'Лидни таҳрирлаш',
     'leads.empty': 'Лид топилмади',
+    'leads.emptyFirst': 'Ҳали лид йўқ',
+    'leads.emptyHint':
+        "Лид — ҳали ўқувчи бўлмаган қизиқувчи: қўнғироқ қилган, Instagram'дан ёзган ёки сайтда ариза қолдирган. Уларни кузатиб, ўқувчига айлантирасиз.",
     'leads.search': 'Исм ёки телефон…',
     'leads.source': 'Манба',
     'leads.allSources': 'Барча манбалар',
@@ -747,6 +762,9 @@ export const uzCyrl: Dictionary = {
     'cashbox.subtitle': 'Ўқувчилардан қабул қилинган тўловлар',
     'cashbox.new': 'Тўлов қабул қилиш',
     'cashbox.empty': 'Тўлов топилмади',
+    'cashbox.emptyFirst': 'Ҳали тўлов йўқ',
+    'cashbox.emptyHint':
+        'Тўлов ўқувчи ва гуруҳ бўйича қабул қилинади. Баланс, қарздорлар ва тушум шундан ҳисобланади.',
     'cashbox.search': 'Ўқувчи исми…',
     'cashbox.allMethods': 'Барча усуллар',
     'cashbox.method': 'Тўлов усули',
@@ -1009,6 +1027,8 @@ export const uzCyrl: Dictionary = {
         'Марказ харажатлари. Ойликлар ойликлар саҳифасидан автоматик ёзилади',
     'expenses.new': 'Харажат қўшиш',
     'expenses.empty': 'Харажат йўқ',
+    'expenses.emptyHint':
+        'Ижара, коммунал тўловлар, реклама каби чиқимларни киритинг — бош саҳифадаги ойлик фойда шундан ҳисобланади.',
     'expenses.category': 'Тоифа',
     'expenses.allCategories': 'Барча тоифалар',
     'expenses.date': 'Сана',
@@ -1406,17 +1426,13 @@ export const uzCyrl: Dictionary = {
     'import.partial': '{count} та сақланди, {failed} та хато',
     'expenses.createdBy': 'Киритган',
     'groups.mine': 'Менинг гуруҳларим',
-    'schedule.viewWeek': 'Ҳафта',
-    'schedule.viewDay': 'Кун',
-    'schedule.viewMonth': 'Ой',
-    'schedule.viewList': 'Рўйхат',
     'schedule.today': 'Бугун',
-    'schedule.previous': 'Олдинги',
-    'schedule.next': 'Кейинги',
-    'schedule.more': '+{count} та',
+    'schedule.now': 'Ҳозир',
+    'schedule.ended': 'Тугади',
+    'schedule.previousDay': 'Олдинги кун',
+    'schedule.nextDay': 'Кейинги кун',
+    'schedule.calendarHint': 'Сана остидаги сон — ўша кунги дарслар сони',
     'schedule.lessonsCount': '{count} та дарс',
-    'schedule.lessonTime': 'Дарс вақти',
-    'schedule.openGroup': 'Гуруҳга ўтиш',
     'schedule.noTeacher': 'Ўқитувчи бириктирилмаган',
     'schedule.noLessonsDay': 'Бу кунда дарс йўқ',
     'schedule.studentsCount': '{count} та ўқувчи',

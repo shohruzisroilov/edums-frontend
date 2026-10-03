@@ -171,6 +171,9 @@ function LeadsView() {
         onError: (error) => toastError(error),
     });
 
+    // Filtr qo'llanmagan bo'sh ro'yxat — yangi markaz: nima ekani tushuntiriladi.
+    const filtered = Boolean(search || filters.status || filters.source);
+
     return (
         <>
             <PageHeader
@@ -347,12 +350,13 @@ function LeadsView() {
                 ) : query.data.data.length === 0 ? (
                     <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                         <EmptyState
-                            message={t('leads.empty')}
+                            message={t(
+                                filtered ? 'leads.empty' : 'leads.emptyFirst',
+                            )}
+                            hint={filtered ? undefined : t('leads.emptyHint')}
                             icon={<Funnel1 className='size-5' />}
                             action={
-                                Boolean(
-                                    search || filters.status || filters.source,
-                                ) ? (
+                                filtered ? (
                                     <Button
                                         appearance='outline'
                                         size='md'

@@ -29,7 +29,7 @@ src/
       branches/           # /branches — filiallar va xonalar (branches.*)
       courses/            # /courses — kurslar (courses.*)
       groups/             # /groups — guruhlar (groups.*)
-      schedule/           # /schedule — haftalik dars jadvali (groups.view)
+      schedule/           # /schedule — dars jadvali: oy kalendari + kun ro'yxati (groups.view)
       students/           # /students va /[id] — o'quvchilar (students.*)
       leads/              # /leads — lidlar voronkasi (leads.*)
       cashbox/            # /cashbox — o'quvchi to'lovlari (payments.*); /payments — super admin'niki

@@ -106,7 +106,24 @@ function CoursesView() {
                     ) : query.data.length === 0 ? (
                         <EmptyState
                             message={t('courses.empty')}
+                            hint={t('courses.emptyHint')}
                             icon={<OpenBook className='size-5' />}
+                            action={
+                                canCreate ? (
+                                    <Button
+                                        variant='primary'
+                                        appearance='fill'
+                                        size='md'
+                                        onPress={() => {
+                                            setEditing(null);
+                                            setFormOpen(true);
+                                        }}
+                                    >
+                                        <Plus />
+                                        {t('courses.addFirst')}
+                                    </Button>
+                                ) : null
+                            }
                         />
                     ) : (
                         <TableRoot fullBleed className='border-x-0 border-t-0'>

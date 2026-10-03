@@ -116,6 +116,11 @@ function CashboxView() {
         onError: (error) => toastError(error),
     });
 
+    // Filtr qo'llanmagan bo'sh ro'yxat — yangi markaz: nima ekani tushuntiriladi.
+    const filtered = Boolean(
+        search || filters.method || filters.from || filters.to,
+    );
+
     return (
         <>
             <PageHeader
@@ -247,15 +252,15 @@ function CashboxView() {
                         <ErrorState error={query.error} />
                     ) : query.data.data.length === 0 ? (
                         <EmptyState
-                            message={t('cashbox.empty')}
+                            message={t(
+                                filtered
+                                    ? 'cashbox.empty'
+                                    : 'cashbox.emptyFirst',
+                            )}
+                            hint={filtered ? undefined : t('cashbox.emptyHint')}
                             icon={<Wallet2 className='size-5' />}
                             action={
-                                Boolean(
-                                    search ||
-                                    filters.method ||
-                                    filters.from ||
-                                    filters.to,
-                                ) ? (
+                                filtered ? (
                                     <Button
                                         appearance='outline'
                                         size='md'
