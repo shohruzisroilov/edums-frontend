@@ -20,10 +20,19 @@ function Select({ ...props }: ComponentProps<typeof SelectPrimitive.Root>) {
     return <SelectPrimitive.Root data-slot='select' {...props} />;
 }
 
+/**
+ * Tanlangan qiymat bitta qatorda: tor maydonda (filtr qatori) uzun nom
+ * ikki qatorga tushib, trigger balandligidan chiqib ketmasin — kesiladi.
+ */
 function SelectValue({
+    className,
     ...props
 }: ComponentProps<typeof SelectPrimitive.Value>) {
-    return <SelectPrimitive.Value data-slot='select-value' {...props} />;
+    return (
+        <span className={cn('min-w-0 truncate text-left', className)}>
+            <SelectPrimitive.Value data-slot='select-value' {...props} />
+        </span>
+    );
 }
 
 function SelectTrigger({

@@ -338,6 +338,7 @@ export function SelectInput({
     name,
     className,
     id,
+    'aria-label': ariaLabel,
 }: BaseProps & {
     options: SelectOption[];
     placeholder?: string;
@@ -348,6 +349,8 @@ export function SelectInput({
     name?: string;
     className?: string;
     id?: string;
+    /** Ko'rinadigan yorlig'i yo'q maydon uchun (filtr qatori). */
+    'aria-label'?: string;
 }) {
     const { inputId, hintId, errorId, labelId } = useFieldIds(id);
 
@@ -382,6 +385,7 @@ export function SelectInput({
                     aria-labelledby={
                         label ? `${labelId} ${inputId}` : undefined
                     }
+                    aria-label={label ? undefined : ariaLabel}
                     aria-describedby={describedBy(hint, error, hintId, errorId)}
                     className={className}
                 >

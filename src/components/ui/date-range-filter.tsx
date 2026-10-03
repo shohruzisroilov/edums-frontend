@@ -1,6 +1,7 @@
 'use client';
 
 import { DatePicker } from '@/components/ui/date-picker';
+import { SelectInput } from '@/components/ui/form-field';
 import { useT } from '@/i18n/provider';
 import { cn } from '@/utils/cn';
 import { toISODate } from '@/utils/format';
@@ -100,12 +101,39 @@ export function DateRangeFilter({
     return (
         <div
             className={cn(
-                'flex w-full flex-wrap items-center gap-2.5 sm:w-auto',
+                'flex w-full flex-wrap items-center gap-2.5 sm:w-auto sm:flex-nowrap',
                 className,
             )}
         >
-            {/* Presets Bar */}
-            <div className='border-card-border bg-background-gray-secondary/50 flex max-w-full scrollbar-none items-center overflow-x-auto rounded-xl border p-1 shadow-xs sm:flex-wrap'>
+            {/* Desktopda davr — ixcham ro'yxat: oltita tugma filtr qatorini
+                ikkiga bo'lib yuborardi. Telefonda (filtr oynasida) tugmalar. */}
+            <div className='hidden w-36 min-w-28 shrink sm:block'>
+                <SelectInput
+                    aria-label={t('dateRange.period')}
+                    options={[
+                        ...presets
+                            .filter((p) => p.id !== 'all')
+                            .map((p) => ({ value: p.id, label: p.label })),
+                        ...(activePreset === 'custom'
+                            ? [
+                                  {
+                                      value: 'custom',
+                                      label: t('dateRange.custom'),
+                                  },
+                              ]
+                            : []),
+                    ]}
+                    placeholder={t('dateRange.all')}
+                    value={activePreset === 'all' ? '' : activePreset}
+                    onValueChange={(next) => {
+                        if (next !== 'custom') {
+                            applyPreset((next || 'all') as DatePreset);
+                        }
+                    }}
+                />
+            </div>
+
+            <div className='border-card-border bg-background-gray-secondary/50 flex max-w-full scrollbar-none items-center overflow-x-auto rounded-xl border p-1 shadow-xs sm:hidden'>
                 {presets.map((p) => {
                     const isActive = activePreset === p.id;
                     return (
@@ -126,9 +154,8 @@ export function DateRangeFilter({
                 })}
             </div>
 
-            {/* Custom Range Inputs */}
             <div className='flex w-full items-center gap-2 sm:w-auto'>
-                <div className='w-full sm:w-34 md:w-36'>
+                <div className='w-full sm:w-32'>
                     <DatePicker
                         size='sm'
                         align='left'
@@ -142,7 +169,7 @@ export function DateRangeFilter({
                 <span className='text-text-tertiary shrink-0 text-xs font-medium'>
                     —
                 </span>
-                <div className='w-full sm:w-34 md:w-36'>
+                <div className='w-full sm:w-32'>
                     <DatePicker
                         size='sm'
                         align='right'

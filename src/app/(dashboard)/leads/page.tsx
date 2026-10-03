@@ -273,8 +273,8 @@ function LeadsView() {
                 })}
             </div>
 
-            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5'>
-                <div className='min-w-[220px] flex-1'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
+                <div className='min-w-[220px] flex-1 lg:min-w-40'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
@@ -290,36 +290,6 @@ function LeadsView() {
                         setFilter('status', '');
                         setFilter('source', '');
                     }}
-                    activeChips={[
-                        ...(filters.status
-                            ? [
-                                  {
-                                      key: 'status',
-                                      label: t('filters.chip', {
-                                          label: t('common.status'),
-                                          value: t(
-                                              `leadStatus.${filters.status as LeadStatus}`,
-                                          ),
-                                      }),
-                                      onRemove: () => setFilter('status', ''),
-                                  },
-                              ]
-                            : []),
-                        ...(filters.source
-                            ? [
-                                  {
-                                      key: 'source',
-                                      label: t('filters.chip', {
-                                          label: t('leads.source'),
-                                          value: t(
-                                              `leadSource.${filters.source as LeadSource}`,
-                                          ),
-                                      }),
-                                      onRemove: () => setFilter('source', ''),
-                                  },
-                              ]
-                            : []),
-                    ]}
                 >
                     <SelectInput
                         label={t('common.allStatuses')}
@@ -343,8 +313,8 @@ function LeadsView() {
                     />
                 </MobileFilterSheet>
 
-                <div className='hidden items-center gap-3 sm:flex'>
-                    <div className='w-44'>
+                <div className='hidden min-w-0 items-center gap-3 sm:flex'>
+                    <div className='w-44 min-w-28 shrink'>
                         <SelectInput
                             options={LEAD_STATUSES.map((status) => ({
                                 value: status,
@@ -355,7 +325,7 @@ function LeadsView() {
                             onValueChange={(next) => setFilter('status', next)}
                         />
                     </div>
-                    <div className='w-44'>
+                    <div className='w-44 min-w-28 shrink'>
                         <SelectInput
                             options={LEAD_SOURCES.map((source) => ({
                                 value: source,

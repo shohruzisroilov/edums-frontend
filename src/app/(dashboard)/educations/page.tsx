@@ -118,13 +118,13 @@ function EducationsView() {
                 }
             />
 
-            <div className='flex items-center gap-2 px-4 pb-4 sm:px-5'>
+            <div className='flex items-center gap-2 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
                 <SearchInput
                     value={search}
                     onChange={setSearch}
                     placeholder={t('educations.search')}
                 />
-                <div className='hidden sm:block sm:w-44'>
+                <div className='hidden min-w-28 shrink sm:block sm:w-44'>
                     <SelectInput
                         options={EDUCATION_STATUSES.map((status) => ({
                             value: status,

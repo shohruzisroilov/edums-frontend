@@ -141,70 +141,26 @@ function GroupsView() {
     const courses = coursesQuery.data ?? [];
     const teachers = teachersQuery.data ?? [];
 
-    const activeBranch = branches.find((b) => b.id === filters.branch_id);
-    const activeCourse = courses.find((c) => c.id === filters.course_id);
-    const activeTeacher = teachers.find((u) => u.id === filters.teacher_id);
     const activeStatus =
         filters.status && filters.status !== 'active' ? filters.status : null;
+
+    // Desktopda "Mening guruhlarim" — o'qituvchi ro'yxatining birinchi bandi:
+    // alohida tugma filtr qatoriga sig'masdi. Telefonda filtr oynasidagi
+    // tugma qoladi.
+    const teacherOptions = [
+        ...(session?.kind === 'user'
+            ? [{ value: session.id, label: t('groups.mine') }]
+            : []),
+        ...teachers
+            .filter((user) => user.id !== session?.id)
+            .map((user) => ({ value: user.id, label: fullName(user) })),
+    ];
 
     const activeCount =
         (filters.branch_id ? 1 : 0) +
         (filters.course_id ? 1 : 0) +
         (filters.teacher_id ? 1 : 0) +
         (activeStatus ? 1 : 0);
-
-    const activeChips = [
-        ...(activeBranch
-            ? [
-                  {
-                      key: 'branch',
-                      label: t('filters.chip', {
-                          label: t('groups.branch'),
-                          value: activeBranch.name,
-                      }),
-                      onRemove: () => setFilter('branch_id', ''),
-                  },
-              ]
-            : []),
-        ...(activeCourse
-            ? [
-                  {
-                      key: 'course',
-                      label: t('filters.chip', {
-                          label: t('groups.course'),
-                          value: activeCourse.name,
-                      }),
-                      onRemove: () => setFilter('course_id', ''),
-                  },
-              ]
-            : []),
-        ...(activeTeacher
-            ? [
-                  {
-                      key: 'teacher',
-                      label: t('filters.chip', {
-                          label: t('groups.teacher'),
-                          value: fullName(activeTeacher),
-                      }),
-                      onRemove: () => setFilter('teacher_id', ''),
-                  },
-              ]
-            : []),
-        ...(activeStatus
-            ? [
-                  {
-                      key: 'status',
-                      label: t('filters.chip', {
-                          label: t('common.status'),
-                          value: t(
-                              `groupStatus.${activeStatus as GroupStatus}`,
-                          ),
-                      }),
-                      onRemove: () => setFilter('status', 'active'),
-                  },
-              ]
-            : []),
-    ];
 
     return (
         <>
@@ -230,8 +186,8 @@ function GroupsView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5'>
-                <div className='min-w-[220px] flex-1'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
+                <div className='min-w-[220px] flex-1 lg:min-w-40'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
@@ -247,7 +203,6 @@ function GroupsView() {
                         setFilter('teacher_id', '');
                         setFilter('status', 'active');
                     }}
-                    activeChips={activeChips}
                 >
                     {session?.kind === 'user' && (
                         <div className='mb-2'>
@@ -323,9 +278,9 @@ function GroupsView() {
                     />
                 </MobileFilterSheet>
 
-                <div className='hidden flex-wrap items-center gap-3 sm:flex'>
+                <div className='hidden min-w-0 flex-wrap items-center gap-3 sm:flex lg:flex-nowrap'>
                     {branches.length > 1 && (
-                        <div className='w-48'>
+                        <div className='w-48 min-w-28 shrink'>
                             <SelectInput
                                 options={branches.map((branch) => ({
                                     value: branch.id,
@@ -339,7 +294,7 @@ function GroupsView() {
                             />
                         </div>
                     )}
-                    <div className='w-52'>
+                    <div className='w-52 min-w-28 shrink'>
                         <SelectInput
                             options={courses.map((course) => ({
                                 value: course.id,
@@ -352,12 +307,9 @@ function GroupsView() {
                             }
                         />
                     </div>
-                    <div className='w-52'>
+                    <div className='w-52 min-w-28 shrink'>
                         <SelectInput
-                            options={teachers.map((user) => ({
-                                value: user.id,
-                                label: fullName(user),
-                            }))}
+                            options={teacherOptions}
                             placeholder={t('groups.allTeachers')}
                             value={filters.teacher_id}
                             onValueChange={(next) =>
@@ -365,7 +317,7 @@ function GroupsView() {
                             }
                         />
                     </div>
-                    <div className='w-40'>
+                    <div className='w-40 min-w-28 shrink'>
                         <SelectInput
                             options={GROUP_STATUSES.map((status) => ({
                                 value: status,
@@ -376,31 +328,6 @@ function GroupsView() {
                             onValueChange={(next) => setFilter('status', next)}
                         />
                     </div>
-                    {session?.kind === 'user' && (
-                        <Button
-                            appearance={
-                                filters.teacher_id === session.id
-                                    ? 'fill'
-                                    : 'outline'
-                            }
-                            variant={
-                                filters.teacher_id === session.id
-                                    ? 'primary'
-                                    : undefined
-                            }
-                            size='md'
-                            onPress={() =>
-                                setFilter(
-                                    'teacher_id',
-                                    filters.teacher_id === session.id
-                                        ? ''
-                                        : session.id,
-                                )
-                            }
-                        >
-                            {t('groups.mine')}
-                        </Button>
-                    )}
                 </div>
             </div>
 

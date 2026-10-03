@@ -15,7 +15,10 @@ import {
     TableSkeleton,
 } from '@/components/ui/data-state';
 import { DateRangeFilter } from '@/components/ui/date-range-filter';
-import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
+import {
+    ClearFiltersButton,
+    MobileFilterSheet,
+} from '@/components/ui/mobile-filter-sheet';
 import { SelectInput } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
@@ -98,6 +101,9 @@ function AuditView() {
         queryFn: listUserOptions,
     });
 
+    const clearFilters = () =>
+        setFilters({ entity_type: '', actor_id: '', from: '', to: '' });
+
     const activeFilterCount =
         (filters.entity_type ? 1 : 0) +
         (filters.actor_id ? 1 : 0) +
@@ -105,7 +111,7 @@ function AuditView() {
 
     const filterElements = (
         <>
-            <div className='w-full sm:w-52'>
+            <div className='w-full min-w-28 shrink sm:w-52'>
                 <SelectInput
                     options={AUDIT_ENTITY_TYPES.map((type) => ({
                         value: type,
@@ -116,7 +122,7 @@ function AuditView() {
                     onValueChange={(next) => setFilter('entity_type', next)}
                 />
             </div>
-            <div className='w-full sm:w-52'>
+            <div className='w-full min-w-28 shrink sm:w-52'>
                 <SelectInput
                     options={(usersQuery.data ?? []).map((user) => ({
                         value: user.id,
@@ -143,19 +149,18 @@ function AuditView() {
                 description={t('audit.subtitle')}
             />
 
-            <div className='flex items-center gap-3 px-4 pb-4 sm:px-5'>
-                <div className='hidden sm:flex sm:flex-wrap sm:items-center sm:gap-3'>
+            <div className='flex items-center gap-3 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
+                <div className='hidden min-w-0 sm:flex sm:items-center sm:gap-3'>
                     {filterElements}
+                    <ClearFiltersButton
+                        activeCount={activeFilterCount}
+                        onClear={clearFilters}
+                    />
                 </div>
                 <div className='flex w-full items-center justify-end sm:hidden'>
                     <MobileFilterSheet
                         activeCount={activeFilterCount}
-                        onClear={() => {
-                            setFilter('entity_type', '');
-                            setFilter('actor_id', '');
-                            setFilter('from', '');
-                            setFilter('to', '');
-                        }}
+                        onClear={clearFilters}
                     >
                         {filterElements}
                     </MobileFilterSheet>

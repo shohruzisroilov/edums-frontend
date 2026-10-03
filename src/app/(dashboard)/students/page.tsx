@@ -143,39 +143,9 @@ function StudentsView() {
         onError: (error) => toastError(error),
     });
 
-    const activeBranch = branches.find((b) => b.id === filters.branch_id);
     const activeStatus =
         filters.status && filters.status !== 'active' ? filters.status : null;
     const activeCount = (filters.branch_id ? 1 : 0) + (activeStatus ? 1 : 0);
-
-    const activeChips = [
-        ...(activeBranch
-            ? [
-                  {
-                      key: 'branch',
-                      label: t('filters.chip', {
-                          label: t('groups.branch'),
-                          value: activeBranch.name,
-                      }),
-                      onRemove: () => setFilter('branch_id', ''),
-                  },
-              ]
-            : []),
-        ...(activeStatus
-            ? [
-                  {
-                      key: 'status',
-                      label: t('filters.chip', {
-                          label: t('common.status'),
-                          value: t(
-                              `studentStatus.${activeStatus as StudentStatus}`,
-                          ),
-                      }),
-                      onRemove: () => setFilter('status', 'active'),
-                  },
-              ]
-            : []),
-    ];
 
     return (
         <>
@@ -252,8 +222,8 @@ function StudentsView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-3 px-4 pb-4 sm:px-5'>
-                <div className='min-w-[200px] flex-1'>
+            <div className='flex flex-wrap items-center gap-3 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
+                <div className='min-w-[200px] flex-1 lg:min-w-40'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
@@ -267,7 +237,6 @@ function StudentsView() {
                         setFilter('branch_id', '');
                         setFilter('status', 'active');
                     }}
-                    activeChips={activeChips}
                 >
                     {branches.length > 1 && (
                         <SelectInput
@@ -295,9 +264,9 @@ function StudentsView() {
                     />
                 </MobileFilterSheet>
 
-                <div className='hidden items-center gap-3 sm:flex'>
+                <div className='hidden min-w-0 items-center gap-3 sm:flex'>
                     {branches.length > 1 && (
-                        <div className='w-48'>
+                        <div className='w-48 min-w-28 shrink'>
                             <SelectInput
                                 options={branches.map((branch) => ({
                                     value: branch.id,
@@ -311,7 +280,7 @@ function StudentsView() {
                             />
                         </div>
                     )}
-                    <div className='w-40'>
+                    <div className='w-40 min-w-28 shrink'>
                         <SelectInput
                             options={STUDENT_STATUSES.map((status) => ({
                                 value: status,

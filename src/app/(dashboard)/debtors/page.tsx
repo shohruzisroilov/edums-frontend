@@ -87,20 +87,7 @@ function DebtorsView() {
     const branches = branchesQuery.data ?? [];
     const som = t('common.som');
 
-    const activeBranch = branches.find((b) => b.id === filters.branch_id);
     const activeCount = filters.branch_id ? 1 : 0;
-    const activeChips = activeBranch
-        ? [
-              {
-                  key: 'branch',
-                  label: t('filters.chip', {
-                      label: t('groups.branch'),
-                      value: activeBranch.name,
-                  }),
-                  onRemove: () => setFilter('branch_id', ''),
-              },
-          ]
-        : [];
 
     const allDebtors = query.data?.data ?? [];
 
@@ -149,8 +136,8 @@ function DebtorsView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-3 px-4 pb-4 sm:px-5'>
-                <div className='min-w-[200px] flex-1'>
+            <div className='flex flex-wrap items-center gap-3 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
+                <div className='min-w-[200px] flex-1 lg:min-w-40'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
@@ -163,7 +150,6 @@ function DebtorsView() {
                         <MobileFilterSheet
                             activeCount={activeCount}
                             onClear={() => setFilter('branch_id', '')}
-                            activeChips={activeChips}
                         >
                             <SelectInput
                                 label={t('groups.allBranches')}
@@ -179,7 +165,7 @@ function DebtorsView() {
                             />
                         </MobileFilterSheet>
 
-                        <div className='hidden w-48 sm:block'>
+                        <div className='hidden w-48 min-w-28 shrink sm:block'>
                             <SelectInput
                                 options={branches.map((branch) => ({
                                     value: branch.id,

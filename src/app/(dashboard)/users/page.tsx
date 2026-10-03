@@ -121,42 +121,8 @@ function UsersView() {
         onError: (error) => toastError(error),
     });
 
-    const activeRole = roles.find((r) => r.id === filters.role_id);
-    const activeStatus =
-        filters.is_active !== ''
-            ? filters.is_active === 'true'
-                ? t('common.active')
-                : t('common.inactive')
-            : null;
     const activeCount =
         (filters.role_id ? 1 : 0) + (filters.is_active !== '' ? 1 : 0);
-
-    const activeChips = [
-        ...(activeRole
-            ? [
-                  {
-                      key: 'role',
-                      label: t('filters.chip', {
-                          label: t('users.role'),
-                          value: activeRole.name,
-                      }),
-                      onRemove: () => setFilter('role_id', ''),
-                  },
-              ]
-            : []),
-        ...(activeStatus
-            ? [
-                  {
-                      key: 'status',
-                      label: t('filters.chip', {
-                          label: t('common.status'),
-                          value: activeStatus,
-                      }),
-                      onRemove: () => setFilter('is_active', ''),
-                  },
-              ]
-            : []),
-    ];
 
     return (
         <>
@@ -182,8 +148,8 @@ function UsersView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5'>
-                <div className='min-w-[220px] flex-1'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
+                <div className='min-w-[220px] flex-1 lg:min-w-40'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
@@ -197,7 +163,6 @@ function UsersView() {
                         setFilter('role_id', '');
                         setFilter('is_active', '');
                     }}
-                    activeChips={activeChips}
                 >
                     {canListRoles && (
                         <SelectInput
@@ -223,9 +188,9 @@ function UsersView() {
                     />
                 </MobileFilterSheet>
 
-                <div className='hidden items-center gap-3 sm:flex'>
+                <div className='hidden min-w-0 items-center gap-3 sm:flex'>
                     {canListRoles && (
-                        <div className='w-52'>
+                        <div className='w-52 min-w-28 shrink'>
                             <SelectInput
                                 options={roles.map((role) => ({
                                     value: role.id,
@@ -239,7 +204,7 @@ function UsersView() {
                             />
                         </div>
                     )}
-                    <div className='w-40'>
+                    <div className='w-40 min-w-28 shrink'>
                         <SelectInput
                             options={[
                                 { value: 'true', label: t('common.active') },

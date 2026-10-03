@@ -4,6 +4,7 @@ import { Button } from '@/components/tailgrids/core/button';
 import { Modal } from '@/components/ui/modal';
 import { useT } from '@/i18n/provider';
 import { Funnel1, Close } from '@tailgrids/icons';
+import { cn } from '@/utils/cn';
 import { useState, type ReactNode } from 'react';
 
 interface MobileFilterSheetProps {
@@ -13,15 +14,48 @@ interface MobileFilterSheetProps {
     children: ReactNode;
     /** Barcha filtrlarni tozalash funksiyasi */
     onClear?: () => void;
-    /** Faol filtr chiptalari (misol: [{ key: 'branch', label: 'Filial: Chilonzor', onRemove: ... }]) */
-    activeChips?: { key: string; label: string; onRemove: () => void }[];
 }
 
+/**
+ * Tanlangan filtrlarni bir bosishda tozalaydi — faqat biror filtr faol
+ * bo'lsa ko'rinadi. Har bir filtr uchun alohida "×" belgisi o'rniga bitta
+ * tugma: filtr qatori desktopda bir qatorda qoladi.
+ */
+export function ClearFiltersButton({
+    activeCount,
+    onClear,
+    className,
+}: {
+    activeCount: number;
+    onClear: () => void;
+    className?: string;
+}) {
+    const t = useT();
+
+    if (activeCount === 0) return null;
+
+    return (
+        <Button
+            appearance='outline'
+            size='md'
+            onPress={onClear}
+            aria-label={t('filters.reset')}
+            className={cn('shrink-0', className)}
+        >
+            <Close className='size-4' />
+            {t('filters.clear')}
+        </Button>
+    );
+}
+
+/**
+ * Telefonda filtrlar oynada ochiladi; desktopda filtrlar sahifaning o'zida
+ * turadi, bu komponent esa qator oxiriga "Filtrni tozalash" tugmasini qo'yadi.
+ */
 export function MobileFilterSheet({
     activeCount = 0,
     children,
     onClear,
-    activeChips = [],
 }: MobileFilterSheetProps) {
     const t = useT();
     const [open, setOpen] = useState(false);
@@ -81,35 +115,12 @@ export function MobileFilterSheet({
                 </Modal>
             )}
 
-            {/* Faol filtrlar chip-chiziqlari (Mobil va Desktop uchun tezkor tozalash) */}
-            {activeChips.length > 0 && (
-                <div className='flex w-full items-center gap-1.5 overflow-x-auto pb-1 text-xs'>
-                    {activeChips.map((chip) => (
-                        <span
-                            key={chip.key}
-                            className='border-card-border bg-card-surface-area text-text-primary flex shrink-0 items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-medium shadow-2xs'
-                        >
-                            {chip.label}
-                            <button
-                                type='button'
-                                onClick={chip.onRemove}
-                                className='text-text-tertiary hover:text-badge-error-text ml-0.5 rounded-full p-0.5 transition-colors'
-                                aria-label={t('filters.remove')}
-                            >
-                                <Close className='size-3' />
-                            </button>
-                        </span>
-                    ))}
-                    {onClear && activeCount > 1 && (
-                        <button
-                            type='button'
-                            onClick={onClear}
-                            className='text-badge-error-text shrink-0 px-1 text-xs font-medium hover:underline'
-                        >
-                            {t('filters.clearAll')}
-                        </button>
-                    )}
-                </div>
+            {onClear && (
+                <ClearFiltersButton
+                    activeCount={activeCount}
+                    onClear={onClear}
+                    className='hidden sm:order-last sm:inline-flex'
+                />
             )}
         </>
     );
