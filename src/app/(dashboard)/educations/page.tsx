@@ -28,7 +28,7 @@ import {
 } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
-import { useListQuery } from '@/hooks/use-list-query';
+import { useListQuery, useOffsetInRange } from '@/hooks/use-list-query';
 import { useT } from '@/i18n/provider';
 import { deleteEducation, listEducations } from '@/services/api/educations';
 import type { Education, EducationStatus } from '@/types/api';
@@ -84,6 +84,7 @@ function EducationsView() {
                 offset,
             }),
     });
+    useOffsetInRange(query.data?.count, offset, limit, setOffset);
 
     const removeMutation = useMutation({
         mutationFn: (id: string) => deleteEducation(id),

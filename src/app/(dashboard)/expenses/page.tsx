@@ -31,7 +31,7 @@ import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { ExpenseCategoryBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
-import { useListQuery } from '@/hooks/use-list-query';
+import { useListQuery, useOffsetInRange } from '@/hooks/use-list-query';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { listBranches } from '@/services/api/branches';
@@ -101,6 +101,7 @@ function ExpensesView() {
                 offset,
             }),
     });
+    useOffsetInRange(query.data?.count, offset, limit, setOffset);
 
     const removeMutation = useMutation({
         mutationFn: (id: string) => deleteExpense(id),

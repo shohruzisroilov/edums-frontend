@@ -26,6 +26,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { BottomNav } from '@/components/common/bottom-nav';
 import { Suspense, useEffect, useState, type ReactNode } from 'react';
 
+const SIDEBAR_STORAGE_KEY = 'edums_sidebar_open';
+
 export default function DashboardLayout({ children }: { children: ReactNode }) {
     const { session, loading, signIn } = useSession();
     const router = useRouter();
@@ -33,12 +35,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     const t = useT();
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
-        if (typeof window !== 'undefined') {
-            const stored = localStorage.getItem('edums_sidebar_open');
+        if (typeof window === 'undefined') return true;
+        try {
+            const stored = localStorage.getItem(SIDEBAR_STORAGE_KEY);
             if (stored !== null) return stored === 'true';
-            return window.innerWidth >= 1280;
+        } catch {
+            /* localStorage yopiq bo'lishi mumkin */
         }
-        return true;
+        return window.innerWidth >= 1280;
     });
     const [isMobileSheetOpen, setIsMobileSheetOpen] = useState(false);
 
@@ -94,7 +98,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     const toggleSidebar = () => {
         setIsSidebarOpen((prev) => {
             const next = !prev;
-            localStorage.setItem('edums_sidebar_open', String(next));
+            try {
+                localStorage.setItem(SIDEBAR_STORAGE_KEY, String(next));
+            } catch {
+                /* saqlanmasa ham joriy holat ishlaydi */
+            }
             return next;
         });
     };

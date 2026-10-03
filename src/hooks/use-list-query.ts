@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useUrlParams } from './use-url-state';
 
 const DEFAULT_LIMIT = 20;
@@ -112,4 +112,22 @@ export function useListQuery<TFilters extends Record<string, string>>(
 function positiveInt(value: string | null): number | null {
     const number = Number(value);
     return Number.isInteger(number) && number > 0 ? number : null;
+}
+
+/**
+ * Sahifa ro'yxat oxiridan o'tib ketsa — oxirgi sahifadagi yagona yozuv
+ * o'chirilgan yoki manzilda `?page=99` — oxirgi mavjud sahifaga qaytaradi.
+ * Aks holda yozuvlar bor bo'lsa ham "hech narsa yo'q" ko'rinib, sahifalash
+ * ham yashirinib qolardi.
+ */
+export function useOffsetInRange(
+    count: number | undefined,
+    offset: number,
+    limit: number,
+    setOffset: (offset: number) => void,
+) {
+    useEffect(() => {
+        if (count === undefined || offset === 0 || offset < count) return;
+        setOffset(count === 0 ? 0 : Math.floor((count - 1) / limit) * limit);
+    }, [count, offset, limit, setOffset]);
 }

@@ -73,9 +73,6 @@ function GroupDetailView() {
         'students.view',
         'students.view_own',
     );
-    const canMarkAttendance =
-        canAny(session, 'attendance.view', 'attendance.view_own') &&
-        canAny(session, 'attendance.mark', 'attendance.mark_own');
     const { update: updateUrl } = useUrlParams();
 
     const [editOpen, setEditOpen] = useState(false);
@@ -97,6 +94,16 @@ function GroupDetailView() {
     if (groupQuery.error) return <ErrorState error={groupQuery.error} />;
 
     const group = groupQuery.data;
+    // *_own ruxsatlari faqat o'zi dars beradigan guruhga yetadi — backend
+    // boshqa guruh davomatiga 404 qaytaradi.
+    const teachesGroup = !!session && group.teacher?.id === session.id;
+    const canViewAttendance =
+        can(session, 'attendance.view') ||
+        (teachesGroup && can(session, 'attendance.view_own'));
+    const canMarkAttendance =
+        canViewAttendance &&
+        (can(session, 'attendance.mark') ||
+            (teachesGroup && can(session, 'attendance.mark_own')));
     const enrolledIds = (studentsQuery.data ?? [])
         .filter((enrollment) => enrollment.left_at === null)
         .map((enrollment) => enrollment.student.id);
@@ -309,7 +316,7 @@ function GroupDetailView() {
                 )}
             </DetailSection>
 
-            {canAny(session, 'attendance.view', 'attendance.view_own') && (
+            {canViewAttendance && (
                 <AttendanceSection
                     groupId={group.id}
                     canMark={canMarkAttendance}

@@ -22,7 +22,7 @@ import { PaginationBar } from '@/components/ui/pagination-bar';
 import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { AuditActionBadge } from '@/components/ui/status-badge';
 import { useFormat } from '@/hooks/use-format';
-import { useListQuery } from '@/hooks/use-list-query';
+import { useListQuery, useOffsetInRange } from '@/hooks/use-list-query';
 import { useT, type Translate } from '@/i18n/provider';
 import type { TranslationKey } from '@/i18n/dictionaries/uz';
 import { listAuditLogs } from '@/services/api/audit';
@@ -91,6 +91,7 @@ function AuditView() {
                 offset,
             }),
     });
+    useOffsetInRange(query.data?.count, offset, limit, setOffset);
 
     const usersQuery = useQuery({
         queryKey: ['user-options'],

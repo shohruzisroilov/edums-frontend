@@ -8,6 +8,7 @@ import {
     TableSkeleton,
 } from '@/components/ui/data-state';
 import { DetailSection } from '@/components/ui/detail';
+import { SelectInput } from '@/components/ui/form-field';
 import { Modal } from '@/components/ui/modal';
 import { currentMonth, MonthSwitcher } from '@/components/ui/month-switcher';
 import { useApiErrorToast } from '@/hooks/use-api-error';
@@ -306,6 +307,9 @@ function Legend() {
     );
 }
 
+/** Kuniga nechta dars alohida belgilanishi mumkin. */
+const LESSON_ORDERS = [1, 2, 3];
+
 /** Bir kunni belgilash: har bir o'quvchi uchun to'rtta holatdan biri. */
 function MarkAttendanceModal({
     groupId,
@@ -383,22 +387,19 @@ function MarkAttendanceModal({
             title={t('attendance.markTitle', { date: formatDate(date) })}
             size='lg'
         >
-            <div className='mb-3 flex flex-wrap items-center justify-between gap-3'>
-                <div className='flex items-center gap-2'>
-                    <label className='text-text-secondary text-sm'>
-                        Dars tartibi:
-                    </label>
-                    <select
-                        className='border-card-border bg-card-background focus:border-brand-primary rounded-md border px-2 py-1 text-sm outline-none'
-                        value={lessonOrder}
-                        onChange={(e) =>
-                            handleLessonOrderChange(Number(e.target.value))
+            <div className='mb-3 flex flex-wrap items-end justify-between gap-3'>
+                <div className='w-40'>
+                    <SelectInput
+                        label={t('attendance.lessonOrder')}
+                        options={LESSON_ORDERS.map((order) => ({
+                            value: String(order),
+                            label: t('attendance.lessonN', { n: order }),
+                        }))}
+                        value={String(lessonOrder)}
+                        onValueChange={(next) =>
+                            handleLessonOrderChange(Number(next))
                         }
-                    >
-                        <option value={1}>1-dars</option>
-                        <option value={2}>2-dars</option>
-                        <option value={3}>3-dars</option>
-                    </select>
+                    />
                 </div>
                 <Button
                     appearance='outline'

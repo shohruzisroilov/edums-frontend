@@ -23,7 +23,7 @@ import { PhoneLink } from '@/components/ui/phone-link';
 import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { SearchInput } from '@/components/ui/search-input';
 import { useFormat } from '@/hooks/use-format';
-import { useListQuery } from '@/hooks/use-list-query';
+import { useListQuery, useOffsetInRange } from '@/hooks/use-list-query';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { listBranches } from '@/services/api/branches';
@@ -78,6 +78,7 @@ function DebtorsView() {
                 offset,
             }),
     });
+    useOffsetInRange(query.data?.count, offset, limit, setOffset);
 
     const branchesQuery = useQuery({
         queryKey: ['branches'],
