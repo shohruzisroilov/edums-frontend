@@ -63,7 +63,11 @@ import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
 
 export default function StudentsPage() {
     return (
-        <AccessGuard allow={(session) => canAny(session, 'students.view', 'students.view_own')}>
+        <AccessGuard
+            allow={(session) =>
+                canAny(session, 'students.view', 'students.view_own')
+            }
+        >
             <StudentsView />
         </AccessGuard>
     );

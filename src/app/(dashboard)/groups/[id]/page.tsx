@@ -48,7 +48,11 @@ import { AttendanceSection } from './_components/attendance-section';
 
 export default function GroupDetailPage() {
     return (
-        <AccessGuard allow={(session) => canAny(session, 'groups.view', 'groups.view_own')}>
+        <AccessGuard
+            allow={(session) =>
+                canAny(session, 'groups.view', 'groups.view_own')
+            }
+        >
             <GroupDetailView />
         </AccessGuard>
     );
@@ -64,9 +68,14 @@ function GroupDetailView() {
     const canUpdateStudents = can(session, 'students.update');
     // O'quvchi qidirish GET /students dan.
     const canAddStudent = canUpdateStudents && can(session, 'students.view');
-    const canOpenStudents = canAny(session, 'students.view', 'students.view_own');
+    const canOpenStudents = canAny(
+        session,
+        'students.view',
+        'students.view_own',
+    );
     const canMarkAttendance =
-        canAny(session, 'attendance.view', 'attendance.view_own') && canAny(session, 'attendance.mark', 'attendance.mark_own');
+        canAny(session, 'attendance.view', 'attendance.view_own') &&
+        canAny(session, 'attendance.mark', 'attendance.mark_own');
     const { update: updateUrl } = useUrlParams();
 
     const [editOpen, setEditOpen] = useState(false);
