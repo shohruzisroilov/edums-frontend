@@ -1,5 +1,6 @@
 import Providers from '@/app/providers';
 import { cn } from '@/utils/cn';
+import { SITE_URL } from '@/utils/site';
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import { ThemeProvider } from 'next-themes';
@@ -32,13 +33,33 @@ export const viewport: Viewport = {
     ],
 };
 
+const TITLE = "EDUMS — O'quv markaz boshqaruv tizimi";
+const DESCRIPTION =
+    "O'quv markazlarini boshqarish tizimi: markazlar, tariflar, xodimlar va o'quvchilar.";
+
 export const metadata: Metadata = {
+    metadataBase: new URL(SITE_URL),
     title: {
         template: '%s | EDUMS',
-        default: "EDUMS — O'quv markaz boshqaruv tizimi",
+        default: TITLE,
     },
-    description:
-        "O'quv markazlarini boshqarish tizimi: markazlar, tariflar, xodimlar va o'quvchilar.",
+    description: DESCRIPTION,
+    applicationName: 'EDUMS',
+    openGraph: {
+        type: 'website',
+        siteName: 'EDUMS',
+        title: TITLE,
+        description: DESCRIPTION,
+        url: '/',
+        locale: 'uz_UZ',
+        images: [{ url: '/landing/hero.png', width: 1024, height: 575 }],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: TITLE,
+        description: DESCRIPTION,
+        images: ['/landing/hero.png'],
+    },
     verification: {
         google: 'DuH0dlATA0mmNA0BNX6VqeSlLOUBZJQeKonxapL9rM8',
     },

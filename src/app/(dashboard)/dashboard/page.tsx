@@ -53,8 +53,8 @@ function DashboardView() {
     const canOpenGroups = canAny(session, 'groups.view', 'groups.view_own');
     const canMarkAttendance =
         canOpenGroups &&
-        can(session, 'attendance.view') &&
-        can(session, 'attendance.mark');
+        canAny(session, 'attendance.view', 'attendance.view_own') &&
+        canAny(session, 'attendance.mark', 'attendance.mark_own');
 
     return (
         <>

@@ -101,6 +101,12 @@ Sessiyada `subscription` ham bor. Obuna tugaganda backend `402` qaytaradi —
 boshqa sahifalarni ochmaydi. `SubscriptionBanner` sinov muddati va tugash
 haqida eslatadi.
 
+`*.view_own` / `*.mark_own` ruxsatlari faqat foydalanuvchi o'zi dars beradigan
+guruhlarga yetadi (o'qituvchi roli). Bunday sahifa, menyu bandi va tugma
+`canAny(s, 'groups.view', 'groups.view_own')` bilan ochiladi; boshqa
+o'qituvchining guruhidagi amal (masalan, davomat) esa `group.teacher.id`
+bilan solishtiriladi — backend u yerda 404 qaytaradi.
+
 Sahifalar `<AccessGuard allow={(s) => can(s, '...')}>` bilan yopiladi, menyu
 `src/components/common/sidebar/data.tsx` da `visible` orqali filtrlanadi. Bu
 faqat interfeys to'sig'i — haqiqiy tekshiruv backenddagi `PermissionsGuard`da.
@@ -252,6 +258,9 @@ bo'sh qiymatni qabul qilmaydi.
   (`page`), limit va oy (`month`) `useListQuery` / `useUrlParam`
   (`hooks/use-url-state.ts`) orqali URL'da saqlanadi — "orqaga" qaytganda
   va sahifa yangilanganda yo'qolmaydi. Filtr uchun `useState` ishlatmang.
+  Sahifalangan ro'yxatda `useOffsetInRange(query.data?.count, offset, limit, setOffset)`
+  ham chaqiriladi — oxirgi sahifadagi yagona yozuv o'chirilsa, bo'sh sahifada
+  qolib ketmaslik uchun.
 - **Yaratish oynasiga to'g'ridan-to'g'ri havola:** `withNewParam('/students')`
   → `/students?new=1`. Sahifa `useOpenOnNewParam(open, canCreate)`
   (`hooks/use-new-param.ts`) bilan oynani ochadi va parametrni manzildan

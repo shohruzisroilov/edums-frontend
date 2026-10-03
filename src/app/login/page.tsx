@@ -35,16 +35,28 @@ async function signInWithPhone(
     phone_number: string,
     password: string,
 ): Promise<Session> {
+    let userError: ApiError;
     try {
         const res = await loginUser({ phone_number, password });
         return sessionFromAuthUser(res.token, res.user);
-    } catch (userError) {
-        if (!(userError instanceof ApiError) || userError.statusCode !== 401) {
-            throw userError;
+    } catch (error) {
+        if (!(error instanceof ApiError) || error.statusCode !== 401) {
+            throw error;
         }
+        userError = error;
     }
 
-    const res = await loginSuperAdmin({ phone_number, password });
+    let res;
+    try {
+        res = await loginSuperAdmin({ phone_number, password });
+    } catch (error) {
+        // Super admin ham emas — foydalanuvchi javobi aniqroq ("hisob faol
+        // emas" kabi), super adminniki esa doim umumiy "parol noto'g'ri".
+        if (error instanceof ApiError && error.statusCode === 401) {
+            throw userError;
+        }
+        throw error;
+    }
     return {
         token: res.token,
         kind: 'super_admin',

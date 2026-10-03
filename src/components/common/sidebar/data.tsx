@@ -1,6 +1,6 @@
 import type { TranslationKey } from '@/i18n/dictionaries/uz';
 import type { Session } from '@/types/api';
-import { can, isSuperAdmin } from '@/utils/access';
+import { can, canAny, isSuperAdmin } from '@/utils/access';
 import {
     Bank1,
     Buildings11,
@@ -48,7 +48,8 @@ const NAV_DATA: NavSection[] = [
                 titleKey: 'nav.dashboard',
                 url: '/dashboard',
                 icon: <DashboardSquare1 className='size-5' />,
-                visible: (session) => can(session, 'reports.view'),
+                visible: (session) =>
+                    canAny(session, 'reports.view', 'reports.view_own'),
             },
         ],
     },
@@ -59,19 +60,22 @@ const NAV_DATA: NavSection[] = [
                 titleKey: 'nav.students',
                 url: '/students',
                 icon: <UserCircle1 className='size-5' />,
-                visible: (session) => can(session, 'students.view'),
+                visible: (session) =>
+                    canAny(session, 'students.view', 'students.view_own'),
             },
             {
                 titleKey: 'nav.groups',
                 url: '/groups',
                 icon: <UserMultiple1 className='size-5' />,
-                visible: (session) => can(session, 'groups.view'),
+                visible: (session) =>
+                    canAny(session, 'groups.view', 'groups.view_own'),
             },
             {
                 titleKey: 'nav.schedule',
                 url: '/schedule',
                 icon: <CalendarTime className='size-5' />,
-                visible: (session) => can(session, 'groups.view'),
+                visible: (session) =>
+                    canAny(session, 'groups.view', 'groups.view_own'),
             },
             {
                 titleKey: 'nav.leads',

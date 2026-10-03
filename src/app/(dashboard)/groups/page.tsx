@@ -25,7 +25,7 @@ import { SearchInput } from '@/components/ui/search-input';
 import { GroupStatusBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
-import { useListQuery } from '@/hooks/use-list-query';
+import { useListQuery, useOffsetInRange } from '@/hooks/use-list-query';
 import { useOpenOnNewParam } from '@/hooks/use-new-param';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
@@ -111,6 +111,7 @@ function GroupsView() {
                 offset,
             }),
     });
+    useOffsetInRange(query.data?.count, offset, limit, setOffset);
 
     const branchesQuery = useQuery({
         queryKey: ['branches'],

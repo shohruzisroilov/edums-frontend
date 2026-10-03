@@ -102,11 +102,15 @@ export function ImageUploadField({
                     )}
                 </div>
 
+                {/* Backend faqat shu to'rt turdagi rasmni qabul qiladi
+                    (upload.config.ts) — boshqasini tanlash 400 berardi. */}
                 <input
                     ref={inputRef}
                     type='file'
-                    accept='image/*'
+                    accept='image/jpeg,image/png,image/webp,image/gif'
                     className='sr-only'
+                    tabIndex={-1}
+                    aria-label={label}
                     onChange={handleChange}
                 />
             </div>

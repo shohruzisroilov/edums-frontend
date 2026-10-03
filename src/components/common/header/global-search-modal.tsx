@@ -8,7 +8,7 @@ import { listGroups } from '@/services/api/groups';
 import { listLeads } from '@/services/api/leads';
 import { listStudents } from '@/services/api/students';
 import type { Group, Lead, Student } from '@/types/api';
-import { can } from '@/utils/access';
+import { can, canAny } from '@/utils/access';
 import { cn } from '@/utils/cn';
 import { formatPhone, fullName } from '@/utils/format';
 import { balanceTone } from '@/utils/tone';
@@ -46,8 +46,8 @@ export function GlobalSearchModal({
     const requestId = useRef(0);
 
     // Ruxsati yo'q bo'limga so'rov yuborilmaydi — baribir 403 qaytadi.
-    const canStudents = can(session, 'students.view');
-    const canGroups = can(session, 'groups.view');
+    const canStudents = canAny(session, 'students.view', 'students.view_own');
+    const canGroups = canAny(session, 'groups.view', 'groups.view_own');
     const canLeads = can(session, 'leads.view');
 
     const [query, setQuery] = useState('');

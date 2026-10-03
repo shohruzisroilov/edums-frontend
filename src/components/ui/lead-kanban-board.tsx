@@ -82,8 +82,14 @@ export function LeadKanbanBoard({
     filters: KanbanFilters;
     /** Holat filtri tanlangan bo'lsa — faqat shu ustun. */
     onlyStatus?: LeadStatus;
-    /** "O'quvchi bo'ldi" bu yerga kelmaydi — u faqat onConvert orqali. */
-    onStatusChange: (leadId: string, status: EditableLeadStatus) => void;
+    /**
+     * "O'quvchi bo'ldi" bu yerga kelmaydi — u faqat onConvert orqali.
+     * Saqlangach va ro'yxat qayta yuklangach tugaydi; xatoni sahifa ko'rsatadi.
+     */
+    onStatusChange: (
+        leadId: string,
+        status: EditableLeadStatus,
+    ) => Promise<unknown>;
     onEdit: (lead: Lead) => void;
     onConvert: (lead: Lead) => void;
     canUpdate: boolean;
@@ -171,11 +177,25 @@ export function LeadKanbanBoard({
                 ...prev,
                 [lead.id]: targetStatus,
             }));
-            onStatusChange(lead.id, targetStatus as EditableLeadStatus);
+            // Server javobi kelgach optimistik belgi olib tashlanadi: aks
+            // holda xatoda karta noto'g'ri ustunda qolardi, keyinroq forma
+            // orqali o'zgargan holatni ham eski belgi bosib ketardi.
+            onStatusChange(lead.id, targetStatus as EditableLeadStatus)
+                .catch(() => undefined)
+                .finally(() =>
+                    setOptimisticStatusMap((prev) => {
+                        const next = { ...prev };
+                        delete next[lead.id];
+                        return next;
+                    }),
+                );
         }
     }
 
-    function getColumnLeads(status: LeadStatus): { leads: Lead[]; count: number } {
+    function getColumnLeads(status: LeadStatus): {
+        leads: Lead[];
+        count: number;
+    } {
         const queryCol = columns[status];
         const rawLeads = queryCol.leads;
 
@@ -324,7 +344,7 @@ export function LeadKanbanBoard({
                                                 className={cn(
                                                     'border-card-border bg-card-surface-area hover:border-brand-accent/40 flex flex-col justify-between rounded-xl border p-3.5 shadow-2xs transition-all duration-200 hover:shadow-sm',
                                                     draggable &&
-                                                        'cursor-grab active:cursor-grabbing hover:-translate-y-0.5',
+                                                        'cursor-grab hover:-translate-y-0.5 active:cursor-grabbing',
                                                     isDraggingThis &&
                                                         'border-brand-accent bg-brand-accent/5 scale-[0.98] border-dashed opacity-40 shadow-xl',
                                                 )}
@@ -341,7 +361,9 @@ export function LeadKanbanBoard({
                                                                 </span>
                                                             )}
                                                             <span className='truncate'>
-                                                                {lead.first_name}{' '}
+                                                                {
+                                                                    lead.first_name
+                                                                }{' '}
                                                                 {lead.last_name ||
                                                                     ''}
                                                             </span>
@@ -468,7 +490,8 @@ export function LeadKanbanBoard({
                                                             >
                                                                 <User2 className='size-3.5' />
                                                                 <span>
-                                                                    + O&apos;quvchi
+                                                                    +
+                                                                    O&apos;quvchi
                                                                 </span>
                                                             </button>
                                                         )}
@@ -516,4 +539,3 @@ export function LeadKanbanBoard({
         </div>
     );
 }
-

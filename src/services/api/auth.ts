@@ -22,7 +22,7 @@ export function loginUser(payload: { phone_number: string; password: string }) {
     });
 }
 
-/** POST /api/auth/register/send-code — telefonga 6 xonali kod. */
+/** POST /api/auth/register/send-code — telefonga kod (uzunligi javobdagi `code_length`). */
 export function sendRegistrationCode(phone_number: string) {
     return request<SendCodeResponse>('/auth/register/send-code', {
         method: 'POST',
@@ -73,8 +73,8 @@ export async function updateMe(payload: UpdateOwnProfilePayload) {
     return res.data;
 }
 
-/** PATCH /api/auth/me/password — joriy parol noto'g'ri bo'lsa 400. */
 /**
+ * PATCH /api/auth/me/password — joriy parol noto'g'ri bo'lsa 400.
  * Boshqa qurilmalardagi sessiyalar tugaydi; javobdagi yangi token bilan
  * shu sessiya davom etadi — uni sessiyaga yozish kerak.
  */

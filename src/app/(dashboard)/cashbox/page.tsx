@@ -27,7 +27,7 @@ import { SearchInput } from '@/components/ui/search-input';
 import { PaymentMethodBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
-import { useListQuery } from '@/hooks/use-list-query';
+import { useListQuery, useOffsetInRange } from '@/hooks/use-list-query';
 import { useOpenOnNewParam } from '@/hooks/use-new-param';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
@@ -104,6 +104,7 @@ function CashboxView() {
                 offset,
             }),
     });
+    useOffsetInRange(query.data?.count, offset, limit, setOffset);
 
     const removeMutation = useMutation({
         mutationFn: (id: string) => deleteStudentPayment(id),

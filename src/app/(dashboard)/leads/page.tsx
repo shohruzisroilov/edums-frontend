@@ -28,7 +28,7 @@ import {
 } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
-import { useListQuery } from '@/hooks/use-list-query';
+import { useListQuery, useOffsetInRange } from '@/hooks/use-list-query';
 import { useUrlParam } from '@/hooks/use-url-state';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
@@ -132,14 +132,18 @@ function LeadsView() {
                 offset: kanban ? 0 : offset,
             }),
     });
+    useOffsetInRange(query.data?.count, offset, limit, setOffset);
     const statsQuery = useQuery({
         queryKey: ['lead-stats'],
         queryFn: getLeadStats,
     });
 
+    /** Yangi ro'yxat yuklangach tugaydi — Kanban optimistik holatni shunda tozalaydi. */
     function invalidate() {
-        queryClient.invalidateQueries({ queryKey: ['leads'] });
-        queryClient.invalidateQueries({ queryKey: ['lead-stats'] });
+        return Promise.all([
+            queryClient.invalidateQueries({ queryKey: ['leads'] }),
+            queryClient.invalidateQueries({ queryKey: ['lead-stats'] }),
+        ]);
     }
 
     const statusMutation = useMutation({
@@ -151,8 +155,8 @@ function LeadsView() {
             status: NonNullable<LeadPayload['status']>;
         }) => updateLead(id, { status }),
         onSuccess: () => {
-            invalidate();
             toast.success(t('leads.updated'));
+            return invalidate();
         },
         onError: (error) => toastError(error),
     });
@@ -421,7 +425,7 @@ function LeadsView() {
                                 | undefined
                         }
                         onStatusChange={(id, status) =>
-                            statusMutation.mutate({ id, status })
+                            statusMutation.mutateAsync({ id, status })
                         }
                         onEdit={(lead) => {
                             setEditing(lead);

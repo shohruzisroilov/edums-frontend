@@ -24,7 +24,7 @@ import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { PaymentStatusBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
-import { useListQuery } from '@/hooks/use-list-query';
+import { useListQuery, useOffsetInRange } from '@/hooks/use-list-query';
 import { useT } from '@/i18n/provider';
 import {
     approvePaymentRequest,
@@ -72,6 +72,7 @@ function PaymentsView() {
                 offset,
             }),
     });
+    useOffsetInRange(query.data?.count, offset, limit, setOffset);
 
     const approveMutation = useMutation({
         mutationFn: (id: string) => approvePaymentRequest(id),

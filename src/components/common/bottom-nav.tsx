@@ -2,7 +2,7 @@
 
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
-import { can, isSuperAdmin } from '@/utils/access';
+import { can, canAny, isSuperAdmin } from '@/utils/access';
 import { cn } from '@/utils/cn';
 import {
     Buildings11,
@@ -37,9 +37,9 @@ export function BottomNav({ onMenuClick }: BottomNavProps) {
     const isSuper = isSuperAdmin(session);
 
     // Permissions for center users
-    const canStudents = can(session, 'students.view');
-    const canGroups = can(session, 'groups.view');
-    const canDashboard = can(session, 'reports.view');
+    const canStudents = canAny(session, 'students.view', 'students.view_own');
+    const canGroups = canAny(session, 'groups.view', 'groups.view_own');
+    const canDashboard = canAny(session, 'reports.view', 'reports.view_own');
     const canCashbox = can(session, 'payments.view');
 
     const canAddPayment = can(session, 'payments.create');
