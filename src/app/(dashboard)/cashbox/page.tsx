@@ -180,8 +180,8 @@ function CashboxView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5'>
-                <div className='min-w-[220px] flex-1'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
+                <div className='min-w-[220px] flex-1 lg:min-w-40'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
@@ -199,22 +199,6 @@ function CashboxView() {
                         setFilter('from', '');
                         setFilter('to', '');
                     }}
-                    activeChips={[
-                        ...(filters.method
-                            ? [
-                                  {
-                                      key: 'method',
-                                      label: t('filters.chip', {
-                                          label: t('cashbox.method'),
-                                          value: t(
-                                              `paymentMethod.${filters.method as PaymentMethod}`,
-                                          ),
-                                      }),
-                                      onRemove: () => setFilter('method', ''),
-                                  },
-                              ]
-                            : []),
-                    ]}
                 >
                     <SelectInput
                         label={t('cashbox.allMethods')}
@@ -235,8 +219,8 @@ function CashboxView() {
                     </div>
                 </MobileFilterSheet>
 
-                <div className='hidden flex-wrap items-center gap-3 sm:flex'>
-                    <div className='w-40'>
+                <div className='hidden min-w-0 flex-wrap items-center gap-3 sm:flex lg:flex-nowrap'>
+                    <div className='w-40 min-w-28 shrink'>
                         <SelectInput
                             options={PAYMENT_METHODS.map((method) => ({
                                 value: method,

@@ -40,7 +40,7 @@ export function SearchInput({
     const label = placeholder ?? t('common.search');
 
     return (
-        <div className='relative w-full min-w-[200px] sm:max-w-64'>
+        <div className='relative w-full min-w-40 sm:max-w-64'>
             <Search1
                 aria-hidden='true'
                 className='text-text-tertiary pointer-events-none absolute top-1/2 left-3 size-4.5 -translate-y-1/2'

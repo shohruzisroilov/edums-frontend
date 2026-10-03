@@ -175,7 +175,7 @@ function ExpensesView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
                 <MobileFilterSheet
                     activeCount={
                         (filters.category ? 1 : 0) +
@@ -186,22 +186,6 @@ function ExpensesView() {
                         setFilter('from', '');
                         setFilter('to', '');
                     }}
-                    activeChips={[
-                        ...(filters.category
-                            ? [
-                                  {
-                                      key: 'category',
-                                      label: t('filters.chip', {
-                                          label: t('expenses.category'),
-                                          value: t(
-                                              `expenseCategory.${filters.category as ExpenseCategory}`,
-                                          ),
-                                      }),
-                                      onRemove: () => setFilter('category', ''),
-                                  },
-                              ]
-                            : []),
-                    ]}
                 >
                     <SelectInput
                         label={t('expenses.allCategories')}
@@ -222,8 +206,8 @@ function ExpensesView() {
                     </div>
                 </MobileFilterSheet>
 
-                <div className='hidden flex-wrap items-center gap-3 sm:flex'>
-                    <div className='w-52'>
+                <div className='hidden min-w-0 flex-wrap items-center gap-3 sm:flex lg:flex-nowrap'>
+                    <div className='w-52 min-w-28 shrink'>
                         <SelectInput
                             options={EXPENSE_CATEGORIES.map((category) => ({
                                 value: category,

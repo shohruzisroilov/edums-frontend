@@ -9,95 +9,62 @@ import {
 } from '@/components/ui/data-state';
 import { SelectInput } from '@/components/ui/form-field';
 import { LinkButton } from '@/components/ui/link-button';
+import { ClearFiltersButton } from '@/components/ui/mobile-filter-sheet';
 import { Modal } from '@/components/ui/modal';
+import { formatMonth } from '@/components/ui/month-switcher';
 import { PageHeader } from '@/components/ui/page-header';
+import { useFormat } from '@/hooks/use-format';
 import { useListQuery } from '@/hooks/use-list-query';
+import { useUrlParams } from '@/hooks/use-url-state';
 import { useT } from '@/i18n/provider';
+import type { TranslationKey } from '@/i18n/dictionaries/uz';
 import { listBranches } from '@/services/api/branches';
 import { getSchedule } from '@/services/api/groups';
 import { listRooms } from '@/services/api/rooms';
 import { listUserOptions } from '@/services/api/users';
-import { WEEKDAYS, type Group, type Weekday } from '@/types/api';
+import type { Group } from '@/types/api';
 import { canAny } from '@/utils/access';
 import { cn } from '@/utils/cn';
-import { fullName } from '@/utils/format';
-import type { TranslationKey } from '@/i18n/dictionaries/uz';
-import { CalendarTime, Eye, Layout20 } from '@tailgrids/icons';
+import { fullName, toISODate } from '@/utils/format';
+import {
+    Calendar,
+    CalendarTime,
+    ChevronLeft,
+    ChevronRight,
+    Eye,
+    Layout20,
+    MenuHamburger1,
+} from '@tailgrids/icons';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
+import { AgendaList, WeekStrip } from './_components/agenda';
+import {
+    CALENDAR_VIEWS,
+    isISODate,
+    lessonsByDate,
+    monthGridDates,
+    monthOf,
+    shiftDate,
+    weekDates,
+    weekdayOf,
+    type CalendarView,
+} from './_components/calendar';
+import { MonthGrid } from './_components/month-grid';
+import { TimeGrid } from './_components/time-grid';
 
-type ViewMode = 'grid' | 'cards' | 'day';
+const VIEW_ICONS: Record<CalendarView, ReactNode> = {
+    day: <CalendarTime className='size-3.5' />,
+    week: <Layout20 className='size-3.5' />,
+    month: <Calendar className='size-3.5' />,
+    list: <MenuHamburger1 className='size-3.5' />,
+};
 
-const COLOR_PALETTES = [
-    {
-        bg: 'bg-indigo-50 dark:bg-indigo-950/40',
-        border: 'border-indigo-200 dark:border-indigo-800/60',
-        text: 'text-indigo-900 dark:text-indigo-200',
-        subtext: 'text-indigo-600 dark:text-indigo-400',
-        accent: 'bg-indigo-500',
-    },
-    {
-        bg: 'bg-emerald-50 dark:bg-emerald-950/40',
-        border: 'border-emerald-200 dark:border-emerald-800/60',
-        text: 'text-emerald-900 dark:text-emerald-200',
-        subtext: 'text-emerald-600 dark:text-emerald-400',
-        accent: 'bg-emerald-500',
-    },
-    {
-        bg: 'bg-amber-50 dark:bg-amber-950/40',
-        border: 'border-amber-200 dark:border-amber-800/60',
-        text: 'text-amber-900 dark:text-amber-200',
-        subtext: 'text-amber-600 dark:text-amber-400',
-        accent: 'bg-amber-500',
-    },
-    {
-        bg: 'bg-purple-50 dark:bg-purple-950/40',
-        border: 'border-purple-200 dark:border-purple-800/60',
-        text: 'text-purple-900 dark:text-purple-200',
-        subtext: 'text-purple-600 dark:text-purple-400',
-        accent: 'bg-purple-500',
-    },
-    {
-        bg: 'bg-rose-50 dark:bg-rose-950/40',
-        border: 'border-rose-200 dark:border-rose-800/60',
-        text: 'text-rose-900 dark:text-rose-200',
-        subtext: 'text-rose-600 dark:text-rose-400',
-        accent: 'bg-rose-500',
-    },
-    {
-        bg: 'bg-cyan-50 dark:bg-cyan-950/40',
-        border: 'border-cyan-200 dark:border-cyan-800/60',
-        text: 'text-cyan-900 dark:text-cyan-200',
-        subtext: 'text-cyan-600 dark:text-cyan-400',
-        accent: 'bg-cyan-500',
-    },
-];
-
-function getGroupPalette(id: string) {
-    let hash = 0;
-    for (let i = 0; i < id.length; i++) {
-        hash = (hash << 5) - hash + id.charCodeAt(i);
-        hash |= 0;
-    }
-    const index = Math.abs(hash) % COLOR_PALETTES.length;
-    return COLOR_PALETTES[index];
-}
-
-/**
- * Jadval soatlari: odatda 08:00–21:00, lekin undan oldin yoki keyin
- * boshlanadigan dars bo'lsa, oraliq kengayadi — aks holda u jadvalda
- * umuman ko'rinmay qolardi.
- */
-function hourRange(groups: Group[]): number[] {
-    let first = 8;
-    let last = 21;
-    for (const group of groups) {
-        const hour = parseInt(group.lesson_start.split(':')[0], 10);
-        if (hour < first) first = hour;
-        if (hour > last) last = hour;
-    }
-    return Array.from({ length: last - first + 1 }, (_, i) => i + first);
-}
+const VIEW_LABELS: Record<CalendarView, TranslationKey> = {
+    day: 'schedule.viewDay',
+    week: 'schedule.viewWeek',
+    month: 'schedule.viewMonth',
+    list: 'schedule.viewList',
+};
 
 export default function SchedulePage() {
     return (
@@ -111,20 +78,51 @@ export default function SchedulePage() {
     );
 }
 
+/**
+ * Dars jadvali kalendar ko'rinishida: kun, hafta, oy va ro'yxat. Darslar
+ * guruhlarning hafta kunlaridan har bir sana uchun hisoblanadi — guruh
+ * boshlanishidan oldin va tugaganidan keyin dars ko'rsatilmaydi.
+ *
+ * Ko'rinish va sana manzilda (`?view=month&date=2026-10-03`): guruhni ochib
+ * "orqaga" qaytilganda kalendar o'sha joyda qoladi.
+ */
 function ScheduleView() {
     const t = useT();
-    const todayWeekday = (() => {
-        const d = new Date().getDay();
-        return (d === 0 ? 7 : d) as Weekday;
-    })();
-    const [viewMode, setViewMode] = useState<ViewMode>(() => {
-        if (typeof window !== 'undefined' && window.innerWidth < 768) {
-            return 'day';
-        }
-        return 'grid';
-    });
-    const [selectedDay, setSelectedDay] = useState<Weekday>(todayWeekday);
-    const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
+    const { formatDate } = useFormat();
+    const today = toISODate(new Date());
+
+    // Telefonda haftalik to'r tor — kun ko'rinishi bilan ochiladi.
+    const [defaultView] = useState<CalendarView>(() =>
+        typeof window !== 'undefined' && window.innerWidth < 768
+            ? 'day'
+            : 'week',
+    );
+    // Ko'rinish va sana bitta `update` bilan yoziladi: "kunni ochish" ikkalasini
+    // birga o'zgartiradi, ikki alohida yozuv esa bir-birini bosib ketardi.
+    const { params, update } = useUrlParams();
+    const rawView = params.get('view') ?? defaultView;
+    const rawDate = params.get('date') ?? today;
+    const view = CALENDAR_VIEWS.includes(rawView as CalendarView)
+        ? (rawView as CalendarView)
+        : defaultView;
+    const date = isISODate(rawDate) ? rawDate : today;
+
+    const navigate = (next: { view?: CalendarView; date?: string }) =>
+        update({
+            ...(next.view !== undefined && {
+                view: next.view === defaultView ? null : next.view,
+            }),
+            ...(next.date !== undefined && {
+                date: next.date === today ? null : next.date,
+            }),
+        });
+    const setDate = (next: string) => navigate({ date: next });
+    const setView = (next: CalendarView) => navigate({ view: next });
+
+    const [selected, setSelected] = useState<{
+        group: Group;
+        date: string;
+    } | null>(null);
 
     // Filtrlar manzilda: guruhni ochib "orqaga" qaytganda saqlanadi.
     const { filters, setFilter, setFilters } = useListQuery({
@@ -157,7 +155,37 @@ function ScheduleView() {
     });
 
     const branches = branchesQuery.data ?? [];
-    const scheduleData = query.data ?? [];
+    const groups = query.data;
+    const showBranch = branches.length > 1 && !filters.branch_id;
+
+    const week = useMemo(() => weekDates(date), [date]);
+    const visibleDates = useMemo(
+        () =>
+            view === 'day'
+                ? [date]
+                : view === 'month'
+                  ? monthGridDates(date)
+                  : week,
+        [view, date, week],
+    );
+    // Kun ko'rinishidagi hafta tasmasi ham nuqtalar uchun haftaning darslarini so'raydi.
+    const lessons = useMemo(
+        () => lessonsByDate(groups ?? [], view === 'day' ? week : visibleDates),
+        [groups, view, week, visibleDates],
+    );
+
+    const periodLabel =
+        view === 'day'
+            ? `${t(`weekdayLong.${weekdayOf(date)}` as TranslationKey)}, ${formatDate(date)}`
+            : view === 'month'
+              ? formatMonth(monthOf(date), t)
+              : `${formatDate(week[0])} – ${formatDate(week[6])}`;
+
+    const openDay = (day: string) => navigate({ view: 'day', date: day });
+    const select = (group: Group, day: string) =>
+        setSelected({ group, date: day });
+
+    const dayLessons = lessons.get(date) ?? [];
 
     return (
         <>
@@ -165,53 +193,71 @@ function ScheduleView() {
                 title={t('schedule.title')}
                 description={t('schedule.subtitle')}
                 actions={
-                    <div className='border-card-border bg-card-surface-area flex max-w-full items-center overflow-x-auto rounded-lg border p-1 shadow-xs'>
-                        <button
-                            type='button'
-                            onClick={() => setViewMode('grid')}
-                            className={cn(
-                                'flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
-                                viewMode === 'grid'
-                                    ? 'bg-brand-accent text-white shadow-xs'
-                                    : 'text-text-tertiary hover:text-text-primary',
-                            )}
-                        >
-                            <Layout20 className='size-3.5' />
-                            {t('schedule.viewGrid')}
-                        </button>
-                        <button
-                            type='button'
-                            onClick={() => setViewMode('cards')}
-                            className={cn(
-                                'flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
-                                viewMode === 'cards'
-                                    ? 'bg-brand-accent text-white shadow-xs'
-                                    : 'text-text-tertiary hover:text-text-primary',
-                            )}
-                        >
-                            <CalendarTime className='size-3.5' />
-                            {t('schedule.viewWeek')}
-                        </button>
-                        <button
-                            type='button'
-                            onClick={() => setViewMode('day')}
-                            className={cn(
-                                'flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
-                                viewMode === 'day'
-                                    ? 'bg-brand-accent text-white shadow-xs'
-                                    : 'text-text-tertiary hover:text-text-primary',
-                            )}
-                        >
-                            {t('schedule.viewDay')}
-                        </button>
+                    <div
+                        role='group'
+                        aria-label={t('schedule.title')}
+                        className='border-card-border bg-card-surface-area flex max-w-full items-center overflow-x-auto rounded-lg border p-1 shadow-xs'
+                    >
+                        {CALENDAR_VIEWS.map((mode) => (
+                            <button
+                                key={mode}
+                                type='button'
+                                onClick={() => setView(mode)}
+                                aria-pressed={view === mode}
+                                className={cn(
+                                    'flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
+                                    view === mode
+                                        ? 'bg-brand-accent text-white shadow-xs'
+                                        : 'text-text-tertiary hover:text-text-primary',
+                                )}
+                            >
+                                {VIEW_ICONS[mode]}
+                                {t(VIEW_LABELS[mode])}
+                            </button>
+                        ))}
                     </div>
                 }
             />
 
-            <div className='flex flex-wrap items-center justify-between gap-3 px-4 pb-4 sm:px-5'>
-                <div className='flex flex-wrap gap-3'>
+            <div className='flex flex-wrap items-center justify-between gap-3 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
+                <div className='flex min-w-0 shrink-0 items-center gap-2'>
+                    <Button
+                        appearance='outline'
+                        size='sm'
+                        isDisabled={date === today}
+                        onPress={() => setDate(today)}
+                    >
+                        {t('schedule.today')}
+                    </Button>
+                    <Button
+                        appearance='outline'
+                        size='sm'
+                        iconOnly
+                        aria-label={t('schedule.previous')}
+                        onPress={() => setDate(shiftDate(view, date, -1))}
+                    >
+                        <ChevronLeft />
+                    </Button>
+                    <Button
+                        appearance='outline'
+                        size='sm'
+                        iconOnly
+                        aria-label={t('schedule.next')}
+                        onPress={() => setDate(shiftDate(view, date, 1))}
+                    >
+                        <ChevronRight />
+                    </Button>
+                    <h2
+                        aria-live='polite'
+                        className='font-display text-text-primary truncate text-sm font-semibold tabular-nums sm:text-base'
+                    >
+                        {periodLabel}
+                    </h2>
+                </div>
+
+                <div className='flex w-full min-w-0 flex-wrap justify-end gap-3 sm:w-auto lg:flex-nowrap'>
                     {branches.length > 1 && (
-                        <div className='w-full sm:w-48'>
+                        <div className='w-full min-w-28 shrink sm:w-48'>
                             <SelectInput
                                 options={branches.map((branch) => ({
                                     value: branch.id,
@@ -226,7 +272,7 @@ function ScheduleView() {
                             />
                         </div>
                     )}
-                    <div className='w-full sm:w-52'>
+                    <div className='w-full min-w-28 shrink sm:w-52'>
                         <SelectInput
                             options={(teachersQuery.data ?? []).map((user) => ({
                                 value: user.id,
@@ -239,7 +285,7 @@ function ScheduleView() {
                             }
                         />
                     </div>
-                    <div className='w-full sm:w-44'>
+                    <div className='w-full min-w-28 shrink sm:w-44'>
                         <SelectInput
                             options={(roomsQuery.data ?? []).map((room) => ({
                                 value: room.id,
@@ -252,27 +298,21 @@ function ScheduleView() {
                             }
                         />
                     </div>
+                    <ClearFiltersButton
+                        activeCount={
+                            (filters.branch_id ? 1 : 0) +
+                            (filters.teacher_id ? 1 : 0) +
+                            (filters.room_id ? 1 : 0)
+                        }
+                        onClear={() =>
+                            setFilters({
+                                branch_id: '',
+                                teacher_id: '',
+                                room_id: '',
+                            })
+                        }
+                    />
                 </div>
-
-                {viewMode === 'day' && (
-                    <div className='border-card-border bg-card-surface-area flex items-center gap-1 overflow-x-auto rounded-lg border p-1'>
-                        {WEEKDAYS.map((day) => (
-                            <button
-                                key={day}
-                                type='button'
-                                onClick={() => setSelectedDay(day)}
-                                className={cn(
-                                    'rounded-md px-3 py-1 text-xs font-medium transition-colors',
-                                    selectedDay === day
-                                        ? 'bg-brand-accent/15 text-brand-accent font-semibold'
-                                        : 'text-text-tertiary hover:text-text-primary',
-                                )}
-                            >
-                                {t(`weekday.${day}` as TranslationKey)}
-                            </button>
-                        ))}
-                    </div>
-                )}
             </div>
 
             <div className='px-4 pb-8 sm:px-5'>
@@ -280,106 +320,102 @@ function ScheduleView() {
                     <TableSkeleton rows={6} columns={7} />
                 ) : query.error ? (
                     <ErrorState error={query.error} />
-                ) : scheduleData.length === 0 ? (
+                ) : query.data.length === 0 ? (
                     <div className='border-card-border bg-card-background rounded-xl border p-8'>
                         <EmptyState
                             message={t('schedule.empty')}
                             icon={<CalendarTime className='size-5' />}
                         />
                     </div>
-                ) : viewMode === 'grid' ? (
-                    <TimetableGrid
-                        groups={scheduleData}
-                        onSelectGroup={setSelectedGroup}
-                        showBranch={branches.length > 1 && !filters.branch_id}
+                ) : view === 'month' ? (
+                    <MonthGrid
+                        dates={visibleDates}
+                        month={monthOf(date)}
+                        lessons={lessons}
+                        today={today}
+                        onOpenDay={openDay}
+                        onSelect={select}
                     />
-                ) : viewMode === 'day' ? (
-                    <DayView
-                        day={selectedDay}
-                        groups={scheduleData.filter((g) =>
-                            g.lesson_days.includes(selectedDay as Weekday),
-                        )}
-                        onSelectGroup={setSelectedGroup}
-                        showBranch={branches.length > 1 && !filters.branch_id}
+                ) : view === 'list' ? (
+                    <AgendaList
+                        dates={week}
+                        lessons={lessons}
+                        today={today}
+                        showBranch={showBranch}
+                        onSelect={select}
+                        onOpenDay={openDay}
                     />
                 ) : (
-                    <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-7'>
-                        {WEEKDAYS.map((day) => (
-                            <DayColumn
-                                key={day}
-                                title={t(
-                                    `weekdayLong.${day}` as TranslationKey,
-                                )}
-                                groups={scheduleData.filter((group) =>
-                                    group.lesson_days.includes(day),
-                                )}
-                                onSelectGroup={setSelectedGroup}
-                                showBranch={
-                                    branches.length > 1 && !filters.branch_id
-                                }
+                    <>
+                        {view === 'day' && (
+                            <WeekStrip
+                                dates={week}
+                                selected={date}
+                                today={today}
+                                lessons={lessons}
+                                onSelect={setDate}
                             />
-                        ))}
-                    </div>
+                        )}
+                        {view === 'day' && dayLessons.length === 0 && (
+                            <p className='text-text-tertiary mb-3 text-center text-sm'>
+                                {t('schedule.noLessonsDay')}
+                            </p>
+                        )}
+                        <TimeGrid
+                            dates={visibleDates}
+                            lessons={lessons}
+                            today={today}
+                            showBranch={showBranch}
+                            onSelect={select}
+                            onOpenDay={view === 'week' ? openDay : undefined}
+                        />
+                    </>
                 )}
             </div>
 
-            {selectedGroup && (
+            {selected && (
                 <Modal
                     open
-                    onClose={() => setSelectedGroup(null)}
-                    title={selectedGroup.name}
-                    description={selectedGroup.course.name}
+                    onClose={() => setSelected(null)}
+                    title={selected.group.name}
+                    description={`${selected.group.course.name} · ${t(
+                        `weekdayLong.${weekdayOf(selected.date)}` as TranslationKey,
+                    )}, ${formatDate(selected.date)}`}
                     size='md'
                 >
                     <div className='flex flex-col gap-4 py-2'>
                         <div className='grid grid-cols-2 gap-3 text-sm'>
-                            <div className='border-card-border bg-card-surface-area rounded-lg border p-3'>
-                                <p className='text-text-tertiary text-xs font-medium'>
-                                    {t('schedule.lessonTime')}
-                                </p>
-                                <p className='text-text-primary mt-1 font-semibold tabular-nums'>
-                                    {selectedGroup.lesson_start} –{' '}
-                                    {selectedGroup.lesson_end}
-                                </p>
-                            </div>
-                            <div className='border-card-border bg-card-surface-area rounded-lg border p-3'>
-                                <p className='text-text-tertiary text-xs font-medium'>
-                                    {t('groups.room')}
-                                </p>
-                                <p className='text-text-primary mt-1 font-semibold'>
-                                    {selectedGroup.room?.name ?? '—'}
-                                </p>
-                            </div>
-                            <div className='border-card-border bg-card-surface-area rounded-lg border p-3'>
-                                <p className='text-text-tertiary text-xs font-medium'>
-                                    {t('groups.teacher')}
-                                </p>
-                                <p className='text-text-primary mt-1 font-semibold'>
-                                    {selectedGroup.teacher
-                                        ? fullName(selectedGroup.teacher)
-                                        : '—'}
-                                </p>
-                            </div>
-                            <div className='border-card-border bg-card-surface-area rounded-lg border p-3'>
-                                <p className='text-text-tertiary text-xs font-medium'>
-                                    {t('groups.students')}
-                                </p>
-                                <p className='text-text-primary mt-1 font-semibold tabular-nums'>
-                                    {selectedGroup.students_count}
-                                </p>
-                            </div>
+                            <Fact label={t('schedule.lessonTime')}>
+                                <span className='tabular-nums'>
+                                    {selected.group.lesson_start} –{' '}
+                                    {selected.group.lesson_end}
+                                </span>
+                            </Fact>
+                            <Fact label={t('groups.room')}>
+                                {selected.group.room?.name ?? '—'}
+                            </Fact>
+                            <Fact label={t('groups.teacher')}>
+                                {selected.group.teacher
+                                    ? fullName(selected.group.teacher)
+                                    : '—'}
+                            </Fact>
+                            <Fact label={t('groups.students')}>
+                                <span className='tabular-nums'>
+                                    {selected.group.students_count}
+                                </span>
+                            </Fact>
                         </div>
 
                         <div className='mt-2 flex items-center justify-end gap-2'>
                             <Button
                                 appearance='outline'
                                 size='md'
-                                onPress={() => setSelectedGroup(null)}
+                                onPress={() => setSelected(null)}
                             >
                                 {t('common.close')}
                             </Button>
                             <LinkButton
-                                href={`/groups/${selectedGroup.id}`}
+                                href={`/groups/${selected.group.id}`}
                                 appearance='fill'
                             >
                                 <Eye />
@@ -393,345 +429,11 @@ function ScheduleView() {
     );
 }
 
-/** 2D Vaqt Jadvali (Timetable Grid View) */
-function TimetableGrid({
-    groups,
-    onSelectGroup,
-    showBranch: _showBranch,
-}: {
-    groups: Group[];
-    onSelectGroup: (g: Group) => void;
-    showBranch: boolean;
-}) {
-    const t = useT();
-    const hours = useMemo(() => hourRange(groups), [groups]);
-
-    // Group lessons mapped by hour and day
-    const lessonsByCell = useMemo(() => {
-        const map = new Map<string, Group[]>();
-        for (const group of groups) {
-            const startHour = parseInt(group.lesson_start.split(':')[0], 10);
-            for (const day of group.lesson_days) {
-                const key = `${day}-${startHour}`;
-                const list = map.get(key) ?? [];
-                list.push(group);
-                map.set(key, list);
-            }
-        }
-        return map;
-    }, [groups]);
-
+function Fact({ label, children }: { label: string; children: ReactNode }) {
     return (
-        <div className='border-card-border bg-card-background overflow-x-auto rounded-xl border shadow-xs'>
-            <table className='w-full border-collapse text-left'>
-                <thead>
-                    <tr className='border-card-border bg-card-surface-area text-text-primary border-b text-xs font-semibold'>
-                        <th className='border-card-border w-20 border-r p-3 text-center'>
-                            {t('schedule.time')}
-                        </th>
-                        {WEEKDAYS.map((day) => (
-                            <th
-                                key={day}
-                                className='border-card-border min-w-[150px] border-r p-3 text-center last:border-r-0'
-                            >
-                                {t(`weekdayLong.${day}`)}
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody className='divide-card-border divide-y text-xs'>
-                    {hours.map((hour) => {
-                        const hourFormatted = `${String(hour).padStart(2, '0')}:00`;
-                        return (
-                            <tr
-                                key={hour}
-                                className='group hover:bg-card-surface-area/40'
-                            >
-                                <td className='border-card-border bg-card-surface-area/30 text-text-tertiary border-r p-2.5 text-center font-medium tabular-nums'>
-                                    {hourFormatted}
-                                </td>
-                                {WEEKDAYS.map((day) => {
-                                    const key = `${day}-${hour}`;
-                                    const cellGroups =
-                                        lessonsByCell.get(key) ?? [];
-                                    return (
-                                        <td
-                                            key={day}
-                                            className='border-card-border min-w-[150px] border-r p-1.5 align-top last:border-r-0'
-                                        >
-                                            <div className='flex flex-col gap-1.5'>
-                                                {cellGroups.map((group) => {
-                                                    const palette =
-                                                        getGroupPalette(
-                                                            group.id,
-                                                        );
-                                                    return (
-                                                        <button
-                                                            key={group.id}
-                                                            type='button'
-                                                            onClick={() =>
-                                                                onSelectGroup(
-                                                                    group,
-                                                                )
-                                                            }
-                                                            className={cn(
-                                                                'w-full rounded-lg border p-2 text-left transition-all hover:scale-[1.02] hover:shadow-xs',
-                                                                palette.bg,
-                                                                palette.border,
-                                                            )}
-                                                        >
-                                                            <div className='flex items-center justify-between gap-1'>
-                                                                <span
-                                                                    className={cn(
-                                                                        'text-[11px] font-bold tabular-nums',
-                                                                        palette.text,
-                                                                    )}
-                                                                >
-                                                                    {
-                                                                        group.lesson_start
-                                                                    }
-                                                                    –
-                                                                    {
-                                                                        group.lesson_end
-                                                                    }
-                                                                </span>
-                                                                {group.room && (
-                                                                    <span
-                                                                        className={cn(
-                                                                            'rounded border px-1 py-0.5 text-[10px] font-medium',
-                                                                            palette.border,
-                                                                            palette.subtext,
-                                                                        )}
-                                                                    >
-                                                                        {
-                                                                            group
-                                                                                .room
-                                                                                .name
-                                                                        }
-                                                                    </span>
-                                                                )}
-                                                            </div>
-                                                            <p
-                                                                className={cn(
-                                                                    'mt-1 line-clamp-1 text-xs leading-tight font-semibold',
-                                                                    palette.text,
-                                                                )}
-                                                            >
-                                                                {group.name}
-                                                            </p>
-                                                            <div className='mt-1 flex items-center justify-between text-[11px]'>
-                                                                <span
-                                                                    className={cn(
-                                                                        'line-clamp-1',
-                                                                        palette.subtext,
-                                                                    )}
-                                                                >
-                                                                    {group.teacher
-                                                                        ? fullName(
-                                                                              group.teacher,
-                                                                          )
-                                                                        : t(
-                                                                              'schedule.noTeacher',
-                                                                          )}
-                                                                </span>
-                                                            </div>
-                                                        </button>
-                                                    );
-                                                })}
-                                            </div>
-                                        </td>
-                                    );
-                                })}
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
+        <div className='border-card-border bg-card-surface-area rounded-lg border p-3'>
+            <p className='text-text-tertiary text-xs font-medium'>{label}</p>
+            <p className='text-text-primary mt-1 font-semibold'>{children}</p>
         </div>
-    );
-}
-
-/** Kunlik Ko'rinish (Day View Timeline) */
-function DayView({
-    day,
-    groups,
-    onSelectGroup,
-    showBranch: _showBranch,
-}: {
-    day: Weekday;
-    groups: Group[];
-    onSelectGroup: (g: Group) => void;
-    showBranch: boolean;
-}) {
-    const t = useT();
-
-    return (
-        <div className='border-card-border bg-card-background rounded-xl border p-6 shadow-xs'>
-            <h2 className='font-display text-text-primary mb-4 text-base font-semibold'>
-                {t('schedule.dayTitle', {
-                    day: t(`weekdayLong.${day}` as TranslationKey),
-                    count: groups.length,
-                })}
-            </h2>
-
-            {groups.length === 0 ? (
-                <p className='text-text-tertiary py-6 text-center text-sm'>
-                    {t('schedule.noLessonsDay')}
-                </p>
-            ) : (
-                <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-                    {groups.map((group) => {
-                        const palette = getGroupPalette(group.id);
-                        return (
-                            <button
-                                type='button'
-                                key={group.id}
-                                onClick={() => onSelectGroup(group)}
-                                className={cn(
-                                    'cursor-pointer rounded-xl border p-4 text-left transition-all hover:scale-[1.01] hover:shadow-sm',
-                                    palette.bg,
-                                    palette.border,
-                                )}
-                            >
-                                <div className='mb-2 flex items-center justify-between gap-2'>
-                                    <span
-                                        className={cn(
-                                            'rounded-md border px-2 py-0.5 text-xs font-bold tabular-nums',
-                                            palette.border,
-                                            palette.text,
-                                        )}
-                                    >
-                                        {group.lesson_start} –{' '}
-                                        {group.lesson_end}
-                                    </span>
-                                    {group.room && (
-                                        <span
-                                            className={cn(
-                                                'text-xs font-medium',
-                                                palette.subtext,
-                                            )}
-                                        >
-                                            📍 {group.room.name}
-                                        </span>
-                                    )}
-                                </div>
-                                <h3
-                                    className={cn(
-                                        'mb-1 text-base font-semibold',
-                                        palette.text,
-                                    )}
-                                >
-                                    {group.name}
-                                </h3>
-                                <p
-                                    className={cn(
-                                        'mb-3 text-xs',
-                                        palette.subtext,
-                                    )}
-                                >
-                                    {group.course.name}
-                                </p>
-                                <div className='flex items-center justify-between border-t border-black/5 pt-2 text-xs dark:border-white/5'>
-                                    <span className={palette.subtext}>
-                                        👤{' '}
-                                        {group.teacher
-                                            ? fullName(group.teacher)
-                                            : t('schedule.noTeacher')}
-                                    </span>
-                                    <span
-                                        className={cn(
-                                            'font-medium',
-                                            palette.text,
-                                        )}
-                                    >
-                                        {t('schedule.studentsCount', {
-                                            count: group.students_count,
-                                        })}
-                                    </span>
-                                </div>
-                            </button>
-                        );
-                    })}
-                </div>
-            )}
-        </div>
-    );
-}
-
-function DayColumn({
-    title,
-    groups,
-    onSelectGroup,
-    showBranch,
-}: {
-    title: string;
-    groups: Group[];
-    onSelectGroup: (g: Group) => void;
-    showBranch: boolean;
-}) {
-    const t = useT();
-
-    return (
-        <section className='border-card-border bg-card-background flex flex-col rounded-xl border shadow-xs'>
-            <h2 className='text-text-primary border-card-border font-display border-b px-4 py-3 text-sm font-semibold'>
-                {title}
-            </h2>
-            <ul className='flex flex-col gap-2 p-3'>
-                {groups.length === 0 ? (
-                    <li className='text-text-tertiary px-1 py-2 text-xs'>
-                        {t('schedule.noLessons')}
-                    </li>
-                ) : (
-                    groups.map((group) => {
-                        const palette = getGroupPalette(group.id);
-                        return (
-                            <li key={group.id}>
-                                <button
-                                    type='button'
-                                    onClick={() => onSelectGroup(group)}
-                                    className={cn(
-                                        'w-full rounded-lg border p-2.5 text-left transition-all hover:scale-[1.02]',
-                                        palette.bg,
-                                        palette.border,
-                                    )}
-                                >
-                                    <p
-                                        className={cn(
-                                            'text-xs font-semibold tabular-nums',
-                                            palette.text,
-                                        )}
-                                    >
-                                        {group.lesson_start}–{group.lesson_end}
-                                    </p>
-                                    <p
-                                        className={cn(
-                                            'mt-0.5 text-sm font-medium',
-                                            palette.text,
-                                        )}
-                                    >
-                                        {group.name}
-                                    </p>
-                                    <p
-                                        className={cn(
-                                            'mt-0.5 text-xs',
-                                            palette.subtext,
-                                        )}
-                                    >
-                                        {[
-                                            group.room?.name,
-                                            group.teacher &&
-                                                fullName(group.teacher),
-                                            showBranch && group.branch.name,
-                                        ]
-                                            .filter(Boolean)
-                                            .join(' · ')}
-                                    </p>
-                                </button>
-                            </li>
-                        );
-                    })
-                )}
-            </ul>
-        </section>
     );
 }
