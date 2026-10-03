@@ -18,7 +18,7 @@ import { getSchedule } from '@/services/api/groups';
 import { listRooms } from '@/services/api/rooms';
 import { listUserOptions } from '@/services/api/users';
 import { WEEKDAYS, type Group, type Weekday } from '@/types/api';
-import { can, canAny } from '@/utils/access';
+import { canAny } from '@/utils/access';
 import { cn } from '@/utils/cn';
 import { fullName } from '@/utils/format';
 import type { TranslationKey } from '@/i18n/dictionaries/uz';

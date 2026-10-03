@@ -782,13 +782,15 @@ export interface GroupAttendance {
         student: PersonRef;
         /** Shu oyga tegadigan davrlari — belgi faqat shu kunlarga qo'yiladi. */
         stays: { joined_at: string; left_at: string | null }[];
-        records: Record<string, AttendanceStatus>;
+        records: Record<string, { status: AttendanceStatus; order: number }[]>;
     }[];
 }
 
 export interface MarkAttendancePayload {
     /** Bugun yoki o'tgan kun. */
     date: string;
+    /** Nechanchi dars (kuniga bittadan ortiq dars bo'lsa) */
+    lesson_order?: number;
     records: { student_id: string; status: AttendanceStatus }[];
 }
 
