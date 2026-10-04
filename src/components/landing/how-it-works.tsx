@@ -10,29 +10,21 @@ const STEPS: {
     title: TranslationKey;
     text: TranslationKey;
     icon: ReactNode;
-    color: string;
-    iconColor: string;
 }[] = [
     {
         title: 'landing.step1Title',
         text: 'landing.step1Text',
         icon: <Buildings11 className='size-7' />,
-        color: 'from-blue-500/10 to-brand-500/10',
-        iconColor: 'text-blue-500',
     },
     {
         title: 'landing.step2Title',
         text: 'landing.step2Text',
         icon: <Send1 className='size-7' />,
-        color: 'from-violet-500/10 to-purple-500/10',
-        iconColor: 'text-violet-500',
     },
     {
         title: 'landing.step3Title',
         text: 'landing.step3Text',
         icon: <UserMultiple1 className='size-7' />,
-        color: 'from-emerald-500/10 to-teal-500/10',
-        iconColor: 'text-emerald-500',
     },
 ];
 
@@ -61,9 +53,7 @@ export function HowItWorks({ trialDays }: { trialDays: number }) {
                             className='relative flex flex-col items-center text-center'
                         >
                             {/* Icon box */}
-                            <div
-                                className={`bg-gradient-to-br ${step.color} border-card-border ${step.iconColor} relative flex size-20 items-center justify-center rounded-3xl border shadow-sm`}
-                            >
+                            <div className='border-card-border bg-brand-accent/10 text-brand-accent relative flex size-20 items-center justify-center rounded-3xl border'>
                                 {step.icon}
                                 {/* Step number */}
                                 <span className='bg-brand-500 shadow-brand-500/30 absolute -top-2.5 -right-2.5 flex size-7 items-center justify-center rounded-full text-xs font-bold text-white shadow-md'>

@@ -46,14 +46,14 @@ function SelectTrigger({
             data-slot='select-trigger'
             aria-invalid={invalid || undefined}
             className={cn(
-                'border-card-border bg-input-background text-title-50 flex h-11 w-full items-center justify-between gap-2 rounded-lg border px-4 text-sm transition outline-none',
+                'border-input-border bg-input-background text-title-50 flex h-11 w-full items-center justify-between gap-2 rounded-lg border px-4 text-sm transition outline-none',
                 'focus:border-input-primary-focus-border focus:ring-input-primary-focus-border/20 focus:ring-4',
                 'disabled:cursor-not-allowed disabled:opacity-60',
                 // Tanlanmagan holatda ko'rsatkich matni xira bo'ladi — bu
                 // placeholder ekanini bildiradi.
                 'data-[placeholder]:text-input-placeholder-text',
                 invalid &&
-                    'border-red-500 focus:border-red-500 focus:ring-red-500/20',
+                    'border-error-500 focus:border-error-500 focus:ring-error-500/20',
                 className,
             )}
             {...props}

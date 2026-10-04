@@ -9,10 +9,11 @@ const LogoMark = ({
     isDark?: boolean;
     isWhite?: boolean;
 }) => {
-    let leftFaceColor = isDark ? '#3B82F6' : '#0038B8';
-    let rightFaceColor = isDark ? '#38BDF8' : '#0088FF';
-    let capColor = isDark ? '#60A5FA' : '#0055FE';
-    let strokeColor = isDark ? '#93C5FD' : '#0038B8';
+    // Brend rangi — #5750F1 (tugmalar bilan bir xil) va uning ohanglari.
+    let leftFaceColor = isDark ? '#818CF8' : '#3C35D8';
+    let rightFaceColor = isDark ? '#A5B4FC' : '#7B7CF5';
+    let capColor = isDark ? '#7B7CF5' : '#5750F1';
+    let strokeColor = isDark ? '#C7D2FE' : '#3C35D8';
     let undersideOpacity = '0.3';
 
     if (isWhite) {
@@ -101,8 +102,8 @@ export const LogoWithText = (props: IconProps) => {
                 fontFamily='system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
                 letterSpacing={0.2}
             >
-                <tspan fill='#0038B8'>EDU </tspan>
-                <tspan fill='#0088FF'>MS</tspan>
+                <tspan fill='#3C35D8'>EDU </tspan>
+                <tspan fill='#7B7CF5'>MS</tspan>
             </text>
         </svg>
     );
@@ -130,7 +131,7 @@ export const LogoWithTextDark = (props: IconProps) => {
                 letterSpacing={0.2}
             >
                 <tspan fill='#FFFFFF'>EDU </tspan>
-                <tspan fill='#38BDF8'>MS</tspan>
+                <tspan fill='#C7D2FE'>MS</tspan>
             </text>
         </svg>
     );

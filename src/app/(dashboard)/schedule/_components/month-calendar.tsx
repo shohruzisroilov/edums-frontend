@@ -67,7 +67,7 @@ export function MonthCalendar({
                 {WEEKDAYS.map((day) => (
                     <div
                         key={day}
-                        className='text-text-tertiary pb-1 text-center text-[11px] font-medium uppercase'
+                        className='text-text-tertiary pb-1 text-center text-xs font-medium uppercase'
                     >
                         {t(`weekday.${day}` as TranslationKey)}
                     </div>
@@ -106,7 +106,7 @@ export function MonthCalendar({
                             </span>
                             <span
                                 className={cn(
-                                    'text-[10px] leading-none font-semibold',
+                                    'text-xs leading-none font-semibold',
                                     isSelected
                                         ? 'text-white/85'
                                         : inMonth

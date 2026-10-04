@@ -160,7 +160,10 @@ function ExpensesView() {
                                 }}
                             >
                                 <Download1 />
-                                {t('common.export')}
+                                {/* Telefonda faqat ikonka — asosiy amal bir qatorda qolsin. */}
+                                <span className='sr-only sm:not-sr-only'>
+                                    {t('common.export')}
+                                </span>
                             </Button>
                         )}
                         {canManage && (

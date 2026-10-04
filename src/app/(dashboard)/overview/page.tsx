@@ -4,6 +4,7 @@ import { AccessGuard } from '@/components/ui/access-guard';
 import {
     ColumnChart,
     monthColumns,
+    ResponsiveMoney,
     StatTile,
     useCompactNumber,
 } from '@/components/ui/charts';
@@ -63,7 +64,7 @@ function OverviewView() {
                 />
                 <StatTile
                     label={t('overview.mrr')}
-                    value={formatPrice(data.mrr, som)}
+                    value={<ResponsiveMoney value={data.mrr} />}
                     hint={t('overview.mrrHint')}
                 />
                 <StatTile

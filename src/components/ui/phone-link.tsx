@@ -18,7 +18,8 @@ export function PhoneLink({
         <a
             href={`tel:${cleanPhone}`}
             className={cn(
-                'hover:text-brand-accent tabular-nums hover:underline',
+                // Raqam hech qachon ikki qatorga bo'linmaydi.
+                'hover:text-brand-accent whitespace-nowrap tabular-nums hover:underline',
                 className,
             )}
             onClick={(e) => e.stopPropagation()}

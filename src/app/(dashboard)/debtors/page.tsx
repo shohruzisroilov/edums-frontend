@@ -129,7 +129,10 @@ function DebtorsView() {
                                 }}
                             >
                                 <Download1 />
-                                {t('common.export')}
+                                {/* Telefonda faqat ikonka — asosiy amal bir qatorda qolsin. */}
+                                <span className='sr-only sm:not-sr-only'>
+                                    {t('common.export')}
+                                </span>
                             </Button>
                         )}
                     </div>
@@ -273,7 +276,7 @@ function DebtorsView() {
 
                                             <div className='flex items-center justify-between pt-1 text-xs'>
                                                 <div>
-                                                    <span className='text-text-tertiary block text-[10px]'>
+                                                    <span className='text-text-tertiary block text-xs'>
                                                         {t('common.phone')}
                                                     </span>
                                                     <PhoneLink
@@ -287,7 +290,7 @@ function DebtorsView() {
                                                 </div>
 
                                                 <div className='text-right'>
-                                                    <span className='text-text-tertiary block text-[11px]'>
+                                                    <span className='text-text-tertiary block text-xs'>
                                                         {t('balance.paid')} /{' '}
                                                         {t('balance.charged')}
                                                     </span>

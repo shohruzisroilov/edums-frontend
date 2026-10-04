@@ -31,7 +31,7 @@ export function PainPoints() {
                     >
                         {/* Muammo */}
                         <div className='flex items-start gap-3 sm:gap-4'>
-                            <div className='mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-500 sm:mt-0 sm:size-9 dark:bg-red-500/10'>
+                            <div className='bg-badge-error-background text-badge-error-icon-color mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-xl sm:mt-0 sm:size-9'>
                                 <Xmark className='size-3.5 sm:size-4' />
                             </div>
                             <p className='text-text-secondary pt-0.5 text-xs leading-relaxed sm:pt-1.5 sm:text-sm'>
@@ -42,7 +42,7 @@ export function PainPoints() {
                         {/* Divider */}
                         <div className='my-3.5 flex items-center gap-2 sm:my-5 sm:gap-3'>
                             <div className='border-card-border h-px flex-1 border-t border-dashed' />
-                            <span className='text-brand-500 text-[11px] font-semibold whitespace-nowrap'>
+                            <span className='text-brand-500 text-xs font-semibold whitespace-nowrap'>
                                 {t('landing.withEdums')}
                             </span>
                             <div className='border-card-border h-px flex-1 border-t border-dashed' />
@@ -50,7 +50,7 @@ export function PainPoints() {
 
                         {/* Yechim */}
                         <div className='flex items-start gap-3 sm:gap-4'>
-                            <div className='mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 sm:mt-0 sm:size-9 dark:bg-emerald-500/10'>
+                            <div className='bg-badge-success-background text-badge-success-icon-color mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-xl sm:mt-0 sm:size-9'>
                                 <Check className='size-3.5 sm:size-4' />
                             </div>
                             <p className='text-text-primary pt-0.5 text-xs leading-relaxed font-medium sm:pt-1.5 sm:text-sm'>

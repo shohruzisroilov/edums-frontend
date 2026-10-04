@@ -199,7 +199,7 @@ export function UserFormModal({
                     <fieldset className='flex flex-col gap-2'>
                         <legend className='text-text-primary mb-1.5 text-sm font-medium'>
                             {t('users.roles')}
-                            <span className='text-red-500'> *</span>
+                            <span className='text-badge-error-text'> *</span>
                         </legend>
                         {roles.length === 0 ? (
                             <p className='text-text-tertiary text-xs'>

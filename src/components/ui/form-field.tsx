@@ -13,7 +13,7 @@ import type { ComponentProps, ReactNode } from 'react';
 import { useId } from 'react';
 
 const controlClasses =
-    'w-full rounded-lg border border-card-border bg-input-background px-4 py-2.5 text-sm text-title-50 outline-none transition placeholder:text-input-placeholder-text focus:border-input-primary-focus-border focus:ring-4 focus:ring-input-primary-focus-border/20 disabled:cursor-not-allowed disabled:opacity-60';
+    'w-full rounded-lg border border-input-border bg-input-background px-4 py-2.5 text-sm text-title-50 outline-none transition placeholder:text-input-placeholder-text focus:border-input-primary-focus-border focus:ring-4 focus:ring-input-primary-focus-border/20 disabled:cursor-not-allowed disabled:opacity-60';
 
 function FieldShell({
     label,
@@ -46,7 +46,10 @@ function FieldShell({
                 >
                     {label}
                     {required && (
-                        <span className='text-red-500' aria-hidden='true'>
+                        <span
+                            className='text-badge-error-text'
+                            aria-hidden='true'
+                        >
                             {' '}
                             *
                         </span>
@@ -61,7 +64,11 @@ function FieldShell({
             )}
             {/* role="alert" — ekran o'quvchi xatoni darhol o'qiydi. */}
             {error && (
-                <p id={errorId} role='alert' className='text-xs text-red-500'>
+                <p
+                    id={errorId}
+                    role='alert'
+                    className='text-badge-error-text text-xs'
+                >
                     {error}
                 </p>
             )}
@@ -150,7 +157,7 @@ export function TextInput({
                 suffix && 'pr-16',
                 action && 'pr-11',
                 error &&
-                    'border-red-500 focus:border-red-500 focus:ring-red-500/20',
+                    'border-error-500 focus:border-error-500 focus:ring-error-500/20',
                 className,
             )}
             {...props}
@@ -292,7 +299,7 @@ export function TextareaInput({
                     controlClasses,
                     'resize-y',
                     error &&
-                        'border-red-500 focus:border-red-500 focus:ring-red-500/20',
+                        'border-error-500 focus:border-error-500 focus:ring-error-500/20',
                     className,
                 )}
                 {...props}
@@ -432,7 +439,7 @@ export function CheckboxInput({
                 id={inputId}
                 type='checkbox'
                 className={cn(
-                    'border-card-border text-brand-accent focus:ring-brand-accent/30 size-4.5 rounded focus:ring-2',
+                    'border-input-border text-brand-accent focus:ring-brand-accent/30 size-4.5 rounded focus:ring-2',
                     className,
                 )}
                 {...props}

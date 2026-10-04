@@ -1,34 +1,52 @@
 'use client';
 
+import { MenuIcon } from '@/components/common/header/icons';
+import { navSectionsFor } from '@/components/common/sidebar/data';
+import { isPathActive } from '@/components/common/sidebar/utils';
+import { Modal } from '@/components/ui/modal';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
-import { can, canAny, isSuperAdmin } from '@/utils/access';
+import { can, isSuperAdmin } from '@/utils/access';
 import { cn } from '@/utils/cn';
 import {
-    Buildings11,
-    Crown1,
-    DashboardSquare1,
     Funnel1,
     Plus,
-    TrendUp2,
     UserCircle1,
     UserMultiple1,
     Wallet2,
-    Close,
 } from '@tailgrids/icons';
-import { MenuIcon } from '@/components/common/header/icons';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { useState, type ReactNode } from 'react';
 
 interface BottomNavProps {
     onMenuClick: () => void;
 }
 
+/*
+ * Pastki menyuga tushadigan bo'limlar — ustuvorlik tartibida. Ro'yxat
+ * sidebar ma'lumotidan olinadi, shuning uchun ruxsati yo'q bo'lim bu yerda
+ * ham chiqmaydi: bosib bo'lmaydigan xira band o'rniga keyingi bo'lim turadi.
+ */
+const CENTER_PRIORITY = [
+    '/dashboard',
+    '/students',
+    '/groups',
+    '/cashbox',
+    '/leads',
+    '/schedule',
+    '/debtors',
+];
+const SUPER_ADMIN_PRIORITY = [
+    '/overview',
+    '/educations',
+    '/tariffs',
+    '/payments',
+];
+
 export function BottomNav({ onMenuClick }: BottomNavProps) {
     const { session } = useSession();
     const pathname = usePathname();
-    const router = useRouter();
     const t = useT();
     const [quickActionsOpen, setQuickActionsOpen] = useState(false);
 
@@ -36,145 +54,100 @@ export function BottomNav({ onMenuClick }: BottomNavProps) {
 
     const isSuper = isSuperAdmin(session);
 
-    // Permissions for center users
-    const canStudents = canAny(session, 'students.view', 'students.view_own');
-    const canGroups = canAny(session, 'groups.view', 'groups.view_own');
-    const canDashboard = canAny(session, 'reports.view', 'reports.view_own');
-    const canCashbox = can(session, 'payments.view');
+    const quickActions = isSuper
+        ? []
+        : [
+              can(session, 'payments.create') && {
+                  href: '/cashbox?new=1',
+                  title: t('header.quickPayment'),
+                  description: t('nav.quickPaymentDesc'),
+                  icon: <Wallet2 className='size-5' />,
+                  tone: 'bg-badge-success-background text-badge-success-icon-color',
+              },
+              can(session, 'students.create') && {
+                  href: '/students?new=1',
+                  title: t('header.quickStudent'),
+                  description: t('nav.quickStudentDesc'),
+                  icon: <UserCircle1 className='size-5' />,
+                  tone: 'bg-badge-blue-background text-badge-blue-icon-color',
+              },
+              can(session, 'groups.create') && {
+                  href: '/groups?new=1',
+                  title: t('groups.new'),
+                  description: t('nav.quickGroupDesc'),
+                  icon: <UserMultiple1 className='size-5' />,
+                  tone: 'bg-badge-violet-background text-badge-violet-icon-color',
+              },
+              can(session, 'leads.create') && {
+                  href: '/leads?new=1',
+                  title: t('header.quickLead'),
+                  description: t('nav.quickLeadDesc'),
+                  icon: <Funnel1 className='size-5' />,
+                  tone: 'bg-badge-warning-background text-badge-warning-icon-color',
+              },
+          ].filter((action) => !!action);
 
-    const canAddPayment = can(session, 'payments.create');
-    const canAddStudent = can(session, 'students.create');
-    const canAddGroup = can(session, 'groups.create');
-    const canAddLead = can(session, 'leads.create');
+    const hasQuickActions = quickActions.length > 0;
 
-    const hasAnyQuickAction =
-        !isSuper &&
-        (canAddPayment || canAddStudent || canAddGroup || canAddLead);
+    const visibleLinks = navSectionsFor(session).flatMap(
+        (section) => section.items,
+    );
+    const priority = isSuper ? SUPER_ADMIN_PRIORITY : CENTER_PRIORITY;
+    const links = priority
+        .map((url) => visibleLinks.find((item) => item.url === url))
+        .filter((item) => !!item)
+        // Markaziy "+" tugmasi bitta joyni egallaydi.
+        .slice(0, hasQuickActions ? 3 : 4);
 
-    const handleActionClick = (href: string) => {
-        setQuickActionsOpen(false);
-        router.push(href);
-    };
+    const renderLink = (item: (typeof links)[number]) => (
+        <NavItem
+            key={item.url}
+            href={item.url}
+            label={t(item.titleKey)}
+            icon={item.icon}
+            isActive={isPathActive(item.url, pathname)}
+        />
+    );
 
     return (
         <>
-            {/* Quick Action Modal / Sheet */}
             {quickActionsOpen && (
-                <div className='fixed inset-0 z-50 flex items-end justify-center md:hidden'>
-                    <div
-                        className='animate-in fade-in fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-200'
-                        onClick={() => setQuickActionsOpen(false)}
-                    />
-                    <div className='border-card-border bg-card-surface-area animate-in slide-in-from-bottom-6 relative z-10 w-full max-w-lg rounded-t-3xl border-x border-t p-5 pb-8 shadow-2xl duration-200'>
-                        <div className='bg-border-primary/80 mx-auto mb-4 h-1.5 w-12 rounded-full opacity-70' />
-
-                        <div className='mb-4 flex items-center justify-between'>
-                            <h3 className='text-text-primary text-base font-semibold'>
-                                {t('nav.quickActions')}
-                            </h3>
-                            <button
-                                type='button'
+                <Modal
+                    open={quickActionsOpen}
+                    onClose={() => setQuickActionsOpen(false)}
+                    title={t('nav.quickActions')}
+                >
+                    <div className='grid grid-cols-1 gap-2.5'>
+                        {quickActions.map((action) => (
+                            <Link
+                                key={action.href}
+                                href={action.href}
                                 onClick={() => setQuickActionsOpen(false)}
-                                className='text-icon-tertiary hover:text-text-primary flex size-8 items-center justify-center rounded-lg transition-colors'
+                                className='border-card-border bg-background-gray-secondary/50 hover:bg-background-gray-secondary focus-visible:ring-input-primary-focus-border/30 flex items-center gap-3.5 rounded-xl border p-3.5 transition-colors outline-none focus-visible:ring-4'
                             >
-                                <Close className='size-4' />
-                            </button>
-                        </div>
-
-                        <div className='grid grid-cols-1 gap-2.5'>
-                            {canAddPayment && (
-                                <button
-                                    type='button'
-                                    onClick={() =>
-                                        handleActionClick('/cashbox?new=1')
-                                    }
-                                    className='border-card-border bg-background-gray-secondary/50 hover:bg-background-gray-secondary flex items-center gap-3.5 rounded-xl border p-3.5 text-left transition-all active:scale-[0.98]'
+                                <span
+                                    aria-hidden='true'
+                                    className={cn(
+                                        'flex size-10 shrink-0 items-center justify-center rounded-lg',
+                                        action.tone,
+                                    )}
                                 >
-                                    <div className='flex size-10 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'>
-                                        <Wallet2 className='size-5' />
-                                    </div>
-                                    <div className='min-w-0 flex-1'>
-                                        <div className='text-text-primary text-sm font-semibold'>
-                                            {t('header.quickPayment')}
-                                        </div>
-                                        <div className='text-text-tertiary text-xs'>
-                                            {t('nav.quickPaymentDesc')}
-                                        </div>
-                                    </div>
-                                </button>
-                            )}
-
-                            {canAddStudent && (
-                                <button
-                                    type='button'
-                                    onClick={() =>
-                                        handleActionClick('/students?new=1')
-                                    }
-                                    className='border-card-border bg-background-gray-secondary/50 hover:bg-background-gray-secondary flex items-center gap-3.5 rounded-xl border p-3.5 text-left transition-all active:scale-[0.98]'
-                                >
-                                    <div className='flex size-10 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400'>
-                                        <UserCircle1 className='size-5' />
-                                    </div>
-                                    <div className='min-w-0 flex-1'>
-                                        <div className='text-text-primary text-sm font-semibold'>
-                                            {t('header.quickStudent')}
-                                        </div>
-                                        <div className='text-text-tertiary text-xs'>
-                                            {t('nav.quickStudentDesc')}
-                                        </div>
-                                    </div>
-                                </button>
-                            )}
-
-                            {canAddGroup && (
-                                <button
-                                    type='button'
-                                    onClick={() =>
-                                        handleActionClick('/groups?new=1')
-                                    }
-                                    className='border-card-border bg-background-gray-secondary/50 hover:bg-background-gray-secondary flex items-center gap-3.5 rounded-xl border p-3.5 text-left transition-all active:scale-[0.98]'
-                                >
-                                    <div className='flex size-10 shrink-0 items-center justify-center rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400'>
-                                        <UserMultiple1 className='size-5' />
-                                    </div>
-                                    <div className='min-w-0 flex-1'>
-                                        <div className='text-text-primary text-sm font-semibold'>
-                                            {t('groups.new')}
-                                        </div>
-                                        <div className='text-text-tertiary text-xs'>
-                                            {t('nav.quickGroupDesc')}
-                                        </div>
-                                    </div>
-                                </button>
-                            )}
-
-                            {canAddLead && (
-                                <button
-                                    type='button'
-                                    onClick={() =>
-                                        handleActionClick('/leads?new=1')
-                                    }
-                                    className='border-card-border bg-background-gray-secondary/50 hover:bg-background-gray-secondary flex items-center gap-3.5 rounded-xl border p-3.5 text-left transition-all active:scale-[0.98]'
-                                >
-                                    <div className='flex size-10 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400'>
-                                        <Funnel1 className='size-5' />
-                                    </div>
-                                    <div className='min-w-0 flex-1'>
-                                        <div className='text-text-primary text-sm font-semibold'>
-                                            {t('header.quickLead')}
-                                        </div>
-                                        <div className='text-text-tertiary text-xs'>
-                                            {t('nav.quickLeadDesc')}
-                                        </div>
-                                    </div>
-                                </button>
-                            )}
-                        </div>
+                                    {action.icon}
+                                </span>
+                                <span className='min-w-0 flex-1'>
+                                    <span className='text-text-primary block text-sm font-semibold'>
+                                        {action.title}
+                                    </span>
+                                    <span className='text-text-tertiary block text-xs'>
+                                        {action.description}
+                                    </span>
+                                </span>
+                            </Link>
+                        ))}
                     </div>
-                </div>
+                </Modal>
             )}
 
-            {/* Bottom Nav Bar */}
             <nav
                 aria-label={t('nav.mobile')}
                 className='border-card-border bg-card-surface-area/95 supports-backdrop-filter:bg-card-surface-area/85 fixed right-0 bottom-0 left-0 z-40 border-t backdrop-blur-md md:hidden'
@@ -182,118 +155,37 @@ export function BottomNav({ onMenuClick }: BottomNavProps) {
                     paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 8px)',
                 }}
             >
-                <div className='grid h-16 grid-cols-5 items-center px-1'>
-                    {isSuper ? (
+                <div className='flex h-16 items-stretch px-1'>
+                    {hasQuickActions ? (
                         <>
-                            <NavItem
-                                href='/overview'
-                                label={t('nav.overview')}
-                                icon={<TrendUp2 className='size-5' />}
-                                isActive={pathname === '/overview'}
-                            />
-                            <NavItem
-                                href='/educations'
-                                label={t('nav.educations')}
-                                icon={<Buildings11 className='size-5' />}
-                                isActive={pathname.startsWith('/educations')}
-                            />
-                            <NavItem
-                                href='/tariffs'
-                                label={t('nav.tariffs')}
-                                icon={<Crown1 className='size-5' />}
-                                isActive={pathname.startsWith('/tariffs')}
-                            />
-                            <NavItem
-                                href='/payments'
-                                label={t('nav.payments')}
-                                icon={<Wallet2 className='size-5' />}
-                                isActive={pathname.startsWith('/payments')}
-                            />
-                            <button
-                                type='button'
-                                onClick={onMenuClick}
-                                className='text-text-tertiary hover:text-text-primary flex flex-col items-center justify-center gap-1 py-1 transition-colors'
-                            >
-                                <MenuIcon />
-                                <span className='text-[10px] leading-none font-medium'>
-                                    {t('nav.more')}
-                                </span>
-                            </button>
+                            {links.slice(0, 2).map(renderLink)}
+                            <div className='flex flex-1 items-center justify-center'>
+                                <button
+                                    type='button'
+                                    onClick={() => setQuickActionsOpen(true)}
+                                    aria-label={t('nav.quickActions')}
+                                    aria-haspopup='dialog'
+                                    className='bg-button-primary-background hover:bg-button-primary-hover-background focus-visible:ring-button-primary-focus-ring flex size-12 items-center justify-center rounded-full text-white shadow-lg transition-transform outline-none focus-visible:ring-4 active:scale-90'
+                                >
+                                    <Plus className='size-6 stroke-[2.2]' />
+                                </button>
+                            </div>
+                            {links.slice(2).map(renderLink)}
                         </>
                     ) : (
-                        <>
-                            {canDashboard ? (
-                                <NavItem
-                                    href='/dashboard'
-                                    label={t('nav.dashboard')}
-                                    icon={
-                                        <DashboardSquare1 className='size-5' />
-                                    }
-                                    isActive={pathname === '/dashboard'}
-                                />
-                            ) : (
-                                <NavItem
-                                    href='/cashbox'
-                                    label={t('nav.cashbox')}
-                                    icon={<Wallet2 className='size-5' />}
-                                    isActive={pathname.startsWith('/cashbox')}
-                                />
-                            )}
-
-                            <NavItem
-                                href='/students'
-                                label={t('nav.students')}
-                                icon={<UserCircle1 className='size-5' />}
-                                isActive={pathname.startsWith('/students')}
-                                disabled={!canStudents}
-                            />
-
-                            {/* Center Action Button */}
-                            <div className='flex justify-center'>
-                                {hasAnyQuickAction ? (
-                                    <button
-                                        type='button'
-                                        onClick={() =>
-                                            setQuickActionsOpen(true)
-                                        }
-                                        aria-label={t('nav.quickActions')}
-                                        className='bg-brand-accent shadow-brand-accent/30 flex size-12 items-center justify-center rounded-full text-white shadow-lg transition-transform hover:brightness-105 active:scale-90'
-                                    >
-                                        <Plus className='size-6 stroke-[2.2] text-white' />
-                                    </button>
-                                ) : (
-                                    <NavItem
-                                        href='/cashbox'
-                                        label={t('nav.cashbox')}
-                                        icon={<Wallet2 className='size-5' />}
-                                        isActive={pathname.startsWith(
-                                            '/cashbox',
-                                        )}
-                                        disabled={!canCashbox}
-                                    />
-                                )}
-                            </div>
-
-                            <NavItem
-                                href='/groups'
-                                label={t('nav.groups')}
-                                icon={<UserMultiple1 className='size-5' />}
-                                isActive={pathname.startsWith('/groups')}
-                                disabled={!canGroups}
-                            />
-
-                            <button
-                                type='button'
-                                onClick={onMenuClick}
-                                className='text-text-tertiary hover:text-text-primary flex flex-col items-center justify-center gap-1 py-1 transition-colors'
-                            >
-                                <MenuIcon />
-                                <span className='text-[10px] leading-none font-medium'>
-                                    {t('nav.more')}
-                                </span>
-                            </button>
-                        </>
+                        links.map(renderLink)
                     )}
+
+                    <button
+                        type='button'
+                        onClick={onMenuClick}
+                        className='text-text-tertiary hover:text-text-primary flex min-w-0 flex-1 flex-col items-center justify-center gap-1 transition-colors'
+                    >
+                        <MenuIcon />
+                        <span className='text-xs leading-none font-medium'>
+                            {t('nav.more')}
+                        </span>
+                    </button>
                 </div>
             </nav>
         </>
@@ -305,44 +197,25 @@ function NavItem({
     label,
     icon,
     isActive,
-    disabled,
 }: {
     href: string;
     label: string;
-    icon: React.ReactNode;
+    icon: ReactNode;
     isActive: boolean;
-    disabled?: boolean;
 }) {
-    if (disabled) {
-        return (
-            <div className='text-text-tertiary/40 flex cursor-not-allowed flex-col items-center justify-center gap-1 py-1'>
-                {icon}
-                <span className='text-[10px] leading-none font-medium'>
-                    {label}
-                </span>
-            </div>
-        );
-    }
-
     return (
         <Link
             href={href}
+            aria-current={isActive ? 'page' : undefined}
             className={cn(
-                'flex flex-col items-center justify-center gap-1 py-1 transition-all',
+                'flex min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 transition-colors',
                 isActive
                     ? 'text-brand-accent font-semibold'
-                    : 'text-text-tertiary hover:text-text-primary',
+                    : 'text-text-tertiary hover:text-text-primary font-medium',
             )}
         >
-            <div
-                className={cn(
-                    'flex items-center justify-center transition-transform',
-                    isActive && 'scale-110',
-                )}
-            >
-                {icon}
-            </div>
-            <span className='text-[10px] leading-none tracking-tight'>
+            {icon}
+            <span className='w-full truncate text-center text-xs leading-none'>
                 {label}
             </span>
         </Link>

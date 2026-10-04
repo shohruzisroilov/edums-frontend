@@ -68,7 +68,7 @@ export function ErrorState({ error }: { error: unknown }) {
     return (
         <div
             role='alert'
-            className='mx-5 my-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300'
+            className='border-alert-danger-border bg-alert-danger-background text-alert-danger-title mx-5 my-6 rounded-lg border px-4 py-3 text-sm'
         >
             {message}
         </div>

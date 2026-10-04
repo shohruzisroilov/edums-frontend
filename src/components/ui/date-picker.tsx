@@ -597,7 +597,10 @@ export function DatePicker({
                 >
                     {label}
                     {required && (
-                        <span className='text-red-500' aria-hidden='true'>
+                        <span
+                            className='text-badge-error-text'
+                            aria-hidden='true'
+                        >
                             {' '}
                             *
                         </span>
@@ -635,14 +638,14 @@ export function DatePicker({
                         onFocus?.(e);
                     }}
                     className={cn(
-                        'border-card-border bg-input-background text-title-50 placeholder:text-input-placeholder-text focus:border-input-primary-focus-border focus:ring-input-primary-focus-border/20 w-full rounded-lg border transition outline-none focus:ring-4 disabled:cursor-not-allowed disabled:opacity-60',
+                        'border-input-border bg-input-background text-title-50 placeholder:text-input-placeholder-text focus:border-input-primary-focus-border focus:ring-input-primary-focus-border/20 w-full rounded-lg border transition outline-none focus:ring-4 disabled:cursor-not-allowed disabled:opacity-60',
                         size === 'sm'
                             ? 'px-3 py-1.5 pr-9 text-xs'
                             : 'px-4 py-2.5 pr-11 text-sm',
                         prefix && 'pl-14',
                         suffix && 'pr-20',
                         error &&
-                            'border-red-500 focus:border-red-500 focus:ring-red-500/20',
+                            'border-error-500 focus:border-error-500 focus:ring-error-500/20',
                         inputClassName,
                     )}
                 />
@@ -682,7 +685,7 @@ export function DatePicker({
 
             {/* Hint va Error */}
             {error ? (
-                <p role='alert' className='mt-1 text-xs text-red-500'>
+                <p role='alert' className='text-badge-error-text mt-1 text-xs'>
                     {error}
                 </p>
             ) : hint ? (
@@ -825,7 +828,7 @@ export function DatePicker({
                                 {texts.weekdaysShort.map((wName) => (
                                     <span
                                         key={wName}
-                                        className='text-text-tertiary py-1 text-[11px] font-semibold'
+                                        className='text-text-tertiary py-1 text-xs font-semibold'
                                     >
                                         {wName}
                                     </span>
@@ -908,7 +911,7 @@ export function DatePicker({
                                 <button
                                     type='button'
                                     onClick={handleClear}
-                                    className='text-text-tertiary hover:bg-background-gray-primary rounded-lg px-2 py-1 text-xs font-medium transition hover:text-red-500'
+                                    className='text-text-tertiary hover:bg-background-gray-primary hover:text-badge-error-text rounded-lg px-2 py-1 text-xs font-medium transition'
                                 >
                                     {texts.clear}
                                 </button>

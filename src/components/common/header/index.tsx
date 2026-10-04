@@ -6,18 +6,25 @@ import { MenuIcon } from '@/components/common/header/icons';
 import ThemeToggle from '@/components/common/header/theme-toggle';
 import { UserProfileButton } from '@/components/common/header/user-profile';
 import { LocaleSwitcher } from '@/components/common/locale-switcher';
-import { Button } from '@/components/tailgrids/core/button';
+import { LinkButton } from '@/components/ui/link-button';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { can } from '@/utils/access';
 import { Funnel1, Search1, UserCircle1, Wallet2 } from '@tailgrids/icons';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
+
+/** Mac'da Ctrl emas, Cmd bosiladi — yorliq ham shunga mos bo'lishi kerak. */
+function isApplePlatform() {
+    if (typeof navigator === 'undefined') return false;
+    return /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+}
 
 export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
     const t = useT();
     const { session } = useSession();
     const [searchOpen, setSearchOpen] = useState(false);
+    const [shortcut] = useState(() => (isApplePlatform() ? '⌘K' : 'Ctrl+K'));
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -42,14 +49,14 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                         type='button'
                         onClick={onMenuClick}
                         aria-label={t('nav.openMenu')}
-                        className='text-icon-tertiary hover:text-text-primary hover:bg-background-gray-secondary focus-visible:ring-input-primary-focus-border/30 -ml-1 flex size-10 items-center justify-center rounded-lg transition-colors outline-none focus-visible:ring-4 sm:size-11 xl:hidden'
+                        className='text-icon-tertiary hover:text-text-primary hover:bg-background-gray-secondary focus-visible:ring-input-primary-focus-border/30 -ml-1 flex size-10 items-center justify-center rounded-lg transition-colors outline-none focus-visible:ring-4 sm:size-11 md:hidden'
                     >
                         <MenuIcon />
                     </button>
 
                     <Link
                         href='/'
-                        className='flex shrink-0 items-center xl:hidden'
+                        className='flex shrink-0 items-center md:hidden'
                         aria-label='EDUMS'
                     >
                         <span className='sm:hidden'>
@@ -70,51 +77,37 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                         <span className='text-text-tertiary group-hover:text-text-secondary text-xs font-medium transition-colors'>
                             {t('header.searchPlaceholder')}
                         </span>
-                        <kbd className='border-card-border bg-card-surface-area text-text-tertiary group-hover:text-text-secondary rounded-md border px-1.5 py-0.5 text-[10px] font-semibold tracking-tight shadow-xs transition-colors'>
-                            Ctrl+K
+                        <kbd className='border-card-border bg-card-surface-area text-text-tertiary group-hover:text-text-secondary rounded-md border px-1.5 text-xs font-semibold tracking-tight shadow-xs transition-colors'>
+                            {shortcut}
                         </kbd>
                     </button>
                 </div>
 
                 {/* Right Actions */}
                 <div className='flex items-center gap-2 sm:gap-2.5'>
-                    {/* Quick Action Buttons (Desktop) */}
+                    {/* Tez amallar: md–xl oralig'ida faqat ikonka (nomi
+                        tooltip va aria-label'da), keng ekranda — yozuv bilan. */}
                     <div className='hidden items-center gap-2 md:flex'>
                         {canAddPayment && (
-                            <Link href='/cashbox?new=1'>
-                                <Button
-                                    size='sm'
-                                    appearance='outline'
-                                    className='gap-1.5 text-xs font-medium'
-                                >
-                                    <Wallet2 className='size-3.5 text-emerald-600 dark:text-emerald-400' />
-                                    <span>{t('header.quickPayment')}</span>
-                                </Button>
-                            </Link>
+                            <QuickAction
+                                href='/cashbox?new=1'
+                                label={t('header.quickPayment')}
+                                icon={<Wallet2 />}
+                            />
                         )}
                         {canAddStudent && (
-                            <Link href='/students?new=1'>
-                                <Button
-                                    size='sm'
-                                    appearance='outline'
-                                    className='gap-1.5 text-xs font-medium'
-                                >
-                                    <UserCircle1 className='size-3.5 text-blue-600 dark:text-blue-400' />
-                                    <span>{t('header.quickStudent')}</span>
-                                </Button>
-                            </Link>
+                            <QuickAction
+                                href='/students?new=1'
+                                label={t('header.quickStudent')}
+                                icon={<UserCircle1 />}
+                            />
                         )}
                         {canAddLead && (
-                            <Link href='/leads?new=1'>
-                                <Button
-                                    size='sm'
-                                    appearance='outline'
-                                    className='gap-1.5 text-xs font-medium'
-                                >
-                                    <Funnel1 className='size-3.5 text-amber-600 dark:text-amber-400' />
-                                    <span>{t('header.quickLead')}</span>
-                                </Button>
-                            </Link>
+                            <QuickAction
+                                href='/leads?new=1'
+                                label={t('header.quickLead')}
+                                icon={<Funnel1 />}
+                            />
                         )}
                     </div>
 
@@ -139,5 +132,26 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                 onClose={() => setSearchOpen(false)}
             />
         </header>
+    );
+}
+
+function QuickAction({
+    href,
+    label,
+    icon,
+}: {
+    href: string;
+    label: string;
+    icon: ReactNode;
+}) {
+    return (
+        <LinkButton
+            href={href}
+            title={label}
+            className='h-9 px-2.5 text-xs xl:px-3 [&>svg]:size-4'
+        >
+            {icon}
+            <span className='sr-only xl:not-sr-only'>{label}</span>
+        </LinkButton>
     );
 }

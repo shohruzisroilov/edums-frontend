@@ -30,7 +30,7 @@ export function WeekdayPicker({
         <fieldset className='flex flex-col gap-1.5'>
             <legend className='text-text-primary mb-1.5 text-sm font-medium'>
                 {label}
-                {required && <span className='text-red-500'> *</span>}
+                {required && <span className='text-badge-error-text'> *</span>}
             </legend>
             <div className='flex flex-wrap gap-2'>
                 {WEEKDAYS.map((day) => {

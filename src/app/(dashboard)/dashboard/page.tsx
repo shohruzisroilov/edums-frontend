@@ -7,6 +7,7 @@ import {
     HorizontalBars,
     Meter,
     monthColumns,
+    ResponsiveMoney,
     StatTile,
     useCompactNumber,
 } from '@/components/ui/charts';
@@ -80,7 +81,9 @@ function DashboardView() {
                 {isOwner && (
                     <StatTile
                         label={t('dashboard.revenueThisMonth')}
-                        value={formatPrice(data.revenue.this_month, som)}
+                        value={
+                            <ResponsiveMoney value={data.revenue.this_month} />
+                        }
                         href='/cashbox'
                         trend={
                             data.revenue.last_month > 0
@@ -100,7 +103,7 @@ function DashboardView() {
                 {isOwner && (
                     <StatTile
                         label={t('dashboard.totalDebt')}
-                        value={formatPrice(data.debt.total, som)}
+                        value={<ResponsiveMoney value={data.debt.total} />}
                         href='/debtors'
                         hint={t('dashboard.debtors', {
                             count: data.debt.debtors,
@@ -132,7 +135,7 @@ function DashboardView() {
                 </StatTile>
             </div>
 
-            <div className='mt-5 grid items-start gap-5 px-4 sm:px-5 lg:grid-cols-[3fr_2fr]'>
+            <div className='mt-5 grid items-start gap-5 px-4 sm:px-5 xl:grid-cols-[3fr_2fr]'>
                 {isOwner && (
                     <SectionCard title={t('dashboard.revenueChart')}>
                         <p className='text-text-tertiary -mt-2 mb-4 text-xs'>
@@ -214,7 +217,7 @@ function DashboardView() {
             </div>
 
             {isOwner && (
-                <div className='mt-5 grid items-start gap-5 px-4 pb-6 sm:px-5 lg:grid-cols-[3fr_2fr]'>
+                <div className='mt-5 grid items-start gap-5 px-4 pb-6 sm:px-5 xl:grid-cols-[3fr_2fr]'>
                     <SectionCard title={t('dashboard.leadFunnel')}>
                         <p className='text-text-tertiary -mt-2 mb-4 text-xs'>
                             {t('dashboard.newLeads', {
@@ -233,12 +236,20 @@ function DashboardView() {
                     <div className='grid gap-4'>
                         <StatTile
                             label={t('dashboard.expensesThisMonth')}
-                            value={formatPrice(data.expenses.this_month, som)}
+                            value={
+                                <ResponsiveMoney
+                                    value={data.expenses.this_month}
+                                />
+                            }
                             href='/expenses'
                         />
                         <StatTile
                             label={t('dashboard.profit')}
-                            value={formatPrice(data.profit_this_month, som)}
+                            value={
+                                <ResponsiveMoney
+                                    value={data.profit_this_month}
+                                />
+                            }
                             hint={t('dashboard.profitHint')}
                         />
                         <StatTile

@@ -4,3 +4,4 @@ package-lock.json
 *.md
 public
 src/app/css
+.claude

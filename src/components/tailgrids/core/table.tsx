@@ -37,7 +37,7 @@ export function TableRoot({ className, fullBleed, ...props }: TableRootProps) {
  * ko'zga birinchi tashlanadi, ustun nomlari esa fon vazifasini bajaradi.
  */
 const tableHeaderStyles = cva(
-    'bg-background-gray-primary/40 [&_th]:border-border-primary [&_th]:text-text-tertiary [&_th]:border-b [&_th]:text-[0.65rem] sm:[&_th]:text-[0.6875rem] [&_th]:font-semibold [&_th]:tracking-[0.06em] [&_th]:uppercase',
+    'bg-background-gray-primary/40 [&_th]:border-border-primary [&_th]:text-text-tertiary [&_th]:border-b [&_th]:text-xs [&_th]:font-semibold [&_th]:tracking-[0.06em] [&_th]:uppercase',
 );
 
 export function TableHeader({ className, ...props }: ComponentProps<'thead'>) {

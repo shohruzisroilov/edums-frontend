@@ -44,7 +44,11 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { GroupFormModal } from './_components/group-form';
-import { EyeLinkButton } from '@/components/ui/eye-icon';
+import { EyeIcon } from '@/components/ui/eye-icon';
+import {
+    RowActionsMenu,
+    type RowAction,
+} from '@/components/ui/row-actions-menu';
 
 import { LinkButton } from '@/components/ui/link-button';
 import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
@@ -162,6 +166,41 @@ function GroupsView() {
         (filters.course_id ? 1 : 0) +
         (filters.teacher_id ? 1 : 0) +
         (activeStatus ? 1 : 0);
+
+    // Holat bo'yicha filtrlanganda har qatorda bir xil badge turardi —
+    // ustun faqat "barchasi" tanlanganda chiqadi.
+    const showStatusColumn = !filters.status;
+
+    // Qatordagi amallar "⋯" menyuda; guruhni ochish — nomining o'zi ham havola.
+    const rowActions = (group: Group): RowAction[] => [
+        {
+            label: t('common.details'),
+            icon: <EyeIcon />,
+            href: `/groups/${group.id}`,
+        },
+        ...(canUpdate
+            ? [
+                  {
+                      label: t('common.edit'),
+                      icon: <Pencil1 />,
+                      onAction: () => {
+                          setEditing(group);
+                          setFormOpen(true);
+                      },
+                  },
+              ]
+            : []),
+        ...(canDelete
+            ? [
+                  {
+                      label: t('common.delete'),
+                      icon: <Trash1 />,
+                      onAction: () => setDeleting(group),
+                      danger: true,
+                  },
+              ]
+            : []),
+    ];
 
     // Filtr qo'llanmagan bo'sh ro'yxat — yangi markaz: nima ekani tushuntiriladi.
     // Guruh kurs asosida ochiladi — kurs yo'q bo'lsa, avval kursga yo'llanadi.
@@ -430,14 +469,20 @@ function GroupsView() {
                                                         ` · ${group.branch.name}`}
                                                 </p>
                                             </div>
-                                            <GroupStatusBadge
-                                                status={group.status}
-                                            />
+                                            <div className='flex shrink-0 items-center gap-2'>
+                                                <GroupStatusBadge
+                                                    status={group.status}
+                                                />
+                                                <RowActionsMenu
+                                                    label={group.name}
+                                                    actions={rowActions(group)}
+                                                />
+                                            </div>
                                         </div>
 
                                         <div className='grid grid-cols-2 gap-2 text-xs'>
                                             <div>
-                                                <span className='text-text-tertiary block text-[10px]'>
+                                                <span className='text-text-tertiary block text-xs'>
                                                     {t('groups.teacher')}
                                                 </span>
                                                 <span className='text-text-secondary font-medium'>
@@ -449,7 +494,7 @@ function GroupsView() {
                                                 </span>
                                             </div>
                                             <div>
-                                                <span className='text-text-tertiary block text-[10px]'>
+                                                <span className='text-text-tertiary block text-xs'>
                                                     {t('groups.room')}
                                                 </span>
                                                 <span className='text-text-secondary font-medium'>
@@ -460,7 +505,7 @@ function GroupsView() {
 
                                         <div className='flex items-center justify-between text-xs'>
                                             <div className='min-w-0 flex-1 pr-2'>
-                                                <span className='text-text-tertiary block text-[10px]'>
+                                                <span className='text-text-tertiary block text-xs'>
                                                     {t('groups.lessons')}
                                                 </span>
                                                 <div className='text-text-secondary font-medium'>
@@ -470,7 +515,7 @@ function GroupsView() {
                                                 </div>
                                             </div>
                                             <div className='text-right'>
-                                                <span className='text-text-tertiary block text-[10px]'>
+                                                <span className='text-text-tertiary block text-xs'>
                                                     {t('groups.price')} /{' '}
                                                     {t('groups.students')}
                                                 </span>
@@ -488,44 +533,6 @@ function GroupsView() {
                                                     )
                                                 </span>
                                             </div>
-                                        </div>
-
-                                        <div className='border-card-border/60 flex items-center justify-end gap-1.5 border-t pt-2.5'>
-                                            <EyeLinkButton
-                                                href={`/groups/${group.id}`}
-                                            />
-                                            {canUpdate && (
-                                                <Button
-                                                    appearance='outline'
-                                                    size='sm'
-                                                    iconOnly
-                                                    aria-label={t(
-                                                        'common.edit',
-                                                    )}
-                                                    onPress={() => {
-                                                        setEditing(group);
-                                                        setFormOpen(true);
-                                                    }}
-                                                >
-                                                    <Pencil1 />
-                                                </Button>
-                                            )}
-                                            {canDelete && (
-                                                <Button
-                                                    variant='danger'
-                                                    appearance='outline'
-                                                    size='sm'
-                                                    iconOnly
-                                                    aria-label={t(
-                                                        'common.delete',
-                                                    )}
-                                                    onPress={() =>
-                                                        setDeleting(group)
-                                                    }
-                                                >
-                                                    <Trash1 />
-                                                </Button>
-                                            )}
                                         </div>
                                     </div>
                                 ))}
@@ -558,9 +565,11 @@ function GroupsView() {
                                             <TableHead numeric>
                                                 {t('groups.price')}
                                             </TableHead>
-                                            <TableHead>
-                                                {t('common.status')}
-                                            </TableHead>
+                                            {showStatusColumn && (
+                                                <TableHead>
+                                                    {t('common.status')}
+                                                </TableHead>
+                                            )}
                                             <TableHead className='text-right'>
                                                 {t('common.actions')}
                                             </TableHead>
@@ -612,54 +621,23 @@ function GroupsView() {
                                                         t('common.som'),
                                                     )}
                                                 </TableCell>
-                                                <TableCell>
-                                                    <GroupStatusBadge
-                                                        status={group.status}
-                                                    />
-                                                </TableCell>
-                                                <TableCell>
-                                                    <div className='flex justify-end gap-2'>
-                                                        <EyeLinkButton
-                                                            href={`/groups/${group.id}`}
+                                                {showStatusColumn && (
+                                                    <TableCell>
+                                                        <GroupStatusBadge
+                                                            status={
+                                                                group.status
+                                                            }
                                                         />
-                                                        {canUpdate && (
-                                                            <Button
-                                                                appearance='outline'
-                                                                size='md'
-                                                                iconOnly
-                                                                aria-label={t(
-                                                                    'common.edit',
-                                                                )}
-                                                                onPress={() => {
-                                                                    setEditing(
-                                                                        group,
-                                                                    );
-                                                                    setFormOpen(
-                                                                        true,
-                                                                    );
-                                                                }}
-                                                            >
-                                                                <Pencil1 />
-                                                            </Button>
-                                                        )}
-                                                        {canDelete && (
-                                                            <Button
-                                                                variant='danger'
-                                                                appearance='outline'
-                                                                size='md'
-                                                                iconOnly
-                                                                aria-label={t(
-                                                                    'common.delete',
-                                                                )}
-                                                                onPress={() =>
-                                                                    setDeleting(
-                                                                        group,
-                                                                    )
-                                                                }
-                                                            >
-                                                                <Trash1 />
-                                                            </Button>
-                                                        )}
+                                                    </TableCell>
+                                                )}
+                                                <TableCell>
+                                                    <div className='flex justify-end'>
+                                                        <RowActionsMenu
+                                                            label={group.name}
+                                                            actions={rowActions(
+                                                                group,
+                                                            )}
+                                                        />
                                                     </div>
                                                 </TableCell>
                                             </TableRow>

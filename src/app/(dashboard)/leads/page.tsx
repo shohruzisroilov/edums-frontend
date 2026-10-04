@@ -449,7 +449,7 @@ function LeadsView() {
                                                     </span>
                                                 )}
                                             </div>
-                                            <span className='text-text-tertiary text-[11px] tabular-nums'>
+                                            <span className='text-text-tertiary text-xs tabular-nums'>
                                                 {formatDate(lead.created_at)}
                                             </span>
                                         </div>

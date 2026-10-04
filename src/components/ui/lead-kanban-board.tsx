@@ -245,7 +245,7 @@ export function LeadKanbanBoard({
                             </span>
                             <span
                                 className={cn(
-                                    'rounded-md px-1.5 py-0.5 text-[10px] font-bold tabular-nums',
+                                    'rounded-md px-1.5 py-0.5 text-xs font-bold tabular-nums',
                                     isActive
                                         ? 'bg-white/20 text-white'
                                         : 'bg-background-gray-secondary text-text-tertiary',
@@ -398,7 +398,7 @@ export function LeadKanbanBoard({
                                                         />
                                                         {lead.course && (
                                                             <span
-                                                                className='bg-background-gray-secondary text-text-secondary max-w-[140px] truncate rounded-md px-1.5 py-0.5 text-[10px] font-medium'
+                                                                className='bg-background-gray-secondary text-text-secondary max-w-[140px] truncate rounded-md px-1.5 py-0.5 text-xs font-medium'
                                                                 title={
                                                                     lead.course
                                                                         .name
@@ -413,7 +413,7 @@ export function LeadKanbanBoard({
                                                     </div>
 
                                                     {lead.next_call_date && (
-                                                        <div className='text-brand-accent mt-2 flex items-center gap-1 text-[11px] font-medium'>
+                                                        <div className='text-brand-accent mt-2 flex items-center gap-1 text-xs font-medium'>
                                                             <Calendar className='size-3 shrink-0' />
                                                             <span className='truncate'>
                                                                 {t(
@@ -436,7 +436,7 @@ export function LeadKanbanBoard({
                                                             'won' && (
                                                             <div className='min-w-[120px] flex-1'>
                                                                 <SelectInput
-                                                                    className='h-7 rounded-lg text-[11px] font-medium'
+                                                                    className='h-7 rounded-lg text-xs font-medium'
                                                                     options={EDITABLE_LEAD_STATUSES.map(
                                                                         (
                                                                             s,
@@ -486,7 +486,7 @@ export function LeadKanbanBoard({
                                                                         lead,
                                                                     )
                                                                 }
-                                                                className='border-brand-accent/40 bg-brand-accent/5 text-brand-accent hover:bg-brand-accent inline-flex h-7 shrink-0 items-center justify-center gap-1 rounded-lg border px-2.5 text-[11px] font-semibold transition-all hover:text-white hover:shadow-xs'
+                                                                className='border-brand-accent/40 bg-brand-accent/5 text-brand-accent hover:bg-brand-accent inline-flex h-7 shrink-0 items-center justify-center gap-1 rounded-lg border px-2.5 text-xs font-semibold transition-all hover:text-white hover:shadow-xs'
                                                             >
                                                                 <User2 className='size-3.5' />
                                                                 <span>
