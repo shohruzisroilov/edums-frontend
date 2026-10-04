@@ -713,6 +713,8 @@ export const ru: Dictionary = {
     'leads.created': 'Лид добавлен',
     'leads.updated': 'Лид обновлён',
     'leads.deleted': 'Лид удалён',
+    'leads.batchStatusDone': 'Обновлен статус {count} лидов',
+    'leads.batchDeleteDone': 'Удалено {count} лидов',
 
     /* ── Umumiy ── */
     'common.change': 'Изменить',

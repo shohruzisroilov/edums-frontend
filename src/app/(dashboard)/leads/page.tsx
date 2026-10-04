@@ -17,8 +17,11 @@ import {
     TableSkeleton,
 } from '@/components/ui/data-state';
 import { SelectInput } from '@/components/ui/form-field';
+import { LeadKanbanBoard } from '@/components/ui/lead-kanban-board';
+import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
+import { PhoneLink } from '@/components/ui/phone-link';
 import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { SearchInput } from '@/components/ui/search-input';
 import {
@@ -29,9 +32,11 @@ import {
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useListQuery, useOffsetInRange } from '@/hooks/use-list-query';
-import { useUrlParam } from '@/hooks/use-url-state';
 import { useSession } from '@/hooks/use-session';
+import { useUrlParam } from '@/hooks/use-url-state';
 import { useT } from '@/i18n/provider';
+import { listBranches } from '@/services/api/branches';
+import { listCourses } from '@/services/api/courses';
 import {
     deleteLead,
     getLeadStats,
@@ -49,13 +54,15 @@ import {
 } from '@/types/api';
 import { can } from '@/utils/access';
 import { cn } from '@/utils/cn';
-import { Funnel1, Globe2, Pencil1, Plus, Trash1 } from '@tailgrids/icons';
+import { Column, Eye, Funnel1, Globe2, Pencil1, Plus, Table2, Trash1 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { ConvertLeadModal } from './_components/convert-lead';
+import { LeadBatchActionsBar } from './_components/lead-batch-actions';
+import { LeadDetailDrawer } from './_components/lead-detail-drawer';
 import { LeadFormModal } from './_components/lead-form';
 
 export default function LeadsPage() {
@@ -65,10 +72,6 @@ export default function LeadsPage() {
         </AccessGuard>
     );
 }
-
-import { LeadKanbanBoard } from '@/components/ui/lead-kanban-board';
-import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
-import { Column, Table2 } from '@tailgrids/icons';
 
 function leadName(lead: Pick<Lead, 'first_name' | 'last_name'>) {
     return [lead.last_name, lead.first_name].filter(Boolean).join(' ');
@@ -86,7 +89,6 @@ function LeadsView() {
     const canDelete = can(session, 'leads.delete');
     const canConvert = canUpdate && can(session, 'students.create');
     const canOpenStudents = can(session, 'students.view');
-    // Saytdagi forma sozlamalarda yoqiladi.
     const canManageSettings = can(session, 'settings.manage');
     const router = useRouter();
 
@@ -99,19 +101,30 @@ function LeadsView() {
         setLimit,
         offset,
         setOffset,
-    } = useListQuery({ status: '', source: '' });
+    } = useListQuery({ status: '', source: '', course_id: '', branch_id: '' });
 
-    // Ko'rinish ham manzilda — "orqaga" qaytganda va yangilanganda saqlanadi.
+    // View state persisted in URL
     const [view, setView] = useUrlParam('view', 'kanban');
     const viewMode: 'table' | 'kanban' = view === 'table' ? 'table' : 'kanban';
     const setViewMode = (next: 'table' | 'kanban') => setView(next);
+
     const [formOpen, setFormOpen] = useState(false);
     const [editing, setEditing] = useState<Lead | null>(null);
     const [converting, setConverting] = useState<Lead | null>(null);
     const [deleting, setDeleting] = useState<Lead | null>(null);
+    const [drawerLead, setDrawerLead] = useState<Lead | null>(null);
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-    // Kanban ustunlari o'z ma'lumotini o'zi yuklaydi — bu yerda unda faqat
-    // jami son va "umuman bormi" kerak, shuning uchun bitta yozuv so'raladi.
+    const coursesQuery = useQuery({
+        queryKey: ['courses'],
+        queryFn: listCourses,
+    });
+
+    const branchesQuery = useQuery({
+        queryKey: ['branches'],
+        queryFn: listBranches,
+    });
+
     const kanban = viewMode === 'kanban';
     const query = useQuery({
         queryKey: [
@@ -128,17 +141,19 @@ function LeadsView() {
                 search: search || undefined,
                 status: (filters.status || undefined) as LeadStatus | undefined,
                 source: (filters.source || undefined) as LeadSource | undefined,
+                course_id: filters.course_id || undefined,
+                branch_id: filters.branch_id || undefined,
                 limit: kanban ? 1 : limit,
                 offset: kanban ? 0 : offset,
             }),
     });
     useOffsetInRange(query.data?.count, offset, limit, setOffset);
+
     const statsQuery = useQuery({
         queryKey: ['lead-stats'],
         queryFn: getLeadStats,
     });
 
-    /** Yangi ro'yxat yuklangach tugaydi — Kanban optimistik holatni shunda tozalaydi. */
     function invalidate() {
         return Promise.all([
             queryClient.invalidateQueries({ queryKey: ['leads'] }),
@@ -167,12 +182,42 @@ function LeadsView() {
             invalidate();
             toast.success(t('leads.deleted'));
             setDeleting(null);
+            if (drawerLead?.id === deleting?.id) setDrawerLead(null);
         },
         onError: (error) => toastError(error),
     });
 
-    // Filtr qo'llanmagan bo'sh ro'yxat — yangi markaz: nima ekani tushuntiriladi.
-    const filtered = Boolean(search || filters.status || filters.source);
+    const filtered = Boolean(
+        search || filters.status || filters.source || filters.course_id || filters.branch_id,
+    );
+
+    const leadsData = query.data?.data ?? [];
+    const allCurrentPageSelected =
+        leadsData.length > 0 && leadsData.every((lead) => selectedIds.includes(lead.id));
+
+    const toggleSelectAll = () => {
+        if (allCurrentPageSelected) {
+            setSelectedIds((prev) => prev.filter((id) => !leadsData.some((l) => l.id === id)));
+        } else {
+            const currentIds = leadsData.map((l) => l.id);
+            setSelectedIds((prev) => Array.from(new Set([...prev, ...currentIds])));
+        }
+    };
+
+    const toggleSelectRow = (id: string) => {
+        setSelectedIds((prev) =>
+            prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+        );
+    };
+
+    // Calculate Conversion Rate & Stats
+    const stats = statsQuery.data;
+    const totalLeadsCount = stats
+        ? stats.new + stats.contacted + stats.trial + stats.won + stats.lost
+        : 0;
+    const conversionRate = totalLeadsCount > 0 && stats
+        ? Math.round((stats.won / totalLeadsCount) * 100)
+        : 0;
 
     return (
         <>
@@ -187,7 +232,7 @@ function LeadsView() {
                                 type='button'
                                 onClick={() => setViewMode('kanban')}
                                 className={cn(
-                                    'flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium transition-colors',
+                                    'flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold transition-colors',
                                     viewMode === 'kanban'
                                         ? 'bg-card-surface-area text-text-primary shadow-xs'
                                         : 'text-text-tertiary hover:text-text-primary',
@@ -200,7 +245,7 @@ function LeadsView() {
                                 type='button'
                                 onClick={() => setViewMode('table')}
                                 className={cn(
-                                    'flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium transition-colors',
+                                    'flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold transition-colors',
                                     viewMode === 'table'
                                         ? 'bg-card-surface-area text-text-primary shadow-xs'
                                         : 'text-text-tertiary hover:text-text-primary',
@@ -238,10 +283,12 @@ function LeadsView() {
                 }
             />
 
-            {/* Voronka: karta bosilsa shu holat bo'yicha filtrlanadi. */}
-            <div className='grid grid-cols-2 gap-2.5 px-4 pb-4 sm:grid-cols-3 sm:gap-3.5 sm:px-5 lg:grid-cols-5'>
+            {/* Funnel Overview Analytics Bar */}
+            <div className='grid grid-cols-2 gap-2.5 px-4 pb-4 sm:grid-cols-3 sm:gap-3.5 sm:px-5 lg:grid-cols-6'>
                 {LEAD_STATUSES.map((status) => {
                     const active = filters.status === status;
+                    const count = stats ? stats[status] : 0;
+                    const share = totalLeadsCount > 0 ? Math.round((count / totalLeadsCount) * 100) : 0;
 
                     return (
                         <button
@@ -259,23 +306,37 @@ function LeadsView() {
                             )}
                         >
                             <div className='flex items-center justify-between gap-1'>
-                                <p className='text-text-tertiary flex min-w-0 items-center gap-1.5 text-xs font-medium'>
+                                <p className='text-text-tertiary flex min-w-0 items-center gap-1.5 text-xs font-semibold'>
                                     <LeadStatusDot status={status} />
                                     <span className='truncate'>
                                         {t(`leadStatus.${status}`)}
                                     </span>
                                 </p>
+                                <span className='text-[11px] font-medium text-text-tertiary tabular-nums'>
+                                    {share}%
+                                </span>
                             </div>
                             <p className='text-text-primary font-display mt-1.5 text-xl font-bold tabular-nums sm:text-2xl'>
-                                {statsQuery.data
-                                    ? formatNumber(statsQuery.data[status])
-                                    : '—'}
+                                {stats ? formatNumber(count) : '—'}
                             </p>
                         </button>
                     );
                 })}
+
+                {/* Conversion Rate Card */}
+                <div className='bg-gradient-to-br from-brand-accent/10 via-card-background to-card-background border-brand-accent/30 relative overflow-hidden rounded-xl border p-3 text-left sm:p-3.5'>
+                    <div className='flex items-center justify-between gap-1'>
+                        <p className='text-brand-accent flex min-w-0 items-center gap-1.5 text-xs font-bold'>
+                            ⚡ Konversiya
+                        </p>
+                    </div>
+                    <p className='text-brand-accent font-display mt-1.5 text-xl font-bold tabular-nums sm:text-2xl'>
+                        {conversionRate}%
+                    </p>
+                </div>
             </div>
 
+            {/* Filter Bar */}
             <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
                 <div className='min-w-[220px] flex-1 lg:min-w-40'>
                     <SearchInput
@@ -287,11 +348,16 @@ function LeadsView() {
 
                 <MobileFilterSheet
                     activeCount={
-                        (filters.status ? 1 : 0) + (filters.source ? 1 : 0)
+                        (filters.status ? 1 : 0) +
+                        (filters.source ? 1 : 0) +
+                        (filters.course_id ? 1 : 0) +
+                        (filters.branch_id ? 1 : 0)
                     }
                     onClear={() => {
                         setFilter('status', '');
                         setFilter('source', '');
+                        setFilter('course_id', '');
+                        setFilter('branch_id', '');
                     }}
                 >
                     <SelectInput
@@ -314,10 +380,32 @@ function LeadsView() {
                         value={filters.source}
                         onValueChange={(next) => setFilter('source', next)}
                     />
+                    <SelectInput
+                        label={t('groups.allCourses')}
+                        options={(coursesQuery.data ?? []).map((c) => ({
+                            value: c.id,
+                            label: c.name,
+                        }))}
+                        placeholder={t('groups.allCourses')}
+                        value={filters.course_id}
+                        onValueChange={(next) => setFilter('course_id', next)}
+                    />
+                    {(branchesQuery.data ?? []).length > 1 && (
+                        <SelectInput
+                            label={t('groups.allBranches')}
+                            options={(branchesQuery.data ?? []).map((b) => ({
+                                value: b.id,
+                                label: b.name,
+                            }))}
+                            placeholder={t('groups.allBranches')}
+                            value={filters.branch_id}
+                            onValueChange={(next) => setFilter('branch_id', next)}
+                        />
+                    )}
                 </MobileFilterSheet>
 
-                <div className='hidden min-w-0 items-center gap-3 sm:flex'>
-                    <div className='w-44 min-w-28 shrink'>
+                <div className='hidden min-w-0 items-center gap-2.5 sm:flex'>
+                    <div className='w-40 shrink'>
                         <SelectInput
                             options={LEAD_STATUSES.map((status) => ({
                                 value: status,
@@ -328,7 +416,7 @@ function LeadsView() {
                             onValueChange={(next) => setFilter('status', next)}
                         />
                     </div>
-                    <div className='w-44 min-w-28 shrink'>
+                    <div className='w-40 shrink'>
                         <SelectInput
                             options={LEAD_SOURCES.map((source) => ({
                                 value: source,
@@ -339,9 +427,34 @@ function LeadsView() {
                             onValueChange={(next) => setFilter('source', next)}
                         />
                     </div>
+                    <div className='w-44 shrink'>
+                        <SelectInput
+                            options={(coursesQuery.data ?? []).map((c) => ({
+                                value: c.id,
+                                label: c.name,
+                            }))}
+                            placeholder={t('groups.allCourses')}
+                            value={filters.course_id}
+                            onValueChange={(next) => setFilter('course_id', next)}
+                        />
+                    </div>
+                    {(branchesQuery.data ?? []).length > 1 && (
+                        <div className='w-40 shrink'>
+                            <SelectInput
+                                options={(branchesQuery.data ?? []).map((b) => ({
+                                    value: b.id,
+                                    label: b.name,
+                                }))}
+                                placeholder={t('groups.allBranches')}
+                                value={filters.branch_id}
+                                onValueChange={(next) => setFilter('branch_id', next)}
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
 
+            {/* Main Content Area */}
             <div className='px-4 sm:px-5'>
                 {query.isPending ? (
                     <TableSkeleton columns={6} />
@@ -364,6 +477,8 @@ function LeadsView() {
                                             setSearch('');
                                             setFilter('status', '');
                                             setFilter('source', '');
+                                            setFilter('course_id', '');
+                                            setFilter('branch_id', '');
                                         }}
                                     >
                                         {t('filters.reset')}
@@ -389,14 +504,12 @@ function LeadsView() {
                     <LeadKanbanBoard
                         filters={{
                             search: search || undefined,
-                            source: (filters.source || undefined) as
-                                | LeadSource
-                                | undefined,
+                            source: (filters.source || undefined) as LeadSource | undefined,
+                            course_id: filters.course_id || undefined,
+                            branch_id: filters.branch_id || undefined,
                         }}
                         onlyStatus={
-                            (filters.status || undefined) as
-                                | LeadStatus
-                                | undefined
+                            (filters.status || undefined) as LeadStatus | undefined
                         }
                         onStatusChange={(id, status) =>
                             statusMutation.mutateAsync({ id, status })
@@ -406,13 +519,14 @@ function LeadsView() {
                             setFormOpen(true);
                         }}
                         onConvert={(lead) => setConverting(lead)}
+                        onSelectLead={(lead) => setDrawerLead(lead)}
                         canUpdate={canUpdate}
                         canConvert={canConvert}
                     />
                 ) : (
                     <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                         <>
-                            {/* Mobil kartalar (< md) */}
+                            {/* Mobile Cards (< md) */}
                             <div className='divide-card-border divide-y md:hidden'>
                                 {query.data.data.map((lead, index) => (
                                     <div
@@ -420,31 +534,30 @@ function LeadsView() {
                                         className='hover:bg-background-gray-primary/20 flex flex-col gap-3 p-4 transition-colors'
                                     >
                                         <div className='flex items-start justify-between gap-3'>
-                                            <div className='min-w-0 flex-1'>
+                                            <div
+                                                className='min-w-0 flex-1 cursor-pointer'
+                                                onClick={() => setDrawerLead(lead)}
+                                            >
                                                 <div className='flex items-center gap-2'>
                                                     <span className='text-text-tertiary text-xs font-semibold tabular-nums'>
                                                         #{offset + index + 1}
                                                     </span>
-                                                    <span className='text-text-primary truncate text-sm font-semibold'>
+                                                    <span className='text-text-primary hover:text-brand-accent truncate text-sm font-bold'>
                                                         {leadName(lead)}
                                                     </span>
                                                 </div>
-                                                <p className='text-text-tertiary mt-0.5 text-xs tabular-nums'>
-                                                    {lead.phone_number}
-                                                </p>
+                                                <div className='mt-0.5 text-xs'>
+                                                    <PhoneLink phone={lead.phone_number} />
+                                                </div>
                                             </div>
-                                            <LeadStatusBadge
-                                                status={lead.status}
-                                            />
+                                            <LeadStatusBadge status={lead.status} />
                                         </div>
 
                                         <div className='flex items-center justify-between text-xs'>
                                             <div className='flex items-center gap-2'>
-                                                <LeadSourceBadge
-                                                    source={lead.source}
-                                                />
+                                                <LeadSourceBadge source={lead.source} />
                                                 {lead.course && (
-                                                    <span className='text-text-secondary text-xs'>
+                                                    <span className='text-text-secondary text-xs font-medium'>
                                                         {lead.course.name}
                                                     </span>
                                                 )}
@@ -455,37 +568,41 @@ function LeadsView() {
                                         </div>
 
                                         <div className='border-card-border/60 flex items-center justify-end gap-1.5 border-t pt-2.5'>
-                                            {lead.student &&
-                                                canOpenStudents && (
-                                                    <Link
-                                                        href={`/students/${lead.student.id}`}
-                                                        className='text-brand-accent mr-auto text-xs font-medium hover:underline'
-                                                    >
-                                                        {t('leads.openStudent')}
-                                                    </Link>
-                                                )}
-                                            {canConvert &&
-                                                lead.status !== 'won' && (
-                                                    <Button
-                                                        variant='primary'
-                                                        appearance='outline'
-                                                        size='sm'
-                                                        onPress={() =>
-                                                            setConverting(lead)
-                                                        }
-                                                        className='text-xs'
-                                                    >
-                                                        {t('leads.convert')}
-                                                    </Button>
-                                                )}
+                                            <Button
+                                                appearance='outline'
+                                                size='sm'
+                                                onPress={() => setDrawerLead(lead)}
+                                                className='text-xs mr-auto'
+                                            >
+                                                <Eye className='size-3.5' />
+                                                <span>Tafsilotlar</span>
+                                            </Button>
+
+                                            {lead.student && canOpenStudents && (
+                                                <Link
+                                                    href={`/students/${lead.student.id}`}
+                                                    className='text-brand-accent text-xs font-semibold hover:underline'
+                                                >
+                                                    {t('leads.openStudent')}
+                                                </Link>
+                                            )}
+                                            {canConvert && lead.status !== 'won' && (
+                                                <Button
+                                                    variant='primary'
+                                                    appearance='outline'
+                                                    size='sm'
+                                                    onPress={() => setConverting(lead)}
+                                                    className='text-xs'
+                                                >
+                                                    {t('leads.convert')}
+                                                </Button>
+                                            )}
                                             {canUpdate && (
                                                 <Button
                                                     appearance='outline'
                                                     size='sm'
                                                     iconOnly
-                                                    aria-label={t(
-                                                        'common.edit',
-                                                    )}
+                                                    aria-label={t('common.edit')}
                                                     onPress={() => {
                                                         setEditing(lead);
                                                         setFormOpen(true);
@@ -500,12 +617,8 @@ function LeadsView() {
                                                     appearance='outline'
                                                     size='sm'
                                                     iconOnly
-                                                    aria-label={t(
-                                                        'common.delete',
-                                                    )}
-                                                    onPress={() =>
-                                                        setDeleting(lead)
-                                                    }
+                                                    aria-label={t('common.delete')}
+                                                    onPress={() => setDeleting(lead)}
                                                 >
                                                     <Trash1 className='size-3.5' />
                                                 </Button>
@@ -515,180 +628,159 @@ function LeadsView() {
                                 ))}
                             </div>
 
-                            {/* Desktop / Tablet jadval (>= md) */}
+                            {/* Desktop / Tablet Table (>= md) */}
                             <div className='hidden md:block'>
-                                <TableRoot
-                                    fullBleed
-                                    className='border-x-0 border-t-0'
-                                >
+                                <TableRoot fullBleed className='border-x-0 border-t-0'>
                                     <TableHeader>
                                         <TableRow>
+                                            <TableHead className='w-10 text-center'>
+                                                <input
+                                                    type='checkbox'
+                                                    checked={allCurrentPageSelected}
+                                                    onChange={toggleSelectAll}
+                                                    className='rounded border-card-border text-brand-accent focus:ring-brand-accent/20 size-4 cursor-pointer'
+                                                />
+                                            </TableHead>
                                             <RowNumberHead />
-                                            <TableHead>
-                                                {t('common.fullName')}
-                                            </TableHead>
-                                            <TableHead>
-                                                {t('leads.source')}
-                                            </TableHead>
-                                            <TableHead>
-                                                {t('leads.interest')}
-                                            </TableHead>
-                                            <TableHead>
-                                                {t('common.status')}
-                                            </TableHead>
-                                            <TableHead>
-                                                {t('common.createdAt')}
-                                            </TableHead>
+                                            <TableHead>{t('common.fullName')}</TableHead>
+                                            <TableHead>{t('leads.source')}</TableHead>
+                                            <TableHead>{t('leads.interest')}</TableHead>
+                                            <TableHead>{t('common.status')}</TableHead>
+                                            <TableHead>{t('common.createdAt')}</TableHead>
                                             <TableHead className='text-right'>
                                                 {t('common.actions')}
                                             </TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {query.data.data.map((lead, index) => (
-                                            <TableRow key={lead.id}>
-                                                <RowNumberCell
-                                                    index={index}
-                                                    offset={offset}
-                                                />
-                                                <TableCell primary>
-                                                    {leadName(lead)}
-                                                    <p className='text-text-tertiary mt-0.5 text-xs font-normal tabular-nums'>
-                                                        {lead.phone_number}
-                                                    </p>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <LeadSourceBadge
-                                                        source={lead.source}
+                                        {query.data.data.map((lead, index) => {
+                                            const isSelected = selectedIds.includes(lead.id);
+
+                                            return (
+                                                <TableRow
+                                                    key={lead.id}
+                                                    className={cn(
+                                                        isSelected && 'bg-brand-accent/5',
+                                                    )}
+                                                >
+                                                    <TableCell className='text-center'>
+                                                        <input
+                                                            type='checkbox'
+                                                            checked={isSelected}
+                                                            onChange={() => toggleSelectRow(lead.id)}
+                                                            className='rounded border-card-border text-brand-accent focus:ring-brand-accent/20 size-4 cursor-pointer'
+                                                        />
+                                                    </TableCell>
+                                                    <RowNumberCell
+                                                        index={index}
+                                                        offset={offset}
                                                     />
-                                                </TableCell>
-                                                <TableCell>
-                                                    {lead.course?.name ?? '—'}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {canUpdate &&
-                                                    lead.status !== 'won' ? (
-                                                        <div className='flex w-44 items-center gap-2'>
-                                                            <LeadStatusDot
-                                                                status={
-                                                                    lead.status
-                                                                }
-                                                            />
-                                                            <SelectInput
-                                                                options={EDITABLE_LEAD_STATUSES.map(
-                                                                    (
-                                                                        status,
-                                                                    ) => ({
+                                                    <TableCell
+                                                        primary
+                                                        className='cursor-pointer group'
+                                                        onClick={() => setDrawerLead(lead)}
+                                                    >
+                                                        <span className='font-bold group-hover:text-brand-accent transition-colors'>
+                                                            {leadName(lead)}
+                                                        </span>
+                                                        <div className='mt-0.5 text-xs font-normal' onClick={(e) => e.stopPropagation()}>
+                                                            <PhoneLink phone={lead.phone_number} />
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <LeadSourceBadge source={lead.source} />
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {lead.course?.name ?? '—'}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {canUpdate && lead.status !== 'won' ? (
+                                                            <div className='flex w-44 items-center gap-2'>
+                                                                <LeadStatusDot status={lead.status} />
+                                                                <SelectInput
+                                                                    options={EDITABLE_LEAD_STATUSES.map((status) => ({
                                                                         value: status,
-                                                                        label: t(
-                                                                            `leadStatus.${status}`,
-                                                                        ),
-                                                                    }),
-                                                                )}
-                                                                value={
-                                                                    lead.status
-                                                                }
-                                                                disabled={
-                                                                    statusMutation.isPending
-                                                                }
-                                                                onValueChange={(
-                                                                    status,
-                                                                ) =>
-                                                                    statusMutation.mutate(
-                                                                        {
+                                                                        label: t(`leadStatus.${status}`),
+                                                                    }))}
+                                                                    value={lead.status}
+                                                                    disabled={statusMutation.isPending}
+                                                                    onValueChange={(status) =>
+                                                                        statusMutation.mutate({
                                                                             id: lead.id,
                                                                             status: status as NonNullable<
                                                                                 LeadPayload['status']
                                                                             >,
-                                                                        },
-                                                                    )
-                                                                }
-                                                            />
-                                                        </div>
-                                                    ) : (
-                                                        <LeadStatusBadge
-                                                            status={lead.status}
-                                                        />
-                                                    )}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {formatDate(
-                                                        lead.created_at,
-                                                    )}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <div className='flex justify-end gap-2'>
-                                                        {lead.student &&
-                                                            canOpenStudents && (
+                                                                        })
+                                                                    }
+                                                                />
+                                                            </div>
+                                                        ) : (
+                                                            <LeadStatusBadge status={lead.status} />
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {formatDate(lead.created_at)}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className='flex justify-end gap-1.5'>
+                                                            <Button
+                                                                appearance='outline'
+                                                                size='md'
+                                                                iconOnly
+                                                                aria-label='Tafsilotlar'
+                                                                onPress={() => setDrawerLead(lead)}
+                                                            >
+                                                                <Eye className='size-4' />
+                                                            </Button>
+                                                            {lead.student && canOpenStudents && (
                                                                 <Link
                                                                     href={`/students/${lead.student.id}`}
-                                                                    className='text-brand-accent self-center text-sm font-medium hover:underline'
+                                                                    className='text-brand-accent self-center text-sm font-semibold hover:underline px-1'
                                                                 >
-                                                                    {t(
-                                                                        'leads.openStudent',
-                                                                    )}
+                                                                    {t('leads.openStudent')}
                                                                 </Link>
                                                             )}
-                                                        {canConvert &&
-                                                            lead.status !==
-                                                                'won' && (
+                                                            {canConvert && lead.status !== 'won' && (
                                                                 <Button
                                                                     variant='primary'
                                                                     appearance='outline'
                                                                     size='md'
-                                                                    onPress={() =>
-                                                                        setConverting(
-                                                                            lead,
-                                                                        )
-                                                                    }
+                                                                    onPress={() => setConverting(lead)}
                                                                 >
-                                                                    {t(
-                                                                        'leads.convert',
-                                                                    )}
+                                                                    {t('leads.convert')}
                                                                 </Button>
                                                             )}
-                                                        {canUpdate && (
-                                                            <Button
-                                                                appearance='outline'
-                                                                size='md'
-                                                                iconOnly
-                                                                aria-label={t(
-                                                                    'common.edit',
-                                                                )}
-                                                                onPress={() => {
-                                                                    setEditing(
-                                                                        lead,
-                                                                    );
-                                                                    setFormOpen(
-                                                                        true,
-                                                                    );
-                                                                }}
-                                                            >
-                                                                <Pencil1 />
-                                                            </Button>
-                                                        )}
-                                                        {canDelete && (
-                                                            <Button
-                                                                variant='danger'
-                                                                appearance='outline'
-                                                                size='md'
-                                                                iconOnly
-                                                                aria-label={t(
-                                                                    'common.delete',
-                                                                )}
-                                                                onPress={() =>
-                                                                    setDeleting(
-                                                                        lead,
-                                                                    )
-                                                                }
-                                                            >
-                                                                <Trash1 />
-                                                            </Button>
-                                                        )}
-                                                    </div>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
+                                                            {canUpdate && (
+                                                                <Button
+                                                                    appearance='outline'
+                                                                    size='md'
+                                                                    iconOnly
+                                                                    aria-label={t('common.edit')}
+                                                                    onPress={() => {
+                                                                        setEditing(lead);
+                                                                        setFormOpen(true);
+                                                                    }}
+                                                                >
+                                                                    <Pencil1 />
+                                                                </Button>
+                                                            )}
+                                                            {canDelete && (
+                                                                <Button
+                                                                    variant='danger'
+                                                                    appearance='outline'
+                                                                    size='md'
+                                                                    iconOnly
+                                                                    aria-label={t('common.delete')}
+                                                                    onPress={() => setDeleting(lead)}
+                                                                >
+                                                                    <Trash1 />
+                                                                </Button>
+                                                            )}
+                                                        </div>
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
                                     </TableBody>
                                 </TableRoot>
                             </div>
@@ -705,6 +797,7 @@ function LeadsView() {
                 )}
             </div>
 
+            {/* Modals & Drawers */}
             {formOpen && (
                 <LeadFormModal
                     lead={editing}
@@ -718,6 +811,33 @@ function LeadsView() {
                     onClose={() => setConverting(null)}
                 />
             )}
+
+            {drawerLead && (
+                <LeadDetailDrawer
+                    lead={drawerLead}
+                    onClose={() => setDrawerLead(null)}
+                    onEdit={(lead) => {
+                        setDrawerLead(null);
+                        setEditing(lead);
+                        setFormOpen(true);
+                    }}
+                    onConvert={(lead) => {
+                        setDrawerLead(null);
+                        setConverting(lead);
+                    }}
+                    onDelete={(lead) => {
+                        setDrawerLead(null);
+                        setDeleting(lead);
+                    }}
+                />
+            )}
+
+            <LeadBatchActionsBar
+                selectedIds={selectedIds}
+                onClearSelection={() => setSelectedIds([])}
+                canUpdate={canUpdate}
+                canDelete={canDelete}
+            />
 
             <ConfirmDialog
                 open={deleting !== null}

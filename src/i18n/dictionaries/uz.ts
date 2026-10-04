@@ -722,6 +722,8 @@ export const uz = {
     'leads.created': "Lid qo'shildi",
     'leads.updated': 'Lid yangilandi',
     'leads.deleted': "Lid o'chirildi",
+    'leads.batchStatusDone': '{count} ta lid holati yangilandi',
+    'leads.batchDeleteDone': "{count} ta lid o'chirildi",
 
     /* ── Umumiy ── */
     'common.change': "O'zgartirish",
