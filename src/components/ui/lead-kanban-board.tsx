@@ -113,7 +113,9 @@ export function LeadKanbanBoard({
     const allQueryLeads = statuses.flatMap((status) => columns[status].leads);
 
     const [draggedLeadId, setDraggedLeadId] = useState<string | null>(null);
-    const [dragOverColumn, setDragOverColumn] = useState<LeadStatus | null>(null);
+    const [dragOverColumn, setDragOverColumn] = useState<LeadStatus | null>(
+        null,
+    );
     const dragOverColumnRef = useRef<LeadStatus | null>(null);
 
     const [tab, setActiveTab] = useState<LeadStatus>('new');
@@ -275,9 +277,10 @@ export function LeadKanbanBoard({
                         getColumnLeads(status);
                     const isOver = dragOverColumn === status;
 
-                    const percentage = totalLeadsCount > 0
-                        ? Math.round((columnCount / totalLeadsCount) * 100)
-                        : 0;
+                    const percentage =
+                        totalLeadsCount > 0
+                            ? Math.round((columnCount / totalLeadsCount) * 100)
+                            : 0;
 
                     return (
                         <div
@@ -308,7 +311,7 @@ export function LeadKanbanBoard({
                                 </div>
                                 <div className='flex items-center gap-1.5'>
                                     {totalLeadsCount > 0 && (
-                                        <span className='text-[11px] font-medium text-text-tertiary tabular-nums'>
+                                        <span className='text-text-tertiary text-[11px] font-medium tabular-nums'>
                                             {percentage}%
                                         </span>
                                     )}
@@ -321,7 +324,7 @@ export function LeadKanbanBoard({
                             {/* Column Items */}
                             <div className='min-h-[150px] flex-1 scrollbar-thin space-y-2.5 overflow-y-auto pr-0.5'>
                                 {isOver && draggedLeadId && (
-                                    <div className='border-brand-accent/80 bg-brand-accent/15 text-brand-accent flex h-20 animate-pulse items-center justify-center rounded-xl border-2 border-dashed text-xs font-bold shadow-inner gap-2'>
+                                    <div className='border-brand-accent/80 bg-brand-accent/15 text-brand-accent flex h-20 animate-pulse items-center justify-center gap-2 rounded-xl border-2 border-dashed text-xs font-bold shadow-inner'>
                                         <span>↓</span>
                                         <span>{t('leads.dropHere')}</span>
                                     </div>
@@ -369,40 +372,53 @@ export function LeadKanbanBoard({
                                                 className={cn(
                                                     'group border-card-border bg-card-surface-area hover:border-brand-accent/40 relative flex flex-col justify-between rounded-xl border p-3.5 shadow-2xs transition-all duration-200 hover:shadow-md',
                                                     draggable &&
-                                                        'cursor-grab active:cursor-grabbing hover:-translate-y-0.5',
+                                                        'cursor-grab hover:-translate-y-0.5 active:cursor-grabbing',
                                                     isDraggingThis &&
                                                         'border-brand-accent bg-brand-accent/5 scale-[0.98] border-dashed opacity-40 shadow-xl',
-                                                    isOverdue && 'border-l-4 border-l-red-500',
-                                                    isToday && 'border-l-4 border-l-amber-500',
+                                                    isOverdue &&
+                                                        'border-l-4 border-l-red-500',
+                                                    isToday &&
+                                                        'border-l-4 border-l-amber-500',
                                                 )}
                                             >
                                                 <div>
                                                     <div className='flex items-start justify-between gap-1.5'>
                                                         <div
-                                                            className='flex flex-1 min-w-0 items-center gap-1.5 cursor-pointer'
-                                                            onClick={() => onSelectLead?.(lead)}
+                                                            className='flex min-w-0 flex-1 cursor-pointer items-center gap-1.5'
+                                                            onClick={() =>
+                                                                onSelectLead?.(
+                                                                    lead,
+                                                                )
+                                                            }
                                                         >
                                                             {draggable && (
-                                                                <span className='text-text-tertiary shrink-0 cursor-grab text-xs opacity-40 select-none group-hover:opacity-100 transition-opacity'>
+                                                                <span className='text-text-tertiary shrink-0 cursor-grab text-xs opacity-40 transition-opacity select-none group-hover:opacity-100'>
                                                                     ⋮⋮
                                                                 </span>
                                                             )}
                                                             <h5
-                                                                className='text-text-primary truncate text-xs font-bold sm:text-sm hover:text-brand-accent transition-colors'
+                                                                className='text-text-primary hover:text-brand-accent truncate text-xs font-bold transition-colors sm:text-sm'
                                                                 title={`${lead.first_name} ${lead.last_name || ''}`}
                                                             >
-                                                                {lead.first_name}{' '}
-                                                                {lead.last_name || ''}
+                                                                {
+                                                                    lead.first_name
+                                                                }{' '}
+                                                                {lead.last_name ||
+                                                                    ''}
                                                             </h5>
                                                         </div>
 
-                                                        <div className='flex items-center gap-0.5 shrink-0'>
+                                                        <div className='flex shrink-0 items-center gap-0.5'>
                                                             {onSelectLead && (
                                                                 <button
                                                                     type='button'
-                                                                    onClick={() => onSelectLead(lead)}
+                                                                    onClick={() =>
+                                                                        onSelectLead(
+                                                                            lead,
+                                                                        )
+                                                                    }
                                                                     className='text-icon-tertiary hover:text-brand-accent hover:bg-background-gray-secondary rounded-md p-1 transition-colors'
-                                                                    aria-label="Tafsilotlar"
+                                                                    aria-label='Tafsilotlar'
                                                                 >
                                                                     <Eye className='size-3.5' />
                                                                 </button>
@@ -410,9 +426,15 @@ export function LeadKanbanBoard({
                                                             {canUpdate && (
                                                                 <button
                                                                     type='button'
-                                                                    onClick={() => onEdit(lead)}
+                                                                    onClick={() =>
+                                                                        onEdit(
+                                                                            lead,
+                                                                        )
+                                                                    }
                                                                     className='text-icon-tertiary hover:text-text-primary hover:bg-background-gray-secondary rounded-md p-1 transition-colors'
-                                                                    aria-label={t('common.edit')}
+                                                                    aria-label={t(
+                                                                        'common.edit',
+                                                                    )}
                                                                 >
                                                                     <Pencil1 className='size-3.5' />
                                                                 </button>
@@ -421,17 +443,29 @@ export function LeadKanbanBoard({
                                                     </div>
 
                                                     <div className='mt-1 flex items-center justify-between text-xs'>
-                                                        <PhoneLink phone={lead.phone_number} />
+                                                        <PhoneLink
+                                                            phone={
+                                                                lead.phone_number
+                                                            }
+                                                        />
                                                     </div>
 
                                                     <div className='mt-2.5 flex flex-wrap items-center gap-1.5'>
-                                                        <LeadSourceBadge source={lead.source} />
+                                                        <LeadSourceBadge
+                                                            source={lead.source}
+                                                        />
                                                         {lead.course && (
                                                             <span
                                                                 className='bg-background-gray-secondary text-text-secondary max-w-[140px] truncate rounded-md px-1.5 py-0.5 text-[11px] font-medium'
-                                                                title={lead.course.name}
+                                                                title={
+                                                                    lead.course
+                                                                        .name
+                                                                }
                                                             >
-                                                                {lead.course.name}
+                                                                {
+                                                                    lead.course
+                                                                        .name
+                                                                }
                                                             </span>
                                                         )}
                                                     </div>
@@ -443,18 +477,31 @@ export function LeadKanbanBoard({
                                                                 isOverdue
                                                                     ? 'bg-red-500/10 text-red-600 dark:text-red-400'
                                                                     : isToday
-                                                                    ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                                                                    : 'bg-background-gray-secondary/60 text-text-tertiary',
+                                                                      ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                                                                      : 'bg-background-gray-secondary/60 text-text-tertiary',
                                                             )}
                                                         >
                                                             <Calendar className='size-3 shrink-0' />
                                                             <span className='truncate'>
-                                                                {t('leads.nextCall', {
-                                                                    date: formatDate(lead.next_call_date),
-                                                                })}
+                                                                {t(
+                                                                    'leads.nextCall',
+                                                                    {
+                                                                        date: formatDate(
+                                                                            lead.next_call_date,
+                                                                        ),
+                                                                    },
+                                                                )}
                                                             </span>
-                                                            {isOverdue && <span className='ml-auto text-[10px] font-bold'>⚠️</span>}
-                                                            {isToday && <span className='ml-auto text-[10px] font-bold'>⏰</span>}
+                                                            {isOverdue && (
+                                                                <span className='ml-auto text-[10px] font-bold'>
+                                                                    ⚠️
+                                                                </span>
+                                                            )}
+                                                            {isToday && (
+                                                                <span className='ml-auto text-[10px] font-bold'>
+                                                                    ⏰
+                                                                </span>
+                                                            )}
                                                         </div>
                                                     )}
                                                 </div>
@@ -462,21 +509,40 @@ export function LeadKanbanBoard({
                                                 {/* Status Switcher & Convert */}
                                                 <div className='border-card-border mt-3 flex flex-wrap items-center justify-between gap-2 border-t pt-2.5'>
                                                     {canUpdate &&
-                                                        effectiveStatus !== 'won' && (
+                                                        effectiveStatus !==
+                                                            'won' && (
                                                             <div className='min-w-[110px] flex-1'>
                                                                 <SelectInput
                                                                     className='h-7 rounded-lg text-xs font-medium'
-                                                                    options={EDITABLE_LEAD_STATUSES.map((s) => ({
-                                                                        value: s,
-                                                                        label: t(`leadStatus.${s}` as import('@/i18n/dictionaries/uz').TranslationKey),
-                                                                    }))}
-                                                                    value={effectiveStatus}
-                                                                    onValueChange={(next) => {
-                                                                        if (next !== effectiveStatus) {
-                                                                            setOptimisticStatusMap((prev) => ({
-                                                                                ...prev,
-                                                                                [lead.id]: next as LeadStatus,
-                                                                            }));
+                                                                    options={EDITABLE_LEAD_STATUSES.map(
+                                                                        (
+                                                                            s,
+                                                                        ) => ({
+                                                                            value: s,
+                                                                            label: t(
+                                                                                `leadStatus.${s}` as import('@/i18n/dictionaries/uz').TranslationKey,
+                                                                            ),
+                                                                        }),
+                                                                    )}
+                                                                    value={
+                                                                        effectiveStatus
+                                                                    }
+                                                                    onValueChange={(
+                                                                        next,
+                                                                    ) => {
+                                                                        if (
+                                                                            next !==
+                                                                            effectiveStatus
+                                                                        ) {
+                                                                            setOptimisticStatusMap(
+                                                                                (
+                                                                                    prev,
+                                                                                ) => ({
+                                                                                    ...prev,
+                                                                                    [lead.id]:
+                                                                                        next as LeadStatus,
+                                                                                }),
+                                                                            );
                                                                             onStatusChange(
                                                                                 lead.id,
                                                                                 next as EditableLeadStatus,
@@ -487,18 +553,28 @@ export function LeadKanbanBoard({
                                                             </div>
                                                         )}
 
-                                                    {effectiveStatus !== 'won' && canConvert && (
-                                                        <button
-                                                            type='button'
-                                                            onClick={() => onConvert(lead)}
-                                                            className='border-brand-accent/40 bg-brand-accent/5 text-brand-accent hover:bg-brand-accent inline-flex h-7 shrink-0 items-center justify-center gap-1 rounded-lg border px-2 text-xs font-semibold transition-all hover:text-white hover:shadow-xs'
-                                                        >
-                                                            <User2 className='size-3 shrink-0' />
-                                                            <span>+ O&apos;quvchiga</span>
-                                                        </button>
-                                                    )}
+                                                    {effectiveStatus !==
+                                                        'won' &&
+                                                        canConvert && (
+                                                            <button
+                                                                type='button'
+                                                                onClick={() =>
+                                                                    onConvert(
+                                                                        lead,
+                                                                    )
+                                                                }
+                                                                className='border-brand-accent/40 bg-brand-accent/5 text-brand-accent hover:bg-brand-accent inline-flex h-7 shrink-0 items-center justify-center gap-1 rounded-lg border px-2 text-xs font-semibold transition-all hover:text-white hover:shadow-xs'
+                                                            >
+                                                                <User2 className='size-3 shrink-0' />
+                                                                <span>
+                                                                    +
+                                                                    O&apos;quvchiga
+                                                                </span>
+                                                            </button>
+                                                        )}
 
-                                                    {effectiveStatus === 'won' && (
+                                                    {effectiveStatus ===
+                                                        'won' && (
                                                         <div className='flex w-full items-center justify-between py-0.5 text-xs'>
                                                             <LeadStatusBadge status='won' />
                                                             {lead.student && (
@@ -506,7 +582,10 @@ export function LeadKanbanBoard({
                                                                     href={`/students/${lead.student.id}`}
                                                                     className='text-brand-accent font-semibold hover:underline'
                                                                 >
-                                                                    {t('leads.openStudent')} &rarr;
+                                                                    {t(
+                                                                        'leads.openStudent',
+                                                                    )}{' '}
+                                                                    &rarr;
                                                                 </Link>
                                                             )}
                                                         </div>

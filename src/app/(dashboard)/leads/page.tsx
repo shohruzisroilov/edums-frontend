@@ -54,7 +54,16 @@ import {
 } from '@/types/api';
 import { can } from '@/utils/access';
 import { cn } from '@/utils/cn';
-import { Column, Eye, Funnel1, Globe2, Pencil1, Plus, Table2, Trash1 } from '@tailgrids/icons';
+import {
+    Column,
+    Eye,
+    Funnel1,
+    Globe2,
+    Pencil1,
+    Plus,
+    Table2,
+    Trash1,
+} from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -188,25 +197,36 @@ function LeadsView() {
     });
 
     const filtered = Boolean(
-        search || filters.status || filters.source || filters.course_id || filters.branch_id,
+        search ||
+        filters.status ||
+        filters.source ||
+        filters.course_id ||
+        filters.branch_id,
     );
 
     const leadsData = query.data?.data ?? [];
     const allCurrentPageSelected =
-        leadsData.length > 0 && leadsData.every((lead) => selectedIds.includes(lead.id));
+        leadsData.length > 0 &&
+        leadsData.every((lead) => selectedIds.includes(lead.id));
 
     const toggleSelectAll = () => {
         if (allCurrentPageSelected) {
-            setSelectedIds((prev) => prev.filter((id) => !leadsData.some((l) => l.id === id)));
+            setSelectedIds((prev) =>
+                prev.filter((id) => !leadsData.some((l) => l.id === id)),
+            );
         } else {
             const currentIds = leadsData.map((l) => l.id);
-            setSelectedIds((prev) => Array.from(new Set([...prev, ...currentIds])));
+            setSelectedIds((prev) =>
+                Array.from(new Set([...prev, ...currentIds])),
+            );
         }
     };
 
     const toggleSelectRow = (id: string) => {
         setSelectedIds((prev) =>
-            prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+            prev.includes(id)
+                ? prev.filter((item) => item !== id)
+                : [...prev, id],
         );
     };
 
@@ -215,9 +235,10 @@ function LeadsView() {
     const totalLeadsCount = stats
         ? stats.new + stats.contacted + stats.trial + stats.won + stats.lost
         : 0;
-    const conversionRate = totalLeadsCount > 0 && stats
-        ? Math.round((stats.won / totalLeadsCount) * 100)
-        : 0;
+    const conversionRate =
+        totalLeadsCount > 0 && stats
+            ? Math.round((stats.won / totalLeadsCount) * 100)
+            : 0;
 
     return (
         <>
@@ -288,7 +309,10 @@ function LeadsView() {
                 {LEAD_STATUSES.map((status) => {
                     const active = filters.status === status;
                     const count = stats ? stats[status] : 0;
-                    const share = totalLeadsCount > 0 ? Math.round((count / totalLeadsCount) * 100) : 0;
+                    const share =
+                        totalLeadsCount > 0
+                            ? Math.round((count / totalLeadsCount) * 100)
+                            : 0;
 
                     return (
                         <button
@@ -312,7 +336,7 @@ function LeadsView() {
                                         {t(`leadStatus.${status}`)}
                                     </span>
                                 </p>
-                                <span className='text-[11px] font-medium text-text-tertiary tabular-nums'>
+                                <span className='text-text-tertiary text-[11px] font-medium tabular-nums'>
                                     {share}%
                                 </span>
                             </div>
@@ -324,7 +348,7 @@ function LeadsView() {
                 })}
 
                 {/* Conversion Rate Card */}
-                <div className='bg-gradient-to-br from-brand-accent/10 via-card-background to-card-background border-brand-accent/30 relative overflow-hidden rounded-xl border p-3 text-left sm:p-3.5'>
+                <div className='from-brand-accent/10 via-card-background to-card-background border-brand-accent/30 relative overflow-hidden rounded-xl border bg-gradient-to-br p-3 text-left sm:p-3.5'>
                     <div className='flex items-center justify-between gap-1'>
                         <p className='text-brand-accent flex min-w-0 items-center gap-1.5 text-xs font-bold'>
                             ⚡ Konversiya
@@ -399,7 +423,9 @@ function LeadsView() {
                             }))}
                             placeholder={t('groups.allBranches')}
                             value={filters.branch_id}
-                            onValueChange={(next) => setFilter('branch_id', next)}
+                            onValueChange={(next) =>
+                                setFilter('branch_id', next)
+                            }
                         />
                     )}
                 </MobileFilterSheet>
@@ -435,19 +461,25 @@ function LeadsView() {
                             }))}
                             placeholder={t('groups.allCourses')}
                             value={filters.course_id}
-                            onValueChange={(next) => setFilter('course_id', next)}
+                            onValueChange={(next) =>
+                                setFilter('course_id', next)
+                            }
                         />
                     </div>
                     {(branchesQuery.data ?? []).length > 1 && (
                         <div className='w-40 shrink'>
                             <SelectInput
-                                options={(branchesQuery.data ?? []).map((b) => ({
-                                    value: b.id,
-                                    label: b.name,
-                                }))}
+                                options={(branchesQuery.data ?? []).map(
+                                    (b) => ({
+                                        value: b.id,
+                                        label: b.name,
+                                    }),
+                                )}
                                 placeholder={t('groups.allBranches')}
                                 value={filters.branch_id}
-                                onValueChange={(next) => setFilter('branch_id', next)}
+                                onValueChange={(next) =>
+                                    setFilter('branch_id', next)
+                                }
                             />
                         </div>
                     )}
@@ -504,12 +536,16 @@ function LeadsView() {
                     <LeadKanbanBoard
                         filters={{
                             search: search || undefined,
-                            source: (filters.source || undefined) as LeadSource | undefined,
+                            source: (filters.source || undefined) as
+                                | LeadSource
+                                | undefined,
                             course_id: filters.course_id || undefined,
                             branch_id: filters.branch_id || undefined,
                         }}
                         onlyStatus={
-                            (filters.status || undefined) as LeadStatus | undefined
+                            (filters.status || undefined) as
+                                | LeadStatus
+                                | undefined
                         }
                         onStatusChange={(id, status) =>
                             statusMutation.mutateAsync({ id, status })
@@ -536,7 +572,9 @@ function LeadsView() {
                                         <div className='flex items-start justify-between gap-3'>
                                             <div
                                                 className='min-w-0 flex-1 cursor-pointer'
-                                                onClick={() => setDrawerLead(lead)}
+                                                onClick={() =>
+                                                    setDrawerLead(lead)
+                                                }
                                             >
                                                 <div className='flex items-center gap-2'>
                                                     <span className='text-text-tertiary text-xs font-semibold tabular-nums'>
@@ -547,15 +585,23 @@ function LeadsView() {
                                                     </span>
                                                 </div>
                                                 <div className='mt-0.5 text-xs'>
-                                                    <PhoneLink phone={lead.phone_number} />
+                                                    <PhoneLink
+                                                        phone={
+                                                            lead.phone_number
+                                                        }
+                                                    />
                                                 </div>
                                             </div>
-                                            <LeadStatusBadge status={lead.status} />
+                                            <LeadStatusBadge
+                                                status={lead.status}
+                                            />
                                         </div>
 
                                         <div className='flex items-center justify-between text-xs'>
                                             <div className='flex items-center gap-2'>
-                                                <LeadSourceBadge source={lead.source} />
+                                                <LeadSourceBadge
+                                                    source={lead.source}
+                                                />
                                                 {lead.course && (
                                                     <span className='text-text-secondary text-xs font-medium'>
                                                         {lead.course.name}
@@ -571,38 +617,46 @@ function LeadsView() {
                                             <Button
                                                 appearance='outline'
                                                 size='sm'
-                                                onPress={() => setDrawerLead(lead)}
-                                                className='text-xs mr-auto'
+                                                onPress={() =>
+                                                    setDrawerLead(lead)
+                                                }
+                                                className='mr-auto text-xs'
                                             >
                                                 <Eye className='size-3.5' />
                                                 <span>Tafsilotlar</span>
                                             </Button>
 
-                                            {lead.student && canOpenStudents && (
-                                                <Link
-                                                    href={`/students/${lead.student.id}`}
-                                                    className='text-brand-accent text-xs font-semibold hover:underline'
-                                                >
-                                                    {t('leads.openStudent')}
-                                                </Link>
-                                            )}
-                                            {canConvert && lead.status !== 'won' && (
-                                                <Button
-                                                    variant='primary'
-                                                    appearance='outline'
-                                                    size='sm'
-                                                    onPress={() => setConverting(lead)}
-                                                    className='text-xs'
-                                                >
-                                                    {t('leads.convert')}
-                                                </Button>
-                                            )}
+                                            {lead.student &&
+                                                canOpenStudents && (
+                                                    <Link
+                                                        href={`/students/${lead.student.id}`}
+                                                        className='text-brand-accent text-xs font-semibold hover:underline'
+                                                    >
+                                                        {t('leads.openStudent')}
+                                                    </Link>
+                                                )}
+                                            {canConvert &&
+                                                lead.status !== 'won' && (
+                                                    <Button
+                                                        variant='primary'
+                                                        appearance='outline'
+                                                        size='sm'
+                                                        onPress={() =>
+                                                            setConverting(lead)
+                                                        }
+                                                        className='text-xs'
+                                                    >
+                                                        {t('leads.convert')}
+                                                    </Button>
+                                                )}
                                             {canUpdate && (
                                                 <Button
                                                     appearance='outline'
                                                     size='sm'
                                                     iconOnly
-                                                    aria-label={t('common.edit')}
+                                                    aria-label={t(
+                                                        'common.edit',
+                                                    )}
                                                     onPress={() => {
                                                         setEditing(lead);
                                                         setFormOpen(true);
@@ -617,8 +671,12 @@ function LeadsView() {
                                                     appearance='outline'
                                                     size='sm'
                                                     iconOnly
-                                                    aria-label={t('common.delete')}
-                                                    onPress={() => setDeleting(lead)}
+                                                    aria-label={t(
+                                                        'common.delete',
+                                                    )}
+                                                    onPress={() =>
+                                                        setDeleting(lead)
+                                                    }
                                                 >
                                                     <Trash1 className='size-3.5' />
                                                 </Button>
@@ -630,23 +688,38 @@ function LeadsView() {
 
                             {/* Desktop / Tablet Table (>= md) */}
                             <div className='hidden md:block'>
-                                <TableRoot fullBleed className='border-x-0 border-t-0'>
+                                <TableRoot
+                                    fullBleed
+                                    className='border-x-0 border-t-0'
+                                >
                                     <TableHeader>
                                         <TableRow>
                                             <TableHead className='w-10 text-center'>
                                                 <input
                                                     type='checkbox'
-                                                    checked={allCurrentPageSelected}
+                                                    checked={
+                                                        allCurrentPageSelected
+                                                    }
                                                     onChange={toggleSelectAll}
-                                                    className='rounded border-card-border text-brand-accent focus:ring-brand-accent/20 size-4 cursor-pointer'
+                                                    className='border-card-border text-brand-accent focus:ring-brand-accent/20 size-4 cursor-pointer rounded'
                                                 />
                                             </TableHead>
                                             <RowNumberHead />
-                                            <TableHead>{t('common.fullName')}</TableHead>
-                                            <TableHead>{t('leads.source')}</TableHead>
-                                            <TableHead>{t('leads.interest')}</TableHead>
-                                            <TableHead>{t('common.status')}</TableHead>
-                                            <TableHead>{t('common.createdAt')}</TableHead>
+                                            <TableHead>
+                                                {t('common.fullName')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('leads.source')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('leads.interest')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.status')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.createdAt')}
+                                            </TableHead>
                                             <TableHead className='text-right'>
                                                 {t('common.actions')}
                                             </TableHead>
@@ -654,21 +727,27 @@ function LeadsView() {
                                     </TableHeader>
                                     <TableBody>
                                         {query.data.data.map((lead, index) => {
-                                            const isSelected = selectedIds.includes(lead.id);
+                                            const isSelected =
+                                                selectedIds.includes(lead.id);
 
                                             return (
                                                 <TableRow
                                                     key={lead.id}
                                                     className={cn(
-                                                        isSelected && 'bg-brand-accent/5',
+                                                        isSelected &&
+                                                            'bg-brand-accent/5',
                                                     )}
                                                 >
                                                     <TableCell className='text-center'>
                                                         <input
                                                             type='checkbox'
                                                             checked={isSelected}
-                                                            onChange={() => toggleSelectRow(lead.id)}
-                                                            className='rounded border-card-border text-brand-accent focus:ring-brand-accent/20 size-4 cursor-pointer'
+                                                            onChange={() =>
+                                                                toggleSelectRow(
+                                                                    lead.id,
+                                                                )
+                                                            }
+                                                            className='border-card-border text-brand-accent focus:ring-brand-accent/20 size-4 cursor-pointer rounded'
                                                         />
                                                     </TableCell>
                                                     <RowNumberCell
@@ -677,49 +756,89 @@ function LeadsView() {
                                                     />
                                                     <TableCell
                                                         primary
-                                                        className='cursor-pointer group'
-                                                        onClick={() => setDrawerLead(lead)}
+                                                        className='group cursor-pointer'
+                                                        onClick={() =>
+                                                            setDrawerLead(lead)
+                                                        }
                                                     >
-                                                        <span className='font-bold group-hover:text-brand-accent transition-colors'>
+                                                        <span className='group-hover:text-brand-accent font-bold transition-colors'>
                                                             {leadName(lead)}
                                                         </span>
-                                                        <div className='mt-0.5 text-xs font-normal' onClick={(e) => e.stopPropagation()}>
-                                                            <PhoneLink phone={lead.phone_number} />
+                                                        <div
+                                                            className='mt-0.5 text-xs font-normal'
+                                                            onClick={(e) =>
+                                                                e.stopPropagation()
+                                                            }
+                                                        >
+                                                            <PhoneLink
+                                                                phone={
+                                                                    lead.phone_number
+                                                                }
+                                                            />
                                                         </div>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <LeadSourceBadge source={lead.source} />
+                                                        <LeadSourceBadge
+                                                            source={lead.source}
+                                                        />
                                                     </TableCell>
                                                     <TableCell>
-                                                        {lead.course?.name ?? '—'}
+                                                        {lead.course?.name ??
+                                                            '—'}
                                                     </TableCell>
                                                     <TableCell>
-                                                        {canUpdate && lead.status !== 'won' ? (
+                                                        {canUpdate &&
+                                                        lead.status !==
+                                                            'won' ? (
                                                             <div className='flex w-44 items-center gap-2'>
-                                                                <LeadStatusDot status={lead.status} />
+                                                                <LeadStatusDot
+                                                                    status={
+                                                                        lead.status
+                                                                    }
+                                                                />
                                                                 <SelectInput
-                                                                    options={EDITABLE_LEAD_STATUSES.map((status) => ({
-                                                                        value: status,
-                                                                        label: t(`leadStatus.${status}`),
-                                                                    }))}
-                                                                    value={lead.status}
-                                                                    disabled={statusMutation.isPending}
-                                                                    onValueChange={(status) =>
-                                                                        statusMutation.mutate({
-                                                                            id: lead.id,
-                                                                            status: status as NonNullable<
-                                                                                LeadPayload['status']
-                                                                            >,
-                                                                        })
+                                                                    options={EDITABLE_LEAD_STATUSES.map(
+                                                                        (
+                                                                            status,
+                                                                        ) => ({
+                                                                            value: status,
+                                                                            label: t(
+                                                                                `leadStatus.${status}`,
+                                                                            ),
+                                                                        }),
+                                                                    )}
+                                                                    value={
+                                                                        lead.status
+                                                                    }
+                                                                    disabled={
+                                                                        statusMutation.isPending
+                                                                    }
+                                                                    onValueChange={(
+                                                                        status,
+                                                                    ) =>
+                                                                        statusMutation.mutate(
+                                                                            {
+                                                                                id: lead.id,
+                                                                                status: status as NonNullable<
+                                                                                    LeadPayload['status']
+                                                                                >,
+                                                                            },
+                                                                        )
                                                                     }
                                                                 />
                                                             </div>
                                                         ) : (
-                                                            <LeadStatusBadge status={lead.status} />
+                                                            <LeadStatusBadge
+                                                                status={
+                                                                    lead.status
+                                                                }
+                                                            />
                                                         )}
                                                     </TableCell>
                                                     <TableCell>
-                                                        {formatDate(lead.created_at)}
+                                                        {formatDate(
+                                                            lead.created_at,
+                                                        )}
                                                     </TableCell>
                                                     <TableCell>
                                                         <div className='flex justify-end gap-1.5'>
@@ -728,37 +847,58 @@ function LeadsView() {
                                                                 size='md'
                                                                 iconOnly
                                                                 aria-label='Tafsilotlar'
-                                                                onPress={() => setDrawerLead(lead)}
+                                                                onPress={() =>
+                                                                    setDrawerLead(
+                                                                        lead,
+                                                                    )
+                                                                }
                                                             >
                                                                 <Eye className='size-4' />
                                                             </Button>
-                                                            {lead.student && canOpenStudents && (
-                                                                <Link
-                                                                    href={`/students/${lead.student.id}`}
-                                                                    className='text-brand-accent self-center text-sm font-semibold hover:underline px-1'
-                                                                >
-                                                                    {t('leads.openStudent')}
-                                                                </Link>
-                                                            )}
-                                                            {canConvert && lead.status !== 'won' && (
-                                                                <Button
-                                                                    variant='primary'
-                                                                    appearance='outline'
-                                                                    size='md'
-                                                                    onPress={() => setConverting(lead)}
-                                                                >
-                                                                    {t('leads.convert')}
-                                                                </Button>
-                                                            )}
+                                                            {lead.student &&
+                                                                canOpenStudents && (
+                                                                    <Link
+                                                                        href={`/students/${lead.student.id}`}
+                                                                        className='text-brand-accent self-center px-1 text-sm font-semibold hover:underline'
+                                                                    >
+                                                                        {t(
+                                                                            'leads.openStudent',
+                                                                        )}
+                                                                    </Link>
+                                                                )}
+                                                            {canConvert &&
+                                                                lead.status !==
+                                                                    'won' && (
+                                                                    <Button
+                                                                        variant='primary'
+                                                                        appearance='outline'
+                                                                        size='md'
+                                                                        onPress={() =>
+                                                                            setConverting(
+                                                                                lead,
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        {t(
+                                                                            'leads.convert',
+                                                                        )}
+                                                                    </Button>
+                                                                )}
                                                             {canUpdate && (
                                                                 <Button
                                                                     appearance='outline'
                                                                     size='md'
                                                                     iconOnly
-                                                                    aria-label={t('common.edit')}
+                                                                    aria-label={t(
+                                                                        'common.edit',
+                                                                    )}
                                                                     onPress={() => {
-                                                                        setEditing(lead);
-                                                                        setFormOpen(true);
+                                                                        setEditing(
+                                                                            lead,
+                                                                        );
+                                                                        setFormOpen(
+                                                                            true,
+                                                                        );
                                                                     }}
                                                                 >
                                                                     <Pencil1 />
@@ -770,8 +910,14 @@ function LeadsView() {
                                                                     appearance='outline'
                                                                     size='md'
                                                                     iconOnly
-                                                                    aria-label={t('common.delete')}
-                                                                    onPress={() => setDeleting(lead)}
+                                                                    aria-label={t(
+                                                                        'common.delete',
+                                                                    )}
+                                                                    onPress={() =>
+                                                                        setDeleting(
+                                                                            lead,
+                                                                        )
+                                                                    }
                                                                 >
                                                                     <Trash1 />
                                                                 </Button>

@@ -3,7 +3,11 @@
 import { Button } from '@/components/tailgrids/core/button';
 import { TextareaInput, TextInput } from '@/components/ui/form-field';
 import { PhoneLink } from '@/components/ui/phone-link';
-import { LeadSourceBadge, LeadStatusBadge, LeadStatusDot } from '@/components/ui/status-badge';
+import {
+    LeadSourceBadge,
+    LeadStatusBadge,
+    LeadStatusDot,
+} from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useSession } from '@/hooks/use-session';
@@ -56,7 +60,9 @@ export function LeadDetailDrawer({
     if (lead !== prevLead) {
         setPrevLead(lead);
         setNote(lead?.note ?? '');
-        setNextCallDate(lead?.next_call_date ? lead.next_call_date.slice(0, 10) : '');
+        setNextCallDate(
+            lead?.next_call_date ? lead.next_call_date.slice(0, 10) : '',
+        );
     }
 
     // Close on Escape key press
@@ -99,11 +105,13 @@ export function LeadDetailDrawer({
 
     // Calculate call urgency
     const todayStr = new Date().toISOString().slice(0, 10);
-    const isOverdue = lead.next_call_date && lead.next_call_date < todayStr && !isWon;
-    const isToday = lead.next_call_date && lead.next_call_date === todayStr && !isWon;
+    const isOverdue =
+        lead.next_call_date && lead.next_call_date < todayStr && !isWon;
+    const isToday =
+        lead.next_call_date && lead.next_call_date === todayStr && !isWon;
 
     return (
-        <div className='fixed inset-0 z-50 overflow-hidden bg-black/40 backdrop-blur-xs transition-opacity animate-in fade-in duration-200'>
+        <div className='animate-in fade-in fixed inset-0 z-50 overflow-hidden bg-black/40 backdrop-blur-xs transition-opacity duration-200'>
             <div
                 className='absolute inset-0'
                 onClick={onClose}
@@ -111,17 +119,18 @@ export function LeadDetailDrawer({
             />
 
             <div className='pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10'>
-                <div className='pointer-events-auto relative w-screen max-w-md bg-card-surface-area border-l border-card-border shadow-2xl flex flex-col justify-between animate-in slide-in-from-right duration-300'>
-                    
+                <div className='bg-card-surface-area border-card-border animate-in slide-in-from-right pointer-events-auto relative flex w-screen max-w-md flex-col justify-between border-l shadow-2xl duration-300'>
                     {/* Drawer Header */}
-                    <div className='border-b border-card-border p-5 pb-4'>
+                    <div className='border-card-border border-b p-5 pb-4'>
                         <div className='flex items-start justify-between gap-3'>
                             <div className='min-w-0 flex-1'>
                                 <div className='flex items-center gap-2'>
                                     <LeadStatusBadge status={lead.status} />
-                                    {lead.source && <LeadSourceBadge source={lead.source} />}
+                                    {lead.source && (
+                                        <LeadSourceBadge source={lead.source} />
+                                    )}
                                 </div>
-                                <h3 className='text-text-primary mt-2 text-xl font-bold truncate'>
+                                <h3 className='text-text-primary mt-2 truncate text-xl font-bold'>
                                     {lead.first_name} {lead.last_name || ''}
                                 </h3>
                                 <div className='mt-1 flex items-center gap-2 text-sm'>
@@ -140,10 +149,10 @@ export function LeadDetailDrawer({
                         </div>
 
                         {/* Direct Call & Convert Toolbar */}
-                        <div className='mt-4 flex items-center gap-2 border-t border-card-border/60 pt-3.5'>
+                        <div className='border-card-border/60 mt-4 flex items-center gap-2 border-t pt-3.5'>
                             <a
                                 href={`tel:${lead.phone_number}`}
-                                className='bg-brand-accent text-white hover:bg-brand-accent/90 flex flex-1 items-center justify-center gap-2 rounded-xl py-2 px-3 text-xs font-semibold shadow-xs transition-all'
+                                className='bg-brand-accent hover:bg-brand-accent/90 flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-white shadow-xs transition-all'
                             >
                                 📞 {t('leadSource.call')}
                             </a>
@@ -151,7 +160,7 @@ export function LeadDetailDrawer({
                                 <button
                                     type='button'
                                     onClick={() => onConvert(lead)}
-                                    className='bg-emerald-600 hover:bg-emerald-700 text-white flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2 px-3 text-xs font-semibold shadow-xs transition-all'
+                                    className='flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-emerald-700'
                                 >
                                     <User2 className='size-4' />
                                     <span>+ O&apos;quvchiga</span>
@@ -161,11 +170,10 @@ export function LeadDetailDrawer({
                     </div>
 
                     {/* Drawer Content Body */}
-                    <div className='flex-1 overflow-y-auto p-5 space-y-6 scrollbar-thin'>
-                        
+                    <div className='flex-1 scrollbar-thin space-y-6 overflow-y-auto p-5'>
                         {/* Status Pipeline Step Switcher */}
                         <div>
-                            <label className='text-text-tertiary block text-xs font-semibold uppercase tracking-wider mb-2.5'>
+                            <label className='text-text-tertiary mb-2.5 block text-xs font-semibold tracking-wider uppercase'>
                                 Voronka bosqichi
                             </label>
                             <div className='grid grid-cols-2 gap-2 sm:grid-cols-4'>
@@ -175,18 +183,25 @@ export function LeadDetailDrawer({
                                         <button
                                             key={status}
                                             type='button'
-                                            disabled={!canUpdate || isWon || statusMutation.isPending}
-                                            onClick={() => statusMutation.mutate(status)}
+                                            disabled={
+                                                !canUpdate ||
+                                                isWon ||
+                                                statusMutation.isPending
+                                            }
+                                            onClick={() =>
+                                                statusMutation.mutate(status)
+                                            }
                                             className={cn(
                                                 'flex flex-col items-center justify-center gap-1 rounded-xl border p-2.5 text-center text-xs font-medium transition-all',
                                                 active
-                                                    ? 'border-brand-accent bg-brand-accent/10 text-brand-accent font-bold ring-2 ring-brand-accent/20 shadow-2xs'
+                                                    ? 'border-brand-accent bg-brand-accent/10 text-brand-accent ring-brand-accent/20 font-bold shadow-2xs ring-2'
                                                     : 'border-card-border bg-background-gray-secondary/50 text-text-secondary hover:border-card-border/80 hover:bg-background-gray-secondary',
-                                                (!canUpdate || isWon) && 'cursor-default opacity-80',
+                                                (!canUpdate || isWon) &&
+                                                    'cursor-default opacity-80',
                                             )}
                                         >
                                             <LeadStatusDot status={status} />
-                                            <span className='truncate w-full text-[11px] mt-0.5'>
+                                            <span className='mt-0.5 w-full truncate text-[11px]'>
                                                 {t(`leadStatus.${status}`)}
                                             </span>
                                         </button>
@@ -194,12 +209,12 @@ export function LeadDetailDrawer({
                                 })}
                             </div>
                             {isWon && (
-                                <div className='mt-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-2.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center justify-between'>
+                                <div className='mt-2 flex items-center justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-2.5 text-xs font-medium text-emerald-600 dark:text-emerald-400'>
                                     <span>{t('leads.statusWonHint')}</span>
                                     {lead.student && canOpenStudents && (
                                         <Link
                                             href={`/students/${lead.student.id}`}
-                                            className='font-bold hover:underline shrink-0'
+                                            className='shrink-0 font-bold hover:underline'
                                         >
                                             {t('leads.openStudent')} &rarr;
                                         </Link>
@@ -209,24 +224,26 @@ export function LeadDetailDrawer({
                         </div>
 
                         {/* Course & Branch Details */}
-                        <div className='rounded-2xl border border-card-border bg-background-gray-secondary/30 p-4 space-y-3'>
+                        <div className='border-card-border bg-background-gray-secondary/30 space-y-3 rounded-2xl border p-4'>
                             <div className='flex items-center justify-between text-xs'>
                                 <span className='text-text-tertiary font-medium'>
                                     {t('leads.interest')}:
                                 </span>
                                 <span className='text-text-primary font-semibold'>
-                                    {lead.course?.name ?? t('common.notSelected')}
+                                    {lead.course?.name ??
+                                        t('common.notSelected')}
                                 </span>
                             </div>
-                            <div className='flex items-center justify-between text-xs border-t border-card-border/50 pt-2.5'>
+                            <div className='border-card-border/50 flex items-center justify-between border-t pt-2.5 text-xs'>
                                 <span className='text-text-tertiary font-medium'>
                                     {t('groups.branch')}:
                                 </span>
                                 <span className='text-text-primary font-semibold'>
-                                    {lead.branch?.name ?? t('common.notSelected')}
+                                    {lead.branch?.name ??
+                                        t('common.notSelected')}
                                 </span>
                             </div>
-                            <div className='flex items-center justify-between text-xs border-t border-card-border/50 pt-2.5'>
+                            <div className='border-card-border/50 flex items-center justify-between border-t pt-2.5 text-xs'>
                                 <span className='text-text-tertiary font-medium'>
                                     {t('common.createdAt')}:
                                 </span>
@@ -237,14 +254,14 @@ export function LeadDetailDrawer({
                         </div>
 
                         {/* Next Call Date Section */}
-                        <div className='rounded-2xl border border-card-border bg-card-surface-area p-4 space-y-3 shadow-2xs'>
+                        <div className='border-card-border bg-card-surface-area space-y-3 rounded-2xl border p-4 shadow-2xs'>
                             <div className='flex items-center justify-between'>
-                                <div className='flex items-center gap-1.5 text-xs font-bold text-text-primary'>
-                                    <Calendar className='size-4 text-brand-accent' />
+                                <div className='text-text-primary flex items-center gap-1.5 text-xs font-bold'>
+                                    <Calendar className='text-brand-accent size-4' />
                                     <span>Keyingi qo'ng'iroq vaqti</span>
                                 </div>
                                 {isOverdue && (
-                                    <span className='rounded-md bg-red-500/15 px-2 py-0.5 text-[11px] font-bold text-red-600 dark:text-red-400 animate-pulse'>
+                                    <span className='animate-pulse rounded-md bg-red-500/15 px-2 py-0.5 text-[11px] font-bold text-red-600 dark:text-red-400'>
                                         ⚠️ Muddati o'tgan
                                     </span>
                                 )}
@@ -260,61 +277,87 @@ export function LeadDetailDrawer({
                                     <TextInput
                                         type='date'
                                         value={nextCallDate}
-                                        onChange={(e) => setNextCallDate(e.target.value)}
-                                        className='flex-1 h-9 text-xs'
+                                        onChange={(e) =>
+                                            setNextCallDate(e.target.value)
+                                        }
+                                        className='h-9 flex-1 text-xs'
                                     />
                                     <Button
                                         appearance='outline'
                                         size='sm'
-                                        isDisabled={isSavingNote || nextCallDate === (lead.next_call_date?.slice(0, 10) ?? '')}
-                                        onPress={() => updateLeadDetails({ next_call_date: nextCallDate || null })}
+                                        isDisabled={
+                                            isSavingNote ||
+                                            nextCallDate ===
+                                                (lead.next_call_date?.slice(
+                                                    0,
+                                                    10,
+                                                ) ?? '')
+                                        }
+                                        onPress={() =>
+                                            updateLeadDetails({
+                                                next_call_date:
+                                                    nextCallDate || null,
+                                            })
+                                        }
                                     >
                                         Saqlash
                                     </Button>
                                 </div>
                             ) : (
-                                <p className='text-xs text-text-secondary font-medium tabular-nums'>
-                                    {lead.next_call_date ? formatDate(lead.next_call_date) : t('common.notSelected')}
+                                <p className='text-text-secondary text-xs font-medium tabular-nums'>
+                                    {lead.next_call_date
+                                        ? formatDate(lead.next_call_date)
+                                        : t('common.notSelected')}
                                 </p>
                             )}
                         </div>
 
                         {/* Note & History Section */}
                         <div className='space-y-2.5'>
-                            <label className='text-text-tertiary block text-xs font-semibold uppercase tracking-wider'>
+                            <label className='text-text-tertiary block text-xs font-semibold tracking-wider uppercase'>
                                 Eslatmalari & Tarix
                             </label>
                             {canUpdate ? (
                                 <div className='space-y-2'>
                                     <TextareaInput
                                         value={note}
-                                        placeholder="Mijoz bilan muloqot va kelishuvlar haqida eslatma yozing..."
+                                        placeholder='Mijoz bilan muloqot va kelishuvlar haqida eslatma yozing...'
                                         rows={4}
-                                        onChange={(e) => setNote(e.target.value)}
+                                        onChange={(e) =>
+                                            setNote(e.target.value)
+                                        }
                                     />
                                     <div className='flex justify-end'>
                                         <Button
                                             appearance='fill'
                                             variant='primary'
                                             size='sm'
-                                            isDisabled={isSavingNote || note === (lead.note ?? '')}
-                                            onPress={() => updateLeadDetails({ note: note.trim() || null })}
+                                            isDisabled={
+                                                isSavingNote ||
+                                                note === (lead.note ?? '')
+                                            }
+                                            onPress={() =>
+                                                updateLeadDetails({
+                                                    note: note.trim() || null,
+                                                })
+                                            }
                                         >
-                                            {isSavingNote ? t('common.saving') : 'Eslatmani saqlash'}
+                                            {isSavingNote
+                                                ? t('common.saving')
+                                                : 'Eslatmani saqlash'}
                                         </Button>
                                     </div>
                                 </div>
                             ) : (
-                                <div className='rounded-xl border border-card-border bg-background-gray-secondary/40 p-3 text-xs text-text-primary whitespace-pre-wrap min-h-20'>
-                                    {lead.note || "Eslatma mavjud emas"}
+                                <div className='border-card-border bg-background-gray-secondary/40 text-text-primary min-h-20 rounded-xl border p-3 text-xs whitespace-pre-wrap'>
+                                    {lead.note || 'Eslatma mavjud emas'}
                                 </div>
                             )}
                         </div>
-
                     </div>
 
                     {/* Drawer Footer Actions */}
-                    <div className='border-t border-card-border p-4 bg-background-gray-secondary/30 flex items-center justify-between gap-2'>
+                    <div className='border-card-border bg-background-gray-secondary/30 flex items-center justify-between gap-2 border-t p-4'>
                         {canDelete && (
                             <Button
                                 variant='danger'
@@ -326,7 +369,7 @@ export function LeadDetailDrawer({
                                 <span>{t('common.delete')}</span>
                             </Button>
                         )}
-                        <div className='flex items-center gap-2 ml-auto'>
+                        <div className='ml-auto flex items-center gap-2'>
                             {canUpdate && (
                                 <Button
                                     appearance='outline'
@@ -346,7 +389,6 @@ export function LeadDetailDrawer({
                             </Button>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
