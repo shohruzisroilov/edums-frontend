@@ -32,7 +32,8 @@ export function LeadBatchActionsBar({
 
     const [statusModalOpen, setStatusModalOpen] = useState(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-    const [targetStatus, setTargetStatus] = useState<EditableLeadStatus>('contacted');
+    const [targetStatus, setTargetStatus] =
+        useState<EditableLeadStatus>('contacted');
     const [isPending, setIsPending] = useState(false);
 
     if (selectedIds.length === 0) return null;
@@ -43,7 +44,9 @@ export function LeadBatchActionsBar({
         setIsPending(true);
         try {
             await Promise.all(
-                selectedIds.map((id) => updateLead(id, { status: targetStatus })),
+                selectedIds.map((id) =>
+                    updateLead(id, { status: targetStatus }),
+                ),
             );
             await Promise.all([
                 queryClient.invalidateQueries({ queryKey: ['leads'] }),
@@ -80,13 +83,13 @@ export function LeadBatchActionsBar({
     return (
         <>
             {/* Floating Bottom Bar */}
-            <div className='fixed bottom-6 left-1/2 z-40 -translate-x-1/2 animate-in fade-in slide-in-from-bottom-5 duration-200'>
-                <div className='bg-card-surface-area border border-card-border shadow-2xl rounded-2xl p-2.5 px-4 flex items-center gap-3 backdrop-blur-md'>
-                    <div className='flex items-center gap-2 pr-2 border-r border-card-border'>
-                        <span className='bg-brand-accent text-white font-bold text-xs rounded-lg px-2 py-1 tabular-nums'>
+            <div className='animate-in fade-in slide-in-from-bottom-5 fixed bottom-6 left-1/2 z-40 -translate-x-1/2 duration-200'>
+                <div className='bg-card-surface-area border-card-border flex items-center gap-3 rounded-2xl border p-2.5 px-4 shadow-2xl backdrop-blur-md'>
+                    <div className='border-card-border flex items-center gap-2 border-r pr-2'>
+                        <span className='bg-brand-accent rounded-lg px-2 py-1 text-xs font-bold text-white tabular-nums'>
                             {count}
                         </span>
-                        <span className='text-text-primary text-xs font-semibold hidden sm:inline'>
+                        <span className='text-text-primary hidden text-xs font-semibold sm:inline'>
                             lid tanlandi
                         </span>
                     </div>
@@ -109,14 +112,16 @@ export function LeadBatchActionsBar({
                             onPress={() => setDeleteModalOpen(true)}
                         >
                             <Trash1 className='size-3.5' />
-                            <span className='hidden sm:inline'>{t('common.delete')}</span>
+                            <span className='hidden sm:inline'>
+                                {t('common.delete')}
+                            </span>
                         </Button>
                     )}
 
                     <button
                         type='button'
                         onClick={onClearSelection}
-                        className='text-text-tertiary hover:text-text-primary text-xs font-medium px-2 py-1 transition-colors'
+                        className='text-text-tertiary hover:text-text-primary px-2 py-1 text-xs font-medium transition-colors'
                     >
                         {t('common.cancel')}
                     </button>
@@ -140,7 +145,9 @@ export function LeadBatchActionsBar({
                                 label: t(`leadStatus.${status}`),
                             }))}
                             value={targetStatus}
-                            onValueChange={(val) => setTargetStatus(val as EditableLeadStatus)}
+                            onValueChange={(val) =>
+                                setTargetStatus(val as EditableLeadStatus)
+                            }
                         />
 
                         <div className='flex items-center justify-end gap-2 pt-2'>
@@ -159,7 +166,9 @@ export function LeadBatchActionsBar({
                                 isDisabled={isPending}
                                 onPress={handleBatchStatus}
                             >
-                                {isPending ? t('common.saving') : t('common.save')}
+                                {isPending
+                                    ? t('common.saving')
+                                    : t('common.save')}
                             </Button>
                         </div>
                     </div>
@@ -191,7 +200,9 @@ export function LeadBatchActionsBar({
                             isDisabled={isPending}
                             onPress={handleBatchDelete}
                         >
-                            {isPending ? t('common.saving') : `${count} ta lidni o'chirish`}
+                            {isPending
+                                ? t('common.saving')
+                                : `${count} ta lidni o'chirish`}
                         </Button>
                     </div>
                 </Modal>
