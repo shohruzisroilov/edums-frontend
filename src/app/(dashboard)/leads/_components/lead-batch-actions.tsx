@@ -3,7 +3,6 @@
 import { Button } from '@/components/tailgrids/core/button';
 import { SelectInput } from '@/components/ui/form-field';
 import { Modal } from '@/components/ui/modal';
-import { LeadStatusBadge } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useT } from '@/i18n/provider';
 import { deleteLead, updateLead } from '@/services/api/leads';

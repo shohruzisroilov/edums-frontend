@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/tailgrids/core/button';
-import { SelectInput, TextareaInput, TextInput } from '@/components/ui/form-field';
+import { TextareaInput, TextInput } from '@/components/ui/form-field';
 import { PhoneLink } from '@/components/ui/phone-link';
 import { LeadSourceBadge, LeadStatusBadge, LeadStatusDot } from '@/components/ui/status-badge';
 import { useApiErrorToast } from '@/hooks/use-api-error';
@@ -10,7 +10,7 @@ import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { updateLead } from '@/services/api/leads';
 import type { EditableLeadStatus, Lead, LeadPayload } from '@/types/api';
-import { EDITABLE_LEAD_STATUSES, LEAD_STATUSES } from '@/types/api';
+import { EDITABLE_LEAD_STATUSES } from '@/types/api';
 import { can } from '@/utils/access';
 import { cn } from '@/utils/cn';
 import { Calendar, Close, Pencil1, Trash1, User2 } from '@tailgrids/icons';
@@ -45,16 +45,19 @@ export function LeadDetailDrawer({
     const canConvert = canUpdate && can(session, 'students.create');
     const canOpenStudents = can(session, 'students.view');
 
+    const [prevLead, setPrevLead] = useState(lead);
     const [note, setNote] = useState(lead?.note ?? '');
     const [nextCallDate, setNextCallDate] = useState(
         lead?.next_call_date ? lead.next_call_date.slice(0, 10) : '',
     );
     const [isSavingNote, setIsSavingNote] = useState(false);
 
-    useEffect(() => {
+    // Adjust state when lead prop changes (React-recommended render-time pattern)
+    if (lead !== prevLead) {
+        setPrevLead(lead);
         setNote(lead?.note ?? '');
         setNextCallDate(lead?.next_call_date ? lead.next_call_date.slice(0, 10) : '');
-    }, [lead]);
+    }
 
     // Close on Escape key press
     useEffect(() => {
@@ -65,13 +68,9 @@ export function LeadDetailDrawer({
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [onClose]);
 
-    if (!lead) return null;
-
-    const isWon = lead.status === 'won';
-
     const statusMutation = useMutation({
         mutationFn: (newStatus: EditableLeadStatus) =>
-            updateLead(lead.id, { status: newStatus }),
+            updateLead(lead!.id, { status: newStatus }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['leads'] });
             queryClient.invalidateQueries({ queryKey: ['lead-stats'] });
@@ -79,6 +78,10 @@ export function LeadDetailDrawer({
         },
         onError: (error) => toastError(error),
     });
+
+    if (!lead) return null;
+
+    const isWon = lead.status === 'won';
 
     const updateLeadDetails = async (payload: Partial<LeadPayload>) => {
         setIsSavingNote(true);
