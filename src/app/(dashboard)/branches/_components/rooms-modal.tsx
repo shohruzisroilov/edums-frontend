@@ -199,9 +199,9 @@ export function RoomsModal({
             {deleting && (
                 <div
                     role='alertdialog'
-                    className='mb-4 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900/50 dark:bg-red-950/40'
+                    className='border-alert-danger-border bg-alert-danger-background mb-4 rounded-lg border p-4'
                 >
-                    <p className='text-sm text-red-700 dark:text-red-300'>
+                    <p className='text-alert-danger-title text-sm'>
                         {t('rooms.deleteMessage', { name: deleting.name })}
                     </p>
                     <div className='mt-3 flex justify-end gap-2'>

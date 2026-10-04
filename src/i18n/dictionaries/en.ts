@@ -28,6 +28,7 @@ export const en: Dictionary = {
     'common.description': 'Description',
     'common.createdAt': 'Added on',
     'common.details': 'Details',
+    'common.open': 'Open',
     'common.avatar': 'Photo',
 
     /* ── Header ──────────────────────────────────────────────────────── */

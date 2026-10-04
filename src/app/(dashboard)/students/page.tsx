@@ -39,7 +39,7 @@ import {
 import { can, canAny } from '@/utils/access';
 import { cn } from '@/utils/cn';
 import { formatPhone, fullName } from '@/utils/format';
-import { TONE_TEXT, balanceTone } from '@/utils/tone';
+import { balanceTone } from '@/utils/tone';
 import { exportToCsv } from '@/utils/export';
 import { StudentImportModal } from '@/components/ui/student-import-modal';
 import {
@@ -51,7 +51,11 @@ import {
     UserCircle1,
     Wallet2,
 } from '@tailgrids/icons';
-import { EyeLinkButton } from '@/components/ui/eye-icon';
+import { EyeIcon } from '@/components/ui/eye-icon';
+import {
+    RowActionsMenu,
+    type RowAction,
+} from '@/components/ui/row-actions-menu';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -87,7 +91,7 @@ function StudentsView() {
     const canViewPayments = can(session, 'payments.view');
     const canPay = can(session, 'payments.create');
     const canViewGroups = canAny(session, 'groups.view', 'groups.view_own');
-    // Har doim ko'zcha (ochish) tugmasi ko'rinishi uchun hasActions barcha uchun true
+    // "⋯" menyuda "Batafsil" har doim bor, shuning uchun amallar ustuni ham doim.
     const hasActions = true;
 
     const {
@@ -147,6 +151,41 @@ function StudentsView() {
         filters.status && filters.status !== 'active' ? filters.status : null;
     const activeCount = (filters.branch_id ? 1 : 0) + (activeStatus ? 1 : 0);
 
+    // Qatordagi kam ishlatiladigan amallar "⋯" menyuda; asosiy amal — to'lov.
+    const rowActions = (student: Student): RowAction[] => [
+        {
+            label: t('common.details'),
+            icon: <EyeIcon />,
+            href: `/students/${student.id}`,
+        },
+        ...(canUpdate
+            ? [
+                  {
+                      label: t('common.edit'),
+                      icon: <Pencil1 />,
+                      onAction: () => {
+                          setEditing(student);
+                          setFormOpen(true);
+                      },
+                  },
+              ]
+            : []),
+        ...(canDelete
+            ? [
+                  {
+                      label: t('common.delete'),
+                      icon: <Trash1 />,
+                      onAction: () => setDeleting(student),
+                      danger: true,
+                  },
+              ]
+            : []),
+    ];
+
+    // Holat bo'yicha filtrlanganda har qatorda bir xil badge turardi —
+    // ustun faqat "barchasi" tanlanganda chiqadi (jadval noutbukka sig'sin).
+    const showStatusColumn = !filters.status;
+
     // Filtr qo'llanmagan bo'sh ro'yxat — yangi markaz: nima ekani tushuntiriladi.
     const filtered = Boolean(
         search ||
@@ -198,7 +237,10 @@ function StudentsView() {
                                 }}
                             >
                                 <Download1 />
-                                {t('common.export')}
+                                {/* Telefonda faqat ikonka — asosiy amal bir qatorda qolsin. */}
+                                <span className='sr-only sm:not-sr-only'>
+                                    {t('common.export')}
+                                </span>
                             </Button>
                         )}
                         {canCreate && (
@@ -209,7 +251,9 @@ function StudentsView() {
                                     onPress={() => setImportOpen(true)}
                                 >
                                     <UploadCloud />
-                                    {t('students.import')}
+                                    <span className='sr-only sm:not-sr-only'>
+                                        {t('students.import')}
+                                    </span>
                                 </Button>
                                 <Button
                                     variant='primary'
@@ -395,7 +439,7 @@ function StudentsView() {
 
                                             {canViewPayments && (
                                                 <div className='text-right'>
-                                                    <span className='text-text-tertiary block text-[11px]'>
+                                                    <span className='text-text-tertiary block text-xs'>
                                                         {t('balance.title')}
                                                     </span>
                                                     <span
@@ -438,7 +482,7 @@ function StudentsView() {
                                                                 {title}
                                                             </span>
                                                             {schedule && (
-                                                                <span className='text-text-tertiary ml-1.5 text-[10px]'>
+                                                                <span className='text-text-tertiary ml-1.5 text-xs'>
                                                                     {schedule}
                                                                 </span>
                                                             )}
@@ -466,64 +510,28 @@ function StudentsView() {
                                         )}
 
                                         {hasActions && (
-                                            <div className='border-card-border/60 flex items-center justify-end gap-1.5 border-t pt-2.5'>
-                                                <EyeLinkButton
-                                                    href={`/students/${student.id}`}
-                                                />
+                                            <div className='border-card-border/60 flex items-center justify-end gap-2 border-t pt-2.5'>
                                                 {canPay && (
                                                     <Button
                                                         appearance='outline'
-                                                        size='sm'
+                                                        size='md'
                                                         onPress={() =>
                                                             setPaying(student)
                                                         }
-                                                        className='gap-1.5 text-xs'
+                                                        className='gap-1.5 px-3 [&>svg]:size-4'
                                                     >
-                                                        <Wallet2
-                                                            className={cn(
-                                                                'size-3.5',
-                                                                TONE_TEXT.success,
-                                                            )}
-                                                        />
-                                                        <span>
-                                                            {t(
-                                                                'header.quickPayment',
-                                                            )}
-                                                        </span>
-                                                    </Button>
-                                                )}
-                                                {canUpdate && (
-                                                    <Button
-                                                        appearance='outline'
-                                                        size='sm'
-                                                        iconOnly
-                                                        aria-label={t(
-                                                            'common.edit',
+                                                        <Wallet2 />
+                                                        {t(
+                                                            'header.quickPayment',
                                                         )}
-                                                        onPress={() => {
-                                                            setEditing(student);
-                                                            setFormOpen(true);
-                                                        }}
-                                                    >
-                                                        <Pencil1 />
                                                     </Button>
                                                 )}
-                                                {canDelete && (
-                                                    <Button
-                                                        variant='danger'
-                                                        appearance='outline'
-                                                        size='sm'
-                                                        iconOnly
-                                                        aria-label={t(
-                                                            'common.delete',
-                                                        )}
-                                                        onPress={() =>
-                                                            setDeleting(student)
-                                                        }
-                                                    >
-                                                        <Trash1 />
-                                                    </Button>
-                                                )}
+                                                <RowActionsMenu
+                                                    label={fullName(student)}
+                                                    actions={rowActions(
+                                                        student,
+                                                    )}
+                                                />
                                             </div>
                                         )}
                                     </div>
@@ -545,12 +553,14 @@ function StudentsView() {
                                             <TableHead>
                                                 {t('common.phone')}
                                             </TableHead>
-                                            <TableHead className='min-w-[190px]'>
+                                            <TableHead>
                                                 {t('students.groups')}
                                             </TableHead>
-                                            <TableHead>
-                                                {t('common.status')}
-                                            </TableHead>
+                                            {showStatusColumn && (
+                                                <TableHead>
+                                                    {t('common.status')}
+                                                </TableHead>
+                                            )}
                                             {canViewPayments && (
                                                 <TableHead numeric>
                                                     {t('balance.title')}
@@ -589,12 +599,12 @@ function StudentsView() {
                                                             </p>
                                                         )}
                                                     </TableCell>
-                                                    <TableCell>
+                                                    <TableCell className='min-w-40 whitespace-normal'>
                                                         <PhoneLines
                                                             student={student}
                                                         />
                                                     </TableCell>
-                                                    <TableCell className='max-w-[280px] min-w-[190px] whitespace-normal'>
+                                                    <TableCell className='max-w-60 min-w-36 whitespace-normal'>
                                                         {student.groups
                                                             .length === 0 ? (
                                                             <span className='text-text-tertiary text-xs'>
@@ -628,7 +638,7 @@ function StudentsView() {
                                                                                         }
                                                                                     </span>
                                                                                     {schedule && (
-                                                                                        <span className='text-text-tertiary text-[11px] leading-tight font-normal'>
+                                                                                        <span className='text-text-tertiary text-xs leading-tight font-normal'>
                                                                                             {
                                                                                                 schedule
                                                                                             }
@@ -666,13 +676,15 @@ function StudentsView() {
                                                             </div>
                                                         )}
                                                     </TableCell>
-                                                    <TableCell>
-                                                        <StudentStatusBadge
-                                                            status={
-                                                                student.status
-                                                            }
-                                                        />
-                                                    </TableCell>
+                                                    {showStatusColumn && (
+                                                        <TableCell>
+                                                            <StudentStatusBadge
+                                                                status={
+                                                                    student.status
+                                                                }
+                                                            />
+                                                        </TableCell>
+                                                    )}
                                                     {canViewPayments && (
                                                         <TableCell
                                                             numeric
@@ -694,65 +706,32 @@ function StudentsView() {
                                                     )}
                                                     {hasActions && (
                                                         <TableCell>
-                                                            <div className='flex justify-end gap-2'>
-                                                                <EyeLinkButton
-                                                                    href={`/students/${student.id}`}
-                                                                />
+                                                            <div className='flex items-center justify-end gap-2'>
                                                                 {canPay && (
                                                                     <Button
                                                                         appearance='outline'
                                                                         size='md'
-                                                                        iconOnly
-                                                                        aria-label={t(
-                                                                            'cashbox.new',
-                                                                        )}
                                                                         onPress={() =>
                                                                             setPaying(
                                                                                 student,
                                                                             )
                                                                         }
+                                                                        className='gap-1.5 px-3 [&>svg]:size-4'
                                                                     >
                                                                         <Wallet2 />
-                                                                    </Button>
-                                                                )}
-                                                                {canUpdate && (
-                                                                    <Button
-                                                                        appearance='outline'
-                                                                        size='md'
-                                                                        iconOnly
-                                                                        aria-label={t(
-                                                                            'common.edit',
+                                                                        {t(
+                                                                            'header.quickPayment',
                                                                         )}
-                                                                        onPress={() => {
-                                                                            setEditing(
-                                                                                student,
-                                                                            );
-                                                                            setFormOpen(
-                                                                                true,
-                                                                            );
-                                                                        }}
-                                                                    >
-                                                                        <Pencil1 />
                                                                     </Button>
                                                                 )}
-                                                                {canDelete && (
-                                                                    <Button
-                                                                        variant='danger'
-                                                                        appearance='outline'
-                                                                        size='md'
-                                                                        iconOnly
-                                                                        aria-label={t(
-                                                                            'common.delete',
-                                                                        )}
-                                                                        onPress={() =>
-                                                                            setDeleting(
-                                                                                student,
-                                                                            )
-                                                                        }
-                                                                    >
-                                                                        <Trash1 />
-                                                                    </Button>
-                                                                )}
+                                                                <RowActionsMenu
+                                                                    label={fullName(
+                                                                        student,
+                                                                    )}
+                                                                    actions={rowActions(
+                                                                        student,
+                                                                    )}
+                                                                />
                                                             </div>
                                                         </TableCell>
                                                     )}

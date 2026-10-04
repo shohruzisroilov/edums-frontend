@@ -14,13 +14,13 @@ export function Hero({ onStart }: { onStart: () => void }) {
                 className='pointer-events-none absolute inset-0'
             >
                 <div className='bg-brand-500/12 absolute -top-32 left-1/2 size-[800px] -translate-x-1/2 rounded-full blur-[100px]' />
-                <div className='absolute -top-10 right-0 size-80 rounded-full bg-violet-500/8 blur-3xl' />
-                <div className='absolute top-40 -left-20 size-72 rounded-full bg-blue-500/8 blur-3xl' />
+                <div className='bg-brand-400/8 absolute -top-10 right-0 size-80 rounded-full blur-3xl' />
+                <div className='bg-brand-300/10 absolute top-40 -left-20 size-72 rounded-full blur-3xl' />
             </div>
 
             <div className='relative mx-auto max-w-5xl px-4 pt-10 pb-8 sm:pt-24 sm:pb-10'>
                 {/* Sarlavha */}
-                <h1 className='text-text-primary font-display text-center text-3xl leading-[1.15] font-bold tracking-tight sm:text-5xl lg:text-[64px]'>
+                <h1 className='text-text-primary font-display text-center text-3xl leading-[1.15] font-bold tracking-tight text-balance sm:text-5xl lg:text-[64px]'>
                     {t('landing.heroTitle')}
                     <span className='relative mt-2 block'>
                         {/* Highlighted word */}
@@ -71,9 +71,9 @@ export function Hero({ onStart }: { onStart: () => void }) {
                             className='border-card-border bg-background-gray-secondary/70 flex items-center justify-between border-b px-4 py-3'
                         >
                             <div className='flex items-center gap-2'>
-                                <span className='size-3 rounded-full bg-[#EC6A5E]' />
-                                <span className='size-3 rounded-full bg-[#F5BF4F]' />
-                                <span className='size-3 rounded-full bg-[#61C554]' />
+                                <span className='bg-card-border size-3 rounded-full' />
+                                <span className='bg-card-border size-3 rounded-full' />
+                                <span className='bg-card-border size-3 rounded-full' />
                             </div>
                             <span className='text-text-tertiary font-mono text-xs select-none'>
                                 {t('landing.videoCaption')}
@@ -83,7 +83,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
                         <div className='relative aspect-video w-full bg-black'>
                             <iframe
                                 className='h-full w-full'
-                                src='https://www.youtube.com/embed/ByVbY2w7kMQ'
+                                src='https://www.youtube.com/embed/3Gkm8lN9Y2I'
                                 title={t('landing.videoTitle')}
                                 allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
                                 referrerPolicy='strict-origin-when-cross-origin'

@@ -42,7 +42,7 @@ export function UserProfileButton() {
         <DropdownMenu>
             <DropdownMenuTrigger
                 aria-label={t('nav.userMenu')}
-                className='hover:bg-background-gray-secondary flex items-center gap-2.5 rounded-lg p-1 transition-colors outline-none'
+                className='hover:bg-background-gray-secondary focus-visible:ring-input-primary-focus-border/30 flex items-center gap-2.5 rounded-lg p-1 transition-colors outline-none focus-visible:ring-4'
             >
                 <Avatar className='size-9'>
                     {avatar && <AvatarImage src={avatar} alt={displayName} />}
@@ -82,7 +82,7 @@ export function UserProfileButton() {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem onAction={signOut}>
-                    <span className='flex items-center gap-2.5 px-1.5 py-1 text-red-600'>
+                    <span className='text-badge-error-text flex items-center gap-2.5 px-1.5 py-1'>
                         <LogoutIcon />
                         {t('auth.signOut')}
                     </span>

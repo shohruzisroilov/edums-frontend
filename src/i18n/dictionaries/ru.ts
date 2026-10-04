@@ -28,6 +28,7 @@ export const ru: Dictionary = {
     'common.description': 'Описание',
     'common.createdAt': 'Дата добавления',
     'common.details': 'Подробнее',
+    'common.open': 'Открыть',
     'common.avatar': 'Фото',
 
     /* ── Header ──────────────────────────────────────────────────────── */

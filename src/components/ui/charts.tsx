@@ -43,6 +43,27 @@ export function useCompactNumber() {
     };
 }
 
+/**
+ * Karta ichidagi summa: telefonda qisqa ("48,6 mln so'm") — aks holda
+ * "48 600 000 so'm" ikki qatorga bo'linib ketadi; kattaroq ekranda to'liq.
+ * To'liq summa qisqa ko'rinishning `title`ida ham turadi.
+ */
+export function ResponsiveMoney({ value }: { value: number }) {
+    const t = useT();
+    const { formatPrice } = useFormat();
+    const compact = useCompactNumber();
+    const full = formatPrice(value, t('common.som'));
+
+    return (
+        <>
+            <span className='sm:hidden' title={full}>
+                {compact(value)} {t('common.som')}
+            </span>
+            <span className='hidden sm:inline'>{full}</span>
+        </>
+    );
+}
+
 /** Bitta asosiy raqam: yorliq, qiymat va ostida izoh. */
 export function StatTile({
     label,
@@ -63,7 +84,7 @@ export function StatTile({
     const content = (
         <div
             className={cn(
-                'border-card-border bg-card-background flex flex-col rounded-xl border p-4 transition-colors',
+                'border-card-border bg-card-background flex h-full flex-col rounded-xl border p-4 transition-colors',
                 href &&
                     'hover:border-input-primary-focus-border cursor-pointer hover:shadow-sm',
             )}
@@ -75,15 +96,15 @@ export function StatTile({
                         className={cn(
                             'inline-flex items-center gap-0.5 text-xs font-semibold tabular-nums',
                             trend > 0
-                                ? 'text-emerald-600 dark:text-emerald-400'
-                                : 'text-red-600 dark:text-red-400',
+                                ? 'text-badge-success-text'
+                                : 'text-badge-error-text',
                         )}
                     >
                         {trend > 0 ? `↑${trend}%` : `↓${Math.abs(trend)}%`}
                     </span>
                 )}
             </div>
-            <p className='text-text-primary font-display mt-1.5 text-2xl font-semibold'>
+            <p className='text-text-primary font-display mt-1.5 text-xl font-semibold tabular-nums min-[1400px]:text-2xl sm:text-2xl xl:text-xl'>
                 {value}
             </p>
             {children}
@@ -96,7 +117,14 @@ export function StatTile({
     );
 
     if (href) {
-        return <Link href={href}>{content}</Link>;
+        return (
+            <Link
+                href={href}
+                className='focus-visible:ring-input-primary-focus-border/30 block h-full rounded-xl outline-none focus-visible:ring-4'
+            >
+                {content}
+            </Link>
+        );
     }
 
     return content;
@@ -180,7 +208,7 @@ export function ColumnChart({
                 {/* Y-o'q: uchta toza qiymat va ular bo'ylab ingichka chiziqlar. */}
                 <div
                     aria-hidden
-                    className='text-text-tertiary flex h-44 flex-col justify-between text-right text-[11px] tabular-nums'
+                    className='text-text-tertiary flex h-44 flex-col justify-between text-right text-xs tabular-nums'
                 >
                     {ticks.map((tick) => (
                         <span
@@ -219,7 +247,7 @@ export function ColumnChart({
                                 >
                                     {isLast && datum.value > 0 && (
                                         <span
-                                            className='text-text-secondary absolute left-1/2 -translate-x-1/2 text-[11px] font-medium whitespace-nowrap tabular-nums'
+                                            className='text-text-secondary absolute left-1/2 -translate-x-1/2 text-xs font-medium whitespace-nowrap tabular-nums'
                                             style={{
                                                 bottom: `calc(${height}% + 4px)`,
                                             }}
@@ -242,7 +270,7 @@ export function ColumnChart({
                                         <p className='text-text-primary text-xs font-semibold whitespace-nowrap tabular-nums'>
                                             {formatValue(datum.value)}
                                         </p>
-                                        <p className='text-text-tertiary text-[11px] whitespace-nowrap'>
+                                        <p className='text-text-tertiary text-xs whitespace-nowrap'>
                                             {datum.fullLabel}
                                         </p>
                                     </div>
@@ -255,14 +283,14 @@ export function ColumnChart({
 
             <div aria-hidden className='mt-2 flex gap-3'>
                 {/* Y-o'q kengligiga teng bo'sh joy — yorliqlar ustunlar ostida. */}
-                <span className='invisible text-[11px] tabular-nums'>
+                <span className='invisible text-xs tabular-nums'>
                     {formatAxis(max)}
                 </span>
                 <div className='flex flex-1 gap-0.5'>
                     {data.map((datum) => (
                         <span
                             key={datum.key}
-                            className='text-text-tertiary flex-1 text-center text-[11px]'
+                            className='text-text-tertiary flex-1 text-center text-xs'
                         >
                             {datum.label}
                         </span>

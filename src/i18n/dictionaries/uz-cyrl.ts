@@ -28,6 +28,7 @@ export const uzCyrl: Dictionary = {
     'common.description': 'Тавсиф',
     'common.createdAt': 'Қўшилган сана',
     'common.details': 'Батафсил',
+    'common.open': 'Очиш',
     'common.avatar': 'Расм',
 
     /* ── Header ──────────────────────────────────────────────────────── */

@@ -6,8 +6,6 @@ import {
     BarChart2,
     Buildings11,
     CalendarTime,
-    ChevronLeft,
-    ChevronRight,
     ClockThree,
     Code1,
     DoubleCheckMark,
@@ -19,12 +17,11 @@ import {
     Wallet2,
 } from '@tailgrids/icons';
 import type { ReactNode } from 'react';
-import { useEffect, useRef, useState } from 'react';
 import { SectionHeading } from './section-heading';
 
 /**
  * Faqat tizimda hozir haqiqatan bor imkoniyatlar — yangi modul qo'shilganda
- * ro'yxat ham kengayadi. Auto slider ko'rinishida.
+ * ro'yxat ham kengayadi.
  */
 const FEATURES: {
     icon: ReactNode;
@@ -95,46 +92,10 @@ const FEATURES: {
 
 export function FeatureGrid() {
     const t = useT();
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const [isPaused, setIsPaused] = useState(false);
 
-    const scroll = (direction: 'left' | 'right') => {
-        if (!scrollContainerRef.current) return;
-        const { scrollLeft, clientWidth, scrollWidth } =
-            scrollContainerRef.current;
-        const cardWidth = 300;
-
-        let newScrollLeft =
-            direction === 'left'
-                ? scrollLeft - cardWidth
-                : scrollLeft + cardWidth;
-
-        if (
-            direction === 'right' &&
-            scrollLeft + clientWidth >= scrollWidth - 20
-        ) {
-            newScrollLeft = 0;
-        } else if (direction === 'left' && scrollLeft <= 10) {
-            newScrollLeft = scrollWidth - clientWidth;
-        }
-
-        scrollContainerRef.current.scrollTo({
-            left: newScrollLeft,
-            behavior: 'smooth',
-        });
-    };
-
-    // Auto-play scroll every 3 seconds unless hovered
-    useEffect(() => {
-        if (isPaused) return;
-
-        const interval = setInterval(() => {
-            scroll('right');
-        }, 3000);
-
-        return () => clearInterval(interval);
-    }, [isPaused]);
-
+    // Telefonda — barmoq bilan suriladigan qator (keyingi karta chetda
+    // ko'rinib turadi), kattaroq ekranda — hammasi bir qarashda ko'rinadigan
+    // to'r. O'zi aylanadigan slayder yo'q: o'qib ulgurmay matn qochib ketardi.
     return (
         <section className='mx-auto max-w-7xl px-4 py-12 sm:px-5 sm:py-16'>
             <SectionHeading
@@ -142,57 +103,27 @@ export function FeatureGrid() {
                 text={t('landing.featuresText')}
             />
 
-            <div
-                className='relative mt-8 px-0 sm:mt-10 sm:px-4'
-                onMouseEnter={() => setIsPaused(true)}
-                onMouseLeave={() => setIsPaused(false)}
-            >
-                {/* Previous Button */}
-                <button
-                    type='button'
-                    onClick={() => scroll('left')}
-                    aria-label={t('common.previous')}
-                    className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary absolute top-1/2 -left-1 z-20 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-lg transition-all active:scale-95 sm:left-0 sm:size-12'
-                >
-                    <ChevronLeft className='size-4 sm:size-6' />
-                </button>
-
-                {/* Next Button */}
-                <button
-                    type='button'
-                    onClick={() => scroll('right')}
-                    aria-label={t('common.next')}
-                    className='border-card-border bg-card-background text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary absolute top-1/2 -right-1 z-20 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-lg transition-all active:scale-95 sm:right-0 sm:size-12'
-                >
-                    <ChevronRight className='size-4 sm:size-6' />
-                </button>
-
-                {/* Horizontal Auto Slider Track */}
-                <div
-                    ref={scrollContainerRef}
-                    className='flex snap-x snap-mandatory gap-3.5 overflow-x-auto scroll-smooth rounded-2xl px-4 py-2 sm:gap-4 sm:px-10 sm:py-3'
-                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                >
-                    {FEATURES.map((feature) => (
-                        <div
-                            key={feature.title}
-                            className='border-card-border bg-card-background hover:border-brand-accent/50 flex w-[250px] shrink-0 snap-center flex-col justify-between rounded-2xl border p-5 transition-all hover:shadow-lg sm:w-[290px] sm:p-6'
+            <ul className='-mx-4 mt-8 flex snap-x snap-mandatory scroll-px-4 [scrollbar-width:none] gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:mt-10 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3 xl:grid-cols-4'>
+                {FEATURES.map((feature) => (
+                    <li
+                        key={feature.title}
+                        className='border-card-border bg-card-background w-[78%] shrink-0 snap-start rounded-2xl border p-5 sm:w-auto sm:p-6'
+                    >
+                        <span
+                            aria-hidden='true'
+                            className='bg-brand-accent/10 text-brand-accent flex size-10 items-center justify-center rounded-xl'
                         >
-                            <div>
-                                <span className='bg-brand-accent/10 text-brand-accent flex size-9 items-center justify-center rounded-xl sm:size-10'>
-                                    {feature.icon}
-                                </span>
-                                <h3 className='text-text-primary mt-3 text-sm font-semibold sm:mt-4 sm:text-base'>
-                                    {t(feature.title)}
-                                </h3>
-                                <p className='text-text-tertiary mt-1.5 text-xs leading-relaxed sm:mt-2 sm:text-sm'>
-                                    {t(feature.text)}
-                                </p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
+                            {feature.icon}
+                        </span>
+                        <h3 className='text-text-primary mt-4 text-base font-semibold'>
+                            {t(feature.title)}
+                        </h3>
+                        <p className='text-text-tertiary mt-2 text-sm leading-relaxed'>
+                            {t(feature.text)}
+                        </p>
+                    </li>
+                ))}
+            </ul>
         </section>
     );
 }

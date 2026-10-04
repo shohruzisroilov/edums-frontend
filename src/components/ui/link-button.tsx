@@ -25,16 +25,20 @@ export function LinkButton({
     href,
     appearance = 'outline',
     className,
+    title,
     children,
 }: {
     href: string;
     appearance?: keyof typeof APPEARANCE;
     className?: string;
+    /** Yozuvi yashiringan (faqat ikonka) holat uchun tooltip. */
+    title?: string;
     children: ReactNode;
 }) {
     return (
         <Link
             href={href}
+            title={title}
             className={cn(BASE, APPEARANCE[appearance], className)}
         >
             {children}

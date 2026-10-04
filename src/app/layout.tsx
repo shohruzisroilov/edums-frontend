@@ -24,12 +24,12 @@ const golos = Golos_Text({
 export const viewport: Viewport = {
     width: 'device-width',
     initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
+    // Kattalashtirish yopilmaydi (WCAG 1.4.4). iOS fokusdagi avtomatik zoom'ni
+    // globals.css'dagi telefonlar uchun 16px qoidasi oldini oladi.
     viewportFit: 'cover',
     themeColor: [
         { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-        { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
+        { media: '(prefers-color-scheme: dark)', color: '#181921' },
     ],
 };
 
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
         description: DESCRIPTION,
         url: '/',
         locale: 'uz_UZ',
-        images: [{ url: '/landing/hero.png', width: 1024, height: 575 }],
+        images: [{ url: '/landing/hero.png', width: 1200, height: 630 }],
     },
     twitter: {
         card: 'summary_large_image',

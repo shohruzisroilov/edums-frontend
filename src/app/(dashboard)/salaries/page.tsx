@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/month-switcher';
 import { MoneyInput, NumberInput } from '@/components/ui/number-input';
 import { PageHeader } from '@/components/ui/page-header';
+import { RowActionsMenu } from '@/components/ui/row-actions-menu';
 import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
@@ -54,6 +55,7 @@ import { can } from '@/utils/access';
 import { cn } from '@/utils/cn';
 import { fullName, toISODate } from '@/utils/format';
 import { TONE_TEXT } from '@/utils/tone';
+import { Pencil1 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
@@ -154,24 +156,41 @@ function SalariesView() {
                         <EmptyState message={t('salaries.empty')} />
                     ) : (
                         <TableRoot fullBleed className='border-x-0 border-t-0'>
+                            {/* Pul ustunlari ko'p — valyuta sarlavhada, katakda faqat
+                                raqam: jadval noutbuk ekraniga sig'adi. */}
                             <TableHeader>
                                 <TableRow>
                                     <RowNumberHead />
                                     <TableHead>{t('salaries.staff')}</TableHead>
-                                    <TableHead numeric>
+                                    <TableHead
+                                        numeric
+                                        className='max-w-24 whitespace-normal'
+                                    >
                                         {t('salaries.groupsStudents')}
                                     </TableHead>
                                     <TableHead numeric>
                                         {t('salaries.revenue')}
+                                        <span className='block font-normal tracking-normal normal-case'>
+                                            {som}
+                                        </span>
                                     </TableHead>
                                     <TableHead numeric>
                                         {t('salaries.accrued')}
+                                        <span className='block font-normal tracking-normal normal-case'>
+                                            {som}
+                                        </span>
                                     </TableHead>
                                     <TableHead numeric>
                                         {t('salaries.paid')}
+                                        <span className='block font-normal tracking-normal normal-case'>
+                                            {som}
+                                        </span>
                                     </TableHead>
                                     <TableHead numeric>
                                         {t('salaries.balance')}
+                                        <span className='block font-normal tracking-normal normal-case'>
+                                            {som}
+                                        </span>
                                     </TableHead>
                                     {canManage && (
                                         <TableHead className='text-right'>
@@ -184,7 +203,10 @@ function SalariesView() {
                                 {sheetQuery.data.rows.map((row, index) => (
                                     <TableRow key={row.user.id}>
                                         <RowNumberCell index={index} />
-                                        <TableCell primary>
+                                        <TableCell
+                                            primary
+                                            className='min-w-44 whitespace-normal'
+                                        >
                                             {fullName(row.user)}
                                             <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
                                                 {rateLabel(row)}
@@ -195,13 +217,13 @@ function SalariesView() {
                                             {formatNumber(row.students_count)}
                                         </TableCell>
                                         <TableCell numeric>
-                                            {formatPrice(row.revenue, som)}
+                                            {formatNumber(row.revenue)}
                                         </TableCell>
                                         <TableCell numeric>
-                                            {formatPrice(row.accrued, som)}
+                                            {formatNumber(row.accrued)}
                                         </TableCell>
                                         <TableCell numeric>
-                                            {formatPrice(row.paid, som)}
+                                            {formatNumber(row.paid)}
                                         </TableCell>
                                         <TableCell
                                             numeric
@@ -210,20 +232,13 @@ function SalariesView() {
                                                 payoutTone(row),
                                             )}
                                         >
-                                            {formatPrice(row.balance, som)}
+                                            {formatNumber(row.balance)}
                                         </TableCell>
                                         {canManage && (
                                             <TableCell>
-                                                <div className='flex justify-end gap-2'>
-                                                    <Button
-                                                        appearance='outline'
-                                                        size='md'
-                                                        onPress={() =>
-                                                            setRating(row)
-                                                        }
-                                                    >
-                                                        {t('salaries.setRate')}
-                                                    </Button>
+                                                {/* Har oy — to'lash; stavka bir marta
+                                                    belgilanadi, u "⋯" menyuda. */}
+                                                <div className='flex items-center justify-end gap-2'>
                                                     <Button
                                                         variant='primary'
                                                         appearance='outline'
@@ -234,6 +249,25 @@ function SalariesView() {
                                                     >
                                                         {t('salaries.pay')}
                                                     </Button>
+                                                    <RowActionsMenu
+                                                        label={fullName(
+                                                            row.user,
+                                                        )}
+                                                        actions={[
+                                                            {
+                                                                label: t(
+                                                                    'salaries.setRate',
+                                                                ),
+                                                                icon: (
+                                                                    <Pencil1 />
+                                                                ),
+                                                                onAction: () =>
+                                                                    setRating(
+                                                                        row,
+                                                                    ),
+                                                            },
+                                                        ]}
+                                                    />
                                                 </div>
                                             </TableCell>
                                         )}
@@ -247,15 +281,13 @@ function SalariesView() {
                                     <TableCell />
                                     <TableCell />
                                     <TableCell numeric>
-                                        {formatPrice(
+                                        {formatNumber(
                                             sheetQuery.data.totals.accrued,
-                                            som,
                                         )}
                                     </TableCell>
                                     <TableCell numeric>
-                                        {formatPrice(
+                                        {formatNumber(
                                             sheetQuery.data.totals.paid,
-                                            som,
                                         )}
                                     </TableCell>
                                     <TableCell
@@ -265,9 +297,8 @@ function SalariesView() {
                                             payoutTone(sheetQuery.data.totals),
                                         )}
                                     >
-                                        {formatPrice(
+                                        {formatNumber(
                                             sheetQuery.data.totals.balance,
-                                            som,
                                         )}
                                     </TableCell>
                                     {canManage && <TableCell />}

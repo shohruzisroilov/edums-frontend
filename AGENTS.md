@@ -124,7 +124,27 @@ etiladigan tugmalarni oldindan yashirish uchun.
 
 ## Dizayn
 
-**Brend rangi ko'k (`--primary-500: #3758f9`) — o'zgartirilmaydi.**
+**Brend rangi — `#5750f1` (indigo) — o'zgartirilmaydi.** Tugmalar
+(`brand-500`), `primary-*` shkalasi, logotip (`common/logo-icons.tsx`),
+`public/icon.svg`, favicon va manifest shu rang oilasida. Boshqa ko'k
+(`#3758f9`, `#0088ff` kabi) qo'shilmaydi.
+
+- Input, select, sana maydoni va checkbox chegarasi — `border-input-border`
+  (karta chegarasi `border-card-border` emas): maydon kartadan ajralib
+  turishi kerak.
+- Ogohlantirish qutilari — `alert-danger-*` / `alert-warning-*` tokenlari,
+  xato matni — `text-badge-error-text`. Tungi mavzudagi badge matnlari
+  `-400` ohangida — 12px matn uchun 4.5:1 dan o'tadi.
+- Matn 12px (`text-xs`) dan kichik bo'lmaydi.
+- Ochilish animatsiyalari (`animate-in`, `fade-in`, `slide-in-from-*`) —
+  `tw-animate-css` (globals.css'da import qilingan).
+- Jadval qatorida bitta asosiy amal tugma, qolgani (batafsil, tahrirlash,
+  o'chirish) — `RowActionsMenu` (`ui/row-actions-menu.tsx`). Jadval 1280px
+  noutbukda gorizontal scroll'siz sig'ishi kerak. Pul ustunlari ko'p bo'lsa
+  (oyliklar) valyuta sarlavhaning ikkinchi qatorida, katakda faqat raqam.
+- Telefonda sarlavhadagi ikkinchi darajali tugmalar (Eksport/Import) faqat
+  ikonka (`sr-only sm:not-sr-only` yorliq) — asosiy amal bir qatorda qoladi.
+- `viewport` da kattalashtirish (zoom) yopilmaydi.
 
 ## Formatlanadigan maydonlar
 
@@ -178,7 +198,9 @@ tariflar (bazadan), FAQ, CTA. Qoidalar:
 - FAQ javoblari backend qoidalariga mos (obuna tugashi, `max_users`,
   filiallar soni cheklanmagan). Qoida o'zgarsa, javob ham o'zgaradi.
 - Rasmlar `public/landing/` da, yo'li `components/landing/images.ts` da.
-  `null` bo'lsa `ImageSlot` rasm uchun ramka ko'rsatadi.
+  `null` bo'lsa `ImageSlot` rasm uchun ramka ko'rsatadi. Faqat ilovaning
+  **haqiqiy skrinshotlari** (namunaviy ma'lumot bilan), 16:9, WebP — AI
+  chizgan "interfeys" qo'yilmaydi: u tizimda yo'q narsani ko'rsatadi.
 
 ## Kod namunalari
 

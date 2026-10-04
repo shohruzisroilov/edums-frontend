@@ -61,7 +61,7 @@ export default function Sidebar({
                 {sections.map((section) => (
                     <div key={section.labelKey}>
                         {isSidebarOpen && (
-                            <p className='text-text-tertiary/80 mb-2 px-4 text-[0.6875rem] font-semibold tracking-[0.08em] uppercase'>
+                            <p className='text-text-tertiary mb-2 px-4 text-xs font-semibold tracking-[0.06em] uppercase'>
                                 {t(section.labelKey)}
                             </p>
                         )}

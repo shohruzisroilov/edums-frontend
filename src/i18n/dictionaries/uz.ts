@@ -30,6 +30,7 @@ export const uz = {
     'common.description': 'Tavsif',
     'common.createdAt': "Qo'shilgan sana",
     'common.details': 'Batafsil',
+    'common.open': 'Ochish',
     'common.avatar': 'Rasm',
 
     /* ── Header ──────────────────────────────────────────────────────── */

@@ -124,7 +124,7 @@ function BillingView() {
                 <StatusCard subscription={subscription} />
 
                 {pending && (
-                    <section className='rounded-xl border border-amber-200 bg-amber-50 p-5 dark:border-amber-900/50 dark:bg-amber-950/30'>
+                    <section className='border-alert-warning-border bg-alert-warning-background rounded-xl border p-5'>
                         <div className='flex flex-wrap items-start justify-between gap-4'>
                             <div>
                                 <p className='text-text-primary font-semibold'>
@@ -385,7 +385,7 @@ function StatusCard({ subscription }: { subscription: SubscriptionStatus }) {
                 'rounded-2xl border p-5 transition-all sm:p-6',
                 subscription.active
                     ? 'border-brand-accent/30 bg-card-background shadow-xs'
-                    : 'border-red-200 bg-red-50 dark:border-red-900/50 dark:bg-red-950/40',
+                    : 'border-alert-danger-border bg-alert-danger-background',
             )}
         >
             <div className='flex flex-wrap items-center justify-between gap-4'>
@@ -395,7 +395,7 @@ function StatusCard({ subscription }: { subscription: SubscriptionStatus }) {
                             'flex size-12 shrink-0 items-center justify-center rounded-2xl font-bold',
                             subscription.active
                                 ? 'bg-brand-accent/10 text-brand-accent'
-                                : 'bg-red-100 text-red-600 dark:bg-red-900/30',
+                                : 'bg-badge-error-background text-badge-error-text',
                         )}
                     >
                         <Shield1Check className='size-6' />
@@ -425,7 +425,7 @@ function StatusCard({ subscription }: { subscription: SubscriptionStatus }) {
                 <div className='flex flex-wrap items-center gap-2.5 sm:gap-3'>
                     {subscription.active && (
                         <div className='border-card-border bg-card-background/80 rounded-xl border px-3.5 py-2 text-left shadow-2xs'>
-                            <span className='text-text-tertiary block text-[11px] font-medium'>
+                            <span className='text-text-tertiary block text-xs font-medium'>
                                 {t('billing.period')}
                             </span>
                             <span className='text-text-primary block text-xs font-semibold'>
@@ -438,7 +438,7 @@ function StatusCard({ subscription }: { subscription: SubscriptionStatus }) {
                         </div>
                     )}
                     <div className='border-card-border bg-card-background/80 rounded-xl border px-3.5 py-2 text-left shadow-2xs'>
-                        <span className='text-text-tertiary block text-[11px] font-medium'>
+                        <span className='text-text-tertiary block text-xs font-medium'>
                             {t('students.title')}
                         </span>
                         <span className='text-text-primary block text-xs font-semibold'>

@@ -50,7 +50,7 @@ export function ImageSlot({
                         <p className='text-text-secondary text-sm font-medium'>
                             {t('landing.imageSlot')}
                         </p>
-                        <p className='text-xs'>{label} · 1600 × 1000</p>
+                        <p className='text-xs'>{label} · 1600 × 900</p>
                     </div>
                 )}
             </div>

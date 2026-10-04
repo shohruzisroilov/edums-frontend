@@ -154,7 +154,7 @@ export function AttendanceSection({
                                                     <span className='block tabular-nums'>
                                                         {Number(date.slice(8))}
                                                     </span>
-                                                    <span className='text-text-tertiary block text-[10px] font-normal'>
+                                                    <span className='text-text-tertiary block text-xs font-normal'>
                                                         {t(
                                                             `weekday.${isoWeekday(date)}` as Parameters<
                                                                 typeof t
@@ -437,14 +437,16 @@ function MarkAttendanceModal({
                                 const selected =
                                     statuses[row.student.id] === status;
 
+                                // Badge tokenlari — ikkala mavzuda ham o'qiladi;
+                                // tanlangani rangdan tashqari chegarasi bilan ajralib turadi.
                                 const activeColor =
                                     status === 'present'
-                                        ? 'bg-emerald-600 text-white border-transparent shadow-xs'
+                                        ? 'border-current bg-badge-success-background text-badge-success-text'
                                         : status === 'absent'
-                                          ? 'bg-rose-600 text-white border-transparent shadow-xs'
+                                          ? 'border-current bg-badge-error-background text-badge-error-text'
                                           : status === 'late'
-                                            ? 'bg-amber-600 text-white border-transparent shadow-xs'
-                                            : 'bg-slate-600 text-white border-transparent shadow-xs';
+                                            ? 'border-current bg-badge-warning-background text-badge-warning-text'
+                                            : 'border-current bg-badge-neutral-background text-badge-neutral-text';
 
                                 return (
                                     <button

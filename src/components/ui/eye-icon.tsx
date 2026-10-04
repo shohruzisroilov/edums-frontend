@@ -1,3 +1,6 @@
+'use client';
+
+import { useT } from '@/i18n/provider';
 import Link from 'next/link';
 
 export function EyeIcon({ className = 'size-4' }: { className?: string }) {
@@ -22,16 +25,21 @@ export function EyeIcon({ className = 'size-4' }: { className?: string }) {
 /** Amallar ustunida boshqa tugmalar bilan bir xil ko'rinishdagi "ochish" tugmasi */
 export function EyeLinkButton({
     href,
-    label = 'Ochish',
+    label,
 }: {
     href: string;
+    /** Bo'lmasa — joriy tildagi "Ochish". */
     label?: string;
 }) {
+    const t = useT();
+    const text = label ?? t('common.open');
+
     return (
         <Link
             href={href}
-            aria-label={label}
-            className='border-button-primary-outline-stroke bg-button-primary-outline-background text-button-primary-outline-text hover:bg-button-primary-outline-hover-background hover:text-button-primary-outline-hover-text inline-flex size-9 items-center justify-center rounded-lg border transition outline-none'
+            aria-label={text}
+            title={text}
+            className='border-button-primary-outline-stroke bg-button-primary-outline-background text-button-primary-outline-text hover:bg-button-primary-outline-hover-background hover:text-button-primary-outline-hover-text focus-visible:ring-button-outline-focus-ring inline-flex size-9 items-center justify-center rounded-lg border transition outline-none focus-visible:ring-4'
         >
             <EyeIcon className='size-5' />
         </Link>

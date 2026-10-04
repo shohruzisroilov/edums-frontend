@@ -45,13 +45,13 @@ export function SubscriptionBanner() {
     const showLink = can(session, 'billing.manage') && pathname !== '/billing';
 
     return (
-        <div className='px-5 pt-4'>
+        <div className='px-4 pt-4 sm:px-5'>
             <div
                 role='status'
                 className={cn(
                     'flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-3 text-sm',
                     expired || ending
-                        ? 'border-red-200 bg-red-50 text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200'
+                        ? 'border-alert-danger-border bg-alert-danger-background text-alert-danger-title'
                         : 'border-card-border bg-card-background text-text-primary',
                 )}
             >

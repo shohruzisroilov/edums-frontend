@@ -32,8 +32,9 @@ export default function NavItem({
                     onClick={onItemClick}
                     title={label}
                     aria-label={label}
+                    aria-current={isActive ? 'page' : undefined}
                     className={cn(
-                        'flex items-center justify-center rounded-lg px-3 py-2.5',
+                        'focus-visible:ring-input-primary-focus-border/30 flex items-center justify-center rounded-lg px-3 py-2.5 outline-none focus-visible:ring-4',
                         isActive
                             ? 'bg-sidebar-navigation-nav-item-nav-hover-background text-icon-primary'
                             : 'text-icon-tertiary hover:bg-sidebar-navigation-nav-item-nav-hover-background hover:text-icon-primary transition-colors duration-200',
@@ -51,7 +52,7 @@ export default function NavItem({
             onClick={onItemClick}
             aria-current={isActive ? 'page' : undefined}
             className={cn(
-                'relative flex w-full items-center gap-3 rounded-lg py-2 pr-3 pl-4 text-sm transition-colors',
+                'focus-visible:ring-input-primary-focus-border/30 relative flex w-full items-center gap-3 rounded-lg py-2 pr-3 pl-4 text-sm transition-colors outline-none focus-visible:ring-4',
                 isActive
                     ? 'bg-sidebar-navigation-nav-item-nav-hover-background text-text-primary font-semibold'
                     : 'text-text-secondary hover:bg-sidebar-navigation-nav-item-nav-hover-background hover:text-text-primary font-medium',

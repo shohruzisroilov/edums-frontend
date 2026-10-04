@@ -61,7 +61,7 @@ export function BillingPeriodSwitch({
                     >
                         {t(`billingPeriod.${period}`)}
                         {period === 'year' && discount > 0 && (
-                            <span className='bg-badge-success-background text-badge-success-text rounded-md px-1.5 py-0.5 text-[11px] font-semibold tabular-nums'>
+                            <span className='bg-badge-success-background text-badge-success-text rounded-md px-1.5 py-0.5 text-xs font-semibold tabular-nums'>
                                 {t('billing.upToDiscount', {
                                     percent: discount,
                                 })}

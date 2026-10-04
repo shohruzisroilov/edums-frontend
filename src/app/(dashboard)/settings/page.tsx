@@ -89,7 +89,7 @@ function SettingsForm({ settings }: { settings: EducationSettings }) {
                 {!settings.notifications_available && (
                     <p
                         role='status'
-                        className='rounded-lg border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-300'
+                        className='border-alert-warning-border bg-alert-warning-background text-alert-warning-title rounded-lg border px-4 py-2.5 text-sm'
                     >
                         {t('settings.unavailable')}
                     </p>

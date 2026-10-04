@@ -173,7 +173,7 @@ export function GlobalSearchModal({
                                 <Xmark className='size-4' />
                             </button>
                         )}
-                        <kbd className='border-card-border bg-background-gray-secondary/70 text-text-tertiary hidden rounded-md border px-1.5 py-0.5 text-[10px] font-semibold sm:inline-block'>
+                        <kbd className='border-card-border bg-background-gray-secondary/70 text-text-tertiary hidden rounded-md border px-1.5 py-0.5 text-xs font-semibold sm:inline-block'>
                             ESC
                         </kbd>
                     </div>

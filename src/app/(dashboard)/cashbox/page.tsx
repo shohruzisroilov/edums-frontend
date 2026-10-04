@@ -167,7 +167,10 @@ function CashboxView() {
                                 }}
                             >
                                 <Download1 />
-                                {t('common.export')}
+                                {/* Telefonda faqat ikonka — asosiy amal bir qatorda qolsin. */}
+                                <span className='sr-only sm:not-sr-only'>
+                                    {t('common.export')}
+                                </span>
                             </Button>
                         )}
                         {canCreate && (
@@ -353,7 +356,7 @@ function CashboxView() {
                                             </div>
 
                                             {payment.received_by && (
-                                                <span className='text-text-tertiary max-w-[140px] truncate text-[11px]'>
+                                                <span className='text-text-tertiary max-w-[140px] truncate text-xs'>
                                                     {fullName(
                                                         payment.received_by,
                                                     )}

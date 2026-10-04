@@ -35,7 +35,11 @@ import type { Education, EducationStatus } from '@/types/api';
 import { EDUCATION_STATUSES } from '@/types/api';
 import { isSuperAdmin } from '@/utils/access';
 import { Buildings11, Pencil1, Plus, Trash1 } from '@tailgrids/icons';
-import { EyeLinkButton } from '@/components/ui/eye-icon';
+import { EyeIcon } from '@/components/ui/eye-icon';
+import {
+    RowActionsMenu,
+    type RowAction,
+} from '@/components/ui/row-actions-menu';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -96,6 +100,29 @@ function EducationsView() {
         onError: (error) => toastError(error),
     });
 
+    // Qatordagi amallar "⋯" menyuda; markazni ochish — nomining o'zi ham havola.
+    const rowActions = (education: Education): RowAction[] => [
+        {
+            label: t('common.details'),
+            icon: <EyeIcon />,
+            href: `/educations/${education.id}`,
+        },
+        {
+            label: t('common.edit'),
+            icon: <Pencil1 />,
+            onAction: () => {
+                setEditing(education);
+                setFormOpen(true);
+            },
+        },
+        {
+            label: t('common.delete'),
+            icon: <Trash1 />,
+            onAction: () => setDeleting(education),
+            danger: true,
+        },
+    ];
+
     return (
         <>
             <PageHeader
@@ -152,7 +179,7 @@ function EducationsView() {
                 </MobileFilterSheet>
             </div>
 
-            <div className='px-5'>
+            <div className='px-4 sm:px-5'>
                 <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                     {query.isPending ? (
                         <TableSkeleton columns={6} />
@@ -228,42 +255,13 @@ function EducationsView() {
                                                 )}
                                             </TableCell>
                                             <TableCell>
-                                                <div className='flex justify-end gap-2'>
-                                                    <EyeLinkButton
-                                                        href={`/educations/${education.id}`}
+                                                <div className='flex justify-end'>
+                                                    <RowActionsMenu
+                                                        label={education.name}
+                                                        actions={rowActions(
+                                                            education,
+                                                        )}
                                                     />
-                                                    <Button
-                                                        appearance='outline'
-                                                        size='md'
-                                                        iconOnly
-                                                        aria-label={t(
-                                                            'common.edit',
-                                                        )}
-                                                        onPress={() => {
-                                                            setEditing(
-                                                                education,
-                                                            );
-                                                            setFormOpen(true);
-                                                        }}
-                                                    >
-                                                        <Pencil1 />
-                                                    </Button>
-                                                    <Button
-                                                        variant='danger'
-                                                        appearance='outline'
-                                                        size='md'
-                                                        iconOnly
-                                                        aria-label={t(
-                                                            'common.delete',
-                                                        )}
-                                                        onPress={() =>
-                                                            setDeleting(
-                                                                education,
-                                                            )
-                                                        }
-                                                    >
-                                                        <Trash1 />
-                                                    </Button>
                                                 </div>
                                             </TableCell>
                                         </TableRow>
