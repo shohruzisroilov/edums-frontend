@@ -712,6 +712,8 @@ export const en: Dictionary = {
     'leads.created': 'Lead added',
     'leads.updated': 'Lead updated',
     'leads.deleted': 'Lead deleted',
+    'leads.batchStatusDone': 'Updated status of {count} leads',
+    'leads.batchDeleteDone': 'Deleted {count} leads',
 
     /* ── Umumiy ── */
     'common.change': 'Change',

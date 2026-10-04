@@ -712,6 +712,8 @@ export const uzCyrl: Dictionary = {
     'leads.created': 'Лид қўшилди',
     'leads.updated': 'Лид янгиланди',
     'leads.deleted': 'Лид ўчирилди',
+    'leads.batchStatusDone': '{count} та лид ҳолати янгиланди',
+    'leads.batchDeleteDone': '{count} та лид ўчирилди',
 
     /* ── Umumiy ── */
     'common.change': 'Ўзгартириш',

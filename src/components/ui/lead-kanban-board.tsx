@@ -18,7 +18,7 @@ import type {
 } from '@/types/api';
 import { EDITABLE_LEAD_STATUSES, LEAD_STATUSES } from '@/types/api';
 import { cn } from '@/utils/cn';
-import { Calendar, Pencil1, User2 } from '@tailgrids/icons';
+import { Calendar, Eye, Pencil1, User2 } from '@tailgrids/icons';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRef, useState, type DragEvent } from 'react';
@@ -26,14 +26,15 @@ import { useRef, useState, type DragEvent } from 'react';
 /** Ustunga bir martada yuklanadigan lidlar soni. */
 const COLUMN_PAGE = 30;
 
-interface KanbanFilters {
+export interface KanbanFilters {
     search?: string;
     source?: LeadSource;
+    course_id?: string;
+    branch_id?: string;
 }
 
 /**
- * Bitta ustun — o'z holatidagi lidlar, sahifalab. Har ustun alohida
- * so'raladi.
+ * Bitta ustun — o'z holatidagi lidlar, sahifalab. Har ustun alohida so'raladi.
  */
 function useLeadColumn(
     status: LeadStatus,
@@ -76,6 +77,7 @@ export function LeadKanbanBoard({
     onStatusChange,
     onEdit,
     onConvert,
+    onSelectLead,
     canUpdate,
     canConvert,
 }: {
@@ -84,7 +86,6 @@ export function LeadKanbanBoard({
     onlyStatus?: LeadStatus;
     /**
      * "O'quvchi bo'ldi" bu yerga kelmaydi — u faqat onConvert orqali.
-     * Saqlangach va ro'yxat qayta yuklangach tugaydi; xatoni sahifa ko'rsatadi.
      */
     onStatusChange: (
         leadId: string,
@@ -92,6 +93,7 @@ export function LeadKanbanBoard({
     ) => Promise<unknown>;
     onEdit: (lead: Lead) => void;
     onConvert: (lead: Lead) => void;
+    onSelectLead?: (lead: Lead) => void;
     canUpdate: boolean;
     canConvert: boolean;
 }) {
@@ -111,9 +113,7 @@ export function LeadKanbanBoard({
     const allQueryLeads = statuses.flatMap((status) => columns[status].leads);
 
     const [draggedLeadId, setDraggedLeadId] = useState<string | null>(null);
-    const [dragOverColumn, setDragOverColumn] = useState<LeadStatus | null>(
-        null,
-    );
+    const [dragOverColumn, setDragOverColumn] = useState<LeadStatus | null>(null);
     const dragOverColumnRef = useRef<LeadStatus | null>(null);
 
     const [tab, setActiveTab] = useState<LeadStatus>('new');
@@ -123,6 +123,11 @@ export function LeadKanbanBoard({
     const [optimisticStatusMap, setOptimisticStatusMap] = useState<
         Record<string, LeadStatus>
     >({});
+
+    const totalLeadsCount = Object.values(columns).reduce(
+        (sum, col) => sum + col.count,
+        0,
+    );
 
     function handleDragStart(e: DragEvent<HTMLDivElement>, leadId: string) {
         e.dataTransfer.setData('text/plain', leadId);
@@ -177,9 +182,6 @@ export function LeadKanbanBoard({
                 ...prev,
                 [lead.id]: targetStatus,
             }));
-            // Server javobi kelgach optimistik belgi olib tashlanadi: aks
-            // holda xatoda karta noto'g'ri ustunda qolardi, keyinroq forma
-            // orqali o'zgargan holatni ham eski belgi bosib ketardi.
             onStatusChange(lead.id, targetStatus as EditableLeadStatus)
                 .catch(() => undefined)
                 .finally(() =>
@@ -216,6 +218,8 @@ export function LeadKanbanBoard({
 
         return { leads: combined, count };
     }
+
+    const todayStr = new Date().toISOString().slice(0, 10);
 
     return (
         <div className='flex flex-col gap-3'>
@@ -271,6 +275,10 @@ export function LeadKanbanBoard({
                         getColumnLeads(status);
                     const isOver = dragOverColumn === status;
 
+                    const percentage = totalLeadsCount > 0
+                        ? Math.round((columnCount / totalLeadsCount) * 100)
+                        : 0;
+
                     return (
                         <div
                             key={status}
@@ -282,39 +290,47 @@ export function LeadKanbanBoard({
                                 canDropOn(status) && handleDrop(e, status)
                             }
                             className={cn(
-                                'border-card-border bg-background-gray-secondary/40 flex min-h-[480px] w-[280px] shrink-0 snap-start flex-col rounded-2xl border p-3 transition-all duration-150 ease-out sm:w-[300px] lg:w-full lg:min-w-0 lg:shrink',
+                                'border-card-border bg-background-gray-secondary/40 flex min-h-[520px] w-[285px] shrink-0 snap-start flex-col rounded-2xl border p-3 transition-all duration-200 ease-out sm:w-[310px] lg:w-full lg:min-w-0 lg:shrink',
                                 status !== activeTab && 'hidden sm:flex',
                                 isOver &&
-                                    'border-brand-accent/80 bg-brand-accent/5 ring-brand-accent/20 scale-[1.008] shadow-md ring-4',
+                                    'border-brand-accent bg-brand-accent/5 ring-brand-accent/20 scale-[1.01] shadow-lg ring-4',
                             )}
                         >
                             {/* Column Header */}
                             <div className='border-card-border mb-3 flex items-center justify-between border-b px-1 pb-2.5'>
                                 <div className='flex min-w-0 items-center gap-2'>
                                     <LeadStatusDot status={status} />
-                                    <h4 className='text-text-primary truncate text-sm font-semibold'>
+                                    <h4 className='text-text-primary truncate text-sm font-bold'>
                                         {t(
                                             `leadStatus.${status}` as import('@/i18n/dictionaries/uz').TranslationKey,
                                         )}
                                     </h4>
                                 </div>
-                                <span className='border-card-border bg-card-surface-area text-text-secondary shrink-0 rounded-md border px-2 py-0.5 text-xs font-semibold tabular-nums shadow-2xs'>
-                                    {columnCount}
-                                </span>
+                                <div className='flex items-center gap-1.5'>
+                                    {totalLeadsCount > 0 && (
+                                        <span className='text-[11px] font-medium text-text-tertiary tabular-nums'>
+                                            {percentage}%
+                                        </span>
+                                    )}
+                                    <span className='border-card-border bg-card-surface-area text-text-secondary shrink-0 rounded-md border px-2 py-0.5 text-xs font-bold tabular-nums shadow-2xs'>
+                                        {columnCount}
+                                    </span>
+                                </div>
                             </div>
 
                             {/* Column Items */}
                             <div className='min-h-[150px] flex-1 scrollbar-thin space-y-2.5 overflow-y-auto pr-0.5'>
                                 {isOver && draggedLeadId && (
-                                    <div className='border-brand-accent/60 bg-brand-accent/10 text-brand-accent flex h-16 animate-pulse items-center justify-center rounded-xl border-2 border-dashed text-xs font-semibold shadow-inner'>
-                                        ↓ {t('leads.dropHere')}
+                                    <div className='border-brand-accent/80 bg-brand-accent/15 text-brand-accent flex h-20 animate-pulse items-center justify-center rounded-xl border-2 border-dashed text-xs font-bold shadow-inner gap-2'>
+                                        <span>↓</span>
+                                        <span>{t('leads.dropHere')}</span>
                                     </div>
                                 )}
 
                                 {column.isPending ? (
-                                    <div className='bg-background-gray-secondary/80 h-28 animate-pulse rounded-xl' />
+                                    <div className='bg-background-gray-secondary/80 h-32 animate-pulse rounded-xl' />
                                 ) : columnLeads.length === 0 && !isOver ? (
-                                    <div className='text-text-tertiary border-card-border flex h-28 items-center justify-center rounded-xl border border-dashed text-xs transition-all duration-200'>
+                                    <div className='text-text-tertiary border-card-border/70 flex h-28 items-center justify-center rounded-xl border border-dashed text-xs font-medium transition-all duration-200'>
                                         {t('leads.columnEmpty')}
                                     </div>
                                 ) : (
@@ -326,6 +342,15 @@ export function LeadKanbanBoard({
                                             draggedLeadId === lead.id;
                                         const draggable =
                                             canUpdate &&
+                                            effectiveStatus !== 'won';
+
+                                        const isOverdue =
+                                            lead.next_call_date &&
+                                            lead.next_call_date < todayStr &&
+                                            effectiveStatus !== 'won';
+                                        const isToday =
+                                            lead.next_call_date &&
+                                            lead.next_call_date === todayStr &&
                                             effectiveStatus !== 'won';
 
                                         return (
@@ -342,89 +367,94 @@ export function LeadKanbanBoard({
                                                         null;
                                                 }}
                                                 className={cn(
-                                                    'border-card-border bg-card-surface-area hover:border-brand-accent/40 flex flex-col justify-between rounded-xl border p-3.5 shadow-2xs transition-all duration-200 hover:shadow-sm',
+                                                    'group border-card-border bg-card-surface-area hover:border-brand-accent/40 relative flex flex-col justify-between rounded-xl border p-3.5 shadow-2xs transition-all duration-200 hover:shadow-md',
                                                     draggable &&
-                                                        'cursor-grab hover:-translate-y-0.5 active:cursor-grabbing',
+                                                        'cursor-grab active:cursor-grabbing hover:-translate-y-0.5',
                                                     isDraggingThis &&
                                                         'border-brand-accent bg-brand-accent/5 scale-[0.98] border-dashed opacity-40 shadow-xl',
+                                                    isOverdue && 'border-l-4 border-l-red-500',
+                                                    isToday && 'border-l-4 border-l-amber-500',
                                                 )}
                                             >
                                                 <div>
                                                     <div className='flex items-start justify-between gap-1.5'>
-                                                        <h5
-                                                            className='text-text-primary flex min-w-0 items-center gap-1.5 text-xs font-bold sm:text-sm'
-                                                            title={`${lead.first_name} ${lead.last_name || ''}`}
+                                                        <div
+                                                            className='flex flex-1 min-w-0 items-center gap-1.5 cursor-pointer'
+                                                            onClick={() => onSelectLead?.(lead)}
                                                         >
                                                             {draggable && (
-                                                                <span className='text-text-tertiary shrink-0 cursor-grab text-xs opacity-50 select-none hover:opacity-100'>
+                                                                <span className='text-text-tertiary shrink-0 cursor-grab text-xs opacity-40 select-none group-hover:opacity-100 transition-opacity'>
                                                                     ⋮⋮
                                                                 </span>
                                                             )}
-                                                            <span className='truncate'>
-                                                                {
-                                                                    lead.first_name
-                                                                }{' '}
-                                                                {lead.last_name ||
-                                                                    ''}
-                                                            </span>
-                                                        </h5>
-                                                        {canUpdate && (
-                                                            <button
-                                                                type='button'
-                                                                onClick={() =>
-                                                                    onEdit(lead)
-                                                                }
-                                                                className='text-icon-tertiary hover:text-text-primary hover:bg-background-gray-secondary shrink-0 rounded-md p-1 transition-colors'
-                                                                aria-label={t(
-                                                                    'common.edit',
-                                                                )}
+                                                            <h5
+                                                                className='text-text-primary truncate text-xs font-bold sm:text-sm hover:text-brand-accent transition-colors'
+                                                                title={`${lead.first_name} ${lead.last_name || ''}`}
                                                             >
-                                                                <Pencil1 className='size-3.5' />
-                                                            </button>
-                                                        )}
+                                                                {lead.first_name}{' '}
+                                                                {lead.last_name || ''}
+                                                            </h5>
+                                                        </div>
+
+                                                        <div className='flex items-center gap-0.5 shrink-0'>
+                                                            {onSelectLead && (
+                                                                <button
+                                                                    type='button'
+                                                                    onClick={() => onSelectLead(lead)}
+                                                                    className='text-icon-tertiary hover:text-brand-accent hover:bg-background-gray-secondary rounded-md p-1 transition-colors'
+                                                                    aria-label="Tafsilotlar"
+                                                                >
+                                                                    <Eye className='size-3.5' />
+                                                                </button>
+                                                            )}
+                                                            {canUpdate && (
+                                                                <button
+                                                                    type='button'
+                                                                    onClick={() => onEdit(lead)}
+                                                                    className='text-icon-tertiary hover:text-text-primary hover:bg-background-gray-secondary rounded-md p-1 transition-colors'
+                                                                    aria-label={t('common.edit')}
+                                                                >
+                                                                    <Pencil1 className='size-3.5' />
+                                                                </button>
+                                                            )}
+                                                        </div>
                                                     </div>
 
-                                                    <div className='mt-1 text-xs'>
-                                                        <PhoneLink
-                                                            phone={
-                                                                lead.phone_number
-                                                            }
-                                                        />
+                                                    <div className='mt-1 flex items-center justify-between text-xs'>
+                                                        <PhoneLink phone={lead.phone_number} />
                                                     </div>
 
                                                     <div className='mt-2.5 flex flex-wrap items-center gap-1.5'>
-                                                        <LeadSourceBadge
-                                                            source={lead.source}
-                                                        />
+                                                        <LeadSourceBadge source={lead.source} />
                                                         {lead.course && (
                                                             <span
-                                                                className='bg-background-gray-secondary text-text-secondary max-w-[140px] truncate rounded-md px-1.5 py-0.5 text-xs font-medium'
-                                                                title={
-                                                                    lead.course
-                                                                        .name
-                                                                }
+                                                                className='bg-background-gray-secondary text-text-secondary max-w-[140px] truncate rounded-md px-1.5 py-0.5 text-[11px] font-medium'
+                                                                title={lead.course.name}
                                                             >
-                                                                {
-                                                                    lead.course
-                                                                        .name
-                                                                }
+                                                                {lead.course.name}
                                                             </span>
                                                         )}
                                                     </div>
 
                                                     {lead.next_call_date && (
-                                                        <div className='text-brand-accent mt-2 flex items-center gap-1 text-xs font-medium'>
+                                                        <div
+                                                            className={cn(
+                                                                'mt-2.5 flex items-center gap-1.5 rounded-lg px-2 py-1 text-[11px] font-semibold transition-colors',
+                                                                isOverdue
+                                                                    ? 'bg-red-500/10 text-red-600 dark:text-red-400'
+                                                                    : isToday
+                                                                    ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                                                                    : 'bg-background-gray-secondary/60 text-text-tertiary',
+                                                            )}
+                                                        >
                                                             <Calendar className='size-3 shrink-0' />
                                                             <span className='truncate'>
-                                                                {t(
-                                                                    'leads.nextCall',
-                                                                    {
-                                                                        date: formatDate(
-                                                                            lead.next_call_date,
-                                                                        ),
-                                                                    },
-                                                                )}
+                                                                {t('leads.nextCall', {
+                                                                    date: formatDate(lead.next_call_date),
+                                                                })}
                                                             </span>
+                                                            {isOverdue && <span className='ml-auto text-[10px] font-bold'>⚠️</span>}
+                                                            {isToday && <span className='ml-auto text-[10px] font-bold'>⏰</span>}
                                                         </div>
                                                     )}
                                                 </div>
@@ -432,40 +462,21 @@ export function LeadKanbanBoard({
                                                 {/* Status Switcher & Convert */}
                                                 <div className='border-card-border mt-3 flex flex-wrap items-center justify-between gap-2 border-t pt-2.5'>
                                                     {canUpdate &&
-                                                        effectiveStatus !==
-                                                            'won' && (
-                                                            <div className='min-w-[120px] flex-1'>
+                                                        effectiveStatus !== 'won' && (
+                                                            <div className='min-w-[110px] flex-1'>
                                                                 <SelectInput
                                                                     className='h-7 rounded-lg text-xs font-medium'
-                                                                    options={EDITABLE_LEAD_STATUSES.map(
-                                                                        (
-                                                                            s,
-                                                                        ) => ({
-                                                                            value: s,
-                                                                            label: t(
-                                                                                `leadStatus.${s}` as import('@/i18n/dictionaries/uz').TranslationKey,
-                                                                            ),
-                                                                        }),
-                                                                    )}
-                                                                    value={
-                                                                        effectiveStatus
-                                                                    }
-                                                                    onValueChange={(
-                                                                        next,
-                                                                    ) => {
-                                                                        if (
-                                                                            next !==
-                                                                            effectiveStatus
-                                                                        ) {
-                                                                            setOptimisticStatusMap(
-                                                                                (
-                                                                                    prev,
-                                                                                ) => ({
-                                                                                    ...prev,
-                                                                                    [lead.id]:
-                                                                                        next as LeadStatus,
-                                                                                }),
-                                                                            );
+                                                                    options={EDITABLE_LEAD_STATUSES.map((s) => ({
+                                                                        value: s,
+                                                                        label: t(`leadStatus.${s}` as import('@/i18n/dictionaries/uz').TranslationKey),
+                                                                    }))}
+                                                                    value={effectiveStatus}
+                                                                    onValueChange={(next) => {
+                                                                        if (next !== effectiveStatus) {
+                                                                            setOptimisticStatusMap((prev) => ({
+                                                                                ...prev,
+                                                                                [lead.id]: next as LeadStatus,
+                                                                            }));
                                                                             onStatusChange(
                                                                                 lead.id,
                                                                                 next as EditableLeadStatus,
@@ -476,39 +487,26 @@ export function LeadKanbanBoard({
                                                             </div>
                                                         )}
 
-                                                    {effectiveStatus !==
-                                                        'won' &&
-                                                        canConvert && (
-                                                            <button
-                                                                type='button'
-                                                                onClick={() =>
-                                                                    onConvert(
-                                                                        lead,
-                                                                    )
-                                                                }
-                                                                className='border-brand-accent/40 bg-brand-accent/5 text-brand-accent hover:bg-brand-accent inline-flex h-7 shrink-0 items-center justify-center gap-1 rounded-lg border px-2.5 text-xs font-semibold transition-all hover:text-white hover:shadow-xs'
-                                                            >
-                                                                <User2 className='size-3.5' />
-                                                                <span>
-                                                                    +
-                                                                    O&apos;quvchi
-                                                                </span>
-                                                            </button>
-                                                        )}
+                                                    {effectiveStatus !== 'won' && canConvert && (
+                                                        <button
+                                                            type='button'
+                                                            onClick={() => onConvert(lead)}
+                                                            className='border-brand-accent/40 bg-brand-accent/5 text-brand-accent hover:bg-brand-accent inline-flex h-7 shrink-0 items-center justify-center gap-1 rounded-lg border px-2 text-xs font-semibold transition-all hover:text-white hover:shadow-xs'
+                                                        >
+                                                            <User2 className='size-3 shrink-0' />
+                                                            <span>+ O&apos;quvchiga</span>
+                                                        </button>
+                                                    )}
 
-                                                    {effectiveStatus ===
-                                                        'won' && (
-                                                        <div className='flex w-full items-center justify-between py-0.5'>
+                                                    {effectiveStatus === 'won' && (
+                                                        <div className='flex w-full items-center justify-between py-0.5 text-xs'>
                                                             <LeadStatusBadge status='won' />
                                                             {lead.student && (
                                                                 <Link
                                                                     href={`/students/${lead.student.id}`}
-                                                                    className='text-brand-accent text-xs font-semibold hover:underline'
+                                                                    className='text-brand-accent font-semibold hover:underline'
                                                                 >
-                                                                    {t(
-                                                                        'leads.openStudent',
-                                                                    )}{' '}
-                                                                    &rarr;
+                                                                    {t('leads.openStudent')} &rarr;
                                                                 </Link>
                                                             )}
                                                         </div>
