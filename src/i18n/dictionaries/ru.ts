@@ -1555,7 +1555,7 @@ export const ru: Dictionary = {
     'support.telegramPersonal': 'Личный Telegram',
     'support.telegramPersonalHint': 'Быстрая связь (@Shohruz_Isroilov)',
     'support.telegramGroup': 'Группа вопросов и ответов',
-    'support.telegramGroupHint': 'Сообщество и группа обсуждений (@edumsuz)',
+    'support.telegramGroupHint': 'Сообщество и группа обсуждений',
     'support.copyPhone': 'Скопировать номер',
     'support.callNow': 'Позвонить',
     'support.openTelegram': 'Написать в Telegram',

@@ -1556,8 +1556,7 @@ export const uzCyrl: Dictionary = {
     'support.telegramPersonal': 'Шахсий Telegram',
     'support.telegramPersonalHint': 'Тезкор ёзиш (@Shohruz_Isroilov)',
     'support.telegramGroup': 'Савол-жавоблар гуруҳи',
-    'support.telegramGroupHint':
-        'Ҳамжамият ва савол-жавоблар гуруҳи (@edumsuz)',
+    'support.telegramGroupHint': 'Ҳамжамият ва савол-жавоблар гуруҳи',
     'support.copyPhone': 'Нусха олиш',
     'support.callNow': 'Қўнғироқ',
     'support.openTelegram': 'Telegram’да ёзиш',

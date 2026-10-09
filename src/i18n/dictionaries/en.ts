@@ -1553,7 +1553,7 @@ export const en: Dictionary = {
     'support.telegramPersonal': 'Personal Telegram',
     'support.telegramPersonalHint': 'Fast direct chat (@Shohruz_Isroilov)',
     'support.telegramGroup': 'Q&A Community Group',
-    'support.telegramGroupHint': 'Community & support group (@edumsuz)',
+    'support.telegramGroupHint': 'Community & support group',
     'support.copyPhone': 'Copy number',
     'support.callNow': 'Call',
     'support.openTelegram': 'Message on Telegram',

@@ -144,7 +144,6 @@ export function SupportModal({
                                 </span>
                             </div>
                             <p className='text-text-secondary mt-0.5 text-xs'>
-                                {SUPPORT_CONTACTS.telegramGroup} ·{' '}
                                 {t('support.telegramGroupHint')}
                             </p>
                         </div>

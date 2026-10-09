@@ -1570,8 +1570,7 @@ export const uz = {
     'support.telegramPersonal': 'Shaxsiy Telegram',
     'support.telegramPersonalHint': 'Tezkor yozish (@Shohruz_Isroilov)',
     'support.telegramGroup': 'Savol-javoblar guruhi',
-    'support.telegramGroupHint':
-        'Hamjamiyat va savol-javoblar guruhi (@edumsuz)',
+    'support.telegramGroupHint': 'Hamjamiyat va savol-javoblar guruhi',
     'support.copyPhone': 'Nusxa olish',
     'support.callNow': "Qo'ng'iroq",
     'support.openTelegram': 'Telegramda yozish',
