@@ -30,4 +30,5 @@ jobs:
             - run: npm run format:check
             - run: npx next typegen
             - run: npm run typecheck
-            - run: npm run build
+            - name: Build
+              run: npm run build || (echo "Retrying build due to transient next/font network issue..." && npm run build)
