@@ -1,4 +1,19 @@
 import type { ReactNode } from 'react';
+import { cn } from '@/utils/cn';
+
+const layoutByBreakpoint: Record<'sm' | 'md' | 'lg' | 'xl', string> = {
+    sm: 'sm:flex-row sm:items-start sm:justify-between sm:gap-4',
+    md: 'md:flex-row md:items-start md:justify-between md:gap-4',
+    lg: 'lg:flex-row lg:items-start lg:justify-between lg:gap-4',
+    xl: 'xl:flex-row xl:items-start xl:justify-between xl:gap-4',
+};
+
+const actionsBreakpoint: Record<'sm' | 'md' | 'lg' | 'xl', string> = {
+    sm: 'sm:w-auto sm:shrink-0',
+    md: 'md:w-auto md:shrink-0',
+    lg: 'lg:w-auto lg:shrink-0',
+    xl: 'xl:w-auto xl:shrink-0',
+};
 
 /**
  * Sahifa sarlavhasi. Yozuvlar soni sarlavha yonidagi belgida turadi —
@@ -10,18 +25,28 @@ export function PageHeader({
     description,
     count,
     actions,
+    className,
+    breakpoint = 'lg',
 }: {
     title: string;
     /** Matn yoki qisqa qator (masalan, filial · holat belgisi). */
     description?: ReactNode;
     count?: ReactNode;
     actions?: ReactNode;
+    className?: string;
+    breakpoint?: 'sm' | 'md' | 'lg' | 'xl';
 }) {
     return (
-        <div className='flex flex-col gap-3 px-4 pt-4 pb-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4 sm:px-5 sm:pt-6 sm:pb-5'>
-            <div className='min-w-0'>
+        <div
+            className={cn(
+                'flex flex-col gap-3 px-4 pt-4 pb-3 sm:px-5 sm:pt-6 sm:pb-5',
+                layoutByBreakpoint[breakpoint],
+                className,
+            )}
+        >
+            <div className='min-w-0 flex-1'>
                 <div className='flex items-center gap-2.5'>
-                    <h1 className='text-text-primary font-display truncate text-xl leading-tight font-semibold tracking-[-0.015em] sm:text-2xl'>
+                    <h1 className='text-text-primary font-display text-xl leading-tight font-semibold tracking-[-0.015em] sm:text-2xl'>
                         {title}
                     </h1>
                     {count !== undefined && (
@@ -31,13 +56,18 @@ export function PageHeader({
                     )}
                 </div>
                 {description && (
-                    <div className='text-text-tertiary mt-1 flex flex-wrap items-center gap-2 text-xs sm:text-sm'>
+                    <div className='text-text-tertiary mt-1 max-w-3xl text-xs leading-relaxed sm:text-sm'>
                         {description}
                     </div>
                 )}
             </div>
             {actions && (
-                <div className='flex shrink-0 flex-wrap items-center gap-2'>
+                <div
+                    className={cn(
+                        'flex w-full flex-wrap items-center gap-2',
+                        actionsBreakpoint[breakpoint],
+                    )}
+                >
                     {actions}
                 </div>
             )}

@@ -13,14 +13,28 @@ import { cn } from '@/utils/cn';
 import { formatPhone, fullName } from '@/utils/format';
 import { balanceTone } from '@/utils/tone';
 import {
+    CalendarTime,
+    DashboardSquare1,
     Funnel1,
+    Gear1,
+    MoonHalfLeft5,
     OpenBook,
     Search1,
+    Sun1,
     UserCircle1,
+    UserMultiple1,
+    Wallet2,
     Xmark,
 } from '@tailgrids/icons';
+import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+    type ReactNode,
+} from 'react';
 
 interface Results {
     students: Student[];
@@ -29,6 +43,17 @@ interface Results {
 }
 
 const EMPTY: Results = { students: [], groups: [], leads: [] };
+
+interface CommandItem {
+    id: string;
+    title: string;
+    subtitle?: string;
+    icon: ReactNode;
+    tag?: string;
+    url?: string;
+    action?: 'theme';
+    category: 'action' | 'nav' | 'student' | 'group' | 'lead';
+}
 
 export function GlobalSearchModal({
     open,
@@ -40,12 +65,11 @@ export function GlobalSearchModal({
     const t = useT();
     const { formatPrice } = useFormat();
     const { session } = useSession();
+    const { resolvedTheme, setTheme } = useTheme();
     const router = useRouter();
     const inputRef = useRef<HTMLInputElement>(null);
-    /** Oxirgi so'rov raqami — kechikkan eski javob yangisini bosib ketmasin. */
     const requestId = useRef(0);
 
-    // Ruxsati yo'q bo'limga so'rov yuborilmaydi — baribir 403 qaytadi.
     const canStudents = canAny(session, 'students.view', 'students.view_own');
     const canGroups = canAny(session, 'groups.view', 'groups.view_own');
     const canLeads = can(session, 'leads.view');
@@ -53,6 +77,8 @@ export function GlobalSearchModal({
     const [query, setQuery] = useState('');
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState<Results>(EMPTY);
+    const [selectedIndex, setSelectedIndex] = useState(0);
+
     const { students, groups, leads } = results;
 
     const handleClose = useCallback(() => {
@@ -60,11 +86,219 @@ export function GlobalSearchModal({
         setQuery('');
         setResults(EMPTY);
         setLoading(false);
+        setSelectedIndex(0);
         onClose();
     }, [onClose]);
 
+    const executeItem = useCallback(
+        (item: CommandItem) => {
+            if (item.action === 'theme') {
+                setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
+                handleClose();
+            } else if (item.url) {
+                router.push(item.url);
+                handleClose();
+            }
+        },
+        [resolvedTheme, setTheme, router, handleClose],
+    );
+
+    // Barcha tezkor buyruqlar va sahifalar
+    const isDark = resolvedTheme === 'dark';
+    const baseCommands: CommandItem[] = [];
+
+    // Tezkor amallar (Actions)
+    if (can(session, 'students.create')) {
+        baseCommands.push({
+            id: 'action-student-new',
+            title: t('header.quickStudent'),
+            subtitle: t('students.new'),
+            icon: <UserCircle1 className='text-brand-accent size-4' />,
+            tag: '⚡ Action',
+            url: '/students?new=1',
+            category: 'action',
+        });
+    }
+
+    if (can(session, 'payments.create')) {
+        baseCommands.push({
+            id: 'action-payment-new',
+            title: t('header.quickPayment'),
+            subtitle: t('cashbox.title'),
+            icon: <Wallet2 className='text-badge-success-text size-4' />,
+            tag: '⚡ Action',
+            url: '/cashbox?new=1',
+            category: 'action',
+        });
+    }
+
+    if (can(session, 'groups.create')) {
+        baseCommands.push({
+            id: 'action-group-new',
+            title: t('groups.new'),
+            subtitle: t('nav.groups'),
+            icon: <UserMultiple1 className='text-badge-violet-text size-4' />,
+            tag: '⚡ Action',
+            url: '/groups?new=1',
+            category: 'action',
+        });
+    }
+
+    if (can(session, 'leads.create')) {
+        baseCommands.push({
+            id: 'action-lead-new',
+            title: t('header.quickLead'),
+            subtitle: t('nav.leads'),
+            icon: <Funnel1 className='text-badge-warning-text size-4' />,
+            tag: '⚡ Action',
+            url: '/leads?new=1',
+            category: 'action',
+        });
+    }
+
+    // Mavzuni almashtirish buyrug'i
+    baseCommands.push({
+        id: 'action-theme-toggle',
+        title: isDark ? 'Yorug‘ rejimga o‘tish' : 'Qorong‘i rejimga o‘tish',
+        subtitle: isDark ? 'Light mode' : 'Dark mode',
+        icon: isDark ? (
+            <Sun1 className='size-4 text-amber-500' />
+        ) : (
+            <MoonHalfLeft5 className='size-4 text-indigo-400' />
+        ),
+        tag: '⚡ Theme',
+        action: 'theme',
+        category: 'action',
+    });
+
+    // Sahifalarga o'tish (Navigation)
+    if (canAny(session, 'reports.view', 'reports.view_own')) {
+        baseCommands.push({
+            id: 'nav-dashboard',
+            title: t('nav.dashboard'),
+            subtitle: '/dashboard',
+            icon: <DashboardSquare1 className='size-4' />,
+            url: '/dashboard',
+            category: 'nav',
+        });
+    }
+
+    if (canStudents) {
+        baseCommands.push({
+            id: 'nav-students',
+            title: t('nav.students'),
+            subtitle: '/students',
+            icon: <UserCircle1 className='size-4' />,
+            url: '/students',
+            category: 'nav',
+        });
+    }
+
+    if (canGroups) {
+        baseCommands.push({
+            id: 'nav-groups',
+            title: t('nav.groups'),
+            subtitle: '/groups',
+            icon: <OpenBook className='size-4' />,
+            url: '/groups',
+            category: 'nav',
+        });
+    }
+
+    if (can(session, 'payments.view')) {
+        baseCommands.push({
+            id: 'nav-cashbox',
+            title: t('cashbox.title'),
+            subtitle: '/cashbox',
+            icon: <Wallet2 className='size-4' />,
+            url: '/cashbox',
+            category: 'nav',
+        });
+    }
+
+    if (canLeads) {
+        baseCommands.push({
+            id: 'nav-leads',
+            title: t('nav.leads'),
+            subtitle: '/leads',
+            icon: <Funnel1 className='size-4' />,
+            url: '/leads',
+            category: 'nav',
+        });
+    }
+
+    baseCommands.push({
+        id: 'nav-schedule',
+        title: t('nav.schedule'),
+        subtitle: '/schedule',
+        icon: <CalendarTime className='size-4' />,
+        url: '/schedule',
+        category: 'nav',
+    });
+
+    if (can(session, 'settings.manage')) {
+        baseCommands.push({
+            id: 'nav-settings',
+            title: t('nav.settings'),
+            subtitle: '/settings',
+            icon: <Gear1 className='size-4' />,
+            url: '/settings',
+            category: 'nav',
+        });
+    }
+
+    // Qidiruv bo'yicha filtrlangan buyruqlar
+    const q = query.trim().toLowerCase();
+    const filteredCommands = !q
+        ? baseCommands
+        : baseCommands.filter(
+              (c) =>
+                  c.title.toLowerCase().includes(q) ||
+                  (c.subtitle && c.subtitle.toLowerCase().includes(q)),
+          );
+
+    // Barcha tanlanadigan elementlar ro'yxati (klaviatura navigatsiyasi uchun)
+    const allSelectableItems: CommandItem[] = [...filteredCommands];
+
+    students.forEach((student) => {
+        allSelectableItems.push({
+            id: `student-${student.id}`,
+            title: fullName(student),
+            subtitle: formatPhone(student.phone_number ?? student.parent_phone),
+            icon: <UserCircle1 className='text-brand-accent size-4' />,
+            tag: student.status,
+            url: `/students/${student.id}`,
+            category: 'student',
+        });
+    });
+
+    groups.forEach((group) => {
+        allSelectableItems.push({
+            id: `group-${group.id}`,
+            title: group.name,
+            subtitle: group.course.name,
+            icon: <OpenBook className='text-badge-violet-text size-4' />,
+            url: `/groups/${group.id}`,
+            category: 'group',
+        });
+    });
+
+    leads.forEach((lead) => {
+        allSelectableItems.push({
+            id: `lead-${lead.id}`,
+            title: [lead.last_name, lead.first_name].filter(Boolean).join(' '),
+            subtitle: formatPhone(lead.phone_number),
+            icon: <Funnel1 className='text-badge-warning-text size-4' />,
+            tag: lead.status,
+            url: `/leads?q=${encodeURIComponent(lead.phone_number)}`,
+            category: 'lead',
+        });
+    });
+
+    // Qidiruv so'rovi o'zgarganda tanlov indeksini 0 ga tushirish
     const handleQueryChange = (val: string) => {
         setQuery(val);
+        setSelectedIndex(0);
         if (!val.trim()) {
             requestId.current += 1;
             setResults(EMPTY);
@@ -79,11 +313,10 @@ export function GlobalSearchModal({
         }
     }, [open]);
 
+    // API orqali server qidiruvi (Students, Groups, Leads)
     useEffect(() => {
         const trimmed = query.trim();
-        if (!trimmed) {
-            return;
-        }
+        if (!trimmed) return;
 
         const timer = setTimeout(async () => {
             const id = ++requestId.current;
@@ -112,51 +345,76 @@ export function GlobalSearchModal({
                 leads: leadRes.data,
             });
             setLoading(false);
-        }, 250);
+        }, 200);
 
         return () => clearTimeout(timer);
     }, [query, canStudents, canGroups, canLeads]);
 
+    const itemsRef = useRef(allSelectableItems);
     useEffect(() => {
+        itemsRef.current = allSelectableItems;
+    });
+
+    // Klaviatura boshqaruvi: ArrowDown, ArrowUp, Enter, Esc
+    useEffect(() => {
+        if (!open) return;
+
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') handleClose();
+            const items = itemsRef.current;
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                handleClose();
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                setSelectedIndex((prev) =>
+                    prev + 1 < items.length ? prev + 1 : 0,
+                );
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                setSelectedIndex((prev) =>
+                    prev - 1 >= 0 ? prev - 1 : items.length - 1,
+                );
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                const selected = items[selectedIndex];
+                if (selected) {
+                    executeItem(selected);
+                }
+            }
         };
-        if (open) document.addEventListener('keydown', handleKeyDown);
+
+        document.addEventListener('keydown', handleKeyDown);
         return () => document.removeEventListener('keydown', handleKeyDown);
-    }, [open, handleClose]);
+    }, [open, selectedIndex, handleClose, executeItem]);
 
     if (!open) return null;
 
-    const navigateTo = (url: string) => {
-        router.push(url);
-        handleClose();
-    };
-
     const hasResults =
         students.length > 0 || groups.length > 0 || leads.length > 0;
+    const hasCommands = filteredCommands.length > 0;
 
     return (
         <div
-            className='fixed inset-0 z-50 flex items-start justify-center p-4 pt-16 sm:pt-24'
+            className='fixed inset-0 z-50 flex items-start justify-center p-4 pt-14 sm:pt-20'
             role='dialog'
             aria-modal='true'
             aria-label={t('search.title')}
         >
             <div
-                className='fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity'
+                className='animate-in fade-in-0 fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity duration-200'
                 aria-hidden='true'
                 onClick={handleClose}
             />
-            <div className='border-card-border bg-card-surface-area relative z-10 flex max-h-[80vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border shadow-2xl transition-all'>
+            <div className='border-card-border bg-card-surface-area animate-in fade-in-0 zoom-in-95 relative z-10 flex max-h-[82vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border shadow-2xl transition-all duration-200'>
                 {/* Search Header Input */}
                 <div className='border-card-border flex items-center gap-3 border-b px-4 py-3.5'>
-                    <Search1 className='text-icon-tertiary size-5 shrink-0' />
+                    <Search1 className='text-brand-accent size-5 shrink-0' />
                     <input
                         ref={inputRef}
                         type='text'
                         value={query}
                         onChange={(e) => handleQueryChange(e.target.value)}
-                        placeholder={t('header.searchPlaceholder')}
+                        placeholder='Qidirish yoki buyruq kiritish… (masalan: "tolov", "yangi")'
                         aria-label={t('search.title')}
                         className='text-text-primary placeholder:text-text-tertiary w-full border-none bg-transparent text-base ring-0 outline-none focus:border-none focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none'
                         style={{ outline: 'none', boxShadow: 'none' }}
@@ -179,179 +437,324 @@ export function GlobalSearchModal({
                     </div>
                 </div>
 
-                {/* Search Results List */}
-                <div className='flex-1 scrollbar-thin overflow-y-auto p-4'>
+                {/* Results List */}
+                <div className='flex-1 scrollbar-thin overflow-y-auto p-3 sm:p-4'>
                     {loading && (
-                        <div className='text-text-tertiary py-10 text-center text-sm font-medium'>
+                        <div className='text-text-tertiary py-6 text-center text-sm font-medium'>
                             {t('search.searching')}
                         </div>
                     )}
 
-                    {!loading && !query.trim() && (
-                        <div className='text-text-tertiary flex flex-col items-center justify-center py-10 text-center text-sm'>
-                            <div className='border-card-border bg-background-gray-secondary/50 mb-3 flex size-12 items-center justify-center rounded-2xl border'>
-                                <Search1 className='text-icon-tertiary size-5' />
+                    {!loading &&
+                        query.trim() &&
+                        !hasResults &&
+                        !hasCommands && (
+                            <div className='text-text-tertiary py-10 text-center text-sm'>
+                                {t('header.noResults')}
                             </div>
-                            <p className='text-text-secondary text-sm font-medium'>
-                                {t('search.title')}
-                            </p>
-                            <p className='text-text-tertiary mt-1 max-w-xs text-xs'>
-                                {t('search.hint')}
-                            </p>
-                        </div>
-                    )}
+                        )}
 
-                    {!loading && query.trim() && !hasResults && (
-                        <div className='text-text-tertiary py-8 text-center text-sm'>
-                            {t('header.noResults')}
-                        </div>
-                    )}
+                    {/* Tezkor buyruqlar va bo'limlar */}
+                    {hasCommands && (
+                        <div className='mb-4 space-y-1'>
+                            <div className='text-text-tertiary mb-1.5 flex items-center justify-between px-2 text-xs font-semibold tracking-wider uppercase'>
+                                <span>
+                                    {query
+                                        ? 'Mos buyruqlar'
+                                        : 'Tezkor amallar & Bo‘limlar'}
+                                </span>
+                                <span className='text-text-tertiary text-[10px] font-normal lowercase'>
+                                    ↑↓ yurish • ↵ ochish
+                                </span>
+                            </div>
+                            <div className='space-y-0.5'>
+                                {filteredCommands.map((cmd) => {
+                                    const index = allSelectableItems.findIndex(
+                                        (item) => item.id === cmd.id,
+                                    );
+                                    const isSelected = index === selectedIndex;
 
-                    {!loading && hasResults && (
-                        <div className='space-y-5'>
-                            {/* Students */}
-                            {students.length > 0 && (
-                                <div>
-                                    <div className='text-text-tertiary mb-2 flex items-center gap-2 px-2 text-xs font-semibold tracking-wider uppercase'>
-                                        <UserCircle1 className='size-4' />
-                                        <span>{t('header.studentsGroup')}</span>
-                                    </div>
-                                    <div className='space-y-1'>
-                                        {students.map((student) => (
-                                            <button
-                                                key={student.id}
-                                                type='button'
-                                                onClick={() =>
-                                                    navigateTo(
-                                                        `/students/${student.id}`,
-                                                    )
-                                                }
-                                                className='hover:bg-background-gray-secondary flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition-colors'
-                                            >
-                                                <div>
-                                                    <div className='text-text-primary text-sm font-medium'>
-                                                        {fullName(student)}
-                                                    </div>
-                                                    <div className='text-text-tertiary text-xs tabular-nums'>
-                                                        {formatPhone(
-                                                            student.phone_number ??
-                                                                student.parent_phone,
-                                                        )}
-                                                    </div>
-                                                </div>
-                                                {student.balance != null && (
-                                                    <span
-                                                        className={cn(
-                                                            'text-xs font-medium tabular-nums',
-                                                            balanceTone(
-                                                                student.balance,
-                                                            ) ??
-                                                                'text-text-tertiary',
-                                                        )}
-                                                    >
-                                                        {student.balance > 0
-                                                            ? '+'
-                                                            : ''}
-                                                        {formatPrice(
-                                                            student.balance,
-                                                            t('common.som'),
-                                                        )}
+                                    return (
+                                        <button
+                                            key={cmd.id}
+                                            type='button'
+                                            onClick={() => executeItem(cmd)}
+                                            onMouseEnter={() =>
+                                                setSelectedIndex(index)
+                                            }
+                                            className={cn(
+                                                'group flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-left transition-colors',
+                                                isSelected
+                                                    ? 'bg-brand-accent/10 text-brand-accent font-medium'
+                                                    : 'hover:bg-background-gray-secondary text-text-primary',
+                                            )}
+                                        >
+                                            <div className='flex min-w-0 items-center gap-3'>
+                                                <span className='bg-card-surface-area border-card-border flex size-7 shrink-0 items-center justify-center rounded-lg border shadow-2xs'>
+                                                    {cmd.icon}
+                                                </span>
+                                                <span className='truncate text-sm font-medium'>
+                                                    {cmd.title}
+                                                </span>
+                                                {cmd.subtitle && (
+                                                    <span className='text-text-tertiary hidden truncate text-xs sm:inline'>
+                                                        {cmd.subtitle}
                                                     </span>
                                                 )}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Groups */}
-                            {groups.length > 0 && (
-                                <div>
-                                    <div className='text-text-tertiary mb-2 flex items-center gap-2 px-2 text-xs font-semibold tracking-wider uppercase'>
-                                        <OpenBook className='size-4' />
-                                        <span>{t('header.groupsGroup')}</span>
-                                    </div>
-                                    <div className='space-y-1'>
-                                        {groups.map((group) => (
-                                            <button
-                                                key={group.id}
-                                                type='button'
-                                                onClick={() =>
-                                                    navigateTo(
-                                                        `/groups/${group.id}`,
-                                                    )
-                                                }
-                                                className='hover:bg-background-gray-secondary flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition-colors'
-                                            >
-                                                <div>
-                                                    <div className='text-text-primary text-sm font-medium'>
-                                                        {group.name}
-                                                    </div>
-                                                    <div className='text-text-tertiary text-xs'>
-                                                        {group.course.name}
-                                                    </div>
-                                                </div>
-                                                <span className='text-text-tertiary text-xs font-medium'>
-                                                    {t(
-                                                        'schedule.studentsCount',
-                                                        {
-                                                            count: group.students_count,
-                                                        },
-                                                    )}
-                                                </span>
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Leads */}
-                            {leads.length > 0 && (
-                                <div>
-                                    <div className='text-text-tertiary mb-2 flex items-center gap-2 px-2 text-xs font-semibold tracking-wider uppercase'>
-                                        <Funnel1 className='size-4' />
-                                        <span>{t('header.leadsGroup')}</span>
-                                    </div>
-                                    <div className='space-y-1'>
-                                        {leads.map((lead) => (
-                                            <button
-                                                key={lead.id}
-                                                type='button'
-                                                onClick={() =>
-                                                    // Ro'yxat qidiruvi manzilning `q`
-                                                    // parametridan o'qiydi; telefon —
-                                                    // lidni aniq topadi.
-                                                    navigateTo(
-                                                        `/leads?q=${encodeURIComponent(lead.phone_number)}`,
-                                                    )
-                                                }
-                                                className='hover:bg-background-gray-secondary flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition-colors'
-                                            >
-                                                <div>
-                                                    <div className='text-text-primary text-sm font-medium'>
-                                                        {[
-                                                            lead.last_name,
-                                                            lead.first_name,
-                                                        ]
-                                                            .filter(Boolean)
-                                                            .join(' ')}
-                                                    </div>
-                                                    <div className='text-text-tertiary text-xs tabular-nums'>
-                                                        {formatPhone(
-                                                            lead.phone_number,
-                                                        )}
-                                                    </div>
-                                                </div>
-                                                <LeadStatusBadge
-                                                    status={lead.status}
-                                                />
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+                                            </div>
+                                            <div className='flex shrink-0 items-center gap-2'>
+                                                {cmd.tag && (
+                                                    <span className='bg-badge-neutral-background text-badge-neutral-text rounded-md px-1.5 py-0.5 text-[10px] font-semibold'>
+                                                        {cmd.tag}
+                                                    </span>
+                                                )}
+                                                {isSelected && (
+                                                    <span className='text-brand-accent text-xs font-semibold'>
+                                                        ↵
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
                         </div>
                     )}
+
+                    {/* Server natijalari: O'quvchilar */}
+                    {students.length > 0 && (
+                        <div className='mb-4 space-y-1'>
+                            <div className='text-text-tertiary mb-1.5 flex items-center gap-2 px-2 text-xs font-semibold tracking-wider uppercase'>
+                                <UserCircle1 className='size-4' />
+                                <span>{t('header.studentsGroup')}</span>
+                            </div>
+                            <div className='space-y-0.5'>
+                                {students.map((student) => {
+                                    const item: CommandItem = {
+                                        id: `student-${student.id}`,
+                                        title: fullName(student),
+                                        subtitle: formatPhone(
+                                            student.phone_number ??
+                                                student.parent_phone,
+                                        ),
+                                        icon: (
+                                            <UserCircle1 className='text-brand-accent size-4' />
+                                        ),
+                                        tag: student.status,
+                                        url: `/students/${student.id}`,
+                                        category: 'student',
+                                    };
+                                    const index = allSelectableItems.findIndex(
+                                        (i) => i.id === `student-${student.id}`,
+                                    );
+                                    const isSelected = index === selectedIndex;
+
+                                    return (
+                                        <button
+                                            key={student.id}
+                                            type='button'
+                                            onClick={() => executeItem(item)}
+                                            onMouseEnter={() =>
+                                                setSelectedIndex(index)
+                                            }
+                                            className={cn(
+                                                'flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-left transition-colors',
+                                                isSelected
+                                                    ? 'bg-brand-accent/10 text-brand-accent'
+                                                    : 'hover:bg-background-gray-secondary',
+                                            )}
+                                        >
+                                            <div>
+                                                <div className='text-text-primary text-sm font-medium'>
+                                                    {fullName(student)}
+                                                </div>
+                                                <div className='text-text-tertiary text-xs tabular-nums'>
+                                                    {formatPhone(
+                                                        student.phone_number ??
+                                                            student.parent_phone,
+                                                    )}
+                                                </div>
+                                            </div>
+                                            {student.balance != null && (
+                                                <span
+                                                    className={cn(
+                                                        'text-xs font-medium tabular-nums',
+                                                        balanceTone(
+                                                            student.balance,
+                                                        ) ??
+                                                            'text-text-tertiary',
+                                                    )}
+                                                >
+                                                    {student.balance > 0
+                                                        ? '+'
+                                                        : ''}
+                                                    {formatPrice(
+                                                        student.balance,
+                                                        t('common.som'),
+                                                    )}
+                                                </span>
+                                            )}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Server natijalari: Guruhlar */}
+                    {groups.length > 0 && (
+                        <div className='mb-4 space-y-1'>
+                            <div className='text-text-tertiary mb-1.5 flex items-center gap-2 px-2 text-xs font-semibold tracking-wider uppercase'>
+                                <OpenBook className='size-4' />
+                                <span>{t('header.groupsGroup')}</span>
+                            </div>
+                            <div className='space-y-0.5'>
+                                {groups.map((group) => {
+                                    const item: CommandItem = {
+                                        id: `group-${group.id}`,
+                                        title: group.name,
+                                        subtitle: group.course.name,
+                                        icon: (
+                                            <OpenBook className='text-badge-violet-text size-4' />
+                                        ),
+                                        url: `/groups/${group.id}`,
+                                        category: 'group',
+                                    };
+                                    const index = allSelectableItems.findIndex(
+                                        (i) => i.id === `group-${group.id}`,
+                                    );
+                                    const isSelected = index === selectedIndex;
+
+                                    return (
+                                        <button
+                                            key={group.id}
+                                            type='button'
+                                            onClick={() => executeItem(item)}
+                                            onMouseEnter={() =>
+                                                setSelectedIndex(index)
+                                            }
+                                            className={cn(
+                                                'flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-left transition-colors',
+                                                isSelected
+                                                    ? 'bg-brand-accent/10 text-brand-accent'
+                                                    : 'hover:bg-background-gray-secondary',
+                                            )}
+                                        >
+                                            <div>
+                                                <div className='text-text-primary text-sm font-medium'>
+                                                    {group.name}
+                                                </div>
+                                                <div className='text-text-tertiary text-xs'>
+                                                    {group.course.name}
+                                                </div>
+                                            </div>
+                                            <span className='text-text-tertiary text-xs font-medium'>
+                                                {t('schedule.studentsCount', {
+                                                    count: group.students_count,
+                                                })}
+                                            </span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Server natijalari: Lidlar */}
+                    {leads.length > 0 && (
+                        <div className='mb-4 space-y-1'>
+                            <div className='text-text-tertiary mb-1.5 flex items-center gap-2 px-2 text-xs font-semibold tracking-wider uppercase'>
+                                <Funnel1 className='size-4' />
+                                <span>{t('header.leadsGroup')}</span>
+                            </div>
+                            <div className='space-y-0.5'>
+                                {leads.map((lead) => {
+                                    const item: CommandItem = {
+                                        id: `lead-${lead.id}`,
+                                        title: [lead.last_name, lead.first_name]
+                                            .filter(Boolean)
+                                            .join(' '),
+                                        subtitle: formatPhone(
+                                            lead.phone_number,
+                                        ),
+                                        icon: (
+                                            <Funnel1 className='text-badge-warning-text size-4' />
+                                        ),
+                                        tag: lead.status,
+                                        url: `/leads?q=${encodeURIComponent(lead.phone_number)}`,
+                                        category: 'lead',
+                                    };
+                                    const index = allSelectableItems.findIndex(
+                                        (i) => i.id === `lead-${lead.id}`,
+                                    );
+                                    const isSelected = index === selectedIndex;
+
+                                    return (
+                                        <button
+                                            key={lead.id}
+                                            type='button'
+                                            onClick={() => executeItem(item)}
+                                            onMouseEnter={() =>
+                                                setSelectedIndex(index)
+                                            }
+                                            className={cn(
+                                                'flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-left transition-colors',
+                                                isSelected
+                                                    ? 'bg-brand-accent/10 text-brand-accent'
+                                                    : 'hover:bg-background-gray-secondary',
+                                            )}
+                                        >
+                                            <div>
+                                                <div className='text-text-primary text-sm font-medium'>
+                                                    {[
+                                                        lead.last_name,
+                                                        lead.first_name,
+                                                    ]
+                                                        .filter(Boolean)
+                                                        .join(' ')}
+                                                </div>
+                                                <div className='text-text-tertiary text-xs tabular-nums'>
+                                                    {formatPhone(
+                                                        lead.phone_number,
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <LeadStatusBadge
+                                                status={lead.status}
+                                            />
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Footer keyboard help */}
+                <div className='border-card-border bg-background-gray-secondary/40 text-text-tertiary flex items-center justify-between border-t px-4 py-2 text-xs'>
+                    <div className='flex items-center gap-3'>
+                        <span>
+                            <kbd className='border-card-border bg-card-surface-area rounded border px-1 py-0.5 text-[10px]'>
+                                ↑↓
+                            </kbd>{' '}
+                            Navigatsiya
+                        </span>
+                        <span>
+                            <kbd className='border-card-border bg-card-surface-area rounded border px-1 py-0.5 text-[10px]'>
+                                ↵
+                            </kbd>{' '}
+                            Tanlash
+                        </span>
+                        <span>
+                            <kbd className='border-card-border bg-card-surface-area rounded border px-1 py-0.5 text-[10px]'>
+                                Esc
+                            </kbd>{' '}
+                            Yopish
+                        </span>
+                    </div>
+                    <span className='hidden font-mono text-[10px] opacity-75 sm:inline'>
+                        EDUMS Command Center
+                    </span>
                 </div>
             </div>
         </div>

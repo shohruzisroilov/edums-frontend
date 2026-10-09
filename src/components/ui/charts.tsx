@@ -84,7 +84,7 @@ export function StatTile({
     const content = (
         <div
             className={cn(
-                'border-card-border bg-card-background flex h-full flex-col rounded-xl border p-4 transition-colors',
+                'border-card-border bg-card-background xs:p-4 flex h-full flex-col rounded-xl border p-3 transition-colors',
                 href &&
                     'hover:border-input-primary-focus-border cursor-pointer hover:shadow-sm',
             )}

@@ -6,9 +6,8 @@ import { Modal } from '@/components/ui/modal';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useT } from '@/i18n/provider';
 import { deleteLead, updateLead } from '@/services/api/leads';
-import type { EditableLeadStatus } from '@/types/api';
-import { EDITABLE_LEAD_STATUSES } from '@/types/api';
-import { Trash1 } from '@tailgrids/icons';
+import { EDITABLE_LEAD_STATUSES, type EditableLeadStatus } from '@/types/api';
+import { Download1, Trash1 } from '@tailgrids/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -18,6 +17,7 @@ interface LeadBatchActionsProps {
     onClearSelection: () => void;
     canUpdate: boolean;
     canDelete: boolean;
+    onExport?: () => void;
 }
 
 export function LeadBatchActionsBar({
@@ -25,6 +25,7 @@ export function LeadBatchActionsBar({
     onClearSelection,
     canUpdate,
     canDelete,
+    onExport,
 }: LeadBatchActionsProps) {
     const t = useT();
     const queryClient = useQueryClient();
@@ -83,10 +84,10 @@ export function LeadBatchActionsBar({
     return (
         <>
             {/* Floating Bottom Bar */}
-            <div className='animate-in fade-in slide-in-from-bottom-5 fixed bottom-6 left-1/2 z-40 -translate-x-1/2 duration-200'>
-                <div className='bg-card-surface-area border-card-border flex items-center gap-3 rounded-2xl border p-2.5 px-4 shadow-2xl backdrop-blur-md'>
-                    <div className='border-card-border flex items-center gap-2 border-r pr-2'>
-                        <span className='bg-brand-accent rounded-lg px-2 py-1 text-xs font-bold text-white tabular-nums'>
+            <div className='animate-in fade-in slide-in-from-bottom-5 fixed bottom-20 left-1/2 z-50 w-max max-w-[calc(100vw-1.5rem)] -translate-x-1/2 px-2 duration-200 sm:max-w-md sm:px-0 md:bottom-6'>
+                <div className='bg-card-surface-area border-card-border flex items-center gap-2 rounded-2xl border p-2 px-3 shadow-2xl backdrop-blur-md sm:gap-3 sm:p-2.5 sm:px-4'>
+                    <div className='border-card-border flex shrink-0 items-center gap-1.5 border-r pr-2 sm:gap-2'>
+                        <span className='bg-brand-accent rounded-lg px-2 py-0.5 text-xs font-bold text-white tabular-nums sm:py-1'>
                             {count}
                         </span>
                         <span className='text-text-primary hidden text-xs font-semibold sm:inline'>
@@ -99,8 +100,26 @@ export function LeadBatchActionsBar({
                             appearance='outline'
                             size='sm'
                             onPress={() => setStatusModalOpen(true)}
+                            className='text-xs'
                         >
-                            Holatni o&apos;zgartirish
+                            <span className='sm:hidden'>Holat</span>
+                            <span className='hidden sm:inline'>
+                                Holatni o&apos;zgartirish
+                            </span>
+                        </Button>
+                    )}
+
+                    {onExport && (
+                        <Button
+                            appearance='outline'
+                            size='sm'
+                            onPress={onExport}
+                            className='text-xs'
+                        >
+                            <Download1 className='size-3.5' />
+                            <span className='hidden sm:inline'>
+                                {t('common.export')}
+                            </span>
                         </Button>
                     )}
 

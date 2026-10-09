@@ -59,7 +59,7 @@ export default function ProfilePage() {
                 }
             />
 
-            <div className='flex flex-col gap-5 px-5'>
+            <div className='flex flex-col gap-5 px-4 pb-8 sm:px-5'>
                 {isSuperAdmin ? (
                     <Card>
                         <ProfileHeading

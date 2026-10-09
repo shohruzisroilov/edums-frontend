@@ -7,6 +7,8 @@ import { cn } from '@/utils/cn';
 import Link from 'next/link';
 import { homeHref } from '@/utils/access';
 import { navSectionsFor } from './data';
+import { LocaleSwitcher } from '@/components/common/locale-switcher';
+import ThemeToggle from '@/components/common/header/theme-toggle';
 import { CloseIcon, SidebarExpandedIcon } from './icon';
 import NavItem from './nav-item';
 
@@ -80,6 +82,18 @@ export default function Sidebar({
                     </div>
                 ))}
             </nav>
+
+            {isMobileSheet && (
+                <div className='border-card-border bg-card-surface-area/80 sticky bottom-0 flex items-center justify-between border-t p-4 backdrop-blur-xs'>
+                    <span className='text-text-tertiary text-xs font-medium'>
+                        {t('nav.settings')}
+                    </span>
+                    <div className='flex items-center gap-2'>
+                        <LocaleSwitcher />
+                        <ThemeToggle />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

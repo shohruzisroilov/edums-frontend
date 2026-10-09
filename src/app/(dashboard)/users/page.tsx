@@ -33,8 +33,9 @@ import { listRoles } from '@/services/api/roles';
 import { deleteUser, listUsers, resetUserPassword } from '@/services/api/users';
 import type { User } from '@/types/api';
 import { can, canManageUser } from '@/utils/access';
-import { fullName } from '@/utils/format';
-import { Pencil1, Plus, Trash1, User2 } from '@tailgrids/icons';
+import { exportToExcel } from '@/utils/export';
+import { formatPhone, fullName } from '@/utils/format';
+import { Download1, Pencil1, Plus, Trash1, User2 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -124,6 +125,29 @@ function UsersView() {
     const activeCount =
         (filters.role_id ? 1 : 0) + (filters.is_active !== '' ? 1 : 0);
 
+    const handleExportExcel = async () => {
+        const list = query.data?.data ?? [];
+        if (list.length === 0) return;
+        await exportToExcel(
+            t('users.title'),
+            'Users',
+            [
+                t('common.fullName'),
+                t('common.phone'),
+                t('users.role'),
+                t('common.status'),
+                t('common.createdAt'),
+            ],
+            list.map((u) => [
+                fullName(u),
+                u.phone_number ? formatPhone(u.phone_number) : '',
+                u.roles?.map((r) => r.name).join(', ') || '—',
+                u.is_active ? t('common.active') : t('common.inactive'),
+                formatDate(u.created_at),
+            ]),
+        );
+    };
+
     return (
         <>
             <PageHeader
@@ -131,25 +155,39 @@ function UsersView() {
                 count={query.data?.count}
                 description={t('users.subtitle')}
                 actions={
-                    canCreate && (
-                        <Button
-                            variant='primary'
-                            appearance='fill'
-                            size='md'
-                            onPress={() => {
-                                setEditing(null);
-                                setFormOpen(true);
-                            }}
-                        >
-                            <Plus />
-                            {t('users.new')}
-                        </Button>
-                    )
+                    <div className='flex flex-wrap items-center gap-2'>
+                        {query.data?.data && query.data.data.length > 0 && (
+                            <Button
+                                appearance='outline'
+                                size='md'
+                                onPress={handleExportExcel}
+                            >
+                                <Download1 />
+                                <span className='sr-only sm:not-sr-only'>
+                                    {t('common.export')}
+                                </span>
+                            </Button>
+                        )}
+                        {canCreate && (
+                            <Button
+                                variant='primary'
+                                appearance='fill'
+                                size='md'
+                                onPress={() => {
+                                    setEditing(null);
+                                    setFormOpen(true);
+                                }}
+                            >
+                                <Plus />
+                                {t('users.new')}
+                            </Button>
+                        )}
+                    </div>
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
-                <div className='min-w-[220px] flex-1 lg:min-w-40'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5'>
+                <div className='min-w-0 flex-1 sm:min-w-[220px]'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
@@ -188,9 +226,9 @@ function UsersView() {
                     />
                 </MobileFilterSheet>
 
-                <div className='hidden min-w-0 items-center gap-3 sm:flex'>
+                <div className='hidden min-w-0 flex-wrap items-center gap-3 sm:flex'>
                     {canListRoles && (
-                        <div className='w-52 min-w-28 shrink'>
+                        <div className='w-52 shrink-0'>
                             <SelectInput
                                 options={roles.map((role) => ({
                                     value: role.id,
@@ -204,7 +242,7 @@ function UsersView() {
                             />
                         </div>
                     )}
-                    <div className='w-40 min-w-28 shrink'>
+                    <div className='w-40 shrink-0'>
                         <SelectInput
                             options={[
                                 { value: 'true', label: t('common.active') },
@@ -220,7 +258,7 @@ function UsersView() {
                 </div>
             </div>
 
-            <div className='px-5'>
+            <div className='px-4 sm:px-5'>
                 <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                     {query.isPending ? (
                         <TableSkeleton columns={6} />
@@ -233,151 +271,295 @@ function UsersView() {
                         />
                     ) : (
                         <>
-                            <TableRoot
-                                fullBleed
-                                className='border-x-0 border-t-0'
-                            >
-                                <TableHeader>
-                                    <TableRow>
-                                        <RowNumberHead />
-                                        <TableHead>
-                                            {t('common.fullName')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('common.phone')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('users.roles')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('common.status')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('common.createdAt')}
-                                        </TableHead>
-                                        <TableHead className='text-right'>
-                                            {t('common.actions')}
-                                        </TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {query.data.data.map((user, index) => {
-                                        const isSelf = user.id === session?.id;
-                                        // Ruxsatlari kengroq odamni backend
-                                        // baribir rad etadi — tugmani ko'rsatmaymiz.
-                                        const manageable =
-                                            rolesQuery.isSuccess &&
-                                            canManageUser(session, user, roles);
+                            {/* Mobil kartalar (< md) */}
+                            <div className='divide-card-border divide-y md:hidden'>
+                                {query.data.data.map((user, index) => {
+                                    const isSelf = user.id === session?.id;
+                                    const manageable =
+                                        rolesQuery.isSuccess &&
+                                        canManageUser(session, user, roles);
 
-                                        return (
-                                            <TableRow key={user.id}>
-                                                <RowNumberCell
-                                                    index={index}
-                                                    offset={offset}
-                                                />
-                                                <TableCell primary>
-                                                    {fullName(user)}
-                                                    {isSelf && (
-                                                        <span className='text-text-tertiary ml-1.5 text-xs font-normal'>
-                                                            {t('users.you')}
+                                    return (
+                                        <div
+                                            key={user.id}
+                                            className='hover:bg-background-gray-primary/20 flex flex-col gap-3 p-4 transition-colors'
+                                        >
+                                            <div className='flex items-start justify-between gap-3'>
+                                                <div className='min-w-0 flex-1'>
+                                                    <div className='flex items-center gap-2'>
+                                                        <span className='text-text-tertiary text-xs font-semibold tabular-nums'>
+                                                            #
+                                                            {offset + index + 1}
                                                         </span>
-                                                    )}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {user.phone_number}
-                                                </TableCell>
-                                                <TableCell className='whitespace-normal'>
-                                                    <div className='flex flex-wrap gap-1'>
-                                                        {user.roles.map(
-                                                            (role) => (
-                                                                <RoleBadge
-                                                                    key={
-                                                                        role.id
-                                                                    }
-                                                                    role={role}
-                                                                />
-                                                            ),
+                                                        <h3 className='text-text-primary text-sm font-semibold'>
+                                                            {fullName(user)}
+                                                        </h3>
+                                                        {isSelf && (
+                                                            <span className='text-text-tertiary text-xs font-normal'>
+                                                                (
+                                                                {t('users.you')}
+                                                                )
+                                                            </span>
                                                         )}
                                                     </div>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <ActiveBadge
-                                                        active={user.is_active}
-                                                    />
-                                                </TableCell>
-                                                <TableCell>
+                                                    <p className='text-text-secondary mt-1 text-xs'>
+                                                        {user.phone_number}
+                                                    </p>
+                                                </div>
+                                                <ActiveBadge
+                                                    active={user.is_active}
+                                                />
+                                            </div>
+
+                                            {user.roles.length > 0 && (
+                                                <div className='flex flex-wrap gap-1'>
+                                                    {user.roles.map((role) => (
+                                                        <RoleBadge
+                                                            key={role.id}
+                                                            role={role}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            <div className='flex items-center justify-between text-xs'>
+                                                <span className='text-text-tertiary'>
+                                                    {t('common.createdAt')}
+                                                </span>
+                                                <span className='text-text-tertiary tabular-nums'>
                                                     {formatDate(
                                                         user.created_at,
                                                     )}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <div className='flex justify-end gap-2'>
-                                                        {canUpdate &&
-                                                            (isSelf ||
-                                                                manageable) && (
-                                                                <Button
-                                                                    appearance='outline'
-                                                                    size='md'
-                                                                    iconOnly
-                                                                    aria-label={t(
-                                                                        'common.edit',
-                                                                    )}
-                                                                    onPress={() => {
-                                                                        setEditing(
-                                                                            user,
-                                                                        );
-                                                                        setFormOpen(
-                                                                            true,
-                                                                        );
-                                                                    }}
-                                                                >
-                                                                    <Pencil1 />
-                                                                </Button>
-                                                            )}
-                                                        {canUpdate &&
-                                                            !isSelf &&
+                                                </span>
+                                            </div>
+
+                                            {canUpdate &&
+                                                (isSelf || manageable) && (
+                                                    <div className='border-card-border/60 flex flex-wrap items-center justify-end gap-2 border-t pt-2.5'>
+                                                        {!isSelf &&
                                                             manageable && (
                                                                 <Button
                                                                     appearance='outline'
-                                                                    size='md'
+                                                                    size='sm'
                                                                     onPress={() =>
                                                                         setResetting(
                                                                             user,
                                                                         )
                                                                     }
                                                                 >
-                                                                    {t(
-                                                                        'users.resetPassword',
-                                                                    )}
+                                                                    <span>
+                                                                        {t(
+                                                                            'users.resetPassword',
+                                                                        )}
+                                                                    </span>
                                                                 </Button>
                                                             )}
+                                                        <Button
+                                                            appearance='outline'
+                                                            size='sm'
+                                                            onPress={() => {
+                                                                setEditing(
+                                                                    user,
+                                                                );
+                                                                setFormOpen(
+                                                                    true,
+                                                                );
+                                                            }}
+                                                            className='gap-1.5'
+                                                        >
+                                                            <Pencil1 className='size-3.5' />
+                                                            <span>
+                                                                {t(
+                                                                    'common.edit',
+                                                                )}
+                                                            </span>
+                                                        </Button>
                                                         {canDelete &&
                                                             !isSelf &&
                                                             manageable && (
                                                                 <Button
                                                                     variant='danger'
                                                                     appearance='outline'
-                                                                    size='md'
-                                                                    iconOnly
-                                                                    aria-label={t(
-                                                                        'common.delete',
-                                                                    )}
+                                                                    size='sm'
                                                                     onPress={() =>
                                                                         setDeleting(
                                                                             user,
                                                                         )
                                                                     }
+                                                                    className='gap-1.5'
                                                                 >
-                                                                    <Trash1 />
+                                                                    <Trash1 className='size-3.5' />
+                                                                    <span>
+                                                                        {t(
+                                                                            'common.delete',
+                                                                        )}
+                                                                    </span>
                                                                 </Button>
                                                             )}
                                                     </div>
-                                                </TableCell>
-                                            </TableRow>
-                                        );
-                                    })}
-                                </TableBody>
-                            </TableRoot>
+                                                )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            {/* Desktop / Tablet jadval (>= md) */}
+                            <div className='hidden md:block'>
+                                <TableRoot
+                                    fullBleed
+                                    className='border-x-0 border-t-0'
+                                >
+                                    <TableHeader>
+                                        <TableRow>
+                                            <RowNumberHead />
+                                            <TableHead>
+                                                {t('common.fullName')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.phone')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('users.roles')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.status')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.createdAt')}
+                                            </TableHead>
+                                            <TableHead className='text-right'>
+                                                {t('common.actions')}
+                                            </TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {query.data.data.map((user, index) => {
+                                            const isSelf =
+                                                user.id === session?.id;
+                                            // Ruxsatlari kengroq odamni backend
+                                            // baribir rad etadi — tugmani ko'rsatmaymiz.
+                                            const manageable =
+                                                rolesQuery.isSuccess &&
+                                                canManageUser(
+                                                    session,
+                                                    user,
+                                                    roles,
+                                                );
+
+                                            return (
+                                                <TableRow key={user.id}>
+                                                    <RowNumberCell
+                                                        index={index}
+                                                        offset={offset}
+                                                    />
+                                                    <TableCell primary>
+                                                        {fullName(user)}
+                                                        {isSelf && (
+                                                            <span className='text-text-tertiary ml-1.5 text-xs font-normal'>
+                                                                {t('users.you')}
+                                                            </span>
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {user.phone_number}
+                                                    </TableCell>
+                                                    <TableCell className='whitespace-normal'>
+                                                        <div className='flex flex-wrap gap-1'>
+                                                            {user.roles.map(
+                                                                (role) => (
+                                                                    <RoleBadge
+                                                                        key={
+                                                                            role.id
+                                                                        }
+                                                                        role={
+                                                                            role
+                                                                        }
+                                                                    />
+                                                                ),
+                                                            )}
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <ActiveBadge
+                                                            active={
+                                                                user.is_active
+                                                            }
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {formatDate(
+                                                            user.created_at,
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className='flex justify-end gap-2'>
+                                                            {canUpdate &&
+                                                                (isSelf ||
+                                                                    manageable) && (
+                                                                    <Button
+                                                                        appearance='outline'
+                                                                        size='md'
+                                                                        iconOnly
+                                                                        aria-label={t(
+                                                                            'common.edit',
+                                                                        )}
+                                                                        onPress={() => {
+                                                                            setEditing(
+                                                                                user,
+                                                                            );
+                                                                            setFormOpen(
+                                                                                true,
+                                                                            );
+                                                                        }}
+                                                                    >
+                                                                        <Pencil1 />
+                                                                    </Button>
+                                                                )}
+                                                            {canUpdate &&
+                                                                !isSelf &&
+                                                                manageable && (
+                                                                    <Button
+                                                                        appearance='outline'
+                                                                        size='md'
+                                                                        onPress={() =>
+                                                                            setResetting(
+                                                                                user,
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        {t(
+                                                                            'users.resetPassword',
+                                                                        )}
+                                                                    </Button>
+                                                                )}
+                                                            {canDelete &&
+                                                                !isSelf &&
+                                                                manageable && (
+                                                                    <Button
+                                                                        variant='danger'
+                                                                        appearance='outline'
+                                                                        size='md'
+                                                                        iconOnly
+                                                                        aria-label={t(
+                                                                            'common.delete',
+                                                                        )}
+                                                                        onPress={() =>
+                                                                            setDeleting(
+                                                                                user,
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <Trash1 />
+                                                                    </Button>
+                                                                )}
+                                                        </div>
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
+                                    </TableBody>
+                                </TableRoot>
+                            </div>
 
                             <PaginationBar
                                 count={query.data.count}

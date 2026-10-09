@@ -37,8 +37,15 @@ import { GROUP_STATUSES, type Group, type GroupStatus } from '@/types/api';
 import { can, canAny } from '@/utils/access';
 import { cn } from '@/utils/cn';
 import { fullName } from '@/utils/format';
+import { exportToExcel } from '@/utils/export';
 import { TONE_TEXT } from '@/utils/tone';
-import { Pencil1, Plus, Trash1, UserMultiple1 } from '@tailgrids/icons';
+import {
+    Download1,
+    Pencil1,
+    Plus,
+    Trash1,
+    UserMultiple1,
+} from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -214,6 +221,62 @@ function GroupsView() {
         (filters.status && filters.status !== 'active'),
     );
 
+    const [exporting, setExporting] = useState(false);
+    const groupsList = query.data?.data ?? [];
+
+    const handleExportExcel = async () => {
+        try {
+            setExporting(true);
+            let items = query.data?.data ?? [];
+            const total = query.data?.count ?? 0;
+            if (total > items.length) {
+                const res = await listGroups({
+                    search: search || undefined,
+                    branch_id: filters.branch_id || undefined,
+                    course_id: filters.course_id || undefined,
+                    teacher_id: filters.teacher_id || undefined,
+                    status: (filters.status || undefined) as
+                        | 'active'
+                        | 'finished'
+                        | undefined,
+                    limit: Math.min(total, 200),
+                    offset: 0,
+                });
+                items = res.data;
+            }
+            if (items.length === 0) return;
+
+            await exportToExcel(
+                t('groups.title'),
+                'Groups',
+                [
+                    t('common.name'),
+                    t('groups.course'),
+                    t('groups.teacher'),
+                    t('groups.branch'),
+                    t('groups.days'),
+                    t('common.status'),
+                    t('nav.students'),
+                ],
+                items.map((g) => [
+                    g.name,
+                    g.course.name,
+                    g.teacher ? fullName(g.teacher) : '—',
+                    g.branch.name,
+                    `${g.lesson_days?.map((d) => t(`weekday.${d}`)).join(', ') || ''} (${g.lesson_start} - ${g.lesson_end})`,
+                    g.status === 'active'
+                        ? t('groupStatus.active')
+                        : t('groupStatus.finished'),
+                    g.students_count ?? 0,
+                ]),
+            );
+        } catch (err) {
+            toastError(err);
+        } finally {
+            setExporting(false);
+        }
+    };
+
     return (
         <>
             <PageHeader
@@ -221,25 +284,40 @@ function GroupsView() {
                 count={query.data?.count}
                 description={t('groups.subtitle')}
                 actions={
-                    canCreate && (
-                        <Button
-                            variant='primary'
-                            appearance='fill'
-                            size='md'
-                            onPress={() => {
-                                setEditing(null);
-                                setFormOpen(true);
-                            }}
-                        >
-                            <Plus />
-                            {t('groups.new')}
-                        </Button>
-                    )
+                    <div className='flex flex-wrap items-center gap-2'>
+                        {groupsList.length > 0 && (
+                            <Button
+                                appearance='outline'
+                                size='md'
+                                isPending={exporting}
+                                onPress={() => void handleExportExcel()}
+                            >
+                                <Download1 />
+                                <span className='sr-only sm:not-sr-only'>
+                                    {t('common.export')}
+                                </span>
+                            </Button>
+                        )}
+                        {canCreate && (
+                            <Button
+                                variant='primary'
+                                appearance='fill'
+                                size='md'
+                                onPress={() => {
+                                    setEditing(null);
+                                    setFormOpen(true);
+                                }}
+                            >
+                                <Plus />
+                                {t('groups.new')}
+                            </Button>
+                        )}
+                    </div>
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
-                <div className='min-w-[220px] flex-1 lg:min-w-40'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5'>
+                <div className='min-w-0 flex-1 sm:min-w-[220px]'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
@@ -330,9 +408,9 @@ function GroupsView() {
                     />
                 </MobileFilterSheet>
 
-                <div className='hidden min-w-0 flex-wrap items-center gap-3 sm:flex lg:flex-nowrap'>
+                <div className='hidden min-w-0 flex-wrap items-center gap-3 sm:flex'>
                     {branches.length > 1 && (
-                        <div className='w-48 min-w-28 shrink'>
+                        <div className='w-48 shrink-0'>
                             <SelectInput
                                 options={branches.map((branch) => ({
                                     value: branch.id,
@@ -346,7 +424,7 @@ function GroupsView() {
                             />
                         </div>
                     )}
-                    <div className='w-52 min-w-28 shrink'>
+                    <div className='w-52 shrink-0'>
                         <SelectInput
                             options={courses.map((course) => ({
                                 value: course.id,
@@ -359,7 +437,7 @@ function GroupsView() {
                             }
                         />
                     </div>
-                    <div className='w-52 min-w-28 shrink'>
+                    <div className='w-52 shrink-0'>
                         <SelectInput
                             options={teacherOptions}
                             placeholder={t('groups.allTeachers')}
@@ -369,7 +447,7 @@ function GroupsView() {
                             }
                         />
                     </div>
-                    <div className='w-40 min-w-28 shrink'>
+                    <div className='w-40 shrink-0'>
                         <SelectInput
                             options={GROUP_STATUSES.map((status) => ({
                                 value: status,
@@ -452,18 +530,18 @@ function GroupsView() {
                                     >
                                         <div className='flex items-start justify-between gap-3'>
                                             <div className='min-w-0 flex-1'>
-                                                <div className='flex items-center gap-2'>
-                                                    <span className='text-text-tertiary text-xs font-semibold tabular-nums'>
+                                                <div className='flex items-start gap-2'>
+                                                    <span className='text-text-tertiary mt-0.5 shrink-0 text-xs font-semibold tabular-nums'>
                                                         #{offset + index + 1}
                                                     </span>
                                                     <Link
                                                         href={`/groups/${group.id}`}
-                                                        className='text-text-primary hover:text-brand-accent truncate text-sm font-semibold hover:underline'
+                                                        className='text-text-primary hover:text-brand-accent text-sm font-semibold break-words hover:underline'
                                                     >
                                                         {group.name}
                                                     </Link>
                                                 </div>
-                                                <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
+                                                <p className='text-text-tertiary mt-0.5 text-xs font-normal break-words'>
                                                     {group.course.name}
                                                     {branches.length > 1 &&
                                                         ` · ${group.branch.name}`}
@@ -503,18 +581,18 @@ function GroupsView() {
                                             </div>
                                         </div>
 
-                                        <div className='flex items-center justify-between text-xs'>
-                                            <div className='min-w-0 flex-1 pr-2'>
+                                        <div className='flex flex-wrap items-baseline justify-between gap-2 text-xs'>
+                                            <div className='min-w-0 flex-1'>
                                                 <span className='text-text-tertiary block text-xs'>
                                                     {t('groups.lessons')}
                                                 </span>
-                                                <div className='text-text-secondary font-medium'>
+                                                <div className='text-text-secondary font-medium break-words'>
                                                     <LessonSchedule
                                                         group={group}
                                                     />
                                                 </div>
                                             </div>
-                                            <div className='text-right'>
+                                            <div className='shrink-0 text-right'>
                                                 <span className='text-text-tertiary block text-xs'>
                                                     {t('groups.price')} /{' '}
                                                     {t('groups.students')}
@@ -585,11 +663,11 @@ function GroupsView() {
                                                 <TableCell primary>
                                                     <Link
                                                         href={`/groups/${group.id}`}
-                                                        className='hover:text-brand-accent hover:underline'
+                                                        className='hover:text-brand-accent break-words hover:underline'
                                                     >
                                                         {group.name}
                                                     </Link>
-                                                    <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
+                                                    <p className='text-text-tertiary mt-0.5 text-xs font-normal break-words'>
                                                         {group.course.name}
                                                         {branches.length > 1 &&
                                                             ` · ${group.branch.name}`}

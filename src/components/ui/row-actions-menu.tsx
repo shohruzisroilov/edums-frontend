@@ -30,10 +30,12 @@ export interface RowAction {
 export function RowActionsMenu({
     actions,
     label,
+    triggerClassName,
 }: {
     actions: RowAction[];
     /** Ekran o'quvchi uchun: kimning amallari (masalan, o'quvchi ismi). */
     label: string;
+    triggerClassName?: string;
 }) {
     const t = useT();
 
@@ -43,9 +45,12 @@ export function RowActionsMenu({
         <DropdownMenu>
             <DropdownMenuTrigger
                 aria-label={`${t('common.actions')}: ${label}`}
-                className='border-button-primary-outline-stroke bg-button-primary-outline-background text-button-primary-outline-text hover:bg-button-primary-outline-hover-background hover:text-button-primary-outline-hover-text data-[focus-visible]:ring-button-outline-focus-ring inline-flex size-9 shrink-0 items-center justify-center rounded-lg border transition data-[focus-visible]:ring-4'
+                className={cn(
+                    'border-button-primary-outline-stroke bg-button-primary-outline-background text-button-primary-outline-text hover:bg-button-primary-outline-hover-background hover:text-button-primary-outline-hover-text data-[focus-visible]:ring-button-outline-focus-ring inline-flex size-9 shrink-0 items-center justify-center rounded-lg border transition data-[focus-visible]:ring-4',
+                    triggerClassName,
+                )}
             >
-                <MenuMeatballs1 className='size-5' />
+                <MenuMeatballs1 className='size-4' />
             </DropdownMenuTrigger>
 
             <DropdownMenuContent
@@ -58,7 +63,7 @@ export function RowActionsMenu({
                             <DropdownMenuSeparator className='my-1' />
                         )}
                         <DropdownMenuItem
-                            href={action.href}
+                            {...(action.href ? { href: action.href } : {})}
                             onAction={action.onAction}
                             className={cn(
                                 'px-2.5 py-2 [&_svg]:size-4 [&_svg]:shrink-0',

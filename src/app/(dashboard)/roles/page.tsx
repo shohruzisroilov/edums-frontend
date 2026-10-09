@@ -116,7 +116,7 @@ function RolesView() {
                 />
             </div>
 
-            <div className='px-5'>
+            <div className='px-4 sm:px-5'>
                 <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                     {query.isPending ? (
                         <TableSkeleton columns={5} />
@@ -128,128 +128,281 @@ function RolesView() {
                             icon={<Shield1Check className='size-5' />}
                         />
                     ) : (
-                        <TableRoot fullBleed className='border-x-0 border-t-0'>
-                            <TableHeader>
-                                <TableRow>
-                                    <RowNumberHead />
-                                    <TableHead>{t('common.name')}</TableHead>
-                                    <TableHead>
-                                        {t('common.description')}
-                                    </TableHead>
-                                    <TableHead numeric>
-                                        {t('roles.permissions')}
-                                    </TableHead>
-                                    <TableHead numeric>
-                                        {t('roles.usersCount')}
-                                    </TableHead>
-                                    <TableHead className='text-right'>
-                                        {t('common.actions')}
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
+                        <>
+                            {/* Mobil kartalar (< md) */}
+                            <div className='divide-card-border divide-y md:hidden'>
                                 {roles.map((role, index) => {
-                                    // Owner roli va sessiya egasidan keng
-                                    // ruxsatli rollar tahrirlanmaydi.
                                     const editable =
                                         !role.is_system &&
                                         canGrantRole(session, role);
 
                                     return (
-                                        <TableRow key={role.id}>
-                                            <RowNumberCell index={index} />
-                                            <TableCell primary>
-                                                <span className='inline-flex items-center gap-2'>
-                                                    {role.name}
-                                                    {role.is_system && (
-                                                        <Badge
-                                                            size='sm'
-                                                            color='primary'
-                                                        >
-                                                            {t('roles.system')}
-                                                        </Badge>
-                                                    )}
-                                                </span>
-                                            </TableCell>
-                                            <TableCell className='whitespace-normal'>
-                                                {role.is_system
-                                                    ? t(
-                                                          'roles.ownerDescription',
-                                                      )
-                                                    : (role.description ?? '—')}
-                                            </TableCell>
-                                            <TableCell numeric>
-                                                {t('roles.permissionsCount', {
-                                                    count: formatNumber(
-                                                        role.permissions.length,
-                                                    ),
-                                                    total: formatNumber(
-                                                        PERMISSION_KEYS.length,
-                                                    ),
-                                                })}
-                                            </TableCell>
-                                            <TableCell numeric>
-                                                {formatNumber(role.users_count)}
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className='flex justify-end gap-2'>
-                                                    {canUpdate && editable ? (
-                                                        <Button
-                                                            appearance='outline'
-                                                            size='md'
-                                                            iconOnly
-                                                            aria-label={t(
-                                                                'common.edit',
-                                                            )}
-                                                            onPress={() => {
-                                                                setEditing(
-                                                                    role,
-                                                                );
-                                                                setFormOpen(
-                                                                    true,
-                                                                );
-                                                            }}
-                                                        >
-                                                            <Pencil1 />
-                                                        </Button>
-                                                    ) : (
-                                                        <Button
-                                                            appearance='outline'
-                                                            size='md'
-                                                            onPress={() =>
-                                                                setViewing(role)
-                                                            }
-                                                        >
+                                        <div
+                                            key={role.id}
+                                            className='hover:bg-background-gray-primary/20 flex flex-col gap-3 p-4 transition-colors'
+                                        >
+                                            <div className='flex items-start justify-between gap-3'>
+                                                <div className='min-w-0 flex-1'>
+                                                    <div className='flex items-center gap-2'>
+                                                        <span className='text-text-tertiary text-xs font-semibold tabular-nums'>
+                                                            #{index + 1}
+                                                        </span>
+                                                        <h3 className='text-text-primary text-sm font-semibold'>
+                                                            {role.name}
+                                                        </h3>
+                                                    </div>
+                                                    <p className='text-text-tertiary mt-1 text-xs'>
+                                                        {role.is_system
+                                                            ? t(
+                                                                  'roles.ownerDescription',
+                                                              )
+                                                            : (role.description ??
+                                                              '—')}
+                                                    </p>
+                                                </div>
+                                                {role.is_system && (
+                                                    <Badge
+                                                        size='sm'
+                                                        color='primary'
+                                                    >
+                                                        {t('roles.system')}
+                                                    </Badge>
+                                                )}
+                                            </div>
+
+                                            <div className='flex items-center justify-between text-xs'>
+                                                <div>
+                                                    <span className='text-text-tertiary block text-[11px]'>
+                                                        {t('roles.permissions')}
+                                                    </span>
+                                                    <span className='text-text-primary text-xs font-semibold tabular-nums'>
+                                                        {t(
+                                                            'roles.permissionsCount',
+                                                            {
+                                                                count: formatNumber(
+                                                                    role
+                                                                        .permissions
+                                                                        .length,
+                                                                ),
+                                                                total: formatNumber(
+                                                                    PERMISSION_KEYS.length,
+                                                                ),
+                                                            },
+                                                        )}
+                                                    </span>
+                                                </div>
+                                                <div className='text-right'>
+                                                    <span className='text-text-tertiary block text-[11px]'>
+                                                        {t('roles.usersCount')}
+                                                    </span>
+                                                    <span className='text-text-secondary text-xs tabular-nums'>
+                                                        {formatNumber(
+                                                            role.users_count,
+                                                        )}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div className='border-card-border/60 flex items-center justify-end gap-2 border-t pt-2.5'>
+                                                {canUpdate && editable ? (
+                                                    <Button
+                                                        appearance='outline'
+                                                        size='sm'
+                                                        onPress={() => {
+                                                            setEditing(role);
+                                                            setFormOpen(true);
+                                                        }}
+                                                        className='gap-1.5'
+                                                    >
+                                                        <Pencil1 className='size-3.5' />
+                                                        <span>
+                                                            {t('common.edit')}
+                                                        </span>
+                                                    </Button>
+                                                ) : (
+                                                    <Button
+                                                        appearance='outline'
+                                                        size='sm'
+                                                        onPress={() =>
+                                                            setViewing(role)
+                                                        }
+                                                    >
+                                                        <span>
                                                             {t(
                                                                 'common.details',
                                                             )}
-                                                        </Button>
-                                                    )}
-                                                    {canDelete && editable && (
-                                                        <Button
-                                                            variant='danger'
-                                                            appearance='outline'
-                                                            size='md'
-                                                            iconOnly
-                                                            aria-label={t(
-                                                                'common.delete',
-                                                            )}
-                                                            onPress={() =>
-                                                                setDeleting(
-                                                                    role,
-                                                                )
-                                                            }
-                                                        >
-                                                            <Trash1 />
-                                                        </Button>
-                                                    )}
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
+                                                        </span>
+                                                    </Button>
+                                                )}
+                                                {canDelete && editable && (
+                                                    <Button
+                                                        variant='danger'
+                                                        appearance='outline'
+                                                        size='sm'
+                                                        onPress={() =>
+                                                            setDeleting(role)
+                                                        }
+                                                        className='gap-1.5'
+                                                    >
+                                                        <Trash1 className='size-3.5' />
+                                                        <span>
+                                                            {t('common.delete')}
+                                                        </span>
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        </div>
                                     );
                                 })}
-                            </TableBody>
-                        </TableRoot>
+                            </div>
+
+                            {/* Desktop / Tablet jadval (>= md) */}
+                            <div className='hidden md:block'>
+                                <TableRoot
+                                    fullBleed
+                                    className='border-x-0 border-t-0'
+                                >
+                                    <TableHeader>
+                                        <TableRow>
+                                            <RowNumberHead />
+                                            <TableHead>
+                                                {t('common.name')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.description')}
+                                            </TableHead>
+                                            <TableHead numeric>
+                                                {t('roles.permissions')}
+                                            </TableHead>
+                                            <TableHead numeric>
+                                                {t('roles.usersCount')}
+                                            </TableHead>
+                                            <TableHead className='text-right'>
+                                                {t('common.actions')}
+                                            </TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {roles.map((role, index) => {
+                                            // Owner roli va sessiya egasidan keng
+                                            // ruxsatli rollar tahrirlanmaydi.
+                                            const editable =
+                                                !role.is_system &&
+                                                canGrantRole(session, role);
+
+                                            return (
+                                                <TableRow key={role.id}>
+                                                    <RowNumberCell
+                                                        index={index}
+                                                    />
+                                                    <TableCell primary>
+                                                        <span className='inline-flex items-center gap-2'>
+                                                            {role.name}
+                                                            {role.is_system && (
+                                                                <Badge
+                                                                    size='sm'
+                                                                    color='primary'
+                                                                >
+                                                                    {t(
+                                                                        'roles.system',
+                                                                    )}
+                                                                </Badge>
+                                                            )}
+                                                        </span>
+                                                    </TableCell>
+                                                    <TableCell className='whitespace-normal'>
+                                                        {role.is_system
+                                                            ? t(
+                                                                  'roles.ownerDescription',
+                                                              )
+                                                            : (role.description ??
+                                                              '—')}
+                                                    </TableCell>
+                                                    <TableCell numeric>
+                                                        {t(
+                                                            'roles.permissionsCount',
+                                                            {
+                                                                count: formatNumber(
+                                                                    role
+                                                                        .permissions
+                                                                        .length,
+                                                                ),
+                                                                total: formatNumber(
+                                                                    PERMISSION_KEYS.length,
+                                                                ),
+                                                            },
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell numeric>
+                                                        {formatNumber(
+                                                            role.users_count,
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className='flex justify-end gap-2'>
+                                                            {canUpdate &&
+                                                            editable ? (
+                                                                <Button
+                                                                    appearance='outline'
+                                                                    size='md'
+                                                                    iconOnly
+                                                                    aria-label={t(
+                                                                        'common.edit',
+                                                                    )}
+                                                                    onPress={() => {
+                                                                        setEditing(
+                                                                            role,
+                                                                        );
+                                                                        setFormOpen(
+                                                                            true,
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <Pencil1 />
+                                                                </Button>
+                                                            ) : (
+                                                                <Button
+                                                                    appearance='outline'
+                                                                    size='md'
+                                                                    onPress={() =>
+                                                                        setViewing(
+                                                                            role,
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    {t(
+                                                                        'common.details',
+                                                                    )}
+                                                                </Button>
+                                                            )}
+                                                            {canDelete &&
+                                                                editable && (
+                                                                    <Button
+                                                                        variant='danger'
+                                                                        appearance='outline'
+                                                                        size='md'
+                                                                        iconOnly
+                                                                        aria-label={t(
+                                                                            'common.delete',
+                                                                        )}
+                                                                        onPress={() =>
+                                                                            setDeleting(
+                                                                                role,
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <Trash1 />
+                                                                    </Button>
+                                                                )}
+                                                        </div>
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
+                                    </TableBody>
+                                </TableRoot>
+                            </div>
+                        </>
                     )}
                 </div>
             </div>

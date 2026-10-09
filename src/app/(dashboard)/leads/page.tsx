@@ -17,7 +17,11 @@ import {
     TableSkeleton,
 } from '@/components/ui/data-state';
 import { SelectInput } from '@/components/ui/form-field';
-import { LeadKanbanBoard } from '@/components/ui/lead-kanban-board';
+import {
+    LeadKanbanBoard,
+    type KanbanDensity,
+    type QuickFilterType,
+} from '@/components/ui/lead-kanban-board';
 import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
@@ -37,12 +41,7 @@ import { useUrlParam } from '@/hooks/use-url-state';
 import { useT } from '@/i18n/provider';
 import { listBranches } from '@/services/api/branches';
 import { listCourses } from '@/services/api/courses';
-import {
-    deleteLead,
-    getLeadStats,
-    listLeads,
-    updateLead,
-} from '@/services/api/leads';
+import { deleteLead, listLeads, updateLead } from '@/services/api/leads';
 import {
     EDITABLE_LEAD_STATUSES,
     LEAD_SOURCES,
@@ -54,11 +53,17 @@ import {
 } from '@/types/api';
 import { can } from '@/utils/access';
 import { cn } from '@/utils/cn';
+import { exportToExcel } from '@/utils/export';
+import { formatPhone } from '@/utils/format';
 import {
+    Close,
     Column,
+    Download1,
     Eye,
     Funnel1,
     Globe2,
+    Layout5,
+    Layout6,
     Pencil1,
     Plus,
     Table2,
@@ -89,7 +94,7 @@ function leadName(lead: Pick<Lead, 'first_name' | 'last_name'>) {
 function LeadsView() {
     const t = useT();
     const toastError = useApiErrorToast();
-    const { formatDate, formatNumber } = useFormat();
+    const { formatDate } = useFormat();
     const { session } = useSession();
     const queryClient = useQueryClient();
 
@@ -110,12 +115,34 @@ function LeadsView() {
         setLimit,
         offset,
         setOffset,
-    } = useListQuery({ status: '', source: '', course_id: '', branch_id: '' });
+    } = useListQuery({
+        status: '',
+        source: '',
+        course_id: '',
+        branch_id: '',
+        call_filter: '',
+    });
 
     // View state persisted in URL
     const [view, setView] = useUrlParam('view', 'kanban');
     const viewMode: 'table' | 'kanban' = view === 'table' ? 'table' : 'kanban';
     const setViewMode = (next: 'table' | 'kanban') => setView(next);
+
+    const [density, setDensity] = useState<KanbanDensity>(() => {
+        if (typeof window === 'undefined') return 'compact';
+        try {
+            const stored = localStorage.getItem('edums_kanban_density');
+            if (stored === 'comfortable' || stored === 'compact') return stored;
+        } catch {}
+        return 'compact';
+    });
+
+    const handleDensityChange = (newDensity: KanbanDensity) => {
+        setDensity(newDensity);
+        try {
+            localStorage.setItem('edums_kanban_density', newDensity);
+        } catch {}
+    };
 
     const [formOpen, setFormOpen] = useState(false);
     const [editing, setEditing] = useState<Lead | null>(null);
@@ -158,16 +185,8 @@ function LeadsView() {
     });
     useOffsetInRange(query.data?.count, offset, limit, setOffset);
 
-    const statsQuery = useQuery({
-        queryKey: ['lead-stats'],
-        queryFn: getLeadStats,
-    });
-
     function invalidate() {
-        return Promise.all([
-            queryClient.invalidateQueries({ queryKey: ['leads'] }),
-            queryClient.invalidateQueries({ queryKey: ['lead-stats'] }),
-        ]);
+        return queryClient.invalidateQueries({ queryKey: ['leads'] });
     }
 
     const statusMutation = useMutation({
@@ -201,10 +220,33 @@ function LeadsView() {
         filters.status ||
         filters.source ||
         filters.course_id ||
-        filters.branch_id,
+        filters.branch_id ||
+        filters.call_filter,
     );
 
-    const leadsData = query.data?.data ?? [];
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const rawLeads = query.data?.data ?? [];
+    const leadsData = rawLeads.filter((l) => {
+        if (filters.call_filter === 'today') {
+            return (
+                l.next_call_date &&
+                l.next_call_date.slice(0, 10) === todayStr &&
+                l.status !== 'won'
+            );
+        }
+        if (filters.call_filter === 'overdue') {
+            return (
+                l.next_call_date &&
+                l.next_call_date.slice(0, 10) < todayStr &&
+                l.status !== 'won'
+            );
+        }
+        if (filters.call_filter === 'with_notes') {
+            return Boolean(l.note?.trim());
+        }
+        return true;
+    });
+
     const allCurrentPageSelected =
         leadsData.length > 0 &&
         leadsData.every((lead) => selectedIds.includes(lead.id));
@@ -230,15 +272,81 @@ function LeadsView() {
         );
     };
 
-    // Calculate Conversion Rate & Stats
-    const stats = statsQuery.data;
-    const totalLeadsCount = stats
-        ? stats.new + stats.contacted + stats.trial + stats.won + stats.lost
-        : 0;
-    const conversionRate =
-        totalLeadsCount > 0 && stats
-            ? Math.round((stats.won / totalLeadsCount) * 100)
-            : 0;
+    const [exporting, setExporting] = useState(false);
+
+    const handleExportExcel = async (onlySelected = false) => {
+        try {
+            setExporting(true);
+            let list = onlySelected
+                ? leadsData.filter((l) => selectedIds.includes(l.id))
+                : leadsData;
+            const total = query.data?.count ?? 0;
+            if (!onlySelected && total > leadsData.length) {
+                const res = await listLeads({
+                    search: search || undefined,
+                    status: (filters.status || undefined) as
+                        | LeadStatus
+                        | undefined,
+                    source: (filters.source || undefined) as
+                        | LeadSource
+                        | undefined,
+                    course_id: filters.course_id || undefined,
+                    branch_id: filters.branch_id || undefined,
+                    limit: Math.min(total, 200),
+                    offset: 0,
+                });
+                let fetched = res.data;
+                if (filters.call_filter === 'today') {
+                    fetched = fetched.filter(
+                        (l) =>
+                            l.next_call_date &&
+                            l.next_call_date.slice(0, 10) === todayStr &&
+                            l.status !== 'won',
+                    );
+                } else if (filters.call_filter === 'overdue') {
+                    fetched = fetched.filter(
+                        (l) =>
+                            l.next_call_date &&
+                            l.next_call_date.slice(0, 10) < todayStr &&
+                            l.status !== 'won',
+                    );
+                } else if (filters.call_filter === 'with_notes') {
+                    fetched = fetched.filter((l) => Boolean(l.note?.trim()));
+                }
+                list = fetched;
+            }
+            if (list.length === 0) return;
+
+            await exportToExcel(
+                t('leads.title'),
+                'Leads',
+                [
+                    t('common.fullName'),
+                    t('common.phone'),
+                    t('common.status'),
+                    t('leads.source'),
+                    t('courses.title'),
+                    t('branches.title'),
+                    t('common.createdAt'),
+                    t('common.description'),
+                ],
+                list.map((l) => [
+                    leadName(l),
+                    l.phone_number ? formatPhone(l.phone_number) : '',
+                    t(`leadStatus.${l.status}`),
+                    l.source ? t(`leadSource.${l.source}`) : '',
+                    l.course?.name || '',
+                    l.branch?.name || '',
+                    formatDate(l.created_at),
+                    l.note || '',
+                ]),
+            );
+        } catch (err) {
+            toastError(err);
+        } finally {
+            setExporting(false);
+        }
+    };
 
     return (
         <>
@@ -246,123 +354,134 @@ function LeadsView() {
                 title={t('leads.title')}
                 count={query.data?.count}
                 description={t('leads.subtitle')}
+                breakpoint='xl'
                 actions={
-                    <div className='flex flex-wrap items-center gap-2'>
-                        <div className='border-card-border bg-background-gray-secondary/60 flex items-center rounded-xl border p-1'>
-                            <button
-                                type='button'
-                                onClick={() => setViewMode('kanban')}
-                                className={cn(
-                                    'flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold transition-colors',
-                                    viewMode === 'kanban'
-                                        ? 'bg-card-surface-area text-text-primary shadow-xs'
-                                        : 'text-text-tertiary hover:text-text-primary',
-                                )}
-                            >
-                                <Column className='size-3.5' />
-                                {t('leads.viewKanban')}
-                            </button>
-                            <button
-                                type='button'
-                                onClick={() => setViewMode('table')}
-                                className={cn(
-                                    'flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold transition-colors',
-                                    viewMode === 'table'
-                                        ? 'bg-card-surface-area text-text-primary shadow-xs'
-                                        : 'text-text-tertiary hover:text-text-primary',
-                                )}
-                            >
-                                <Table2 className='size-3.5' />
-                                {t('leads.viewTable')}
-                            </button>
+                    <div className='flex w-full flex-wrap items-center justify-between gap-2.5 sm:gap-3 xl:w-auto xl:justify-end'>
+                        {/* Switchers Group */}
+                        <div className='flex flex-wrap items-center gap-1.5 sm:gap-2'>
+                            <div className='border-card-border bg-background-gray-secondary/60 flex items-center rounded-xl border p-0.5 sm:p-1'>
+                                <button
+                                    type='button'
+                                    onClick={() => setViewMode('kanban')}
+                                    className={cn(
+                                        'flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-semibold transition-colors sm:px-2.5',
+                                        viewMode === 'kanban'
+                                            ? 'bg-card-surface-area text-text-primary shadow-xs'
+                                            : 'text-text-tertiary hover:text-text-primary',
+                                    )}
+                                >
+                                    <Column className='size-3.5' />
+                                    <span>{t('leads.viewKanban')}</span>
+                                </button>
+                                <button
+                                    type='button'
+                                    onClick={() => setViewMode('table')}
+                                    className={cn(
+                                        'flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-semibold transition-colors sm:px-2.5',
+                                        viewMode === 'table'
+                                            ? 'bg-card-surface-area text-text-primary shadow-xs'
+                                            : 'text-text-tertiary hover:text-text-primary',
+                                    )}
+                                >
+                                    <Table2 className='size-3.5' />
+                                    <span>{t('leads.viewTable')}</span>
+                                </button>
+                            </div>
+
+                            {viewMode === 'kanban' && (
+                                <div className='border-card-border bg-background-gray-secondary/60 flex items-center rounded-xl border p-0.5 sm:p-1'>
+                                    <button
+                                        type='button'
+                                        onClick={() =>
+                                            handleDensityChange('compact')
+                                        }
+                                        className={cn(
+                                            'flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-semibold transition-colors sm:px-2.5',
+                                            density === 'compact'
+                                                ? 'bg-card-surface-area text-text-primary shadow-xs'
+                                                : 'text-text-tertiary hover:text-text-primary',
+                                        )}
+                                        title={t('leads.densityCompact')}
+                                    >
+                                        <Layout6 className='size-3.5' />
+                                        <span>{t('leads.densityCompact')}</span>
+                                    </button>
+                                    <button
+                                        type='button'
+                                        onClick={() =>
+                                            handleDensityChange('comfortable')
+                                        }
+                                        className={cn(
+                                            'flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-semibold transition-colors sm:px-2.5',
+                                            density === 'comfortable'
+                                                ? 'bg-card-surface-area text-text-primary shadow-xs'
+                                                : 'text-text-tertiary hover:text-text-primary',
+                                        )}
+                                        title={t('leads.densityComfortable')}
+                                    >
+                                        <Layout5 className='size-3.5' />
+                                        <span>
+                                            {t('leads.densityComfortable')}
+                                        </span>
+                                    </button>
+                                </div>
+                            )}
                         </div>
-                        {canManageSettings && (
-                            <Button
-                                appearance='outline'
-                                size='md'
-                                onPress={() => router.push('/settings')}
-                            >
-                                <Globe2 />
-                                {t('leads.fromWebsite')}
-                            </Button>
-                        )}
-                        {canCreate && (
-                            <Button
-                                variant='primary'
-                                appearance='fill'
-                                size='md'
-                                onPress={() => {
-                                    setEditing(null);
-                                    setFormOpen(true);
-                                }}
-                            >
-                                <Plus />
-                                {t('leads.new')}
-                            </Button>
-                        )}
+
+                        {/* Actions Group */}
+                        <div className='flex items-center gap-1.5 sm:gap-2'>
+                            {leadsData.length > 0 && (
+                                <Button
+                                    appearance='outline'
+                                    size='sm'
+                                    className='sm:h-9'
+                                    isPending={exporting}
+                                    onPress={() =>
+                                        void handleExportExcel(false)
+                                    }
+                                >
+                                    <Download1 className='size-3.5 sm:size-4' />
+                                    <span className='xs:inline hidden sm:inline'>
+                                        {t('common.export')}
+                                    </span>
+                                </Button>
+                            )}
+                            {canManageSettings && (
+                                <Button
+                                    appearance='outline'
+                                    size='sm'
+                                    className='sm:h-9'
+                                    onPress={() => router.push('/settings')}
+                                >
+                                    <Globe2 className='size-3.5 sm:size-4' />
+                                    <span className='xs:inline hidden sm:inline'>
+                                        {t('leads.fromWebsite')}
+                                    </span>
+                                </Button>
+                            )}
+                            {canCreate && (
+                                <Button
+                                    variant='primary'
+                                    appearance='fill'
+                                    size='sm'
+                                    className='sm:h-9'
+                                    onPress={() => {
+                                        setEditing(null);
+                                        setFormOpen(true);
+                                    }}
+                                >
+                                    <Plus className='size-3.5 sm:size-4' />
+                                    <span>{t('leads.new')}</span>
+                                </Button>
+                            )}
+                        </div>
                     </div>
                 }
             />
 
-            {/* Funnel Overview Analytics Bar */}
-            <div className='grid grid-cols-2 gap-2.5 px-4 pb-4 sm:grid-cols-3 sm:gap-3.5 sm:px-5 lg:grid-cols-6'>
-                {LEAD_STATUSES.map((status) => {
-                    const active = filters.status === status;
-                    const count = stats ? stats[status] : 0;
-                    const share =
-                        totalLeadsCount > 0
-                            ? Math.round((count / totalLeadsCount) * 100)
-                            : 0;
-
-                    return (
-                        <button
-                            key={status}
-                            type='button'
-                            aria-pressed={active}
-                            onClick={() =>
-                                setFilter('status', active ? '' : status)
-                            }
-                            className={cn(
-                                'bg-card-background relative overflow-hidden rounded-xl border p-3 text-left transition-all duration-200 hover:-translate-y-0.5 sm:p-3.5',
-                                active
-                                    ? 'border-brand-accent ring-brand-accent/20 shadow-sm ring-2'
-                                    : 'border-card-border hover:border-brand-accent/40 hover:shadow-2xs',
-                            )}
-                        >
-                            <div className='flex items-center justify-between gap-1'>
-                                <p className='text-text-tertiary flex min-w-0 items-center gap-1.5 text-xs font-semibold'>
-                                    <LeadStatusDot status={status} />
-                                    <span className='truncate'>
-                                        {t(`leadStatus.${status}`)}
-                                    </span>
-                                </p>
-                                <span className='text-text-tertiary text-[11px] font-medium tabular-nums'>
-                                    {share}%
-                                </span>
-                            </div>
-                            <p className='text-text-primary font-display mt-1.5 text-xl font-bold tabular-nums sm:text-2xl'>
-                                {stats ? formatNumber(count) : '—'}
-                            </p>
-                        </button>
-                    );
-                })}
-
-                {/* Conversion Rate Card */}
-                <div className='from-brand-accent/10 via-card-background to-card-background border-brand-accent/30 relative overflow-hidden rounded-xl border bg-gradient-to-br p-3 text-left sm:p-3.5'>
-                    <div className='flex items-center justify-between gap-1'>
-                        <p className='text-brand-accent flex min-w-0 items-center gap-1.5 text-xs font-bold'>
-                            ⚡ Konversiya
-                        </p>
-                    </div>
-                    <p className='text-brand-accent font-display mt-1.5 text-xl font-bold tabular-nums sm:text-2xl'>
-                        {conversionRate}%
-                    </p>
-                </div>
-            </div>
-
             {/* Filter Bar */}
-            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
-                <div className='min-w-[220px] flex-1 lg:min-w-40'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5'>
+                <div className='min-w-0 flex-1 sm:min-w-[220px]'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
@@ -375,15 +494,38 @@ function LeadsView() {
                         (filters.status ? 1 : 0) +
                         (filters.source ? 1 : 0) +
                         (filters.course_id ? 1 : 0) +
-                        (filters.branch_id ? 1 : 0)
+                        (filters.branch_id ? 1 : 0) +
+                        (filters.call_filter ? 1 : 0)
                     }
                     onClear={() => {
                         setFilter('status', '');
                         setFilter('source', '');
                         setFilter('course_id', '');
                         setFilter('branch_id', '');
+                        setFilter('call_filter', '');
                     }}
                 >
+                    <SelectInput
+                        label={t('leads.callFilter')}
+                        options={[
+                            { value: '', label: t('leads.allCalls') },
+                            {
+                                value: 'today',
+                                label: t('leads.todayCalls'),
+                            },
+                            {
+                                value: 'overdue',
+                                label: t('leads.overdueCalls'),
+                            },
+                            {
+                                value: 'with_notes',
+                                label: t('leads.withNotes'),
+                            },
+                        ]}
+                        placeholder={t('leads.callFilter')}
+                        value={filters.call_filter}
+                        onValueChange={(next) => setFilter('call_filter', next)}
+                    />
                     <SelectInput
                         label={t('common.allStatuses')}
                         options={LEAD_STATUSES.map((status) => ({
@@ -429,61 +571,94 @@ function LeadsView() {
                         />
                     )}
                 </MobileFilterSheet>
+                {filtered && (
+                    <button
+                        type='button'
+                        onClick={() => {
+                            setSearch('');
+                            setFilter('status', '');
+                            setFilter('source', '');
+                            setFilter('course_id', '');
+                            setFilter('branch_id', '');
+                            setFilter('call_filter', '');
+                        }}
+                        className='text-brand-accent hover:bg-brand-accent/10 flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold transition-colors sm:hidden'
+                    >
+                        <Close className='size-3' />
+                        <span>{t('filters.clear')}</span>
+                    </button>
+                )}
 
-                <div className='hidden min-w-0 items-center gap-2.5 sm:flex'>
-                    <div className='w-40 shrink'>
+                <div className='hidden w-44 shrink sm:block'>
+                    <SelectInput
+                        options={[
+                            { value: '', label: t('leads.allCalls') },
+                            {
+                                value: 'today',
+                                label: t('leads.todayCalls'),
+                            },
+                            {
+                                value: 'overdue',
+                                label: t('leads.overdueCalls'),
+                            },
+                            {
+                                value: 'with_notes',
+                                label: t('leads.withNotes'),
+                            },
+                        ]}
+                        placeholder={t('leads.callFilter')}
+                        value={filters.call_filter}
+                        onValueChange={(next) => setFilter('call_filter', next)}
+                    />
+                </div>
+                <div className='hidden w-40 shrink sm:block'>
+                    <SelectInput
+                        options={LEAD_STATUSES.map((status) => ({
+                            value: status,
+                            label: t(`leadStatus.${status}`),
+                        }))}
+                        placeholder={t('common.allStatuses')}
+                        value={filters.status}
+                        onValueChange={(next) => setFilter('status', next)}
+                    />
+                </div>
+                <div className='hidden w-40 shrink sm:block'>
+                    <SelectInput
+                        options={LEAD_SOURCES.map((source) => ({
+                            value: source,
+                            label: t(`leadSource.${source}`),
+                        }))}
+                        placeholder={t('leads.allSources')}
+                        value={filters.source}
+                        onValueChange={(next) => setFilter('source', next)}
+                    />
+                </div>
+                <div className='hidden w-44 shrink sm:block'>
+                    <SelectInput
+                        options={(coursesQuery.data ?? []).map((c) => ({
+                            value: c.id,
+                            label: c.name,
+                        }))}
+                        placeholder={t('groups.allCourses')}
+                        value={filters.course_id}
+                        onValueChange={(next) => setFilter('course_id', next)}
+                    />
+                </div>
+                {(branchesQuery.data ?? []).length > 1 && (
+                    <div className='hidden w-40 shrink sm:block'>
                         <SelectInput
-                            options={LEAD_STATUSES.map((status) => ({
-                                value: status,
-                                label: t(`leadStatus.${status}`),
+                            options={(branchesQuery.data ?? []).map((b) => ({
+                                value: b.id,
+                                label: b.name,
                             }))}
-                            placeholder={t('common.allStatuses')}
-                            value={filters.status}
-                            onValueChange={(next) => setFilter('status', next)}
-                        />
-                    </div>
-                    <div className='w-40 shrink'>
-                        <SelectInput
-                            options={LEAD_SOURCES.map((source) => ({
-                                value: source,
-                                label: t(`leadSource.${source}`),
-                            }))}
-                            placeholder={t('leads.allSources')}
-                            value={filters.source}
-                            onValueChange={(next) => setFilter('source', next)}
-                        />
-                    </div>
-                    <div className='w-44 shrink'>
-                        <SelectInput
-                            options={(coursesQuery.data ?? []).map((c) => ({
-                                value: c.id,
-                                label: c.name,
-                            }))}
-                            placeholder={t('groups.allCourses')}
-                            value={filters.course_id}
+                            placeholder={t('groups.allBranches')}
+                            value={filters.branch_id}
                             onValueChange={(next) =>
-                                setFilter('course_id', next)
+                                setFilter('branch_id', next)
                             }
                         />
                     </div>
-                    {(branchesQuery.data ?? []).length > 1 && (
-                        <div className='w-40 shrink'>
-                            <SelectInput
-                                options={(branchesQuery.data ?? []).map(
-                                    (b) => ({
-                                        value: b.id,
-                                        label: b.name,
-                                    }),
-                                )}
-                                placeholder={t('groups.allBranches')}
-                                value={filters.branch_id}
-                                onValueChange={(next) =>
-                                    setFilter('branch_id', next)
-                                }
-                            />
-                        </div>
-                    )}
-                </div>
+                )}
             </div>
 
             {/* Main Content Area */}
@@ -511,6 +686,7 @@ function LeadsView() {
                                             setFilter('source', '');
                                             setFilter('course_id', '');
                                             setFilter('branch_id', '');
+                                            setFilter('call_filter', '');
                                         }}
                                     >
                                         {t('filters.reset')}
@@ -534,6 +710,7 @@ function LeadsView() {
                     </div>
                 ) : viewMode === 'kanban' ? (
                     <LeadKanbanBoard
+                        density={density}
                         filters={{
                             search: search || undefined,
                             source: (filters.source || undefined) as
@@ -542,6 +719,9 @@ function LeadsView() {
                             course_id: filters.course_id || undefined,
                             branch_id: filters.branch_id || undefined,
                         }}
+                        quickFilter={
+                            (filters.call_filter as QuickFilterType) || 'all'
+                        }
                         onlyStatus={
                             (filters.status || undefined) as
                                 | LeadStatus
@@ -555,41 +735,89 @@ function LeadsView() {
                             setFormOpen(true);
                         }}
                         onConvert={(lead) => setConverting(lead)}
+                        onDelete={(lead) => setDeleting(lead)}
                         onSelectLead={(lead) => setDrawerLead(lead)}
+                        canCreate={canCreate}
                         canUpdate={canUpdate}
                         canConvert={canConvert}
+                        canDelete={canDelete}
+                        defaultBranchId={
+                            filters.branch_id || branchesQuery.data?.[0]?.id
+                        }
+                        onOpenFullForm={() => {
+                            setEditing(null);
+                            setFormOpen(true);
+                        }}
                     />
                 ) : (
                     <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                         <>
+                            {/* Mobile Select All Header (< md) */}
+                            {leadsData.length > 0 && (
+                                <div className='border-card-border bg-background-gray-secondary/40 flex items-center justify-between border-b px-4 py-2.5 md:hidden'>
+                                    <label className='text-text-secondary flex cursor-pointer items-center gap-2 text-xs font-semibold select-none'>
+                                        <input
+                                            type='checkbox'
+                                            checked={allCurrentPageSelected}
+                                            onChange={toggleSelectAll}
+                                            className='border-card-border text-brand-accent focus:ring-brand-accent/20 size-4 cursor-pointer rounded'
+                                        />
+                                        <span>
+                                            {allCurrentPageSelected
+                                                ? t('filters.clear')
+                                                : 'Barchasini tanlash'}
+                                        </span>
+                                    </label>
+                                    {selectedIds.length > 0 && (
+                                        <span className='bg-brand-accent/10 text-brand-accent rounded-md px-2 py-0.5 text-xs font-bold tabular-nums'>
+                                            {selectedIds.length} ta tanlandi
+                                        </span>
+                                    )}
+                                </div>
+                            )}
+
                             {/* Mobile Cards (< md) */}
                             <div className='divide-card-border divide-y md:hidden'>
-                                {query.data.data.map((lead, index) => (
+                                {leadsData.map((lead, index) => (
                                     <div
                                         key={lead.id}
                                         className='hover:bg-background-gray-primary/20 flex flex-col gap-3 p-4 transition-colors'
                                     >
                                         <div className='flex items-start justify-between gap-3'>
-                                            <div
-                                                className='min-w-0 flex-1 cursor-pointer'
-                                                onClick={() =>
-                                                    setDrawerLead(lead)
-                                                }
-                                            >
-                                                <div className='flex items-center gap-2'>
-                                                    <span className='text-text-tertiary text-xs font-semibold tabular-nums'>
-                                                        #{offset + index + 1}
-                                                    </span>
-                                                    <span className='text-text-primary hover:text-brand-accent truncate text-sm font-bold'>
-                                                        {leadName(lead)}
-                                                    </span>
-                                                </div>
-                                                <div className='mt-0.5 text-xs'>
-                                                    <PhoneLink
-                                                        phone={
-                                                            lead.phone_number
-                                                        }
-                                                    />
+                                            <div className='flex min-w-0 flex-1 items-start gap-2.5'>
+                                                <input
+                                                    type='checkbox'
+                                                    checked={selectedIds.includes(
+                                                        lead.id,
+                                                    )}
+                                                    onChange={() =>
+                                                        toggleSelectRow(lead.id)
+                                                    }
+                                                    className='border-card-border text-brand-accent focus:ring-brand-accent/20 mt-1 size-4 shrink-0 cursor-pointer rounded'
+                                                    aria-label={`${leadName(lead)} tanlash`}
+                                                />
+                                                <div
+                                                    className='min-w-0 flex-1 cursor-pointer'
+                                                    onClick={() =>
+                                                        setDrawerLead(lead)
+                                                    }
+                                                >
+                                                    <div className='flex items-start gap-2'>
+                                                        <span className='text-text-tertiary mt-0.5 shrink-0 text-xs font-semibold tabular-nums'>
+                                                            #
+                                                            {offset + index + 1}
+                                                        </span>
+                                                        <span className='text-text-primary hover:text-brand-accent text-sm font-bold break-words'>
+                                                            {leadName(lead)}
+                                                        </span>
+                                                    </div>
+                                                    <div className='mt-0.5 text-xs'>
+                                                        <PhoneLink
+                                                            phone={
+                                                                lead.phone_number
+                                                            }
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                             <LeadStatusBadge
@@ -726,7 +954,7 @@ function LeadsView() {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {query.data.data.map((lead, index) => {
+                                        {leadsData.map((lead, index) => {
                                             const isSelected =
                                                 selectedIds.includes(lead.id);
 
@@ -983,6 +1211,7 @@ function LeadsView() {
                 onClearSelection={() => setSelectedIds([])}
                 canUpdate={canUpdate}
                 canDelete={canDelete}
+                onExport={() => handleExportExcel(true)}
             />
 
             <ConfirmDialog

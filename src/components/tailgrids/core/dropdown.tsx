@@ -47,10 +47,12 @@ type DropdownMenuItemProps = MenuItemProps;
 
 export function DropdownMenuItem({
     className,
+    href,
     ...props
 }: DropdownMenuItemProps) {
     return (
         <MenuItem
+            {...(href ? { href } : {})}
             {...props}
             className={cn(
                 'group text-text-50 hover:bg-background-gray-secondary_alt focus:bg-background-gray-secondary_alt focus:text-title-50 flex w-full cursor-default items-center gap-3 rounded-md px-1.5 py-1 text-sm outline-hidden',

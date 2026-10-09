@@ -125,7 +125,7 @@ function ScheduleView() {
     const filterFields = (inline: boolean) => (
         <>
             {branches.length > 1 && (
-                <div className={inline ? 'w-48 min-w-28 shrink' : undefined}>
+                <div className={inline ? 'w-48 shrink-0' : undefined}>
                     <SelectInput
                         label={inline ? undefined : t('groups.allBranches')}
                         options={branches.map((branch) => ({
@@ -141,7 +141,7 @@ function ScheduleView() {
                     />
                 </div>
             )}
-            <div className={inline ? 'w-52 min-w-28 shrink' : undefined}>
+            <div className={inline ? 'w-52 shrink-0' : undefined}>
                 <SelectInput
                     label={inline ? undefined : t('groups.allTeachers')}
                     options={(teachersQuery.data ?? []).map((user) => ({
@@ -155,7 +155,7 @@ function ScheduleView() {
                     }
                 />
             </div>
-            <div className={inline ? 'w-44 min-w-28 shrink' : undefined}>
+            <div className={inline ? 'w-44 shrink-0' : undefined}>
                 <SelectInput
                     label={inline ? undefined : t('groups.allRooms')}
                     options={(roomsQuery.data ?? []).map((room) => ({
@@ -177,7 +177,7 @@ function ScheduleView() {
                 description={t('schedule.subtitle')}
             />
 
-            <div className='flex items-center gap-3 px-4 pb-4 sm:px-5'>
+            <div className='flex flex-wrap items-center gap-3 px-4 pb-4 sm:px-5'>
                 <MobileFilterSheet
                     activeCount={activeCount}
                     onClear={() =>
@@ -190,7 +190,7 @@ function ScheduleView() {
                 >
                     {filterFields(false)}
                 </MobileFilterSheet>
-                <div className='hidden min-w-0 items-center gap-3 sm:flex'>
+                <div className='hidden min-w-0 flex-wrap items-center gap-3 sm:flex'>
                     {filterFields(true)}
                 </div>
             </div>

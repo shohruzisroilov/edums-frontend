@@ -68,6 +68,18 @@ const PHONE_PREFIX = '+998';
 const NATIONAL_DIGITS = 9;
 
 /**
+ * Kiritilgan matndan milliy raqamni (9 xona) oladi. Agar foydalanuvchi to'liq
+ * xalqaro raqamni (+998...) nusxalab qo'ysa, boshidagi 998 avtomatik olib tashlanadi.
+ */
+function extractNational(raw: string): string {
+    let digits = digitsOnly(raw);
+    if (digits.length > NATIONAL_DIGITS && digits.startsWith('998')) {
+        digits = digits.slice(3);
+    }
+    return digits.slice(0, NATIONAL_DIGITS);
+}
+
+/**
  * `901234567` → `90 123 45 67`.
  *
  * `+998` maydonning tahrirlanmaydigan qismi sifatida chapda turadi: aks holda
@@ -83,13 +95,11 @@ function formatNational(digits: string): string {
 
 export function PhoneInput({ value, onValueChange, ...rest }: BaseProps) {
     // Tashqi qiymat to'liq raqam (+998XXXXXXXXX), maydonda esa faqat milliy qism.
-    const national = digitsOnly(value)
-        .replace(/^998/, '')
-        .slice(0, NATIONAL_DIGITS);
+    const national = extractNational(value);
 
     function handleChange(event: ChangeEvent<HTMLInputElement>) {
         applyWithCaret(event, (raw) => {
-            const digits = digitsOnly(raw).slice(0, NATIONAL_DIGITS);
+            const digits = extractNational(raw);
             onValueChange(digits ? `${PHONE_PREFIX}${digits}` : '');
             return formatNational(digits);
         });

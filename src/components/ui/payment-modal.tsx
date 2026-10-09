@@ -111,12 +111,28 @@ export function PaymentModal({
         date: string;
     } | null>(null);
 
+    const [touchedAmount, setTouchedAmount] = useState(false);
+
+    const effectiveGroupId =
+        form.group_id ||
+        (groupOptions.length === 1 ? groupOptions[0].value : '');
+    const activeBalance = groups.find(
+        (item) => item.group.id === effectiveGroupId,
+    );
+    const defaultAmount =
+        activeBalance && activeBalance.balance < 0
+            ? String(Math.round(-activeBalance.balance))
+            : '';
+    const effectiveAmount = touchedAmount
+        ? form.amount
+        : form.amount || defaultAmount;
+
     const mutation = useMutation({
         mutationFn: () =>
             createStudentPayment({
                 student_id: student!.id,
-                group_id: form.group_id,
-                amount: Number(form.amount),
+                group_id: effectiveGroupId,
+                amount: Number(effectiveAmount),
                 method: form.method,
                 paid_at: form.paid_at,
                 note: form.note.trim() || null,
@@ -127,16 +143,16 @@ export function PaymentModal({
             toast.success(t('cashbox.created'));
 
             const enrolledGrp = groups.find(
-                (g) => g.group.id === form.group_id,
+                (g) => g.group.id === effectiveGroupId,
             );
-            const otherGrp = allGroups.find((g) => g.id === form.group_id);
+            const otherGrp = allGroups.find((g) => g.id === effectiveGroupId);
             const groupName =
                 enrolledGrp?.group.name ?? otherGrp?.name ?? t('common.group');
 
             setReceiptData({
                 studentName: student ? fullName(student) : '',
                 groupName,
-                amount: Number(form.amount),
+                amount: Number(effectiveAmount),
                 method: t(`paymentMethod.${form.method}`),
                 date: form.paid_at,
             });
@@ -145,6 +161,7 @@ export function PaymentModal({
     });
 
     function selectGroup(group_id: string) {
+        setTouchedAmount(false);
         const balance = groups.find((item) => item.group.id === group_id);
         setForm((prev) => ({
             ...prev,
@@ -153,15 +170,8 @@ export function PaymentModal({
             amount:
                 balance && balance.balance < 0
                     ? String(Math.round(-balance.balance))
-                    : prev.amount,
+                    : '',
         }));
-    }
-
-    // Guruh bitta bo'lsa, tanlashga hojat yo'q — qarzi bilan darhol to'ladi.
-    const [autoPicked, setAutoPicked] = useState(false);
-    if (!autoPicked && groupOptions.length === 1 && !form.group_id) {
-        setAutoPicked(true);
-        selectGroup(groupOptions[0].value);
     }
 
     function handleSubmit(event: FormEvent) {
@@ -235,7 +245,7 @@ export function PaymentModal({
                                 ? t('cashbox.noGroups')
                                 : t('cashbox.groupHint')
                         }
-                        value={form.group_id}
+                        value={effectiveGroupId}
                         onValueChange={selectGroup}
                     />
                     <div className='grid gap-4 sm:grid-cols-2'>
@@ -243,10 +253,15 @@ export function PaymentModal({
                             label={t('cashbox.amount')}
                             required
                             currency={t('common.som')}
-                            value={form.amount}
-                            onValueChange={(next) =>
-                                setForm({ ...form, amount: next })
-                            }
+                            value={effectiveAmount}
+                            onValueChange={(next) => {
+                                setTouchedAmount(true);
+                                setForm((prev) => ({
+                                    ...prev,
+                                    group_id: effectiveGroupId,
+                                    amount: next,
+                                }));
+                            }}
                         />
                         <SelectInput
                             label={t('cashbox.method')}
@@ -283,10 +298,11 @@ export function PaymentModal({
                         }
                     />
 
-                    <div className='mt-2 flex items-center justify-end gap-2'>
+                    <div className='mt-4 flex flex-col-reverse items-stretch justify-end gap-2 sm:flex-row sm:items-center'>
                         <Button
                             appearance='outline'
                             size='md'
+                            className='w-full sm:w-auto'
                             onPress={onClose}
                             isDisabled={mutation.isPending}
                         >
@@ -297,10 +313,11 @@ export function PaymentModal({
                             variant='primary'
                             appearance='fill'
                             size='md'
+                            className='w-full sm:w-auto'
                             isDisabled={
                                 mutation.isPending ||
-                                !form.group_id ||
-                                !Number(form.amount)
+                                !effectiveGroupId ||
+                                !Number(effectiveAmount)
                             }
                         >
                             {t(

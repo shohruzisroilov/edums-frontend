@@ -22,7 +22,7 @@ type TableRootProps = ComponentProps<'table'> &
 
 export function TableRoot({ className, fullBleed, ...props }: TableRootProps) {
     return (
-        <div className='scrollbar-thin overflow-x-auto'>
+        <div className='scrollbar-thin overflow-x-auto overscroll-x-contain'>
             <table
                 className={cn(tableRootStyles({ fullBleed }), className)}
                 {...props}

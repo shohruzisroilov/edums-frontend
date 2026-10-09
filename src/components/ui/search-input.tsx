@@ -53,7 +53,7 @@ export function SearchInput({
                 onChange={(event) => setDraft(event.target.value)}
                 placeholder={label}
                 aria-label={label}
-                className='border-input-border bg-input-background text-title-50 placeholder:text-input-placeholder-text focus:border-input-primary-focus-border focus:ring-input-primary-focus-border/20 w-full rounded-lg border py-2.5 pr-4 pl-10 text-sm transition outline-none focus:ring-4'
+                className='border-input-border bg-input-background text-title-50 placeholder:text-input-placeholder-text focus:border-input-primary-focus-border focus:ring-input-primary-focus-border/20 h-11 w-full rounded-lg border py-2.5 pr-4 pl-10 text-sm transition outline-none focus:ring-4'
             />
         </div>
     );

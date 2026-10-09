@@ -109,13 +109,18 @@ export function ReceiptModal({
                     </div>
                 </div>
 
-                <div className='flex items-center justify-end gap-2 pt-2'>
-                    <Button appearance='outline' onPress={onClose}>
+                <div className='flex flex-col-reverse items-stretch justify-end gap-2 pt-2 sm:flex-row sm:items-center'>
+                    <Button
+                        appearance='outline'
+                        className='w-full sm:w-auto'
+                        onPress={onClose}
+                    >
                         {t('common.close')}
                     </Button>
                     <Button
                         variant='primary'
                         appearance='fill'
+                        className='w-full sm:w-auto'
                         onPress={() => window.print()}
                     >
                         <Printer className='size-4' />

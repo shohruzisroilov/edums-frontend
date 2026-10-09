@@ -17,7 +17,17 @@ import type { EditableLeadStatus, Lead, LeadPayload } from '@/types/api';
 import { EDITABLE_LEAD_STATUSES } from '@/types/api';
 import { can } from '@/utils/access';
 import { cn } from '@/utils/cn';
-import { Calendar, Close, Pencil1, Trash1, User2 } from '@tailgrids/icons';
+import {
+    Calendar,
+    ClockThree,
+    Close,
+    ErrorCircle1,
+    Pencil1,
+    Send1,
+    Telephone1,
+    Trash1,
+    User2,
+} from '@tailgrids/icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -118,10 +128,10 @@ export function LeadDetailDrawer({
                 aria-hidden='true'
             />
 
-            <div className='pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10'>
-                <div className='bg-card-surface-area border-card-border animate-in slide-in-from-right pointer-events-auto relative flex w-screen max-w-md flex-col justify-between border-l shadow-2xl duration-300'>
+            <div className='pointer-events-none fixed inset-y-0 right-0 flex w-full max-w-full sm:max-w-md sm:pl-10'>
+                <div className='bg-card-surface-area border-card-border animate-in slide-in-from-right pointer-events-auto relative flex w-full max-w-full flex-col justify-between border-l shadow-2xl duration-300 sm:max-w-md'>
                     {/* Drawer Header */}
-                    <div className='border-card-border border-b p-5 pb-4'>
+                    <div className='border-card-border border-b p-4 pb-4 sm:p-5'>
                         <div className='flex items-start justify-between gap-3'>
                             <div className='min-w-0 flex-1'>
                                 <div className='flex items-center gap-2'>
@@ -130,7 +140,7 @@ export function LeadDetailDrawer({
                                         <LeadSourceBadge source={lead.source} />
                                     )}
                                 </div>
-                                <h3 className='text-text-primary mt-2 truncate text-xl font-bold'>
+                                <h3 className='text-text-primary mt-2 text-xl font-bold break-words'>
                                     {lead.first_name} {lead.last_name || ''}
                                 </h3>
                                 <div className='mt-1 flex items-center gap-2 text-sm'>
@@ -148,19 +158,32 @@ export function LeadDetailDrawer({
                             </button>
                         </div>
 
-                        {/* Direct Call & Convert Toolbar */}
-                        <div className='border-card-border/60 mt-4 flex items-center gap-2 border-t pt-3.5'>
+                        {/* Direct Call, Telegram & Convert Toolbar */}
+                        <div className='border-card-border/60 mt-4 flex flex-wrap items-center gap-2 border-t pt-3.5'>
                             <a
-                                href={`tel:${lead.phone_number}`}
-                                className='bg-brand-accent hover:bg-brand-accent/90 flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-white shadow-xs transition-all'
+                                href={`tel:${lead.phone_number.replace(/\s+/g, '')}`}
+                                className='bg-brand-accent hover:bg-brand-accent/90 flex min-w-[100px] flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold text-white shadow-xs transition-all active:scale-95'
                             >
-                                📞 {t('leadSource.call')}
+                                <Telephone1 className='size-3.5' />
+                                <span>{t('leadSource.call')}</span>
                             </a>
+                            {lead.phone_number.replace(/[^\d]/g, '').length >=
+                                9 && (
+                                <a
+                                    href={`https://t.me/+${lead.phone_number.replace(/[^\d]/g, '')}`}
+                                    target='_blank'
+                                    rel='noreferrer'
+                                    className='flex min-w-[100px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-sky-500 px-3 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-sky-600 active:scale-95'
+                                >
+                                    <Send1 className='size-3.5' />
+                                    <span>Telegram</span>
+                                </a>
+                            )}
                             {canConvert && !isWon && (
                                 <button
                                     type='button'
                                     onClick={() => onConvert(lead)}
-                                    className='flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-emerald-700'
+                                    className='flex min-w-[110px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-emerald-700 active:scale-95'
                                 >
                                     <User2 className='size-4' />
                                     <span>+ O&apos;quvchiga</span>
@@ -261,13 +284,15 @@ export function LeadDetailDrawer({
                                     <span>Keyingi qo'ng'iroq vaqti</span>
                                 </div>
                                 {isOverdue && (
-                                    <span className='animate-pulse rounded-md bg-red-500/15 px-2 py-0.5 text-[11px] font-bold text-red-600 dark:text-red-400'>
-                                        ⚠️ Muddati o'tgan
+                                    <span className='inline-flex items-center gap-1 rounded-md bg-red-500/15 px-2 py-0.5 text-[11px] font-bold text-red-600 dark:text-red-400'>
+                                        <ErrorCircle1 className='size-3 shrink-0' />
+                                        <span>{t('leads.overdueCalls')}</span>
                                     </span>
                                 )}
                                 {isToday && (
-                                    <span className='rounded-md bg-amber-500/15 px-2 py-0.5 text-[11px] font-bold text-amber-600 dark:text-amber-400'>
-                                        ⏰ Bugun
+                                    <span className='inline-flex items-center gap-1 rounded-md bg-amber-500/15 px-2 py-0.5 text-[11px] font-bold text-amber-600 dark:text-amber-400'>
+                                        <ClockThree className='size-3 shrink-0' />
+                                        <span>{t('leads.todayCalls')}</span>
                                     </span>
                                 )}
                             </div>
@@ -357,7 +382,7 @@ export function LeadDetailDrawer({
                     </div>
 
                     {/* Drawer Footer Actions */}
-                    <div className='border-card-border bg-background-gray-secondary/30 flex items-center justify-between gap-2 border-t p-4'>
+                    <div className='border-card-border bg-background-gray-secondary/30 flex items-center justify-between gap-2 border-t p-4 pb-[max(1rem,env(safe-area-inset-bottom))]'>
                         {canDelete && (
                             <Button
                                 variant='danger'

@@ -61,11 +61,13 @@ export function DateRangeFilter({
     to,
     onDateChange,
     className,
+    size = 'md',
 }: {
     from: string;
     to: string;
     onDateChange: (range: { from: string; to: string }) => void;
     className?: string;
+    size?: 'sm' | 'md';
 }) {
     const t = useT();
 
@@ -101,13 +103,13 @@ export function DateRangeFilter({
     return (
         <div
             className={cn(
-                'flex w-full flex-wrap items-center gap-2.5 sm:w-auto sm:flex-nowrap',
+                'flex w-full flex-wrap items-center gap-2.5 sm:w-auto',
                 className,
             )}
         >
             {/* Desktopda davr — ixcham ro'yxat: oltita tugma filtr qatorini
                 ikkiga bo'lib yuborardi. Telefonda (filtr oynasida) tugmalar. */}
-            <div className='hidden w-36 min-w-28 shrink sm:block'>
+            <div className='hidden w-36 shrink-0 sm:block'>
                 <SelectInput
                     aria-label={t('dateRange.period')}
                     options={[
@@ -155,9 +157,14 @@ export function DateRangeFilter({
             </div>
 
             <div className='flex w-full items-center gap-2 sm:w-auto'>
-                <div className='w-full sm:w-32'>
+                <div
+                    className={cn(
+                        'min-w-0 flex-1 sm:flex-initial',
+                        size === 'sm' ? 'sm:w-32' : 'sm:w-38',
+                    )}
+                >
                     <DatePicker
-                        size='sm'
+                        size={size}
                         align='left'
                         aria-label={t('common.from')}
                         title={t('common.from')}
@@ -166,12 +173,22 @@ export function DateRangeFilter({
                         onDateChange={(val) => onDateChange({ from: val, to })}
                     />
                 </div>
-                <span className='text-text-tertiary shrink-0 text-xs font-medium'>
+                <span
+                    className={cn(
+                        'text-text-tertiary shrink-0 font-medium',
+                        size === 'sm' ? 'text-xs' : 'text-sm',
+                    )}
+                >
                     —
                 </span>
-                <div className='w-full sm:w-32'>
+                <div
+                    className={cn(
+                        'min-w-0 flex-1 sm:flex-initial',
+                        size === 'sm' ? 'sm:w-32' : 'sm:w-38',
+                    )}
+                >
                     <DatePicker
-                        size='sm'
+                        size={size}
                         align='right'
                         aria-label={t('common.to')}
                         title={t('common.to')}
