@@ -17,12 +17,18 @@ import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { fileUrl } from '@/services/api/client';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { LogoutIcon, UserCircleIcon } from './icons';
+import {
+    SupportHeadsetIcon,
+    SupportModal,
+} from '@/components/ui/support-modal';
 
 export function UserProfileButton() {
     const { session, signOut } = useSession();
     const router = useRouter();
     const t = useT();
+    const [supportOpen, setSupportOpen] = useState(false);
 
     if (!session) return null;
 
@@ -39,55 +45,71 @@ export function UserProfileButton() {
     const avatar = fileUrl(session.avatar_url);
 
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger
-                aria-label={t('nav.userMenu')}
-                className='hover:bg-background-gray-secondary focus-visible:ring-input-primary-focus-border/30 flex items-center gap-2.5 rounded-lg p-1 transition-colors outline-none focus-visible:ring-4'
-            >
-                <Avatar className='size-9'>
-                    {avatar && <AvatarImage src={avatar} alt={displayName} />}
-                    <AvatarFallback>{initials || 'U'}</AvatarFallback>
-                </Avatar>
-                <span className='hidden text-left sm:block'>
-                    <span className='text-text-primary block text-sm font-medium'>
-                        {displayName}
+        <>
+            <DropdownMenu>
+                <DropdownMenuTrigger
+                    aria-label={t('nav.userMenu')}
+                    className='hover:bg-background-gray-secondary focus-visible:ring-input-primary-focus-border/30 flex items-center gap-2.5 rounded-lg p-1 transition-colors outline-none focus-visible:ring-4'
+                >
+                    <Avatar className='size-9'>
+                        {avatar && (
+                            <AvatarImage src={avatar} alt={displayName} />
+                        )}
+                        <AvatarFallback>{initials || 'U'}</AvatarFallback>
+                    </Avatar>
+                    <span className='hidden text-left sm:block'>
+                        <span className='text-text-primary block text-sm font-medium'>
+                            {displayName}
+                        </span>
+                        <span className='text-text-tertiary block text-xs'>
+                            {superAdmin
+                                ? t('profile.superAdmin')
+                                : (session.education?.name ?? '')}
+                        </span>
                     </span>
-                    <span className='text-text-tertiary block text-xs'>
-                        {superAdmin
-                            ? t('profile.superAdmin')
-                            : (session.education?.name ?? '')}
-                    </span>
-                </span>
-            </DropdownMenuTrigger>
+                </DropdownMenuTrigger>
 
-            <DropdownMenuContent className='min-w-56'>
-                <DropdownMenuLabel>
-                    <p className='text-text-primary text-sm font-medium'>
-                        {displayName}
-                    </p>
-                    <p className='text-text-tertiary text-xs'>
-                        {session.phone_number}
-                    </p>
-                </DropdownMenuLabel>
+                <DropdownMenuContent className='min-w-56'>
+                    <DropdownMenuLabel>
+                        <p className='text-text-primary text-sm font-medium'>
+                            {displayName}
+                        </p>
+                        <p className='text-text-tertiary text-xs'>
+                            {session.phone_number}
+                        </p>
+                    </DropdownMenuLabel>
 
-                <DropdownMenuSeparator />
+                    <DropdownMenuSeparator />
 
-                <DropdownMenuItem onAction={() => router.push('/profile')}>
-                    <span className='flex items-center gap-2.5 px-1.5 py-1'>
-                        <UserCircleIcon />
-                        {t('nav.profile')}
-                    </span>
-                </DropdownMenuItem>
+                    <DropdownMenuItem onAction={() => router.push('/profile')}>
+                        <span className='flex items-center gap-2.5 px-1.5 py-1'>
+                            <UserCircleIcon />
+                            {t('nav.profile')}
+                        </span>
+                    </DropdownMenuItem>
 
-                <DropdownMenuSeparator />
+                    <DropdownMenuItem onAction={() => setSupportOpen(true)}>
+                        <span className='flex items-center gap-2.5 px-1.5 py-1'>
+                            <SupportHeadsetIcon className='size-4 text-sky-500' />
+                            {t('support.title')}
+                        </span>
+                    </DropdownMenuItem>
 
-                <DropdownMenuItem onAction={signOut}>
-                    <span className='text-badge-error-text flex items-center gap-2.5 px-1.5 py-1'>
-                        <LogoutIcon />
-                        {t('auth.signOut')}
-                    </span>
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
+                    <DropdownMenuSeparator />
+
+                    <DropdownMenuItem onAction={signOut}>
+                        <span className='text-badge-error-text flex items-center gap-2.5 px-1.5 py-1'>
+                            <LogoutIcon />
+                            {t('auth.signOut')}
+                        </span>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+
+            <SupportModal
+                open={supportOpen}
+                onClose={() => setSupportOpen(false)}
+            />
+        </>
     );
 }

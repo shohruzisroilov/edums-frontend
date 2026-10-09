@@ -2,18 +2,19 @@
 
 import { AppLogo } from '@/components/common/app-logo';
 import { useT } from '@/i18n/provider';
+import { SUPPORT_CONTACTS } from '@/utils/site';
 import Link from 'next/link';
 import { LANDING_NAV } from './landing-header';
 
 /** Hisob ochish yoki savollar bo'yicha murojaat kanali. */
-export const SUPPORT_TELEGRAM = 'https://t.me/edumsuz';
+export const SUPPORT_TELEGRAM = SUPPORT_CONTACTS.telegramGroupUrl;
 
 export function LandingFooter() {
     const t = useT();
 
     return (
         <footer className='border-card-border bg-card-background border-t'>
-            <div className='mx-auto grid max-w-6xl gap-10 px-5 py-12 md:grid-cols-[2fr_1fr_1fr]'>
+            <div className='mx-auto grid max-w-6xl gap-8 px-5 py-12 sm:grid-cols-2 md:grid-cols-[1.8fr_1fr_1fr_1.2fr]'>
                 <div>
                     <AppLogo />
                     <p className='text-text-tertiary mt-4 max-w-sm text-sm leading-6'>
@@ -58,14 +59,41 @@ export function LandingFooter() {
                                 {t('auth.signIn')}
                             </Link>
                         </li>
+                    </ul>
+                </div>
+                <div>
+                    <p className='text-text-primary text-sm font-semibold'>
+                        {t('support.title')}
+                    </p>
+                    <ul className='mt-4 space-y-2.5 text-sm'>
                         <li>
                             <a
-                                href={SUPPORT_TELEGRAM}
+                                href={SUPPORT_CONTACTS.phoneTel}
+                                className='text-text-tertiary hover:text-text-primary flex items-center gap-1.5 transition'
+                            >
+                                <span className='text-text-secondary font-mono font-medium'>
+                                    {SUPPORT_CONTACTS.phoneFormatted}
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href={SUPPORT_CONTACTS.telegramPersonalUrl}
                                 target='_blank'
                                 rel='noopener noreferrer'
                                 className='text-text-tertiary hover:text-text-primary transition'
                             >
-                                {t('landing.footerTelegram')}
+                                Telegram: {SUPPORT_CONTACTS.telegramPersonal}
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href={SUPPORT_CONTACTS.telegramGroupUrl}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                className='text-text-tertiary hover:text-text-primary transition'
+                            >
+                                Guruh: {SUPPORT_CONTACTS.telegramGroup}
                             </a>
                         </li>
                     </ul>

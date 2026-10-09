@@ -1548,6 +1548,29 @@ export const uz = {
     'tariffs.yearlyPreview': 'Yillik narx (365 kun): {price}',
     'tariffs.yearly': 'Yillik',
     'auditField.period': "To'lov muddati",
+
+    /* ── Yordam va bog'lanish ── */
+    'support.title': "Yordam va bog'lanish",
+    'support.subtitle':
+        "Savol, taklif yoki muammolar bo'yicha biz bilan istalgan vaqtda bog'lanishingiz mumkin.",
+    'support.buttonLabel': 'Yordam',
+    'support.cardTitle': 'Yordam va aloqa',
+    'support.cardDescription':
+        "Savol va takliflar bo'yicha to'g'ridan-to'g'ri murojaat qiling",
+    'support.phone': 'Telefon orqali',
+    'support.phoneHint':
+        "To'g'ridan-to'g'ri qo'ng'iroq qilish yoki saqlab olish",
+    'support.telegramPersonal': 'Shaxsiy Telegram',
+    'support.telegramPersonalHint': 'Tezkor yozish (@Shohruz_Isroilov)',
+    'support.telegramGroup': 'Savol-javoblar guruhi',
+    'support.telegramGroupHint':
+        'Hamjamiyat va savol-javoblar guruhi (@edumsuz)',
+    'support.copyPhone': 'Nusxa olish',
+    'support.callNow': "Qo'ng'iroq",
+    'support.openTelegram': 'Telegramda yozish',
+    'support.joinGroup': "Guruhga qo'shilish",
+    'support.copied': 'Telefon raqami nusxalandi',
+    'support.fastResponse': 'Tezkor javob beramiz',
 } as const;
 
 export type TranslationKey = keyof typeof uz;

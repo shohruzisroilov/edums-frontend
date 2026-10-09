@@ -12,6 +12,7 @@ import { PasswordInput } from '@/components/ui/password-input';
 import { ImageUploadField } from '@/components/ui/image-upload';
 import { PageHeader } from '@/components/ui/page-header';
 import { RoleBadge } from '@/components/ui/status-badge';
+import { SupportContactCard } from '@/components/ui/support-modal';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
@@ -76,6 +77,8 @@ export default function ProfilePage() {
                 ) : (
                     <UserProfile profile={meQuery.data} />
                 )}
+
+                <SupportContactCard />
             </div>
         </>
     );
