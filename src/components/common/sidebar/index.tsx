@@ -7,6 +7,7 @@ import { cn } from '@/utils/cn';
 import Link from 'next/link';
 import { homeHref } from '@/utils/access';
 import { navSectionsFor } from './data';
+import { useNewLeadsCount } from '@/hooks/use-new-leads-count';
 import { LocaleSwitcher } from '@/components/common/locale-switcher';
 import ThemeToggle from '@/components/common/header/theme-toggle';
 import { CloseIcon, SidebarExpandedIcon } from './icon';
@@ -25,6 +26,7 @@ export default function Sidebar({
 }) {
     const { session } = useSession();
     const t = useT();
+    const newLeadsCount = useNewLeadsCount();
 
     const sections = navSectionsFor(session);
     const home = homeHref(session);
@@ -68,16 +70,26 @@ export default function Sidebar({
                             </p>
                         )}
                         <div className='space-y-1'>
-                            {section.items.map((item) => (
-                                <NavItem
-                                    key={item.url}
-                                    label={t(item.titleKey)}
-                                    href={item.url}
-                                    icon={item.icon}
-                                    collapsed={!isSidebarOpen}
-                                    onItemClick={onItemClick}
-                                />
-                            ))}
+                            {section.items.map((item) => {
+                                const badge =
+                                    item.url === '/leads' && newLeadsCount > 0
+                                        ? newLeadsCount > 99
+                                            ? '99+'
+                                            : newLeadsCount
+                                        : undefined;
+
+                                return (
+                                    <NavItem
+                                        key={item.url}
+                                        label={t(item.titleKey)}
+                                        href={item.url}
+                                        icon={item.icon}
+                                        badge={badge}
+                                        collapsed={!isSidebarOpen}
+                                        onItemClick={onItemClick}
+                                    />
+                                );
+                            })}
                         </div>
                     </div>
                 ))}
