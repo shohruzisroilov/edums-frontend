@@ -7,6 +7,7 @@ import ThemeToggle from '@/components/common/header/theme-toggle';
 import { UserProfileButton } from '@/components/common/header/user-profile';
 import { LocaleSwitcher } from '@/components/common/locale-switcher';
 import { LinkButton } from '@/components/ui/link-button';
+import { SupportModal } from '@/components/ui/support-modal';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { can } from '@/utils/access';
@@ -24,6 +25,7 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
     const t = useT();
     const { session } = useSession();
     const [searchOpen, setSearchOpen] = useState(false);
+    const [supportOpen, setSupportOpen] = useState(false);
     const [shortcut] = useState(() => (isApplePlatform() ? '⌘K' : 'Ctrl+K'));
 
     useEffect(() => {
@@ -132,6 +134,12 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
             <GlobalSearchModal
                 open={searchOpen}
                 onClose={() => setSearchOpen(false)}
+                onOpenSupport={() => setSupportOpen(true)}
+            />
+
+            <SupportModal
+                open={supportOpen}
+                onClose={() => setSupportOpen(false)}
             />
         </header>
     );

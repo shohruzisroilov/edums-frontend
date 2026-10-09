@@ -1,6 +1,6 @@
 'use client';
 
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, KeyboardEvent } from 'react';
 import { TextInput } from './form-field';
 
 /**
@@ -15,6 +15,7 @@ interface BaseProps {
     placeholder?: string;
     required?: boolean;
     disabled?: boolean;
+    autoComplete?: string;
     /** Xom qiymat: `+998XXXXXXXXX` yoki bo'sh satr. */
     value: string;
     onValueChange: (value: string) => void;
@@ -23,6 +24,76 @@ interface BaseProps {
 /** Kiritilgan matndan faqat raqamlarni oladi. */
 function digitsOnly(text: string): string {
     return text.replace(/\D/g, '');
+}
+
+const PHONE_PREFIX = '+998';
+const NATIONAL_DIGITS = 9;
+
+/**
+ * Tashqi (prop) qiymatdan milliy 9 xonali raqamni ajratib oladi.
+ * Prop odatda `+998901234567` yoki qisman `+99890` ko'rinishida keladi.
+ */
+function extractNationalFromValue(value: string | null | undefined): string {
+    if (!value) return '';
+    // Agar +998 bilan boshlansa, xalqaro prefiksni olib tashlaymiz
+    if (value.startsWith('+998')) {
+        return digitsOnly(value.slice(4)).slice(0, NATIONAL_DIGITS);
+    }
+    if (value.startsWith('+')) {
+        const d = digitsOnly(value);
+        if (d.startsWith('998')) {
+            return d.slice(3, 3 + NATIONAL_DIGITS);
+        }
+        return d.slice(0, NATIONAL_DIGITS);
+    }
+    let digits = digitsOnly(value);
+    // 12 xonali (998XXXXXXXXX) kelsa prefiksni kesamiz
+    if (digits.length > NATIONAL_DIGITS && digits.startsWith('998')) {
+        digits = digits.slice(3);
+    }
+    // 10 xonali (8XXXXXXXXX) kelsa boshidagi 8 ni kesamiz
+    if (digits.length === 10 && digits.startsWith('8')) {
+        digits = digits.slice(1);
+    }
+    return digits.slice(0, NATIONAL_DIGITS);
+}
+
+/**
+ * Foydalanuvchi maydonga yozgan yoki nusxalab qo'ygan (paste) matndan
+ * milliy raqamni ajratib oladi.
+ */
+function extractNationalFromInput(raw: string): string {
+    if (!raw) return '';
+    const trimmed = raw.trim();
+
+    // Agar + bilan boshlansa (masalan, +998 90 123 45 67)
+    if (trimmed.startsWith('+')) {
+        let d = digitsOnly(trimmed);
+        if (d.startsWith('998')) {
+            d = d.slice(3);
+        }
+        return d.slice(0, NATIONAL_DIGITS);
+    }
+
+    let digits = digitsOnly(trimmed);
+    // 12 xonali (998XXXXXXXXX) yoki 9 tadan ko'p bo'lib 998 bilan boshlansa
+    if (digits.length > NATIONAL_DIGITS && digits.startsWith('998')) {
+        digits = digits.slice(3);
+    } else if (digits.length === 10 && digits.startsWith('8')) {
+        // 8 90 123 45 67 ko'rinishida yozilgan bo'lsa
+        digits = digits.slice(1);
+    }
+    return digits.slice(0, NATIONAL_DIGITS);
+}
+
+/**
+ * `901234567` → `90 123 45 67`.
+ */
+function formatNational(digits: string): string {
+    const d = digits.slice(0, NATIONAL_DIGITS);
+    return [d.slice(0, 2), d.slice(2, 5), d.slice(5, 7), d.slice(7, 9)]
+        .filter(Boolean)
+        .join(' ');
 }
 
 /**
@@ -64,45 +135,55 @@ function applyWithCaret(
     return formatted;
 }
 
-const PHONE_PREFIX = '+998';
-const NATIONAL_DIGITS = 9;
-
-/**
- * Kiritilgan matndan milliy raqamni (9 xona) oladi. Agar foydalanuvchi to'liq
- * xalqaro raqamni (+998...) nusxalab qo'ysa, boshidagi 998 avtomatik olib tashlanadi.
- */
-function extractNational(raw: string): string {
-    let digits = digitsOnly(raw);
-    if (digits.length > NATIONAL_DIGITS && digits.startsWith('998')) {
-        digits = digits.slice(3);
-    }
-    return digits.slice(0, NATIONAL_DIGITS);
-}
-
-/**
- * `901234567` → `90 123 45 67`.
- *
- * `+998` maydonning tahrirlanmaydigan qismi sifatida chapda turadi: aks holda
- * kursor prefiksdan oldin qolib, raqamlar noto'g'ri joyga tushardi va
- * foydalanuvchi mamlakat kodini tasodifan o'chirib yuborishi mumkin edi.
- */
-function formatNational(digits: string): string {
-    const d = digits.slice(0, NATIONAL_DIGITS);
-    return [d.slice(0, 2), d.slice(2, 5), d.slice(5, 7), d.slice(7, 9)]
-        .filter(Boolean)
-        .join(' ');
-}
-
-export function PhoneInput({ value, onValueChange, ...rest }: BaseProps) {
+export function PhoneInput({
+    value,
+    onValueChange,
+    autoComplete = 'off',
+    ...rest
+}: BaseProps) {
     // Tashqi qiymat to'liq raqam (+998XXXXXXXXX), maydonda esa faqat milliy qism.
-    const national = extractNational(value);
+    const national = extractNationalFromValue(value);
 
     function handleChange(event: ChangeEvent<HTMLInputElement>) {
         applyWithCaret(event, (raw) => {
-            const digits = extractNational(raw);
+            const digits = extractNationalFromInput(raw);
             onValueChange(digits ? `${PHONE_PREFIX}${digits}` : '');
             return formatNational(digits);
         });
+    }
+
+    function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+        if (event.key === 'Backspace') {
+            const input = event.currentTarget;
+            const { selectionStart, selectionEnd } = input;
+            if (
+                selectionStart !== null &&
+                selectionStart === selectionEnd &&
+                selectionStart > 1 &&
+                input.value[selectionStart - 1] === ' '
+            ) {
+                // Kursordan chapda bo'shliq tursa, bo'shliqdan oldingi raqamni o'chiramiz
+                event.preventDefault();
+                const text = input.value;
+                const nextText =
+                    text.slice(0, selectionStart - 2) +
+                    text.slice(selectionStart);
+                const digits = extractNationalFromInput(nextText);
+                onValueChange(digits ? `${PHONE_PREFIX}${digits}` : '');
+                const targetDigitIndex = digitIndexFromCaret(
+                    text.slice(0, selectionStart - 2),
+                    selectionStart - 2,
+                );
+                requestAnimationFrame(() => {
+                    if (!input.isConnected) return;
+                    const nextCaret = caretFromDigitIndex(
+                        input.value,
+                        targetDigitIndex,
+                    );
+                    input.setSelectionRange(nextCaret, nextCaret);
+                });
+            }
+        }
     }
 
     return (
@@ -110,11 +191,12 @@ export function PhoneInput({ value, onValueChange, ...rest }: BaseProps) {
             {...rest}
             type='tel'
             inputMode='tel'
-            autoComplete='off'
+            autoComplete={autoComplete}
             prefix={PHONE_PREFIX}
             placeholder='90 123 45 67'
             value={formatNational(national)}
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
         />
     );
 }

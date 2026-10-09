@@ -4,6 +4,7 @@ import { MenuIcon } from '@/components/common/header/icons';
 import { navSectionsFor } from '@/components/common/sidebar/data';
 import { isPathActive } from '@/components/common/sidebar/utils';
 import { Modal } from '@/components/ui/modal';
+import { useNewLeadsCount } from '@/hooks/use-new-leads-count';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { can, isSuperAdmin } from '@/utils/access';
@@ -49,6 +50,7 @@ export function BottomNav({ onMenuClick }: BottomNavProps) {
     const pathname = usePathname();
     const t = useT();
     const [quickActionsOpen, setQuickActionsOpen] = useState(false);
+    const newLeadsCount = useNewLeadsCount();
 
     if (!session) return null;
 
@@ -105,6 +107,13 @@ export function BottomNav({ onMenuClick }: BottomNavProps) {
             href={item.url}
             label={t(item.titleKey)}
             icon={item.icon}
+            badge={
+                item.url === '/leads' && newLeadsCount > 0
+                    ? newLeadsCount > 99
+                        ? '99+'
+                        : newLeadsCount
+                    : undefined
+            }
             isActive={isPathActive(item.url, pathname)}
         />
     );
@@ -199,11 +208,13 @@ function NavItem({
     href,
     label,
     icon,
+    badge,
     isActive,
 }: {
     href: string;
     label: string;
     icon: ReactNode;
+    badge?: ReactNode;
     isActive: boolean;
 }) {
     return (
@@ -224,6 +235,11 @@ function NavItem({
                 )}
             >
                 {icon}
+                {badge !== undefined && badge !== null && (
+                    <span className='bg-brand-accent ring-card-background absolute -top-1 -right-2.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full px-1 text-[9px] font-bold text-white tabular-nums ring-2'>
+                        {badge}
+                    </span>
+                )}
             </span>
             <span className='w-full truncate text-center text-[11px] leading-tight'>
                 {label}

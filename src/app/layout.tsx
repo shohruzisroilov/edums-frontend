@@ -17,7 +17,6 @@ const inter = Inter({
 const golos = Golos_Text({
     variable: '--font-golos',
     subsets: ['latin', 'latin-ext', 'cyrillic', 'cyrillic-ext'],
-    weight: ['500', '600', '700'],
     display: 'swap',
 });
 

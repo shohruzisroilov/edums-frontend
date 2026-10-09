@@ -1235,6 +1235,13 @@ export const uz = {
     'landing.navFeatures': 'Imkoniyatlar',
     'landing.navHow': 'Qanday boshlanadi',
     'landing.navFaq': 'Savollar',
+    'landing.navContact': "Bog'lanish",
+    'landing.contactEyebrow': 'Aloqa va konsultatsiya',
+    'landing.contactTitle': "Savollaringiz bormi? Biz bilan bog'laning",
+    'landing.contactSubtitle':
+        "Hisob ochish, narxlar yoki tizimni joriy qilish bo'yicha to'g'ridan-to'g'ri bog'lanishingiz mumkin:",
+    'landing.floatingContact': "Savol bormi? Bog'lanish",
+    'landing.topContactPrompt': 'Hamkorlik va savollar uchun:',
     'landing.heroAccent': "daftar va Excel'siz",
     'landing.seeFeatures': "Imkoniyatlarni ko'rish",
     'landing.heroPoint.noCard': 'Bank kartasi shart emas',
@@ -1548,6 +1555,28 @@ export const uz = {
     'tariffs.yearlyPreview': 'Yillik narx (365 kun): {price}',
     'tariffs.yearly': 'Yillik',
     'auditField.period': "To'lov muddati",
+
+    /* ── Yordam va bog'lanish ── */
+    'support.title': "Yordam va bog'lanish",
+    'support.subtitle':
+        "Savol, taklif yoki muammolar bo'yicha biz bilan istalgan vaqtda bog'lanishingiz mumkin.",
+    'support.buttonLabel': 'Yordam',
+    'support.cardTitle': 'Yordam va aloqa',
+    'support.cardDescription':
+        "Savol va takliflar bo'yicha to'g'ridan-to'g'ri murojaat qiling",
+    'support.phone': 'Telefon orqali',
+    'support.phoneHint':
+        "To'g'ridan-to'g'ri qo'ng'iroq qilish yoki saqlab olish",
+    'support.telegramPersonal': 'Shaxsiy Telegram',
+    'support.telegramPersonalHint': 'Tezkor yozish (@Shohruz_Isroilov)',
+    'support.telegramGroup': 'Savol-javoblar guruhi',
+    'support.telegramGroupHint': 'Hamjamiyat va savol-javoblar guruhi',
+    'support.copyPhone': 'Nusxa olish',
+    'support.callNow': "Qo'ng'iroq",
+    'support.openTelegram': 'Telegramda yozish',
+    'support.joinGroup': "Guruhga qo'shilish",
+    'support.copied': 'Telefon raqami nusxalandi',
+    'support.fastResponse': 'Tezkor javob beramiz',
 } as const;
 
 export type TranslationKey = keyof typeof uz;

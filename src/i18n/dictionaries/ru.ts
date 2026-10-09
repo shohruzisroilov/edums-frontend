@@ -1225,6 +1225,13 @@ export const ru: Dictionary = {
     'landing.navFeatures': 'Возможности',
     'landing.navHow': 'Как начать',
     'landing.navFaq': 'Вопросы',
+    'landing.navContact': 'Контакты',
+    'landing.contactEyebrow': 'Связь и консультация',
+    'landing.contactTitle': 'Есть вопросы? Свяжитесь с нами',
+    'landing.contactSubtitle':
+        'Вы можете напрямую связаться с нами для открытия счёта, консультации по тарифам или внедрению:',
+    'landing.floatingContact': 'Есть вопрос? Связаться',
+    'landing.topContactPrompt': 'Для сотрудничества и вопросов:',
     'landing.heroAccent': 'без тетрадей и Excel',
     'landing.seeFeatures': 'Посмотреть возможности',
     'landing.heroPoint.noCard': 'Банковская карта не нужна',
@@ -1535,4 +1542,24 @@ export const ru: Dictionary = {
     'tariffs.yearlyPreview': 'Цена за год (365 дней): {price}',
     'tariffs.yearly': 'За год',
     'auditField.period': 'Срок оплаты',
+
+    /* ── Помощь и контакты ── */
+    'support.title': 'Помощь и контакты',
+    'support.subtitle':
+        'Вы можете связаться с нами в любое время по любым вопросам, предложениям или проблемам.',
+    'support.buttonLabel': 'Помощь',
+    'support.cardTitle': 'Помощь и поддержка',
+    'support.cardDescription': 'Прямая связь по вопросам и предложениям',
+    'support.phone': 'По телефону',
+    'support.phoneHint': 'Прямой звонок или скопировать номер',
+    'support.telegramPersonal': 'Личный Telegram',
+    'support.telegramPersonalHint': 'Быстрая связь (@Shohruz_Isroilov)',
+    'support.telegramGroup': 'Группа вопросов и ответов',
+    'support.telegramGroupHint': 'Сообщество и группа обсуждений',
+    'support.copyPhone': 'Скопировать номер',
+    'support.callNow': 'Позвонить',
+    'support.openTelegram': 'Написать в Telegram',
+    'support.joinGroup': 'Вступить в группу',
+    'support.copied': 'Номер телефона скопирован',
+    'support.fastResponse': 'Быстрый ответ',
 };

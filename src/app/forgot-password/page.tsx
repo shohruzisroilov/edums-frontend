@@ -23,8 +23,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, type FormEvent } from 'react';
 
-const SUPPORT_TELEGRAM = 'https://t.me/edumsuz';
-
 const STEPS = ['forgot.step1', 'forgot.step2', 'forgot.step3'] as const;
 
 export default function ForgotPasswordPage() {
@@ -365,17 +363,6 @@ export default function ForgotPasswordPage() {
                                 >
                                     {t('auth.signIn')}
                                 </Link>
-                            </p>
-                            <p className='text-text-tertiary text-xs'>
-                                {t('auth.contact')}{' '}
-                                <a
-                                    href={SUPPORT_TELEGRAM}
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                    className='text-brand-accent font-medium hover:underline'
-                                >
-                                    @edumsuz
-                                </a>
                             </p>
                         </div>
                     </div>

@@ -23,8 +23,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, type FormEvent } from 'react';
 
-const SUPPORT_TELEGRAM = 'https://t.me/edumsuz';
-
 /**
  * Bitta forma ikkala kirish uchun: avval markaz foydalanuvchisi
  * (/auth/login), faqat 401 kelsa — super admin (/super_admin/login).
@@ -277,17 +275,6 @@ export default function LoginPage() {
                                 >
                                     {t('auth.tryFree', { days: trialDays })}
                                 </Link>
-                            </p>
-                            <p className='text-text-tertiary text-xs'>
-                                {t('auth.contact')}{' '}
-                                <a
-                                    href={SUPPORT_TELEGRAM}
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                    className='text-brand-accent font-medium hover:underline'
-                                >
-                                    @edumsuz
-                                </a>
                             </p>
                         </div>
                     </div>

@@ -1223,6 +1223,13 @@ export const uzCyrl: Dictionary = {
     'landing.navFeatures': 'Имкониятлар',
     'landing.navHow': 'Қандай бошланади',
     'landing.navFaq': 'Саволлар',
+    'landing.navContact': 'Боғланиш',
+    'landing.contactEyebrow': 'Алоқа ва консультация',
+    'landing.contactTitle': 'Саволларингиз борми? Биз билан боғланинг',
+    'landing.contactSubtitle':
+        'Ҳисоб очиш, нархлар ёки тизимни жорий қилиш бўйича тўғридан-тўғри боғланишингиз мумкин:',
+    'landing.floatingContact': 'Савол борми? Боғланиш',
+    'landing.topContactPrompt': 'Ҳамкорлик ва саволлар учун:',
     'landing.heroAccent': "дафтар ва Excel'сиз",
     'landing.seeFeatures': 'Имкониятларни кўриш',
     'landing.heroPoint.noCard': 'Банк картаси шарт эмас',
@@ -1535,4 +1542,25 @@ export const uzCyrl: Dictionary = {
     'tariffs.yearlyPreview': 'Йиллик нарх (365 кун): {price}',
     'tariffs.yearly': 'Йиллик',
     'auditField.period': 'Тўлов муддати',
+
+    /* ── Ёрдам ва боғланиш ── */
+    'support.title': 'Ёрдам ва боғланиш',
+    'support.subtitle':
+        'Савол, таклиф ёки муаммолар бўйича биз билан исталган вақтда боғланишингиз мумкин.',
+    'support.buttonLabel': 'Ёрдам',
+    'support.cardTitle': 'Ёрдам ва алоқа',
+    'support.cardDescription':
+        'Савол ва таклифлар бўйича тўғридан-тўғри мурожаат қилинг',
+    'support.phone': 'Телефон орқали',
+    'support.phoneHint': 'Тўғридан-тўғри қўнғироқ қилиш ёки сақлаб олиш',
+    'support.telegramPersonal': 'Шахсий Telegram',
+    'support.telegramPersonalHint': 'Тезкор ёзиш (@Shohruz_Isroilov)',
+    'support.telegramGroup': 'Савол-жавоблар гуруҳи',
+    'support.telegramGroupHint': 'Ҳамжамият ва савол-жавоблар гуруҳи',
+    'support.copyPhone': 'Нусха олиш',
+    'support.callNow': 'Қўнғироқ',
+    'support.openTelegram': 'Telegram’да ёзиш',
+    'support.joinGroup': 'Гуруҳга қўшилиш',
+    'support.copied': 'Телефон рақами нусхаланди',
+    'support.fastResponse': 'Тезкор жавоб берамиз',
 };

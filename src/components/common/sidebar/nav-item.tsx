@@ -11,12 +11,14 @@ export default function NavItem({
     label,
     href,
     collapsed,
+    badge,
     onItemClick,
 }: {
     icon: ReactNode;
     label: string;
     href: string;
     collapsed?: boolean;
+    badge?: ReactNode;
     onItemClick?: () => void;
 }) {
     const pathname = usePathname();
@@ -30,17 +32,24 @@ export default function NavItem({
                 <Link
                     href={href}
                     onClick={onItemClick}
-                    title={label}
-                    aria-label={label}
+                    title={badge ? `${label} (${badge})` : label}
+                    aria-label={badge ? `${label} (${badge})` : label}
                     aria-current={isActive ? 'page' : undefined}
                     className={cn(
-                        'focus-visible:ring-input-primary-focus-border/30 flex items-center justify-center rounded-lg px-3 py-2.5 outline-none focus-visible:ring-4',
+                        'focus-visible:ring-input-primary-focus-border/30 relative flex items-center justify-center rounded-lg px-3 py-2.5 outline-none focus-visible:ring-4',
                         isActive
                             ? 'bg-sidebar-navigation-nav-item-nav-hover-background text-icon-primary'
                             : 'text-icon-tertiary hover:bg-sidebar-navigation-nav-item-nav-hover-background hover:text-icon-primary transition-colors duration-200',
                     )}
                 >
-                    {icon}
+                    <span className='relative flex items-center justify-center'>
+                        {icon}
+                        {badge !== undefined && badge !== null && (
+                            <span className='bg-brand-accent ring-card-background absolute -top-1.5 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold text-white tabular-nums ring-2'>
+                                {badge}
+                            </span>
+                        )}
+                    </span>
                 </Link>
             </div>
         );
@@ -76,7 +85,12 @@ export default function NavItem({
             >
                 {icon}
             </span>
-            <span>{label}</span>
+            <span className='flex-1 truncate'>{label}</span>
+            {badge !== undefined && badge !== null && (
+                <span className='bg-brand-accent ml-auto inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full px-1.5 text-[11px] font-bold text-white tabular-nums shadow-xs'>
+                    {badge}
+                </span>
+            )}
         </Link>
     );
 }

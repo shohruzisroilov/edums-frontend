@@ -1226,6 +1226,13 @@ export const en: Dictionary = {
     'landing.navFeatures': 'Features',
     'landing.navHow': 'Get started',
     'landing.navFaq': 'FAQ',
+    'landing.navContact': 'Contact',
+    'landing.contactEyebrow': 'Contact & consultation',
+    'landing.contactTitle': 'Have questions? Get in touch with us',
+    'landing.contactSubtitle':
+        'Direct contact for opening an account, tariffs, or onboarding support:',
+    'landing.floatingContact': 'Questions? Contact us',
+    'landing.topContactPrompt': 'For partnership and questions:',
     'landing.heroAccent': 'no notebooks, no spreadsheets',
     'landing.seeFeatures': 'See the features',
     'landing.heroPoint.noCard': 'No bank card needed',
@@ -1533,4 +1540,24 @@ export const en: Dictionary = {
     'tariffs.yearlyPreview': 'Yearly price (365 days): {price}',
     'tariffs.yearly': 'Yearly',
     'auditField.period': 'Billing period',
+
+    /* ── Help & Support ── */
+    'support.title': 'Help & Support',
+    'support.subtitle':
+        'Feel free to reach out to us anytime for questions, feedback, or assistance.',
+    'support.buttonLabel': 'Help',
+    'support.cardTitle': 'Help & Support',
+    'support.cardDescription': 'Direct contact for inquiries and assistance',
+    'support.phone': 'Phone call',
+    'support.phoneHint': 'Direct phone call or copy number',
+    'support.telegramPersonal': 'Personal Telegram',
+    'support.telegramPersonalHint': 'Fast direct chat (@Shohruz_Isroilov)',
+    'support.telegramGroup': 'Q&A Community Group',
+    'support.telegramGroupHint': 'Community & support group',
+    'support.copyPhone': 'Copy number',
+    'support.callNow': 'Call',
+    'support.openTelegram': 'Message on Telegram',
+    'support.joinGroup': 'Join group',
+    'support.copied': 'Phone number copied',
+    'support.fastResponse': 'Fast response',
 };

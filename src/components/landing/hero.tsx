@@ -18,7 +18,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
                 <div className='bg-brand-300/10 absolute top-40 -left-20 size-72 rounded-full blur-3xl' />
             </div>
 
-            <div className='relative mx-auto max-w-5xl px-4 pt-10 pb-8 sm:pt-24 sm:pb-10'>
+            <div className='relative mx-auto max-w-5xl px-4 pt-10 pb-8 sm:pt-20 sm:pb-10'>
                 {/* Sarlavha */}
                 <h1 className='text-text-primary font-display text-center text-3xl leading-[1.15] font-bold tracking-tight text-balance sm:text-5xl lg:text-[64px]'>
                     {t('landing.heroTitle')}

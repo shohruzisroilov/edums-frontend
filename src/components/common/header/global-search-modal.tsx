@@ -26,6 +26,8 @@ import {
     Wallet2,
     Xmark,
 } from '@tailgrids/icons';
+import { SUPPORT_CONTACTS } from '@/utils/site';
+import { SupportHeadsetIcon } from '@/components/ui/support-modal';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import {
@@ -51,16 +53,18 @@ interface CommandItem {
     icon: ReactNode;
     tag?: string;
     url?: string;
-    action?: 'theme';
+    action?: 'theme' | 'support';
     category: 'action' | 'nav' | 'student' | 'group' | 'lead';
 }
 
 export function GlobalSearchModal({
     open,
     onClose,
+    onOpenSupport,
 }: {
     open: boolean;
     onClose: () => void;
+    onOpenSupport?: () => void;
 }) {
     const t = useT();
     const { formatPrice } = useFormat();
@@ -95,12 +99,15 @@ export function GlobalSearchModal({
             if (item.action === 'theme') {
                 setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
                 handleClose();
+            } else if (item.action === 'support') {
+                handleClose();
+                onOpenSupport?.();
             } else if (item.url) {
                 router.push(item.url);
                 handleClose();
             }
         },
-        [resolvedTheme, setTheme, router, handleClose],
+        [resolvedTheme, setTheme, router, handleClose, onOpenSupport],
     );
 
     // Barcha tezkor buyruqlar va sahifalar
@@ -170,6 +177,18 @@ export function GlobalSearchModal({
         action: 'theme',
         category: 'action',
     });
+
+    if (onOpenSupport) {
+        baseCommands.push({
+            id: 'action-support-modal',
+            title: `${t('support.title')} (Telegram, Telefon)`,
+            subtitle: `${SUPPORT_CONTACTS.phoneFormatted} · ${SUPPORT_CONTACTS.telegramPersonal} · ${SUPPORT_CONTACTS.telegramGroup}`,
+            icon: <SupportHeadsetIcon className='size-4 text-sky-500' />,
+            tag: '⚡ Support',
+            action: 'support',
+            category: 'action',
+        });
+    }
 
     // Sahifalarga o'tish (Navigation)
     if (canAny(session, 'reports.view', 'reports.view_own')) {

@@ -1,5 +1,6 @@
 'use client';
 
+import { FloatingContactWidget } from '@/components/landing/contact-section';
 import { Faq } from '@/components/landing/faq';
 import { FeatureGrid } from '@/components/landing/feature-grid';
 import { FinalCta } from '@/components/landing/final-cta';
@@ -54,6 +55,7 @@ export default function LandingPage() {
             </main>
 
             <LandingFooter />
+            <FloatingContactWidget />
         </div>
     );
 }
