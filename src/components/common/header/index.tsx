@@ -7,7 +7,7 @@ import ThemeToggle from '@/components/common/header/theme-toggle';
 import { UserProfileButton } from '@/components/common/header/user-profile';
 import { LocaleSwitcher } from '@/components/common/locale-switcher';
 import { LinkButton } from '@/components/ui/link-button';
-import { SupportHelpButton, SupportModal } from '@/components/ui/support-modal';
+import { SupportModal } from '@/components/ui/support-modal';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { can } from '@/utils/access';
@@ -122,11 +122,6 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                     >
                         <Search1 className='size-5' />
                     </button>
-
-                    <SupportHelpButton
-                        onClick={() => setSupportOpen(true)}
-                        className='border-card-border bg-card-background text-icon-primary hover:bg-background-gray-secondary focus-visible:border-input-primary-focus-border focus-visible:ring-input-primary-focus-border/20 flex size-11 items-center justify-center rounded-lg border shadow-xs transition-colors outline-none focus-visible:ring-4 sm:size-10'
-                    />
 
                     <div className='hidden items-center gap-1.5 sm:flex'>
                         <LocaleSwitcher />

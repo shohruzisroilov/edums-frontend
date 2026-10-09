@@ -32,6 +32,7 @@ export function SupportModal({
         <Modal
             open={open}
             onClose={onClose}
+            size='lg'
             title={t('support.title')}
             description={t('support.subtitle')}
             footer={
@@ -45,23 +46,7 @@ export function SupportModal({
                 </Button>
             }
         >
-            <div className='space-y-4 pt-1'>
-                {/* Status Indicator Banner */}
-                <div className='border-card-border bg-background-gray-secondary/60 flex items-center justify-between rounded-xl border px-3.5 py-2.5'>
-                    <div className='flex items-center gap-2.5'>
-                        <span className='relative flex size-2.5'>
-                            <span className='bg-badge-success-text absolute inline-flex size-full animate-ping rounded-full opacity-75' />
-                            <span className='bg-badge-success-text relative inline-flex size-2.5 rounded-full' />
-                        </span>
-                        <span className='text-text-secondary text-xs font-medium'>
-                            {t('support.fastResponse')}
-                        </span>
-                    </div>
-                    <span className='border-card-border bg-card-surface-area text-text-tertiary rounded-md border px-2 py-0.5 text-[11px] font-medium'>
-                        EDUMS Support
-                    </span>
-                </div>
-
+            <div className='space-y-3.5 pt-1'>
                 {/* 1. Telefon */}
                 <div className='border-card-border bg-card-background hover:border-card-border/80 flex flex-col justify-between gap-3 rounded-2xl border p-4 shadow-xs sm:flex-row sm:items-center'>
                     <div className='flex items-center gap-3.5'>
@@ -74,7 +59,7 @@ export function SupportModal({
                                     {t('support.phone')}
                                 </span>
                             </div>
-                            <p className='text-text-primary mt-0.5 font-mono text-base font-bold tracking-tight'>
+                            <p className='text-text-primary mt-0.5 font-mono text-base font-bold tracking-tight whitespace-nowrap'>
                                 {SUPPORT_CONTACTS.phoneFormatted}
                             </p>
                         </div>
@@ -277,7 +262,7 @@ export function SupportContactCard() {
                         <p className='text-text-secondary mt-3 text-xs font-medium'>
                             {t('support.phone')}
                         </p>
-                        <p className='text-text-primary font-mono text-sm font-bold'>
+                        <p className='text-text-primary font-mono text-sm font-bold whitespace-nowrap'>
                             {SUPPORT_CONTACTS.phoneFormatted}
                         </p>
                     </div>

@@ -24,6 +24,7 @@ export function Modal({
     children,
     footer,
     size = 'md',
+    className,
     isDirty = false,
 }: {
     open: boolean;
@@ -32,7 +33,8 @@ export function Modal({
     description?: string;
     children: ReactNode;
     footer?: ReactNode;
-    size?: 'md' | 'lg';
+    size?: 'md' | 'lg' | 'xl';
+    className?: string;
     isDirty?: boolean;
 }) {
     const t = useT();
@@ -116,7 +118,12 @@ export function Modal({
                 tabIndex={-1}
                 className={cn(
                     'border-card-border bg-card-surface-area animate-in fade-in-0 slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 relative z-10 my-0 max-h-[92dvh] w-full overflow-y-auto overscroll-contain rounded-t-3xl border p-5 shadow-2xl transition-all duration-200 outline-none sm:my-auto sm:max-h-[90vh] sm:rounded-2xl sm:p-6',
-                    size === 'lg' ? 'max-w-3xl' : 'max-w-lg',
+                    size === 'xl'
+                        ? 'max-w-3xl'
+                        : size === 'lg'
+                          ? 'max-w-2xl'
+                          : 'max-w-lg',
+                    className,
                 )}
             >
                 {/* Mobil telefonlar uchun maxsus visual sheet tutqichi */}

@@ -1241,7 +1241,7 @@ export const uz = {
     'landing.contactSubtitle':
         "Hisob ochish, narxlar yoki tizimni joriy qilish bo'yicha to'g'ridan-to'g'ri bog'lanishingiz mumkin:",
     'landing.floatingContact': "Savol bormi? Bog'lanish",
-    'landing.topContactPrompt': 'Hisob ochish yoki savollar uchun:',
+    'landing.topContactPrompt': 'Hamkorlik va savollar uchun:',
     'landing.heroContactTitle': 'Hisob ochish yoki savollar bormi?',
     'landing.heroContactSubtitle':
         "To'g'ridan-to'g'ri mutaxassis bilan bog'laning:",

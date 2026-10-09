@@ -6,7 +6,6 @@ import { LocaleSwitcher } from '@/components/common/locale-switcher';
 import { Button } from '@/components/tailgrids/core/button';
 import type { TranslationKey } from '@/i18n/dictionaries/uz';
 import { useT } from '@/i18n/provider';
-import { SupportHelpButton, PhoneIcon } from '@/components/ui/support-modal';
 import { SUPPORT_CONTACTS } from '@/utils/site';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -17,7 +16,6 @@ export const LANDING_NAV: { href: string; label: TranslationKey }[] = [
     { href: '#how', label: 'landing.navHow' },
     { href: '#tariffs', label: 'landing.navTariffs' },
     { href: '#faq', label: 'landing.navFaq' },
-    { href: '#contact', label: 'landing.navContact' },
 ];
 
 export function LandingHeader({
@@ -55,23 +53,12 @@ export function LandingHeader({
                         </a>
                         <span className='text-text-tertiary opacity-40'>·</span>
                         <a
-                            href={SUPPORT_CONTACTS.telegramPersonalUrl}
-                            target='_blank'
-                            rel='noopener noreferrer'
-                            className='flex items-center gap-1 font-medium transition hover:text-sky-500'
-                        >
-                            Telegram: {SUPPORT_CONTACTS.telegramPersonal}
-                        </a>
-                        <span className='text-text-tertiary hidden opacity-40 sm:inline'>
-                            ·
-                        </span>
-                        <a
                             href={SUPPORT_CONTACTS.telegramGroupUrl}
                             target='_blank'
                             rel='noopener noreferrer'
-                            className='hidden items-center gap-1 font-medium transition hover:text-indigo-500 sm:flex'
+                            className='flex items-center gap-1 font-medium transition hover:text-indigo-500'
                         >
-                            Guruh: {SUPPORT_CONTACTS.telegramGroup}
+                            👥 Guruh: {SUPPORT_CONTACTS.telegramGroup}
                         </a>
                     </div>
                 </div>
@@ -110,19 +97,7 @@ export function LandingHeader({
                         <div className='hidden items-center gap-2 sm:flex'>
                             <LocaleSwitcher />
                             <ThemeToggle />
-                            <SupportHelpButton />
                         </div>
-
-                        {/* Call link on wide screens */}
-                        <a
-                            href={SUPPORT_CONTACTS.phoneTel}
-                            className='border-card-border bg-card-surface-area hover:bg-background-gray-secondary text-text-primary hidden items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition 2xl:flex'
-                        >
-                            <PhoneIcon className='size-3.5 text-emerald-500' />
-                            <span className='font-mono'>
-                                {SUPPORT_CONTACTS.phoneFormatted}
-                            </span>
-                        </a>
 
                         {signedIn ? (
                             <Button
@@ -213,15 +188,6 @@ export function LandingHeader({
                                     📞 {SUPPORT_CONTACTS.phoneFormatted}
                                 </a>
                                 <a
-                                    href={SUPPORT_CONTACTS.telegramPersonalUrl}
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                    className='text-text-primary flex items-center gap-2 font-medium hover:text-sky-500'
-                                >
-                                    💬 Telegram:{' '}
-                                    {SUPPORT_CONTACTS.telegramPersonal}
-                                </a>
-                                <a
                                     href={SUPPORT_CONTACTS.telegramGroupUrl}
                                     target='_blank'
                                     rel='noopener noreferrer'
@@ -236,7 +202,6 @@ export function LandingHeader({
                             <div className='flex items-center gap-2'>
                                 <LocaleSwitcher />
                                 <ThemeToggle />
-                                <SupportHelpButton />
                             </div>
                             <Button
                                 appearance='outline'

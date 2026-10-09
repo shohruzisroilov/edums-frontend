@@ -1229,7 +1229,7 @@ export const uzCyrl: Dictionary = {
     'landing.contactSubtitle':
         'Ҳисоб очиш, нархлар ёки тизимни жорий қилиш бўйича тўғридан-тўғри боғланишингиз мумкин:',
     'landing.floatingContact': 'Савол борми? Боғланиш',
-    'landing.topContactPrompt': 'Ҳисоб очиш ёки саволлар учун:',
+    'landing.topContactPrompt': 'Ҳамкорлик ва саволлар учун:',
     'landing.heroContactTitle': 'Ҳисоб очиш ёки саволлар борми?',
     'landing.heroContactSubtitle': 'Тўғридан-тўғри мутахассис билан боғланинг:',
     'landing.heroAccent': "дафтар ва Excel'сиз",

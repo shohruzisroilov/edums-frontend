@@ -1,9 +1,6 @@
 'use client';
 
-import {
-    ContactSection,
-    FloatingContactWidget,
-} from '@/components/landing/contact-section';
+import { FloatingContactWidget } from '@/components/landing/contact-section';
 import { Faq } from '@/components/landing/faq';
 import { FeatureGrid } from '@/components/landing/feature-grid';
 import { FinalCta } from '@/components/landing/final-cta';
@@ -54,7 +51,6 @@ export default function LandingPage() {
                 <HowItWorks trialDays={trialDays} />
                 <Tariffs trialDays={trialDays} onStart={start} />
                 <Faq trialDays={trialDays} />
-                <ContactSection />
                 <FinalCta trialDays={trialDays} onStart={start} />
             </main>
 
