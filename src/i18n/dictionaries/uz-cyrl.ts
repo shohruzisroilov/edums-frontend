@@ -1223,6 +1223,12 @@ export const uzCyrl: Dictionary = {
     'landing.navFeatures': 'Имкониятлар',
     'landing.navHow': 'Қандай бошланади',
     'landing.navFaq': 'Саволлар',
+    'landing.navContact': 'Боғланиш',
+    'landing.contactEyebrow': 'Алоқа ва консультация',
+    'landing.contactTitle': 'Саволларингиз борми? Биз билан боғланинг',
+    'landing.contactSubtitle':
+        'Ҳисоб очиш, нархлар ёки тизимни жорий қилиш бўйича тўғридан-тўғри боғланишингиз мумкин:',
+    'landing.floatingContact': 'Савол борми? Боғланиш',
     'landing.heroAccent': "дафтар ва Excel'сиз",
     'landing.seeFeatures': 'Имкониятларни кўриш',
     'landing.heroPoint.noCard': 'Банк картаси шарт эмас',

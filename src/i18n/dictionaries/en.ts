@@ -1226,6 +1226,12 @@ export const en: Dictionary = {
     'landing.navFeatures': 'Features',
     'landing.navHow': 'Get started',
     'landing.navFaq': 'FAQ',
+    'landing.navContact': 'Contact',
+    'landing.contactEyebrow': 'Contact & consultation',
+    'landing.contactTitle': 'Have questions? Get in touch with us',
+    'landing.contactSubtitle':
+        'Direct contact for opening an account, tariffs, or onboarding support:',
+    'landing.floatingContact': 'Questions? Contact us',
     'landing.heroAccent': 'no notebooks, no spreadsheets',
     'landing.seeFeatures': 'See the features',
     'landing.heroPoint.noCard': 'No bank card needed',

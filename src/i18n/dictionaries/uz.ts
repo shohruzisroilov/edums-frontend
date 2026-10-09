@@ -1235,6 +1235,12 @@ export const uz = {
     'landing.navFeatures': 'Imkoniyatlar',
     'landing.navHow': 'Qanday boshlanadi',
     'landing.navFaq': 'Savollar',
+    'landing.navContact': "Bog'lanish",
+    'landing.contactEyebrow': 'Aloqa va konsultatsiya',
+    'landing.contactTitle': "Savollaringiz bormi? Biz bilan bog'laning",
+    'landing.contactSubtitle':
+        "Hisob ochish, narxlar yoki tizimni joriy qilish bo'yicha to'g'ridan-to'g'ri bog'lanishingiz mumkin:",
+    'landing.floatingContact': "Savol bormi? Bog'lanish",
     'landing.heroAccent': "daftar va Excel'siz",
     'landing.seeFeatures': "Imkoniyatlarni ko'rish",
     'landing.heroPoint.noCard': 'Bank kartasi shart emas',

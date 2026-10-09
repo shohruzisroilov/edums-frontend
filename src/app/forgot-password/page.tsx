@@ -19,7 +19,6 @@ import {
 import { ApiError } from '@/services/api/client';
 import { homeHref } from '@/utils/access';
 import { isValidUzbekMobile } from '@/utils/format';
-import { SUPPORT_CONTACTS } from '@/utils/site';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, type FormEvent } from 'react';
@@ -365,40 +364,6 @@ export default function ForgotPasswordPage() {
                                     {t('auth.signIn')}
                                 </Link>
                             </p>
-                            <div className='border-card-border bg-card-surface-area/60 text-text-tertiary mt-6 rounded-xl border p-3 text-center text-xs'>
-                                <p className='text-text-secondary font-medium'>
-                                    {t('auth.contact')}
-                                </p>
-                                <div className='mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5'>
-                                    <a
-                                        href={SUPPORT_CONTACTS.phoneTel}
-                                        className='text-brand-accent font-medium hover:underline'
-                                    >
-                                        📞 {SUPPORT_CONTACTS.phoneFormatted}
-                                    </a>
-                                    <span className='opacity-40'>·</span>
-                                    <a
-                                        href={
-                                            SUPPORT_CONTACTS.telegramPersonalUrl
-                                        }
-                                        target='_blank'
-                                        rel='noopener noreferrer'
-                                        className='text-brand-accent font-medium hover:underline'
-                                    >
-                                        Telegram:{' '}
-                                        {SUPPORT_CONTACTS.telegramPersonal}
-                                    </a>
-                                    <span className='opacity-40'>·</span>
-                                    <a
-                                        href={SUPPORT_CONTACTS.telegramGroupUrl}
-                                        target='_blank'
-                                        rel='noopener noreferrer'
-                                        className='text-brand-accent font-medium hover:underline'
-                                    >
-                                        Guruh: {SUPPORT_CONTACTS.telegramGroup}
-                                    </a>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

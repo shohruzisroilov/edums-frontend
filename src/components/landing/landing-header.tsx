@@ -6,6 +6,7 @@ import { LocaleSwitcher } from '@/components/common/locale-switcher';
 import { Button } from '@/components/tailgrids/core/button';
 import type { TranslationKey } from '@/i18n/dictionaries/uz';
 import { useT } from '@/i18n/provider';
+import { SupportHelpButton } from '@/components/ui/support-modal';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -15,6 +16,7 @@ export const LANDING_NAV: { href: string; label: TranslationKey }[] = [
     { href: '#how', label: 'landing.navHow' },
     { href: '#tariffs', label: 'landing.navTariffs' },
     { href: '#faq', label: 'landing.navFaq' },
+    { href: '#contact', label: 'landing.navContact' },
 ];
 
 export function LandingHeader({
@@ -61,6 +63,7 @@ export function LandingHeader({
                     <div className='hidden items-center gap-2 sm:flex'>
                         <LocaleSwitcher />
                         <ThemeToggle />
+                        <SupportHelpButton />
                     </div>
 
                     {signedIn ? (
@@ -142,6 +145,7 @@ export function LandingHeader({
                         <div className='flex items-center gap-2'>
                             <LocaleSwitcher />
                             <ThemeToggle />
+                            <SupportHelpButton />
                         </div>
                         <Button
                             appearance='outline'

@@ -1225,6 +1225,12 @@ export const ru: Dictionary = {
     'landing.navFeatures': 'Возможности',
     'landing.navHow': 'Как начать',
     'landing.navFaq': 'Вопросы',
+    'landing.navContact': 'Контакты',
+    'landing.contactEyebrow': 'Связь и консультация',
+    'landing.contactTitle': 'Есть вопросы? Свяжитесь с нами',
+    'landing.contactSubtitle':
+        'Вы можете напрямую связаться с нами для открытия счёта, консультации по тарифам или внедрению:',
+    'landing.floatingContact': 'Есть вопрос? Связаться',
     'landing.heroAccent': 'без тетрадей и Excel',
     'landing.seeFeatures': 'Посмотреть возможности',
     'landing.heroPoint.noCard': 'Банковская карта не нужна',
