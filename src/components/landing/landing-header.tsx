@@ -4,6 +4,7 @@ import { AppLogo } from '@/components/common/app-logo';
 import ThemeToggle from '@/components/common/header/theme-toggle';
 import { LocaleSwitcher } from '@/components/common/locale-switcher';
 import { Button } from '@/components/tailgrids/core/button';
+import { GroupIcon, PhoneIcon } from '@/components/ui/support-modal';
 import type { TranslationKey } from '@/i18n/dictionaries/uz';
 import { useT } from '@/i18n/provider';
 import { SUPPORT_CONTACTS } from '@/utils/site';
@@ -47,18 +48,20 @@ export function LandingHeader({
                     <div className='text-text-primary flex items-center gap-2.5 text-xs sm:gap-4'>
                         <a
                             href={SUPPORT_CONTACTS.phoneTel}
-                            className='hover:text-brand-500 flex items-center gap-1 font-mono font-bold transition'
+                            className='hover:text-brand-500 flex items-center gap-1.5 font-mono font-bold transition'
                         >
-                            📞 {SUPPORT_CONTACTS.phoneFormatted}
+                            <PhoneIcon className='size-3.5 text-emerald-500' />
+                            <span>{SUPPORT_CONTACTS.phoneFormatted}</span>
                         </a>
                         <span className='text-text-tertiary opacity-40'>·</span>
                         <a
                             href={SUPPORT_CONTACTS.telegramGroupUrl}
                             target='_blank'
                             rel='noopener noreferrer'
-                            className='flex items-center gap-1 font-medium transition hover:text-indigo-500'
+                            className='flex items-center gap-1.5 font-medium transition hover:text-indigo-500'
                         >
-                            👥 Guruh: {SUPPORT_CONTACTS.telegramGroup}
+                            <GroupIcon className='size-3.5 text-indigo-500' />
+                            <span>Guruh: {SUPPORT_CONTACTS.telegramGroup}</span>
                         </a>
                     </div>
                 </div>
@@ -185,7 +188,10 @@ export function LandingHeader({
                                     href={SUPPORT_CONTACTS.phoneTel}
                                     className='text-text-primary hover:text-brand-500 flex items-center gap-2 font-mono font-bold'
                                 >
-                                    📞 {SUPPORT_CONTACTS.phoneFormatted}
+                                    <PhoneIcon className='size-3.5 text-emerald-500' />
+                                    <span>
+                                        {SUPPORT_CONTACTS.phoneFormatted}
+                                    </span>
                                 </a>
                                 <a
                                     href={SUPPORT_CONTACTS.telegramGroupUrl}
@@ -193,7 +199,10 @@ export function LandingHeader({
                                     rel='noopener noreferrer'
                                     className='text-text-primary flex items-center gap-2 font-medium hover:text-indigo-500'
                                 >
-                                    👥 Guruh: {SUPPORT_CONTACTS.telegramGroup}
+                                    <GroupIcon className='size-3.5 text-indigo-500' />
+                                    <span>
+                                        Guruh: {SUPPORT_CONTACTS.telegramGroup}
+                                    </span>
                                 </a>
                             </div>
                         </div>

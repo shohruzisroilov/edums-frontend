@@ -63,8 +63,9 @@ export function ContactSection() {
                             <div className='flex size-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 transition-colors group-hover:bg-emerald-500/20 dark:bg-emerald-500/15 dark:text-emerald-400'>
                                 <PhoneIcon className='size-6' />
                             </div>
-                            <span className='rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400'>
-                                📞 Qo&apos;ng&apos;iroq
+                            <span className='inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400'>
+                                <PhoneIcon className='size-3' />
+                                <span>Qo&apos;ng&apos;iroq</span>
                             </span>
                         </div>
 
@@ -152,8 +153,9 @@ export function ContactSection() {
                             <div className='flex size-12 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600 transition-colors group-hover:bg-indigo-500/20 dark:bg-indigo-500/15 dark:text-indigo-400'>
                                 <GroupIcon className='size-6' />
                             </div>
-                            <span className='rounded-full border border-indigo-500/20 bg-indigo-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400'>
-                                👥 Hamjamiyat
+                            <span className='inline-flex items-center gap-1 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400'>
+                                <GroupIcon className='size-3' />
+                                <span>Hamjamiyat</span>
                             </span>
                         </div>
 
