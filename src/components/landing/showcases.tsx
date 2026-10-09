@@ -103,7 +103,7 @@ export function Showcases() {
                             top: `${4 + index * 0.75}rem`,
                             zIndex: 10 + index,
                         }}
-                        className='border-card-border bg-card-background/95 sticky grid items-center gap-6 rounded-2xl border p-5 shadow-xl backdrop-blur-md transition-all duration-300 sm:gap-8 sm:rounded-3xl sm:p-10 sm:shadow-2xl lg:grid-cols-2 lg:gap-12 lg:p-12'
+                        className='border-card-border bg-card-background/95 relative grid items-center gap-6 rounded-2xl border p-5 shadow-xl backdrop-blur-md transition-all duration-300 sm:sticky sm:gap-8 sm:rounded-3xl sm:p-10 sm:shadow-2xl lg:grid-cols-2 lg:gap-12 lg:p-12'
                     >
                         <div
                             className={index % 2 ? 'lg:order-last' : undefined}

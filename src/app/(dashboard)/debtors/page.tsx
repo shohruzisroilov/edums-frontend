@@ -22,6 +22,7 @@ import { PaymentModal } from '@/components/ui/payment-modal';
 import { PhoneLink } from '@/components/ui/phone-link';
 import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { SearchInput } from '@/components/ui/search-input';
+import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useListQuery, useOffsetInRange } from '@/hooks/use-list-query';
 import { useSession } from '@/hooks/use-session';
@@ -30,7 +31,7 @@ import { listBranches } from '@/services/api/branches';
 import { listDebtors } from '@/services/api/student-payments';
 import type { Debtor } from '@/types/api';
 import { can } from '@/utils/access';
-import { exportToCsv } from '@/utils/export';
+import { exportToExcel } from '@/utils/export';
 import { formatPhone, fullName } from '@/utils/format';
 import { Download1, SackDollar } from '@tailgrids/icons';
 import { useQuery } from '@tanstack/react-query';
@@ -49,6 +50,7 @@ export default function DebtorsPage() {
 
 function DebtorsView() {
     const t = useT();
+    const toastError = useApiErrorToast();
     const { formatPrice } = useFormat();
     const { session } = useSession();
 
@@ -67,6 +69,7 @@ function DebtorsView() {
     } = useListQuery({ branch_id: '' });
 
     const [paying, setPaying] = useState<Debtor | null>(null);
+    const [exporting, setExporting] = useState(false);
 
     const query = useQuery({
         queryKey: ['debtors', { search, ...filters, limit, offset }],
@@ -91,6 +94,50 @@ function DebtorsView() {
 
     const allDebtors = query.data?.data ?? [];
 
+    const handleExportExcel = async () => {
+        try {
+            setExporting(true);
+            let items = query.data?.data ?? [];
+            const total = query.data?.count ?? 0;
+            if (total > items.length) {
+                const res = await listDebtors({
+                    search: search || undefined,
+                    branch_id: filters.branch_id || undefined,
+                    limit: Math.min(total, 200),
+                    offset: 0,
+                });
+                items = res.data;
+            }
+            if (!items.length) return;
+            await exportToExcel(
+                t('debtors.title'),
+                'Debtors',
+                [
+                    t('common.student'),
+                    t('common.phone'),
+                    t('common.group'),
+                    `${t('balance.charged')} (${som})`,
+                    `${t('balance.paid')} (${som})`,
+                    `${t('debtors.debt')} (${som})`,
+                ],
+                items.map((d) => [
+                    fullName(d.student),
+                    formatPhone(
+                        d.student.phone_number || d.student.parent_phone,
+                    ),
+                    d.group.name,
+                    d.charged,
+                    d.paid,
+                    d.debt,
+                ]),
+            );
+        } catch (err) {
+            toastError(err);
+        } finally {
+            setExporting(false);
+        }
+    };
+
     return (
         <>
             <PageHeader
@@ -103,30 +150,8 @@ function DebtorsView() {
                             <Button
                                 appearance='outline'
                                 size='md'
-                                onPress={() => {
-                                    exportToCsv(
-                                        t('debtors.title'),
-                                        [
-                                            t('common.student'),
-                                            t('common.phone'),
-                                            t('common.group'),
-                                            `${t('balance.charged')} (${som})`,
-                                            `${t('balance.paid')} (${som})`,
-                                            `${t('debtors.debt')} (${som})`,
-                                        ],
-                                        allDebtors.map((d) => [
-                                            fullName(d.student),
-                                            formatPhone(
-                                                d.student.phone_number ||
-                                                    d.student.parent_phone,
-                                            ),
-                                            d.group.name,
-                                            d.charged,
-                                            d.paid,
-                                            d.debt,
-                                        ]),
-                                    );
-                                }}
+                                isPending={exporting}
+                                onPress={() => void handleExportExcel()}
                             >
                                 <Download1 />
                                 {/* Telefonda faqat ikonka — asosiy amal bir qatorda qolsin. */}
@@ -139,8 +164,8 @@ function DebtorsView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-3 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
-                <div className='min-w-[200px] flex-1 lg:min-w-40'>
+            <div className='flex flex-wrap items-center gap-3 px-4 pb-4 sm:px-5'>
+                <div className='min-w-0 flex-1 sm:min-w-[200px]'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
@@ -168,7 +193,7 @@ function DebtorsView() {
                             />
                         </MobileFilterSheet>
 
-                        <div className='hidden w-48 min-w-28 shrink sm:block'>
+                        <div className='hidden w-48 shrink-0 sm:block'>
                             <SelectInput
                                 options={branches.map((branch) => ({
                                     value: branch.id,
@@ -233,8 +258,8 @@ function DebtorsView() {
                                             <div className='flex items-start justify-between gap-3'>
                                                 <div className='flex min-w-0 flex-1 items-center gap-2.5'>
                                                     <div className='min-w-0'>
-                                                        <div className='flex items-center gap-2'>
-                                                            <span className='text-text-tertiary text-xs font-semibold tabular-nums'>
+                                                        <div className='flex items-start gap-2'>
+                                                            <span className='text-text-tertiary mt-0.5 shrink-0 text-xs font-semibold tabular-nums'>
                                                                 #
                                                                 {offset +
                                                                     index +
@@ -243,21 +268,21 @@ function DebtorsView() {
                                                             {canOpenStudents ? (
                                                                 <Link
                                                                     href={`/students/${debtor.student.id}`}
-                                                                    className='text-text-primary hover:text-brand-accent truncate text-sm font-semibold hover:underline'
+                                                                    className='text-text-primary hover:text-brand-accent text-sm font-semibold break-words hover:underline'
                                                                 >
                                                                     {fullName(
                                                                         debtor.student,
                                                                     )}
                                                                 </Link>
                                                             ) : (
-                                                                <span className='text-text-primary truncate text-sm font-semibold'>
+                                                                <span className='text-text-primary text-sm font-semibold break-words'>
                                                                     {fullName(
                                                                         debtor.student,
                                                                     )}
                                                                 </span>
                                                             )}
                                                         </div>
-                                                        <p className='text-text-tertiary mt-0.5 text-xs'>
+                                                        <p className='text-text-tertiary mt-0.5 text-xs break-words'>
                                                             {debtor.group.name}
                                                         </p>
                                                     </div>

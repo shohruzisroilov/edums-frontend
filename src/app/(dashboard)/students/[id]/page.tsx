@@ -199,82 +199,187 @@ function StudentDetailView() {
                 ) : enrollmentsQuery.data.length === 0 ? (
                     <EmptyState message={t('students.historyEmpty')} />
                 ) : (
-                    <TableRoot fullBleed className='border-x-0 border-t-0'>
-                        <TableHeader>
-                            <TableRow>
-                                <RowNumberHead />
-                                <TableHead>{t('common.group')}</TableHead>
-                                <TableHead>{t('students.joinedAt')}</TableHead>
-                                <TableHead>{t('students.leftAt')}</TableHead>
-                                <TableHead numeric>
-                                    {t('students.monthlyPrice')}
-                                </TableHead>
-                                {canUpdate && (
-                                    <TableHead className='text-right'>
-                                        {t('common.actions')}
-                                    </TableHead>
-                                )}
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {enrollmentsQuery.data.map((enrollment, index) => (
-                                <TableRow key={enrollment.id}>
-                                    <RowNumberCell index={index} />
-                                    <TableCell primary>
-                                        {canOpenGroups ? (
-                                            <Link
-                                                href={`/groups/${enrollment.group.id}`}
-                                                className='hover:text-brand-accent hover:underline'
-                                            >
-                                                {enrollment.group.name}
-                                            </Link>
-                                        ) : (
-                                            enrollment.group.name
-                                        )}
-                                    </TableCell>
-                                    <TableCell>
-                                        {formatDate(enrollment.joined_at)}
-                                    </TableCell>
-                                    <TableCell>
-                                        {enrollment.left_at ? (
-                                            formatDate(enrollment.left_at)
-                                        ) : (
-                                            <Badge size='sm' color='success'>
-                                                {t('students.studying')}
-                                            </Badge>
-                                        )}
-                                    </TableCell>
-                                    <TableCell numeric>
-                                        {formatPrice(
-                                            enrollment.monthly_price,
-                                            t('common.som'),
-                                        )}
-                                    </TableCell>
-                                    {canUpdate && (
-                                        <TableCell>
-                                            <div className='flex justify-end'>
-                                                <Button
-                                                    appearance='outline'
-                                                    size='md'
-                                                    iconOnly
-                                                    aria-label={t(
-                                                        'common.edit',
-                                                    )}
-                                                    onPress={() =>
-                                                        setEditingEnrollment(
-                                                            enrollment,
-                                                        )
-                                                    }
+                    <>
+                        {/* Mobile enrollments card list */}
+                        <div className='divide-card-border divide-y md:hidden'>
+                            {enrollmentsQuery.data.map((enrollment) => (
+                                <div
+                                    key={enrollment.id}
+                                    className='space-y-2 p-4'
+                                >
+                                    <div className='flex items-start justify-between gap-3'>
+                                        <div className='min-w-0'>
+                                            {canOpenGroups ? (
+                                                <Link
+                                                    href={`/groups/${enrollment.group.id}`}
+                                                    className='text-text-primary hover:text-brand-accent block text-sm font-semibold break-words'
                                                 >
-                                                    <Pencil1 />
-                                                </Button>
+                                                    {enrollment.group.name}
+                                                </Link>
+                                            ) : (
+                                                <p className='text-text-primary text-sm font-semibold break-words'>
+                                                    {enrollment.group.name}
+                                                </p>
+                                            )}
+                                            <div className='mt-1 flex items-center gap-2'>
+                                                {enrollment.left_at ? (
+                                                    <span className='text-text-tertiary text-xs'>
+                                                        {formatDate(
+                                                            enrollment.joined_at,
+                                                        )}{' '}
+                                                        –{' '}
+                                                        {formatDate(
+                                                            enrollment.left_at,
+                                                        )}
+                                                    </span>
+                                                ) : (
+                                                    <Badge
+                                                        size='sm'
+                                                        color='success'
+                                                    >
+                                                        {t('students.studying')}
+                                                    </Badge>
+                                                )}
                                             </div>
-                                        </TableCell>
+                                        </div>
+                                        <div className='shrink-0 text-right'>
+                                            <span className='text-text-primary block text-sm font-semibold tabular-nums'>
+                                                {formatPrice(
+                                                    enrollment.monthly_price,
+                                                    t('common.som'),
+                                                )}
+                                            </span>
+                                            <span className='text-text-tertiary text-xs'>
+                                                {formatDate(
+                                                    enrollment.joined_at,
+                                                )}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {canUpdate && (
+                                        <div className='flex justify-end pt-1'>
+                                            <Button
+                                                appearance='outline'
+                                                size='sm'
+                                                onPress={() =>
+                                                    setEditingEnrollment(
+                                                        enrollment,
+                                                    )
+                                                }
+                                            >
+                                                <Pencil1 className='size-3.5' />
+                                                {t('common.edit')}
+                                            </Button>
+                                        </div>
                                     )}
-                                </TableRow>
+                                </div>
                             ))}
-                        </TableBody>
-                    </TableRoot>
+                        </div>
+
+                        {/* Desktop table */}
+                        <div className='hidden md:block'>
+                            <TableRoot
+                                fullBleed
+                                className='border-x-0 border-t-0'
+                            >
+                                <TableHeader>
+                                    <TableRow>
+                                        <RowNumberHead />
+                                        <TableHead>
+                                            {t('common.group')}
+                                        </TableHead>
+                                        <TableHead>
+                                            {t('students.joinedAt')}
+                                        </TableHead>
+                                        <TableHead>
+                                            {t('students.leftAt')}
+                                        </TableHead>
+                                        <TableHead numeric>
+                                            {t('students.monthlyPrice')}
+                                        </TableHead>
+                                        {canUpdate && (
+                                            <TableHead className='text-right'>
+                                                {t('common.actions')}
+                                            </TableHead>
+                                        )}
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {enrollmentsQuery.data.map(
+                                        (enrollment, index) => (
+                                            <TableRow key={enrollment.id}>
+                                                <RowNumberCell index={index} />
+                                                <TableCell primary>
+                                                    {canOpenGroups ? (
+                                                        <Link
+                                                            href={`/groups/${enrollment.group.id}`}
+                                                            className='hover:text-brand-accent hover:underline'
+                                                        >
+                                                            {
+                                                                enrollment.group
+                                                                    .name
+                                                            }
+                                                        </Link>
+                                                    ) : (
+                                                        enrollment.group.name
+                                                    )}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {formatDate(
+                                                        enrollment.joined_at,
+                                                    )}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {enrollment.left_at ? (
+                                                        formatDate(
+                                                            enrollment.left_at,
+                                                        )
+                                                    ) : (
+                                                        <Badge
+                                                            size='sm'
+                                                            color='success'
+                                                        >
+                                                            {t(
+                                                                'students.studying',
+                                                            )}
+                                                        </Badge>
+                                                    )}
+                                                </TableCell>
+                                                <TableCell numeric>
+                                                    {formatPrice(
+                                                        enrollment.monthly_price,
+                                                        t('common.som'),
+                                                    )}
+                                                </TableCell>
+                                                {canUpdate && (
+                                                    <TableCell>
+                                                        <div className='flex justify-end'>
+                                                            <Button
+                                                                appearance='outline'
+                                                                size='md'
+                                                                iconOnly
+                                                                aria-label={t(
+                                                                    'common.edit',
+                                                                )}
+                                                                onPress={() =>
+                                                                    setEditingEnrollment(
+                                                                        enrollment,
+                                                                    )
+                                                                }
+                                                            >
+                                                                <Pencil1 />
+                                                            </Button>
+                                                        </div>
+                                                    </TableCell>
+                                                )}
+                                            </TableRow>
+                                        ),
+                                    )}
+                                </TableBody>
+                            </TableRoot>
+                        </div>
+                    </>
                 )}
             </DetailSection>
 

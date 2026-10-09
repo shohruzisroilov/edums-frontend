@@ -73,39 +73,78 @@ export function StudentAttendanceSection({ studentId }: { studentId: string }) {
                             </span>
                         ))}
                     </div>
-                    <TableRoot fullBleed className='border-x-0 border-t-0'>
-                        <TableHeader>
-                            <TableRow>
-                                <RowNumberHead />
-                                <TableHead>{t('cashbox.paidAt')}</TableHead>
-                                <TableHead>{t('common.group')}</TableHead>
-                                <TableHead>{t('common.status')}</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {query.data.records.map((record, index) => (
-                                <TableRow
-                                    key={`${record.group.id}:${record.date}`}
-                                >
-                                    <RowNumberCell index={index} />
-                                    <TableCell>
-                                        {formatDate(record.date)}
-                                    </TableCell>
-                                    <TableCell>{record.group.name}</TableCell>
-                                    <TableCell>
-                                        <Badge
-                                            size='sm'
-                                            color={STATUS_COLORS[record.status]}
-                                        >
-                                            {t(
-                                                `attendanceStatus.${record.status}`,
-                                            )}
-                                        </Badge>
-                                    </TableCell>
+                    {/* Mobile cards view (< md) */}
+                    <div className='divide-card-border divide-y md:hidden'>
+                        {query.data.records.map((record, index) => (
+                            <div
+                                key={`${record.group.id}:${record.date}`}
+                                className='hover:bg-background-gray-primary/20 flex items-center justify-between gap-3 p-3.5 text-sm transition-colors'
+                            >
+                                <div className='min-w-0 flex-1'>
+                                    <div className='flex items-center gap-2'>
+                                        <span className='text-text-tertiary shrink-0 text-xs font-semibold tabular-nums'>
+                                            #{index + 1}
+                                        </span>
+                                        <span className='text-text-primary font-medium'>
+                                            {formatDate(record.date)}
+                                        </span>
+                                    </div>
+                                    <p className='text-text-tertiary mt-0.5 text-xs'>
+                                        {record.group.name}
+                                    </p>
+                                </div>
+                                <div className='shrink-0'>
+                                    <Badge
+                                        size='sm'
+                                        color={STATUS_COLORS[record.status]}
+                                    >
+                                        {t(`attendanceStatus.${record.status}`)}
+                                    </Badge>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Desktop table (md+) */}
+                    <div className='hidden md:block'>
+                        <TableRoot fullBleed className='border-x-0 border-t-0'>
+                            <TableHeader>
+                                <TableRow>
+                                    <RowNumberHead />
+                                    <TableHead>{t('common.date')}</TableHead>
+                                    <TableHead>{t('common.group')}</TableHead>
+                                    <TableHead>{t('common.status')}</TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </TableRoot>
+                            </TableHeader>
+                            <TableBody>
+                                {query.data.records.map((record, index) => (
+                                    <TableRow
+                                        key={`${record.group.id}:${record.date}`}
+                                    >
+                                        <RowNumberCell index={index} />
+                                        <TableCell>
+                                            {formatDate(record.date)}
+                                        </TableCell>
+                                        <TableCell>
+                                            {record.group.name}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge
+                                                size='sm'
+                                                color={
+                                                    STATUS_COLORS[record.status]
+                                                }
+                                            >
+                                                {t(
+                                                    `attendanceStatus.${record.status}`,
+                                                )}
+                                            </Badge>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </TableRoot>
+                    </div>
                 </>
             )}
         </DetailSection>

@@ -27,10 +27,11 @@ export function ConfirmDialog({
         <Modal open={open} onClose={onCancel} title={title}>
             <p className='text-text-secondary text-sm'>{message}</p>
 
-            <div className='mt-6 flex items-center justify-end gap-2'>
+            <div className='mt-6 flex flex-col-reverse items-stretch justify-end gap-2 sm:flex-row sm:items-center'>
                 <Button
                     appearance='outline'
                     size='md'
+                    className='w-full sm:w-auto'
                     onPress={onCancel}
                     isDisabled={pending}
                 >
@@ -40,6 +41,7 @@ export function ConfirmDialog({
                     variant='danger'
                     appearance='fill'
                     size='md'
+                    className='w-full sm:w-auto'
                     onPress={onConfirm}
                     isDisabled={pending}
                 >

@@ -49,7 +49,7 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                         type='button'
                         onClick={onMenuClick}
                         aria-label={t('nav.openMenu')}
-                        className='text-icon-tertiary hover:text-text-primary hover:bg-background-gray-secondary focus-visible:ring-input-primary-focus-border/30 -ml-1 flex size-10 items-center justify-center rounded-lg transition-colors outline-none focus-visible:ring-4 sm:size-11 md:hidden'
+                        className='text-icon-tertiary hover:text-text-primary hover:bg-background-gray-secondary focus-visible:ring-input-primary-focus-border/30 -ml-1 flex size-11 items-center justify-center rounded-lg transition-colors outline-none focus-visible:ring-4 md:hidden'
                     >
                         <MenuIcon />
                     </button>
@@ -116,13 +116,15 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                         type='button'
                         onClick={() => setSearchOpen(true)}
                         aria-label={t('header.searchPlaceholder')}
-                        className='border-card-border bg-card-background text-icon-primary hover:bg-background-gray-secondary focus-visible:border-input-primary-focus-border focus-visible:ring-input-primary-focus-border/20 flex size-10 items-center justify-center rounded-lg border shadow-xs transition-colors outline-none focus-visible:ring-4 sm:hidden'
+                        className='border-card-border bg-card-background text-icon-primary hover:bg-background-gray-secondary focus-visible:border-input-primary-focus-border focus-visible:ring-input-primary-focus-border/20 flex size-11 items-center justify-center rounded-lg border shadow-xs transition-colors outline-none focus-visible:ring-4 sm:hidden'
                     >
                         <Search1 className='size-5' />
                     </button>
 
-                    <LocaleSwitcher />
-                    <ThemeToggle />
+                    <div className='hidden items-center gap-1.5 sm:flex'>
+                        <LocaleSwitcher />
+                        <ThemeToggle />
+                    </div>
                     <UserProfileButton />
                 </div>
             </div>

@@ -53,9 +53,10 @@ import {
 } from '@/types/api';
 import { can } from '@/utils/access';
 import { cn } from '@/utils/cn';
+import { exportToExcel } from '@/utils/export';
 import { fullName, toISODate } from '@/utils/format';
 import { TONE_TEXT } from '@/utils/tone';
-import { Pencil1 } from '@tailgrids/icons';
+import { Download1, Pencil1 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
@@ -138,12 +139,54 @@ function SalariesView() {
         return `${type} · ${value}`;
     }
 
+    const handleExportExcel = async () => {
+        const rows = sheetQuery.data?.rows ?? [];
+        if (rows.length === 0) return;
+        await exportToExcel(
+            `${t('salaries.title')} - ${month}`,
+            'Salaries',
+            [
+                t('common.fullName'),
+                t('salaries.rate'),
+                `${t('salaries.revenue')} (${som})`,
+                `${t('salaries.accrued')} (${som})`,
+                `${t('salaries.paid')} (${som})`,
+                `${t('salaries.balance')} (${som})`,
+            ],
+            rows.map((row) => [
+                fullName(row.user),
+                rateLabel(row),
+                row.revenue,
+                row.accrued,
+                row.paid,
+                row.balance,
+            ]),
+        );
+    };
+
     return (
         <>
             <PageHeader
                 title={t('salaries.title')}
                 description={t('salaries.subtitle')}
-                actions={<MonthSwitcher month={month} onChange={setMonth} />}
+                actions={
+                    <div className='flex flex-wrap items-center gap-2'>
+                        {sheetQuery.data?.rows &&
+                            sheetQuery.data.rows.length > 0 && (
+                                <Button
+                                    appearance='outline'
+                                    size='md'
+                                    onPress={handleExportExcel}
+                                >
+                                    <Download1 />
+                                    <span className='sr-only sm:not-sr-only'>
+                                        {t('common.export')}
+                                    </span>
+                                </Button>
+                            )}
+                        <MonthSwitcher month={month} onChange={setMonth} />
+                    </div>
+                }
             />
 
             <div className='px-4 sm:px-5'>
@@ -155,94 +198,83 @@ function SalariesView() {
                     ) : sheetQuery.data.rows.length === 0 ? (
                         <EmptyState message={t('salaries.empty')} />
                     ) : (
-                        <TableRoot fullBleed className='border-x-0 border-t-0'>
-                            {/* Pul ustunlari ko'p — valyuta sarlavhada, katakda faqat
-                                raqam: jadval noutbuk ekraniga sig'adi. */}
-                            <TableHeader>
-                                <TableRow>
-                                    <RowNumberHead />
-                                    <TableHead>{t('salaries.staff')}</TableHead>
-                                    <TableHead
-                                        numeric
-                                        className='max-w-24 whitespace-normal'
+                        <>
+                            {/* Mobile card list for sheet */}
+                            <div className='divide-card-border divide-y md:hidden'>
+                                {sheetQuery.data.rows.map((row) => (
+                                    <div
+                                        key={row.user.id}
+                                        className='space-y-3 p-4'
                                     >
-                                        {t('salaries.groupsStudents')}
-                                    </TableHead>
-                                    <TableHead numeric>
-                                        {t('salaries.revenue')}
-                                        <span className='block font-normal tracking-normal normal-case'>
-                                            {som}
-                                        </span>
-                                    </TableHead>
-                                    <TableHead numeric>
-                                        {t('salaries.accrued')}
-                                        <span className='block font-normal tracking-normal normal-case'>
-                                            {som}
-                                        </span>
-                                    </TableHead>
-                                    <TableHead numeric>
-                                        {t('salaries.paid')}
-                                        <span className='block font-normal tracking-normal normal-case'>
-                                            {som}
-                                        </span>
-                                    </TableHead>
-                                    <TableHead numeric>
-                                        {t('salaries.balance')}
-                                        <span className='block font-normal tracking-normal normal-case'>
-                                            {som}
-                                        </span>
-                                    </TableHead>
-                                    {canManage && (
-                                        <TableHead className='text-right'>
-                                            {t('common.actions')}
-                                        </TableHead>
-                                    )}
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {sheetQuery.data.rows.map((row, index) => (
-                                    <TableRow key={row.user.id}>
-                                        <RowNumberCell index={index} />
-                                        <TableCell
-                                            primary
-                                            className='min-w-44 whitespace-normal'
-                                        >
-                                            {fullName(row.user)}
-                                            <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
-                                                {rateLabel(row)}
-                                            </p>
-                                        </TableCell>
-                                        <TableCell numeric>
-                                            {formatNumber(row.groups_count)} /{' '}
-                                            {formatNumber(row.students_count)}
-                                        </TableCell>
-                                        <TableCell numeric>
-                                            {formatNumber(row.revenue)}
-                                        </TableCell>
-                                        <TableCell numeric>
-                                            {formatNumber(row.accrued)}
-                                        </TableCell>
-                                        <TableCell numeric>
-                                            {formatNumber(row.paid)}
-                                        </TableCell>
-                                        <TableCell
-                                            numeric
-                                            className={cn(
-                                                'font-semibold',
-                                                payoutTone(row),
-                                            )}
-                                        >
-                                            {formatNumber(row.balance)}
-                                        </TableCell>
-                                        {canManage && (
-                                            <TableCell>
-                                                {/* Har oy — to'lash; stavka bir marta
-                                                    belgilanadi, u "⋯" menyuda. */}
-                                                <div className='flex items-center justify-end gap-2'>
+                                        <div className='flex items-start justify-between gap-2'>
+                                            <div>
+                                                <h3 className='text-text-primary text-sm font-semibold'>
+                                                    {fullName(row.user)}
+                                                </h3>
+                                                <p className='text-text-tertiary mt-0.5 text-xs'>
+                                                    {rateLabel(row)}
+                                                </p>
+                                            </div>
+                                            <div
+                                                className={cn(
+                                                    'text-right text-sm font-semibold tabular-nums',
+                                                    payoutTone(row),
+                                                )}
+                                            >
+                                                <span className='text-text-tertiary block text-[10px] font-normal tracking-wider uppercase'>
+                                                    {t('salaries.balance')}
+                                                </span>
+                                                {formatNumber(row.balance)}{' '}
+                                                {som}
+                                            </div>
+                                        </div>
+
+                                        <div className='bg-surface-ground grid grid-cols-3 gap-2 rounded-lg p-2.5 text-center text-xs'>
+                                            <div>
+                                                <span className='text-text-tertiary block text-[11px]'>
+                                                    {t('salaries.revenue')}
+                                                </span>
+                                                <span className='text-text-primary font-medium tabular-nums'>
+                                                    {formatNumber(row.revenue)}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <span className='text-text-tertiary block text-[11px]'>
+                                                    {t('salaries.accrued')}
+                                                </span>
+                                                <span className='text-text-primary font-medium tabular-nums'>
+                                                    {formatNumber(row.accrued)}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <span className='text-text-tertiary block text-[11px]'>
+                                                    {t('salaries.paid')}
+                                                </span>
+                                                <span className='text-text-primary font-medium tabular-nums'>
+                                                    {formatNumber(row.paid)}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div className='text-text-tertiary flex items-center justify-between pt-1 text-xs'>
+                                            <span>
+                                                {t('salaries.groupsStudents')}:{' '}
+                                                <strong className='text-text-secondary font-medium'>
+                                                    {formatNumber(
+                                                        row.groups_count,
+                                                    )}{' '}
+                                                    /{' '}
+                                                    {formatNumber(
+                                                        row.students_count,
+                                                    )}
+                                                </strong>
+                                            </span>
+                                            {canManage && (
+                                                <div className='flex items-center gap-2'>
                                                     <Button
                                                         variant='primary'
                                                         appearance='outline'
-                                                        size='md'
+                                                        size='sm'
                                                         onPress={() =>
                                                             setPaying(row)
                                                         }
@@ -269,42 +301,236 @@ function SalariesView() {
                                                         ]}
                                                     />
                                                 </div>
-                                            </TableCell>
-                                        )}
-                                    </TableRow>
+                                            )}
+                                        </div>
+                                    </div>
                                 ))}
-                                <TableRow>
-                                    <TableCell />
-                                    <TableCell primary>
-                                        {t('common.total')}
-                                    </TableCell>
-                                    <TableCell />
-                                    <TableCell />
-                                    <TableCell numeric>
-                                        {formatNumber(
-                                            sheetQuery.data.totals.accrued,
+
+                                {/* Totals card for mobile */}
+                                <div className='bg-surface-ground/50 space-y-2 p-4'>
+                                    <div className='text-text-primary flex items-center justify-between text-sm font-semibold'>
+                                        <span>{t('common.total')}</span>
+                                        <span
+                                            className={cn(
+                                                'tabular-nums',
+                                                payoutTone(
+                                                    sheetQuery.data.totals,
+                                                ),
+                                            )}
+                                        >
+                                            {formatNumber(
+                                                sheetQuery.data.totals.balance,
+                                            )}{' '}
+                                            {som}
+                                        </span>
+                                    </div>
+                                    <div className='text-text-tertiary grid grid-cols-2 gap-2 pt-1 text-xs'>
+                                        <div>
+                                            {t('salaries.accrued')}:{' '}
+                                            <span className='text-text-secondary font-medium tabular-nums'>
+                                                {formatNumber(
+                                                    sheetQuery.data.totals
+                                                        .accrued,
+                                                )}{' '}
+                                                {som}
+                                            </span>
+                                        </div>
+                                        <div className='text-right'>
+                                            {t('salaries.paid')}:{' '}
+                                            <span className='text-text-secondary font-medium tabular-nums'>
+                                                {formatNumber(
+                                                    sheetQuery.data.totals.paid,
+                                                )}{' '}
+                                                {som}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Desktop table */}
+                            <div className='hidden md:block'>
+                                <TableRoot
+                                    fullBleed
+                                    className='border-x-0 border-t-0'
+                                >
+                                    {/* Pul ustunlari ko'p — valyuta sarlavhada, katakda faqat
+                                        raqam: jadval noutbuk ekraniga sig'adi. */}
+                                    <TableHeader>
+                                        <TableRow>
+                                            <RowNumberHead />
+                                            <TableHead>
+                                                {t('salaries.staff')}
+                                            </TableHead>
+                                            <TableHead
+                                                numeric
+                                                className='max-w-24 whitespace-normal'
+                                            >
+                                                {t('salaries.groupsStudents')}
+                                            </TableHead>
+                                            <TableHead numeric>
+                                                {t('salaries.revenue')}
+                                                <span className='block font-normal tracking-normal normal-case'>
+                                                    {som}
+                                                </span>
+                                            </TableHead>
+                                            <TableHead numeric>
+                                                {t('salaries.accrued')}
+                                                <span className='block font-normal tracking-normal normal-case'>
+                                                    {som}
+                                                </span>
+                                            </TableHead>
+                                            <TableHead numeric>
+                                                {t('salaries.paid')}
+                                                <span className='block font-normal tracking-normal normal-case'>
+                                                    {som}
+                                                </span>
+                                            </TableHead>
+                                            <TableHead numeric>
+                                                {t('salaries.balance')}
+                                                <span className='block font-normal tracking-normal normal-case'>
+                                                    {som}
+                                                </span>
+                                            </TableHead>
+                                            {canManage && (
+                                                <TableHead className='text-right'>
+                                                    {t('common.actions')}
+                                                </TableHead>
+                                            )}
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {sheetQuery.data.rows.map(
+                                            (row, index) => (
+                                                <TableRow key={row.user.id}>
+                                                    <RowNumberCell
+                                                        index={index}
+                                                    />
+                                                    <TableCell
+                                                        primary
+                                                        className='min-w-44 whitespace-normal'
+                                                    >
+                                                        {fullName(row.user)}
+                                                        <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
+                                                            {rateLabel(row)}
+                                                        </p>
+                                                    </TableCell>
+                                                    <TableCell numeric>
+                                                        {formatNumber(
+                                                            row.groups_count,
+                                                        )}{' '}
+                                                        /{' '}
+                                                        {formatNumber(
+                                                            row.students_count,
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell numeric>
+                                                        {formatNumber(
+                                                            row.revenue,
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell numeric>
+                                                        {formatNumber(
+                                                            row.accrued,
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell numeric>
+                                                        {formatNumber(row.paid)}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        numeric
+                                                        className={cn(
+                                                            'font-semibold',
+                                                            payoutTone(row),
+                                                        )}
+                                                    >
+                                                        {formatNumber(
+                                                            row.balance,
+                                                        )}
+                                                    </TableCell>
+                                                    {canManage && (
+                                                        <TableCell>
+                                                            {/* Har oy — to'lash; stavka bir marta
+                                                            belgilanadi, u "⋯" menyuda. */}
+                                                            <div className='flex items-center justify-end gap-2'>
+                                                                <Button
+                                                                    variant='primary'
+                                                                    appearance='outline'
+                                                                    size='md'
+                                                                    onPress={() =>
+                                                                        setPaying(
+                                                                            row,
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    {t(
+                                                                        'salaries.pay',
+                                                                    )}
+                                                                </Button>
+                                                                <RowActionsMenu
+                                                                    label={fullName(
+                                                                        row.user,
+                                                                    )}
+                                                                    actions={[
+                                                                        {
+                                                                            label: t(
+                                                                                'salaries.setRate',
+                                                                            ),
+                                                                            icon: (
+                                                                                <Pencil1 />
+                                                                            ),
+                                                                            onAction:
+                                                                                () =>
+                                                                                    setRating(
+                                                                                        row,
+                                                                                    ),
+                                                                        },
+                                                                    ]}
+                                                                />
+                                                            </div>
+                                                        </TableCell>
+                                                    )}
+                                                </TableRow>
+                                            ),
                                         )}
-                                    </TableCell>
-                                    <TableCell numeric>
-                                        {formatNumber(
-                                            sheetQuery.data.totals.paid,
-                                        )}
-                                    </TableCell>
-                                    <TableCell
-                                        numeric
-                                        className={cn(
-                                            'font-semibold',
-                                            payoutTone(sheetQuery.data.totals),
-                                        )}
-                                    >
-                                        {formatNumber(
-                                            sheetQuery.data.totals.balance,
-                                        )}
-                                    </TableCell>
-                                    {canManage && <TableCell />}
-                                </TableRow>
-                            </TableBody>
-                        </TableRoot>
+                                        <TableRow>
+                                            <TableCell />
+                                            <TableCell primary>
+                                                {t('common.total')}
+                                            </TableCell>
+                                            <TableCell />
+                                            <TableCell />
+                                            <TableCell numeric>
+                                                {formatNumber(
+                                                    sheetQuery.data.totals
+                                                        .accrued,
+                                                )}
+                                            </TableCell>
+                                            <TableCell numeric>
+                                                {formatNumber(
+                                                    sheetQuery.data.totals.paid,
+                                                )}
+                                            </TableCell>
+                                            <TableCell
+                                                numeric
+                                                className={cn(
+                                                    'font-semibold',
+                                                    payoutTone(
+                                                        sheetQuery.data.totals,
+                                                    ),
+                                                )}
+                                            >
+                                                {formatNumber(
+                                                    sheetQuery.data.totals
+                                                        .balance,
+                                                )}
+                                            </TableCell>
+                                            {canManage && <TableCell />}
+                                        </TableRow>
+                                    </TableBody>
+                                </TableRoot>
+                            </div>
+                        </>
                     )}
                 </div>
             </div>
@@ -317,66 +543,138 @@ function SalariesView() {
                 ) : payoutsQuery.data.length === 0 ? (
                     <EmptyState message={t('salaries.noPayouts')} />
                 ) : (
-                    <TableRoot fullBleed className='border-x-0 border-t-0'>
-                        <TableHeader>
-                            <TableRow>
-                                <RowNumberHead />
-                                <TableHead>{t('cashbox.paidAt')}</TableHead>
-                                <TableHead>{t('salaries.staff')}</TableHead>
-                                <TableHead numeric>
-                                    {t('cashbox.amount')}
-                                </TableHead>
-                                <TableHead>{t('cashbox.receivedBy')}</TableHead>
-                                {canManage && (
-                                    <TableHead className='text-right'>
-                                        {t('common.actions')}
-                                    </TableHead>
-                                )}
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {payoutsQuery.data.map((payout, index) => (
-                                <TableRow key={payout.id}>
-                                    <RowNumberCell index={index} />
-                                    <TableCell>
-                                        {formatDate(payout.paid_at)}
-                                    </TableCell>
-                                    <TableCell primary>
-                                        {fullName(payout.user)}
-                                        {payout.note && (
-                                            <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
-                                                {payout.note}
+                    <>
+                        {/* Mobile payouts card list */}
+                        <div className='divide-card-border divide-y md:hidden'>
+                            {payoutsQuery.data.map((payout) => (
+                                <div key={payout.id} className='space-y-2 p-4'>
+                                    <div className='flex items-start justify-between gap-3'>
+                                        <div className='min-w-0 flex-1'>
+                                            <p className='text-text-primary text-sm font-semibold break-words'>
+                                                {fullName(payout.user)}
                                             </p>
+                                            {payout.note && (
+                                                <p className='text-text-tertiary mt-0.5 text-xs break-words'>
+                                                    {payout.note}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <div className='shrink-0 text-right'>
+                                            <p className='text-text-primary text-sm font-semibold tabular-nums'>
+                                                {formatPrice(
+                                                    payout.amount,
+                                                    som,
+                                                )}
+                                            </p>
+                                            <p className='text-text-tertiary text-xs'>
+                                                {formatDate(payout.paid_at)}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className='text-text-tertiary flex items-center justify-between pt-1 text-xs'>
+                                        <span className='max-w-[200px] truncate'>
+                                            {payout.created_by
+                                                ? fullName(payout.created_by)
+                                                : '—'}
+                                        </span>
+                                        {canManage && (
+                                            <Button
+                                                variant='danger'
+                                                appearance='outline'
+                                                size='sm'
+                                                onPress={() =>
+                                                    setCancelling(payout)
+                                                }
+                                            >
+                                                {t('common.cancel')}
+                                            </Button>
                                         )}
-                                    </TableCell>
-                                    <TableCell numeric>
-                                        {formatPrice(payout.amount, som)}
-                                    </TableCell>
-                                    <TableCell>
-                                        {payout.created_by
-                                            ? fullName(payout.created_by)
-                                            : '—'}
-                                    </TableCell>
-                                    {canManage && (
-                                        <TableCell>
-                                            <div className='flex justify-end'>
-                                                <Button
-                                                    variant='danger'
-                                                    appearance='outline'
-                                                    size='md'
-                                                    onPress={() =>
-                                                        setCancelling(payout)
-                                                    }
-                                                >
-                                                    {t('common.cancel')}
-                                                </Button>
-                                            </div>
-                                        </TableCell>
-                                    )}
-                                </TableRow>
+                                    </div>
+                                </div>
                             ))}
-                        </TableBody>
-                    </TableRoot>
+                        </div>
+
+                        {/* Desktop payouts table */}
+                        <div className='hidden md:block'>
+                            <TableRoot
+                                fullBleed
+                                className='border-x-0 border-t-0'
+                            >
+                                <TableHeader>
+                                    <TableRow>
+                                        <RowNumberHead />
+                                        <TableHead>
+                                            {t('cashbox.paidAt')}
+                                        </TableHead>
+                                        <TableHead>
+                                            {t('salaries.staff')}
+                                        </TableHead>
+                                        <TableHead numeric>
+                                            {t('cashbox.amount')}
+                                        </TableHead>
+                                        <TableHead>
+                                            {t('cashbox.receivedBy')}
+                                        </TableHead>
+                                        {canManage && (
+                                            <TableHead className='text-right'>
+                                                {t('common.actions')}
+                                            </TableHead>
+                                        )}
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {payoutsQuery.data.map((payout, index) => (
+                                        <TableRow key={payout.id}>
+                                            <RowNumberCell index={index} />
+                                            <TableCell>
+                                                {formatDate(payout.paid_at)}
+                                            </TableCell>
+                                            <TableCell primary>
+                                                {fullName(payout.user)}
+                                                {payout.note && (
+                                                    <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
+                                                        {payout.note}
+                                                    </p>
+                                                )}
+                                            </TableCell>
+                                            <TableCell numeric>
+                                                {formatPrice(
+                                                    payout.amount,
+                                                    som,
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {payout.created_by
+                                                    ? fullName(
+                                                          payout.created_by,
+                                                      )
+                                                    : '—'}
+                                            </TableCell>
+                                            {canManage && (
+                                                <TableCell>
+                                                    <div className='flex justify-end'>
+                                                        <Button
+                                                            variant='danger'
+                                                            appearance='outline'
+                                                            size='md'
+                                                            onPress={() =>
+                                                                setCancelling(
+                                                                    payout,
+                                                                )
+                                                            }
+                                                        >
+                                                            {t('common.cancel')}
+                                                        </Button>
+                                                    </div>
+                                                </TableCell>
+                                            )}
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </TableRoot>
+                        </div>
+                    </>
                 )}
             </DetailSection>
 

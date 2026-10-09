@@ -102,7 +102,7 @@ function BranchesView() {
                 }
             />
 
-            <div className='px-5'>
+            <div className='px-4 sm:px-5'>
                 <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                     {query.isPending ? (
                         <TableSkeleton columns={5} />
@@ -114,97 +114,208 @@ function BranchesView() {
                             icon={<MapMarker5 className='size-5' />}
                         />
                     ) : (
-                        <TableRoot fullBleed className='border-x-0 border-t-0'>
-                            <TableHeader>
-                                <TableRow>
-                                    <RowNumberHead />
-                                    <TableHead>{t('common.name')}</TableHead>
-                                    <TableHead>
-                                        {t('branches.address')}
-                                    </TableHead>
-                                    <TableHead>{t('common.phone')}</TableHead>
-                                    <TableHead>{t('common.status')}</TableHead>
-                                    <TableHead>
-                                        {t('common.createdAt')}
-                                    </TableHead>
-                                    <TableHead className='text-right'>
-                                        {t('common.actions')}
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
+                        <>
+                            {/* Mobil kartalar (< md) */}
+                            <div className='divide-card-border divide-y md:hidden'>
                                 {query.data.map((branch, index) => (
-                                    <TableRow key={branch.id}>
-                                        <RowNumberCell index={index} />
-                                        <TableCell primary>
-                                            {branch.name}
-                                        </TableCell>
-                                        <TableCell className='whitespace-normal'>
-                                            {branch.address ?? '—'}
-                                        </TableCell>
-                                        <TableCell>
-                                            {branch.phone_number ?? '—'}
-                                        </TableCell>
-                                        <TableCell>
+                                    <div
+                                        key={branch.id}
+                                        className='hover:bg-background-gray-primary/20 flex flex-col gap-3 p-4 transition-colors'
+                                    >
+                                        <div className='flex items-start justify-between gap-3'>
+                                            <div className='min-w-0 flex-1'>
+                                                <div className='flex items-center gap-2'>
+                                                    <span className='text-text-tertiary text-xs font-semibold tabular-nums'>
+                                                        #{index + 1}
+                                                    </span>
+                                                    <h3 className='text-text-primary text-sm font-semibold'>
+                                                        {branch.name}
+                                                    </h3>
+                                                </div>
+                                                {branch.address && (
+                                                    <p className='text-text-tertiary mt-1 text-xs'>
+                                                        {branch.address}
+                                                    </p>
+                                                )}
+                                            </div>
                                             <ActiveBadge
                                                 active={branch.is_active}
                                             />
-                                        </TableCell>
-                                        <TableCell>
-                                            {formatDate(branch.created_at)}
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className='flex justify-end gap-2'>
+                                        </div>
+
+                                        <div className='flex items-center justify-between text-xs'>
+                                            <span className='text-text-secondary'>
+                                                {branch.phone_number ?? '—'}
+                                            </span>
+                                            <span className='text-text-tertiary tabular-nums'>
+                                                {formatDate(branch.created_at)}
+                                            </span>
+                                        </div>
+
+                                        <div className='border-card-border/60 flex items-center justify-end gap-2 border-t pt-2.5'>
+                                            <Button
+                                                appearance='outline'
+                                                size='sm'
+                                                onPress={() =>
+                                                    setRoomsOf(branch)
+                                                }
+                                                className='gap-1.5'
+                                            >
+                                                <span>{t('rooms.manage')}</span>
+                                            </Button>
+                                            {canUpdate && (
                                                 <Button
                                                     appearance='outline'
-                                                    size='md'
-                                                    onPress={() =>
-                                                        setRoomsOf(branch)
-                                                    }
+                                                    size='sm'
+                                                    onPress={() => {
+                                                        setEditing(branch);
+                                                        setFormOpen(true);
+                                                    }}
+                                                    className='gap-1.5'
                                                 >
-                                                    {t('rooms.manage')}
+                                                    <Pencil1 className='size-3.5' />
+                                                    <span>
+                                                        {t('common.edit')}
+                                                    </span>
                                                 </Button>
-                                                {canUpdate && (
+                                            )}
+                                            {canDelete &&
+                                                query.data.length > 1 && (
                                                     <Button
+                                                        variant='danger'
                                                         appearance='outline'
-                                                        size='md'
-                                                        iconOnly
-                                                        aria-label={t(
-                                                            'common.edit',
-                                                        )}
-                                                        onPress={() => {
-                                                            setEditing(branch);
-                                                            setFormOpen(true);
-                                                        }}
+                                                        size='sm'
+                                                        onPress={() =>
+                                                            setDeleting(branch)
+                                                        }
+                                                        className='gap-1.5'
                                                     >
-                                                        <Pencil1 />
+                                                        <Trash1 className='size-3.5' />
+                                                        <span>
+                                                            {t('common.delete')}
+                                                        </span>
                                                     </Button>
                                                 )}
-                                                {canDelete &&
-                                                    query.data.length > 1 && (
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Desktop / Tablet jadval (>= md) */}
+                            <div className='hidden md:block'>
+                                <TableRoot
+                                    fullBleed
+                                    className='border-x-0 border-t-0'
+                                >
+                                    <TableHeader>
+                                        <TableRow>
+                                            <RowNumberHead />
+                                            <TableHead>
+                                                {t('common.name')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('branches.address')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.phone')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.status')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.createdAt')}
+                                            </TableHead>
+                                            <TableHead className='text-right'>
+                                                {t('common.actions')}
+                                            </TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {query.data.map((branch, index) => (
+                                            <TableRow key={branch.id}>
+                                                <RowNumberCell index={index} />
+                                                <TableCell primary>
+                                                    {branch.name}
+                                                </TableCell>
+                                                <TableCell className='whitespace-normal'>
+                                                    {branch.address ?? '—'}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {branch.phone_number ?? '—'}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <ActiveBadge
+                                                        active={
+                                                            branch.is_active
+                                                        }
+                                                    />
+                                                </TableCell>
+                                                <TableCell>
+                                                    {formatDate(
+                                                        branch.created_at,
+                                                    )}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className='flex justify-end gap-2'>
                                                         <Button
-                                                            variant='danger'
                                                             appearance='outline'
                                                             size='md'
-                                                            iconOnly
-                                                            aria-label={t(
-                                                                'common.delete',
-                                                            )}
                                                             onPress={() =>
-                                                                setDeleting(
+                                                                setRoomsOf(
                                                                     branch,
                                                                 )
                                                             }
                                                         >
-                                                            <Trash1 />
+                                                            {t('rooms.manage')}
                                                         </Button>
-                                                    )}
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </TableRoot>
+                                                        {canUpdate && (
+                                                            <Button
+                                                                appearance='outline'
+                                                                size='md'
+                                                                iconOnly
+                                                                aria-label={t(
+                                                                    'common.edit',
+                                                                )}
+                                                                onPress={() => {
+                                                                    setEditing(
+                                                                        branch,
+                                                                    );
+                                                                    setFormOpen(
+                                                                        true,
+                                                                    );
+                                                                }}
+                                                            >
+                                                                <Pencil1 />
+                                                            </Button>
+                                                        )}
+                                                        {canDelete &&
+                                                            query.data.length >
+                                                                1 && (
+                                                                <Button
+                                                                    variant='danger'
+                                                                    appearance='outline'
+                                                                    size='md'
+                                                                    iconOnly
+                                                                    aria-label={t(
+                                                                        'common.delete',
+                                                                    )}
+                                                                    onPress={() =>
+                                                                        setDeleting(
+                                                                            branch,
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <Trash1 />
+                                                                </Button>
+                                                            )}
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </TableRoot>
+                            </div>
+                        </>
                     )}
                 </div>
             </div>

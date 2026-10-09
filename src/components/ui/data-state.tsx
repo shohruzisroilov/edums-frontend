@@ -26,6 +26,53 @@ export function TableSkeleton({
 }
 
 /**
+ * Mobil qurilmalar uchun kartochka shaklidagi skeleton.
+ */
+export function CardListSkeleton({ count = 4 }: { count?: number }) {
+    return (
+        <div className='divide-card-border divide-y'>
+            {Array.from({ length: count }).map((_, i) => (
+                <div key={i} className='space-y-3 p-4'>
+                    <div className='flex items-start justify-between gap-3'>
+                        <div className='flex-1 space-y-1.5'>
+                            <Skeleton className='h-4 w-3/5 rounded-md' />
+                            <Skeleton className='h-3 w-2/5 rounded-md' />
+                        </div>
+                        <Skeleton className='h-5 w-16 rounded-full' />
+                    </div>
+                    <div className='flex items-center justify-between pt-1'>
+                        <Skeleton className='h-3.5 w-28 rounded-md' />
+                        <Skeleton className='h-3.5 w-20 rounded-md' />
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+/**
+ * Avtomatik adaptiv skeleton: mobilda CardList, desktopda TableSkeleton.
+ */
+export function DataListSkeleton({
+    rows = 5,
+    columns = 5,
+}: {
+    rows?: number;
+    columns?: number;
+}) {
+    return (
+        <>
+            <div className='md:hidden'>
+                <CardListSkeleton count={rows} />
+            </div>
+            <div className='hidden md:block'>
+                <TableSkeleton rows={rows} columns={columns} />
+            </div>
+        </>
+    );
+}
+
+/**
  * Bo'sh ro'yxat — bu ham holat, shuning uchun kulrang matn bilan
  * cheklanmaymiz: nima yo'qligi aytiladi va keyingi qadam taklif qilinadi.
  */
@@ -41,18 +88,20 @@ export function EmptyState({
     action?: ReactNode;
 }) {
     return (
-        <div className='flex flex-col items-center px-5 py-14 text-center'>
+        <div className='flex flex-col items-center justify-center px-5 py-14 text-center'>
             {icon && (
-                <span
+                <div
                     aria-hidden='true'
-                    className='border-card-border bg-background-gray-primary text-icon-tertiary mb-4 flex size-12 items-center justify-center rounded-full border'
+                    className='border-card-border bg-background-gray-secondary/80 text-icon-secondary mb-4 flex size-14 items-center justify-center rounded-2xl border shadow-xs transition-transform duration-200 hover:scale-105 [&>svg]:size-6'
                 >
                     {icon}
-                </span>
+                </div>
             )}
-            <p className='text-text-primary text-sm font-medium'>{message}</p>
+            <p className='text-text-primary text-base font-semibold tracking-[-0.01em]'>
+                {message}
+            </p>
             {hint && (
-                <p className='text-text-tertiary mt-1 max-w-sm text-sm'>
+                <p className='text-text-tertiary mt-1.5 max-w-sm text-xs leading-relaxed sm:text-sm'>
                     {hint}
                 </p>
             )}

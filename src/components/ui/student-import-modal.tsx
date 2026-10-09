@@ -8,7 +8,7 @@ import { useT } from '@/i18n/provider';
 import { listBranches } from '@/services/api/branches';
 import { createStudent } from '@/services/api/students';
 import { cn } from '@/utils/cn';
-import { exportToCsv } from '@/utils/export';
+import { exportToExcel } from '@/utils/export';
 import { formatPhone } from '@/utils/format';
 import { invalidateStudyData } from '@/utils/query-cache';
 import { TONE_TEXT } from '@/utils/tone';
@@ -48,10 +48,9 @@ function normalizePhone(value: string): string | null {
 }
 
 /**
- * Ustunlar: Ism | Familiya | Telefon | Ota-ona telefoni. Ikki ustunli fayl
- * (Ism | Telefon) ham qabul qilinadi. Birinchi qatorning telefon katagida
- * raqam bo'lmasa — u sarlavha, o'tkazib yuboriladi (ism bo'yicha emas:
- * "Ismoil" ham o'quvchi bo'lishi mumkin).
+ * Ustunlar: Ism | Familiya | Telefon | Ota-ona telefoni yoki F.I.SH | Telefon.
+ * Ikki ustunli fayllar (F.I.SH. va Telefon) va uch ustunli fayllar ham avtomatik
+ * aniqlanib, ism va familiyaga ajratiladi.
  */
 function toRows(table: unknown[][]): ImportRow[] {
     const rows: ImportRow[] = [];
@@ -60,13 +59,57 @@ function toRows(table: unknown[][]): ImportRow[] {
         const parts = cells.map((cell) => String(cell ?? '').trim());
         if (parts.every((part) => part === '')) return;
 
-        const twoColumns = parts.filter(Boolean).length === 2 && !parts[2];
-        const first_name = parts[0] ?? '';
-        const last_name = twoColumns ? '' : (parts[1] ?? '');
-        const phone_raw = (twoColumns ? parts[1] : parts[2]) ?? '';
-        const parent_raw = twoColumns ? '' : (parts[3] ?? '');
+        // Birinchi qatorda raqam umuman bo'lmasa — bu jadval sarlavhasi (Header)
+        const hasDigitsAnywhere = parts.some((p) => /\d{5,}/.test(p));
+        if (index === 0 && !hasDigitsAnywhere) return;
 
-        if (index === 0 && !/\d/.test(phone_raw + parent_raw)) return;
+        let first_name = '';
+        let last_name = '';
+        let phone_raw = '';
+        let parent_raw = '';
+
+        const col1IsPhone = /\d{5,}/.test(parts[1] ?? '');
+        const twoColumns = parts.filter(Boolean).length <= 2 || col1IsPhone;
+
+        if (twoColumns) {
+            const rawFullName = parts[0] ?? '';
+            phone_raw = parts[1] ?? '';
+            const nameTokens = rawFullName.split(/\s+/).filter(Boolean);
+            if (nameTokens.length >= 2) {
+                first_name = nameTokens[0];
+                last_name = nameTokens.slice(1).join(' ');
+            } else {
+                first_name = nameTokens[0] ?? '';
+                last_name = '-';
+            }
+        } else if (col1IsPhone) {
+            // [F.I.SH., Telefon, Ota-ona telefoni]
+            const rawFullName = parts[0] ?? '';
+            const nameTokens = rawFullName.split(/\s+/).filter(Boolean);
+            if (nameTokens.length >= 2) {
+                first_name = nameTokens[0];
+                last_name = nameTokens.slice(1).join(' ');
+            } else {
+                first_name = nameTokens[0] ?? '';
+                last_name = '-';
+            }
+            phone_raw = parts[1] ?? '';
+            parent_raw = parts[2] ?? '';
+        } else {
+            // [Ism, Familiya, Telefon, Ota-ona telefoni]
+            first_name = parts[0] ?? '';
+            last_name = parts[1] ?? '';
+            phone_raw = parts[2] ?? '';
+            parent_raw = parts[3] ?? '';
+
+            if (!last_name && first_name.includes(' ')) {
+                const nameTokens = first_name.split(/\s+/).filter(Boolean);
+                first_name = nameTokens[0];
+                last_name = nameTokens.slice(1).join(' ');
+            } else if (!last_name && first_name) {
+                last_name = '-';
+            }
+        }
 
         const phone_number = phone_raw ? normalizePhone(phone_raw) : null;
         const parent_phone = parent_raw ? normalizePhone(parent_raw) : null;
@@ -81,12 +124,7 @@ function toRows(table: unknown[][]): ImportRow[] {
             last_name,
             phone_number,
             parent_phone,
-            problem:
-                !first_name || !last_name
-                    ? 'name'
-                    : phone_invalid
-                      ? 'phone'
-                      : null,
+            problem: !first_name ? 'name' : phone_invalid ? 'phone' : null,
         });
     });
 
@@ -232,8 +270,9 @@ export function StudentImportModal({
     };
 
     const downloadSample = () => {
-        exportToCsv(
+        void exportToExcel(
             t('import.sampleFile'),
+            'Namuna',
             [
                 t('common.firstName'),
                 t('common.lastName'),
@@ -438,9 +477,10 @@ export function StudentImportModal({
                         </table>
                     </div>
 
-                    <div className='flex items-center justify-end gap-2 pt-2'>
+                    <div className='flex flex-col-reverse items-stretch justify-end gap-2 pt-2 sm:flex-row sm:items-center'>
                         <Button
                             appearance='outline'
+                            className='w-full sm:w-auto'
                             onPress={handleReset}
                             isDisabled={submitting}
                         >
@@ -449,6 +489,7 @@ export function StudentImportModal({
                         <Button
                             variant='primary'
                             appearance='fill'
+                            className='w-full sm:w-auto'
                             onPress={handleImport}
                             isDisabled={
                                 submitting ||

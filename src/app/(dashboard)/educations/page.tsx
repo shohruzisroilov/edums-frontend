@@ -145,13 +145,13 @@ function EducationsView() {
                 }
             />
 
-            <div className='flex items-center gap-2 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
+            <div className='flex flex-wrap items-center gap-2 px-4 pb-4 sm:px-5'>
                 <SearchInput
                     value={search}
                     onChange={setSearch}
                     placeholder={t('educations.search')}
                 />
-                <div className='hidden min-w-28 shrink sm:block sm:w-44'>
+                <div className='hidden shrink-0 sm:block sm:w-44'>
                     <SelectInput
                         options={EDUCATION_STATUSES.map((status) => ({
                             value: status,
@@ -192,82 +192,139 @@ function EducationsView() {
                         />
                     ) : (
                         <>
-                            <TableRoot
-                                fullBleed
-                                className='border-x-0 border-t-0'
-                            >
-                                <TableHeader>
-                                    <TableRow>
-                                        <RowNumberHead />
-                                        <TableHead>
-                                            {t('common.name')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('common.phone')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('common.status')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('billing.subscription')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('common.createdAt')}
-                                        </TableHead>
-                                        <TableHead className='text-right'>
-                                            {t('common.actions')}
-                                        </TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {query.data.data.map((education, index) => (
-                                        <TableRow key={education.id}>
-                                            <RowNumberCell
-                                                index={index}
-                                                offset={offset}
-                                            />
-                                            <TableCell primary>
+                            {/* Mobile Card List */}
+                            <div className='divide-card-border divide-y md:hidden'>
+                                {query.data.data.map((education) => (
+                                    <div
+                                        key={education.id}
+                                        className='space-y-3 p-4'
+                                    >
+                                        <div className='flex items-start justify-between gap-3'>
+                                            <div className='min-w-0 flex-1'>
                                                 <Link
                                                     href={`/educations/${education.id}`}
-                                                    className='hover:text-brand-accent hover:underline'
+                                                    className='text-text-primary hover:text-brand-accent block text-sm font-semibold break-words'
                                                 >
                                                     {education.name}
                                                 </Link>
-                                            </TableCell>
-                                            <TableCell>
-                                                {education.phone_number}
-                                            </TableCell>
-                                            <TableCell>
-                                                <EducationStatusBadge
-                                                    status={education.status}
-                                                />
-                                            </TableCell>
-                                            <TableCell>
-                                                <SubscriptionBadge
-                                                    subscription={
-                                                        education.subscription
-                                                    }
-                                                />
-                                            </TableCell>
-                                            <TableCell>
+                                                <p className='text-text-tertiary mt-0.5 text-xs'>
+                                                    {education.phone_number}
+                                                </p>
+                                            </div>
+                                            <RowActionsMenu
+                                                label={education.name}
+                                                actions={rowActions(education)}
+                                            />
+                                        </div>
+
+                                        <div className='flex flex-wrap items-center gap-2'>
+                                            <EducationStatusBadge
+                                                status={education.status}
+                                            />
+                                            <SubscriptionBadge
+                                                subscription={
+                                                    education.subscription
+                                                }
+                                            />
+                                        </div>
+
+                                        <div className='text-text-tertiary text-xs'>
+                                            {t('common.createdAt')}:{' '}
+                                            <span className='text-text-secondary'>
                                                 {formatDate(
                                                     education.created_at,
                                                 )}
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className='flex justify-end'>
-                                                    <RowActionsMenu
-                                                        label={education.name}
-                                                        actions={rowActions(
-                                                            education,
-                                                        )}
-                                                    />
-                                                </div>
-                                            </TableCell>
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Desktop Table View */}
+                            <div className='hidden md:block'>
+                                <TableRoot
+                                    fullBleed
+                                    className='border-x-0 border-t-0'
+                                >
+                                    <TableHeader>
+                                        <TableRow>
+                                            <RowNumberHead />
+                                            <TableHead>
+                                                {t('common.name')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.phone')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.status')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('billing.subscription')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.createdAt')}
+                                            </TableHead>
+                                            <TableHead className='text-right'>
+                                                {t('common.actions')}
+                                            </TableHead>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </TableRoot>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {query.data.data.map(
+                                            (education, index) => (
+                                                <TableRow key={education.id}>
+                                                    <RowNumberCell
+                                                        index={index}
+                                                        offset={offset}
+                                                    />
+                                                    <TableCell primary>
+                                                        <Link
+                                                            href={`/educations/${education.id}`}
+                                                            className='hover:text-brand-accent hover:underline'
+                                                        >
+                                                            {education.name}
+                                                        </Link>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {education.phone_number}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <EducationStatusBadge
+                                                            status={
+                                                                education.status
+                                                            }
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <SubscriptionBadge
+                                                            subscription={
+                                                                education.subscription
+                                                            }
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {formatDate(
+                                                            education.created_at,
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className='flex justify-end'>
+                                                            <RowActionsMenu
+                                                                label={
+                                                                    education.name
+                                                                }
+                                                                actions={rowActions(
+                                                                    education,
+                                                                )}
+                                                            />
+                                                        </div>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ),
+                                        )}
+                                    </TableBody>
+                                </TableRoot>
+                            </div>
 
                             <PaginationBar
                                 count={query.data.count}

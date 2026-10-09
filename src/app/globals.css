@@ -19,6 +19,11 @@
     --font-display:
         var(--font-golos), var(--font-inter), ui-sans-serif, system-ui,
         sans-serif;
+
+    /* Qo'shimcha responsive breakpointlar */
+    --breakpoint-xs: 30rem; /* 480px mobil */
+    --breakpoint-tablet-max: 90rem; /* 1440px eng katta planshet */
+    --breakpoint-3xl: 120rem; /* 1920px katta desktop */
 }
 
 @theme {
@@ -454,10 +459,17 @@
  * oq fonda qolib ketmasligi kerak.
  */
 @layer base {
-    html,
+    html {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+        overflow-x: hidden;
+    }
+
     body {
         -webkit-tap-highlight-color: transparent;
         touch-action: manipulation;
+        min-width: 320px;
+        overflow-x: hidden;
     }
 
     select option,

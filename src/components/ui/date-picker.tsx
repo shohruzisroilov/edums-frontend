@@ -640,8 +640,8 @@ export function DatePicker({
                     className={cn(
                         'border-input-border bg-input-background text-title-50 placeholder:text-input-placeholder-text focus:border-input-primary-focus-border focus:ring-input-primary-focus-border/20 w-full rounded-lg border transition outline-none focus:ring-4 disabled:cursor-not-allowed disabled:opacity-60',
                         size === 'sm'
-                            ? 'px-3 py-1.5 pr-9 text-xs'
-                            : 'px-4 py-2.5 pr-11 text-sm',
+                            ? 'h-9 px-3 pr-9 text-xs'
+                            : 'h-11 px-3.5 pr-10 text-sm',
                         prefix && 'pl-14',
                         suffix && 'pr-20',
                         error &&
@@ -699,7 +699,7 @@ export function DatePicker({
                 <div
                     ref={popoverRef}
                     className={cn(
-                        'border-card-border bg-card-surface-area animate-in fade-in-0 zoom-in-95 absolute z-[9999] w-[310px] rounded-2xl border p-3.5 shadow-2xl sm:w-[320px]',
+                        'border-card-border bg-card-surface-area animate-in fade-in-0 zoom-in-95 absolute z-[9999] w-[min(310px,calc(100vw-1.5rem))] rounded-2xl border p-3.5 shadow-2xl sm:w-[320px]',
                         openDirection === 'bottom'
                             ? 'top-[calc(100%+6px)]'
                             : 'bottom-[calc(100%+6px)]',

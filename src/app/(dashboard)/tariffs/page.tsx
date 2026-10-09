@@ -83,7 +83,7 @@ function TariffsView() {
                 }
             />
 
-            <div className='px-5'>
+            <div className='px-4 sm:px-5'>
                 <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                     {query.isPending ? (
                         <TableSkeleton columns={6} />
@@ -95,117 +95,236 @@ function TariffsView() {
                             icon={<Wallet2 className='size-5' />}
                         />
                     ) : (
-                        <TableRoot fullBleed className='border-x-0 border-t-0'>
-                            <TableHeader>
-                                <TableRow>
-                                    <RowNumberHead />
-                                    <TableHead>{t('common.name')}</TableHead>
-                                    <TableHead numeric>
-                                        {t('tariffs.price')}
-                                    </TableHead>
-                                    <TableHead numeric>
-                                        {t('tariffs.duration')}
-                                    </TableHead>
-                                    <TableHead numeric>
-                                        {t('tariffs.yearly')}
-                                    </TableHead>
-                                    <TableHead numeric>
-                                        {t('tariffs.maxStudents')}
-                                    </TableHead>
-                                    <TableHead>{t('common.status')}</TableHead>
-                                    <TableHead className='text-right'>
-                                        {t('common.actions')}
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {query.data.map((tariff, index) => (
-                                    <TableRow key={tariff.id}>
-                                        <RowNumberCell index={index} />
-                                        <TableCell primary>
-                                            {tariff.name}
-                                        </TableCell>
-                                        <TableCell numeric>
-                                            {formatPrice(
-                                                tariff.price,
-                                                t('common.som'),
-                                            )}
-                                        </TableCell>
-                                        <TableCell numeric>
-                                            {t('tariffs.durationValue', {
-                                                days: tariff.duration_days,
-                                            })}
-                                        </TableCell>
-                                        <TableCell numeric>
-                                            {tariff.yearly_price === null ? (
-                                                '—'
-                                            ) : (
-                                                <>
+                        <>
+                            {/* Mobile Card List */}
+                            <div className='divide-card-border divide-y md:hidden'>
+                                {query.data.map((tariff) => (
+                                    <div
+                                        key={tariff.id}
+                                        className='space-y-3 p-4'
+                                    >
+                                        <div className='flex items-start justify-between gap-3'>
+                                            <div>
+                                                <h3 className='text-text-primary text-sm font-semibold'>
+                                                    {tariff.name}
+                                                </h3>
+                                                <div className='mt-1 flex items-center gap-2'>
+                                                    <ActiveBadge
+                                                        active={
+                                                            tariff.is_active
+                                                        }
+                                                    />
+                                                    <span className='text-text-tertiary text-xs'>
+                                                        {t(
+                                                            'tariffs.durationValue',
+                                                            {
+                                                                days: tariff.duration_days,
+                                                            },
+                                                        )}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className='shrink-0 text-right'>
+                                                <p className='text-text-primary text-sm font-semibold tabular-nums'>
                                                     {formatPrice(
-                                                        tariff.yearly_price,
+                                                        tariff.price,
                                                         t('common.som'),
                                                     )}
-                                                    <span className='text-badge-success-text block text-xs'>
-                                                        −
+                                                </p>
+                                                {tariff.yearly_price !==
+                                                    null && (
+                                                    <p className='text-badge-success-text text-xs tabular-nums'>
+                                                        {formatPrice(
+                                                            tariff.yearly_price,
+                                                            t('common.som'),
+                                                        )}{' '}
+                                                        (−
                                                         {
                                                             tariff.yearly_discount_percent
                                                         }
-                                                        %
-                                                    </span>
-                                                </>
-                                            )}
-                                        </TableCell>
-                                        <TableCell numeric>
-                                            {(tariff.max_students ??
-                                                tariff.max_users ??
-                                                null) === null
-                                                ? t('common.unlimited')
-                                                : formatNumber(
-                                                      (tariff.max_students ??
-                                                          tariff.max_users)!,
-                                                  )}
-                                        </TableCell>
-                                        <TableCell>
-                                            <ActiveBadge
-                                                active={tariff.is_active}
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className='flex justify-end gap-2'>
+                                                        %)
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className='text-text-tertiary flex items-center justify-between pt-1 text-xs'>
+                                            <span>
+                                                {t('tariffs.maxStudents')}:{' '}
+                                                <strong className='text-text-secondary font-medium'>
+                                                    {(tariff.max_students ??
+                                                        tariff.max_users ??
+                                                        null) === null
+                                                        ? t('common.unlimited')
+                                                        : formatNumber(
+                                                              (tariff.max_students ??
+                                                                  tariff.max_users)!,
+                                                          )}
+                                                </strong>
+                                            </span>
+                                            <div className='flex items-center gap-2'>
                                                 <Button
                                                     appearance='outline'
-                                                    size='md'
-                                                    iconOnly
-                                                    aria-label={t(
-                                                        'common.edit',
-                                                    )}
+                                                    size='sm'
                                                     onPress={() => {
                                                         setEditing(tariff);
                                                         setFormOpen(true);
                                                     }}
                                                 >
-                                                    <Pencil1 />
+                                                    <Pencil1 className='size-3.5' />
+                                                    {t('common.edit')}
                                                 </Button>
                                                 <Button
                                                     variant='danger'
                                                     appearance='outline'
-                                                    size='md'
-                                                    iconOnly
-                                                    aria-label={t(
-                                                        'common.delete',
-                                                    )}
+                                                    size='sm'
                                                     onPress={() =>
                                                         setDeleting(tariff)
                                                     }
                                                 >
-                                                    <Trash1 />
+                                                    <Trash1 className='size-3.5' />
+                                                    {t('common.delete')}
                                                 </Button>
                                             </div>
-                                        </TableCell>
-                                    </TableRow>
+                                        </div>
+                                    </div>
                                 ))}
-                            </TableBody>
-                        </TableRoot>
+                            </div>
+
+                            {/* Desktop Table View */}
+                            <div className='hidden md:block'>
+                                <TableRoot
+                                    fullBleed
+                                    className='border-x-0 border-t-0'
+                                >
+                                    <TableHeader>
+                                        <TableRow>
+                                            <RowNumberHead />
+                                            <TableHead>
+                                                {t('common.name')}
+                                            </TableHead>
+                                            <TableHead numeric>
+                                                {t('tariffs.price')}
+                                            </TableHead>
+                                            <TableHead numeric>
+                                                {t('tariffs.duration')}
+                                            </TableHead>
+                                            <TableHead numeric>
+                                                {t('tariffs.yearly')}
+                                            </TableHead>
+                                            <TableHead numeric>
+                                                {t('tariffs.maxStudents')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.status')}
+                                            </TableHead>
+                                            <TableHead className='text-right'>
+                                                {t('common.actions')}
+                                            </TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {query.data.map((tariff, index) => (
+                                            <TableRow key={tariff.id}>
+                                                <RowNumberCell index={index} />
+                                                <TableCell primary>
+                                                    {tariff.name}
+                                                </TableCell>
+                                                <TableCell numeric>
+                                                    {formatPrice(
+                                                        tariff.price,
+                                                        t('common.som'),
+                                                    )}
+                                                </TableCell>
+                                                <TableCell numeric>
+                                                    {t(
+                                                        'tariffs.durationValue',
+                                                        {
+                                                            days: tariff.duration_days,
+                                                        },
+                                                    )}
+                                                </TableCell>
+                                                <TableCell numeric>
+                                                    {tariff.yearly_price ===
+                                                    null ? (
+                                                        '—'
+                                                    ) : (
+                                                        <>
+                                                            {formatPrice(
+                                                                tariff.yearly_price,
+                                                                t('common.som'),
+                                                            )}
+                                                            <span className='text-badge-success-text block text-xs'>
+                                                                −
+                                                                {
+                                                                    tariff.yearly_discount_percent
+                                                                }
+                                                                %
+                                                            </span>
+                                                        </>
+                                                    )}
+                                                </TableCell>
+                                                <TableCell numeric>
+                                                    {(tariff.max_students ??
+                                                        tariff.max_users ??
+                                                        null) === null
+                                                        ? t('common.unlimited')
+                                                        : formatNumber(
+                                                              (tariff.max_students ??
+                                                                  tariff.max_users)!,
+                                                          )}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <ActiveBadge
+                                                        active={
+                                                            tariff.is_active
+                                                        }
+                                                    />
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className='flex justify-end gap-2'>
+                                                        <Button
+                                                            appearance='outline'
+                                                            size='md'
+                                                            iconOnly
+                                                            aria-label={t(
+                                                                'common.edit',
+                                                            )}
+                                                            onPress={() => {
+                                                                setEditing(
+                                                                    tariff,
+                                                                );
+                                                                setFormOpen(
+                                                                    true,
+                                                                );
+                                                            }}
+                                                        >
+                                                            <Pencil1 />
+                                                        </Button>
+                                                        <Button
+                                                            variant='danger'
+                                                            appearance='outline'
+                                                            size='md'
+                                                            iconOnly
+                                                            aria-label={t(
+                                                                'common.delete',
+                                                            )}
+                                                            onPress={() =>
+                                                                setDeleting(
+                                                                    tariff,
+                                                                )
+                                                            }
+                                                        >
+                                                            <Trash1 />
+                                                        </Button>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </TableRoot>
+                            </div>
+                        </>
                     )}
                 </div>
             </div>

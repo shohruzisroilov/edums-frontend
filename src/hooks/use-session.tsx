@@ -2,6 +2,7 @@
 
 import { SESSION_STORAGE_KEY, TOKEN_STORAGE_KEY } from '@/services/api/client';
 import type { Session } from '@/types/api';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import {
     createContext,
@@ -43,6 +44,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     const [session, setSession] = useState<Session | null>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
+    const queryClient = useQueryClient();
 
     // localStorage faqat brauzerda mavjud. Uni render paytida o'qib bo'lmaydi:
     // server HTML'i har doim sessiyasiz chiziladi, shuning uchun qiymat
@@ -53,18 +55,32 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         setLoading(false);
     }, []);
 
-    const signIn = useCallback((next: Session) => {
-        try {
-            window.localStorage.setItem(TOKEN_STORAGE_KEY, next.token);
-            window.localStorage.setItem(
-                SESSION_STORAGE_KEY,
-                JSON.stringify(next),
-            );
-        } catch {
-            /* localStorage o'chirilgan bo'lsa ham sessiya xotirada ishlaydi */
-        }
-        setSession(next);
-    }, []);
+    const signIn = useCallback(
+        (next: Session) => {
+            try {
+                window.localStorage.setItem(TOKEN_STORAGE_KEY, next.token);
+                window.localStorage.setItem(
+                    SESSION_STORAGE_KEY,
+                    JSON.stringify(next),
+                );
+            } catch {
+                /* localStorage o'chirilgan bo'lsa ham sessiya xotirada ishlaydi */
+            }
+            setSession((prev) => {
+                // Agar boshqa foydalanuvchi yoki boshqa markaz kelsa, keshni butunlay tozalaymiz
+                if (
+                    prev &&
+                    (prev.id !== next.id ||
+                        prev.token !== next.token ||
+                        prev.education?.id !== next.education?.id)
+                ) {
+                    queryClient.clear();
+                }
+                return next;
+            });
+        },
+        [queryClient],
+    );
 
     const signOut = useCallback(() => {
         try {
@@ -73,9 +89,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         } catch {
             /* e'tiborsiz */
         }
+        queryClient.clear();
         setSession(null);
         router.replace('/login');
-    }, [router]);
+    }, [queryClient, router]);
 
     const value = useMemo(
         () => ({ session, loading, signIn, signOut }),

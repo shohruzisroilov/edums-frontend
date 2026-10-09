@@ -104,7 +104,7 @@ export function Modal({
     return (
         <div className='fixed inset-0 z-50 flex items-end justify-center overflow-y-auto p-0 sm:items-center sm:p-4'>
             <div
-                className='fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity'
+                className='animate-in fade-in-0 fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity duration-200'
                 aria-hidden='true'
                 onClick={handleAttemptClose}
             />
@@ -115,7 +115,7 @@ export function Modal({
                 aria-label={title}
                 tabIndex={-1}
                 className={cn(
-                    'border-card-border bg-card-surface-area relative z-10 my-0 max-h-[92vh] w-full overflow-y-auto rounded-t-2xl border p-4.5 shadow-2xl outline-none sm:my-auto sm:max-h-[90vh] sm:rounded-xl sm:p-6',
+                    'border-card-border bg-card-surface-area animate-in fade-in-0 slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 relative z-10 my-0 max-h-[92dvh] w-full overflow-y-auto overscroll-contain rounded-t-3xl border p-5 shadow-2xl transition-all duration-200 outline-none sm:my-auto sm:max-h-[90vh] sm:rounded-2xl sm:p-6',
                     size === 'lg' ? 'max-w-3xl' : 'max-w-lg',
                 )}
             >

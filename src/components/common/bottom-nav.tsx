@@ -150,7 +150,7 @@ export function BottomNav({ onMenuClick }: BottomNavProps) {
 
             <nav
                 aria-label={t('nav.mobile')}
-                className='border-card-border bg-card-surface-area/95 supports-backdrop-filter:bg-card-surface-area/85 fixed right-0 bottom-0 left-0 z-40 border-t backdrop-blur-md md:hidden'
+                className='border-card-border bg-card-surface-area/95 supports-backdrop-filter:bg-card-surface-area/85 fixed right-0 bottom-0 left-0 z-40 border-t shadow-[0_-4px_20px_rgba(0,0,0,0.04)] backdrop-blur-md md:hidden'
                 style={{
                     paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 8px)',
                 }}
@@ -165,7 +165,7 @@ export function BottomNav({ onMenuClick }: BottomNavProps) {
                                     onClick={() => setQuickActionsOpen(true)}
                                     aria-label={t('nav.quickActions')}
                                     aria-haspopup='dialog'
-                                    className='bg-button-primary-background hover:bg-button-primary-hover-background focus-visible:ring-button-primary-focus-ring flex size-12 items-center justify-center rounded-full text-white shadow-lg transition-transform outline-none focus-visible:ring-4 active:scale-90'
+                                    className='bg-button-primary-background hover:bg-button-primary-hover-background focus-visible:ring-button-primary-focus-ring ring-card-surface-area shadow-brand-accent/25 relative -top-2.5 flex size-12 items-center justify-center rounded-full text-white shadow-lg ring-4 transition-all duration-150 outline-none hover:scale-105 active:scale-90'
                                 >
                                     <Plus className='size-6 stroke-[2.2]' />
                                 </button>
@@ -179,12 +179,15 @@ export function BottomNav({ onMenuClick }: BottomNavProps) {
                     <button
                         type='button'
                         onClick={onMenuClick}
-                        className='text-text-tertiary hover:text-text-primary flex min-w-0 flex-1 flex-col items-center justify-center gap-1 transition-colors'
+                        className='group text-text-tertiary hover:text-text-primary flex min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 py-1 transition-all duration-150 active:scale-95'
                     >
-                        <MenuIcon />
-                        <span className='text-xs leading-none font-medium'>
+                        <span className='flex items-center justify-center transition-transform duration-150 group-active:scale-90'>
+                            <MenuIcon />
+                        </span>
+                        <span className='w-full truncate text-center text-[11px] leading-tight font-medium'>
                             {t('nav.more')}
                         </span>
+                        <span className='size-1 rounded-full bg-transparent' />
                     </button>
                 </div>
             </nav>
@@ -208,16 +211,28 @@ function NavItem({
             href={href}
             aria-current={isActive ? 'page' : undefined}
             className={cn(
-                'flex min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 transition-colors',
+                'group flex min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 py-1 transition-all duration-150 active:scale-95',
                 isActive
                     ? 'text-brand-accent font-semibold'
                     : 'text-text-tertiary hover:text-text-primary font-medium',
             )}
         >
-            {icon}
-            <span className='w-full truncate text-center text-xs leading-none'>
+            <span
+                className={cn(
+                    'relative flex items-center justify-center transition-transform duration-150',
+                    isActive && 'scale-110',
+                )}
+            >
+                {icon}
+            </span>
+            <span className='w-full truncate text-center text-[11px] leading-tight'>
                 {label}
             </span>
+            {isActive ? (
+                <span className='bg-brand-accent size-1 rounded-full transition-all duration-200' />
+            ) : (
+                <span className='size-1 rounded-full bg-transparent' />
+            )}
         </Link>
     );
 }

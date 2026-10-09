@@ -12,9 +12,9 @@ import {
 import { AccessGuard } from '@/components/ui/access-guard';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import {
+    DataListSkeleton,
     EmptyState,
     ErrorState,
-    TableSkeleton,
 } from '@/components/ui/data-state';
 import { TextInput } from '@/components/ui/form-field';
 import { Modal } from '@/components/ui/modal';
@@ -34,7 +34,8 @@ import {
 import type { PaymentRequest, PaymentRequestStatus } from '@/types/api';
 import { isSuperAdmin } from '@/utils/access';
 import { cn } from '@/utils/cn';
-import { Wallet2 } from '@tailgrids/icons';
+import { exportToExcel } from '@/utils/export';
+import { Download1, Wallet2 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState, type FormEvent } from 'react';
@@ -86,12 +87,73 @@ function PaymentsView() {
         onError: (error) => toastError(error),
     });
 
+    const [exporting, setExporting] = useState(false);
+
+    const handleExportExcel = async () => {
+        try {
+            setExporting(true);
+            let items = query.data?.data ?? [];
+            const total = query.data?.count ?? 0;
+            if (total > items.length) {
+                const res = await listPaymentRequests({
+                    status: (filters.status || undefined) as
+                        | PaymentRequestStatus
+                        | undefined,
+                    limit: Math.min(total, 200),
+                    offset: 0,
+                });
+                items = res.data;
+            }
+            if (items.length === 0) return;
+
+            await exportToExcel(
+                t('payments.title'),
+                'Payments',
+                [
+                    'ID',
+                    t('payments.education'),
+                    t('tariffs.title'),
+                    `${t('tariffs.price')} (${t('common.som')})`,
+                    t('common.status'),
+                    t('common.createdAt'),
+                ],
+                items.map((p) => [
+                    p.id,
+                    p.education?.name || '',
+                    p.tariff_name || '',
+                    p.price,
+                    t(`paymentStatus.${p.status}`),
+                    formatDateTime(p.created_at),
+                ]),
+            );
+        } catch (err) {
+            toastError(err);
+        } finally {
+            setExporting(false);
+        }
+    };
+
     return (
         <>
             <PageHeader
                 title={t('payments.title')}
                 count={query.data?.count}
                 description={t('payments.subtitle')}
+                actions={
+                    query.data?.data && query.data.data.length > 0 ? (
+                        <Button
+                            appearance='outline'
+                            size='md'
+                            isPending={exporting}
+                            onPress={() => void handleExportExcel()}
+                        >
+                            <Download1 />
+                            <span className='sr-only sm:not-sr-only'>
+                                {t('common.export')}
+                            </span>
+                        </Button>
+                    ) : undefined
+                }
             />
 
             <div className='px-5 pb-4'>
@@ -131,11 +193,10 @@ function PaymentsView() {
                     })}
                 </div>
             </div>
-
-            <div className='px-5'>
+            <div className='px-4 sm:px-5'>
                 <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                     {query.isPending ? (
-                        <TableSkeleton columns={6} />
+                        <DataListSkeleton rows={5} columns={6} />
                     ) : query.error ? (
                         <ErrorState error={query.error} />
                     ) : query.data.data.length === 0 ? (
@@ -145,127 +206,230 @@ function PaymentsView() {
                         />
                     ) : (
                         <>
-                            <TableRoot
-                                fullBleed
-                                className='border-x-0 border-t-0'
-                            >
-                                <TableHeader>
-                                    <TableRow>
-                                        <RowNumberHead />
-                                        <TableHead>
-                                            {t('payments.education')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('billing.tariff')}
-                                        </TableHead>
-                                        <TableHead numeric>
-                                            {t('tariffs.price')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('common.status')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('common.createdAt')}
-                                        </TableHead>
-                                        <TableHead className='text-right'>
-                                            {t('common.actions')}
-                                        </TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {query.data.data.map((item, index) => (
-                                        <TableRow key={item.id}>
-                                            <RowNumberCell
-                                                index={index}
-                                                offset={offset}
-                                            />
-                                            <TableCell>
+                            {/* Mobile Card List */}
+                            <div className='divide-card-border divide-y md:hidden'>
+                                {query.data.data.map((item) => (
+                                    <div
+                                        key={item.id}
+                                        className='space-y-3 p-4'
+                                    >
+                                        <div className='flex items-start justify-between gap-3'>
+                                            <div className='min-w-0 flex-1'>
                                                 <Link
                                                     href={`/educations/${item.education_id}`}
-                                                    className='text-brand-accent font-medium hover:underline'
+                                                    className='text-text-primary hover:text-brand-accent block text-sm font-semibold break-words'
                                                 >
                                                     {item.education?.name ??
                                                         '—'}
                                                 </Link>
-                                                <span className='text-text-tertiary block text-xs'>
+                                                <span className='text-text-tertiary mt-0.5 block text-xs'>
                                                     {item.education
                                                         ?.phone_number ?? ''}
                                                 </span>
-                                            </TableCell>
-                                            <TableCell>
-                                                {item.tariff_name}
-                                                <span className='text-text-tertiary block text-xs'>
+                                            </div>
+                                            <div className='shrink-0 text-right'>
+                                                <span className='text-text-primary block text-sm font-semibold tabular-nums'>
+                                                    {formatPrice(
+                                                        item.price,
+                                                        t('common.som'),
+                                                    )}
+                                                </span>
+                                                <span className='text-text-tertiary text-xs'>
                                                     {t(
                                                         `billingPeriod.${item.period}`,
-                                                    )}{' '}
-                                                    ·{' '}
+                                                    )}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div className='flex items-center justify-between text-xs'>
+                                            <div>
+                                                <span className='text-text-secondary font-medium'>
+                                                    {item.tariff_name}
+                                                </span>
+                                                <span className='text-text-tertiary ml-1.5'>
+                                                    (
                                                     {t(
                                                         'tariffs.durationValue',
                                                         {
                                                             days: item.duration_days,
                                                         },
                                                     )}
+                                                    )
                                                 </span>
-                                            </TableCell>
-                                            <TableCell numeric>
-                                                {formatPrice(
-                                                    item.price,
-                                                    t('common.som'),
-                                                )}
-                                            </TableCell>
-                                            <TableCell className='whitespace-normal'>
-                                                <PaymentStatusBadge
-                                                    status={item.status}
-                                                />
-                                                {item.note && (
-                                                    <span className='text-text-tertiary block text-xs'>
-                                                        {item.note}
-                                                    </span>
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
+                                            </div>
+                                            <PaymentStatusBadge
+                                                status={item.status}
+                                            />
+                                        </div>
+
+                                        {item.note && (
+                                            <p className='text-text-tertiary bg-surface-ground rounded-lg p-2 text-xs break-words'>
+                                                {item.note}
+                                            </p>
+                                        )}
+
+                                        <div className='text-text-tertiary flex items-center justify-between pt-1 text-xs'>
+                                            <span>
                                                 {formatDateTime(
                                                     item.created_at,
                                                 )}
-                                            </TableCell>
-                                            <TableCell>
-                                                {item.status === 'pending' && (
-                                                    <div className='flex justify-end gap-2'>
-                                                        <Button
-                                                            variant='primary'
-                                                            appearance='fill'
-                                                            size='md'
-                                                            onPress={() =>
-                                                                setApproving(
-                                                                    item,
-                                                                )
-                                                            }
-                                                        >
-                                                            {t(
-                                                                'payments.approve',
-                                                            )}
-                                                        </Button>
-                                                        <Button
-                                                            variant='danger'
-                                                            appearance='outline'
-                                                            size='md'
-                                                            onPress={() =>
-                                                                setRejecting(
-                                                                    item,
-                                                                )
-                                                            }
-                                                        >
-                                                            {t(
-                                                                'payments.reject',
-                                                            )}
-                                                        </Button>
-                                                    </div>
-                                                )}
-                                            </TableCell>
+                                            </span>
+                                            {item.status === 'pending' && (
+                                                <div className='flex items-center gap-2'>
+                                                    <Button
+                                                        variant='primary'
+                                                        appearance='fill'
+                                                        size='sm'
+                                                        onPress={() =>
+                                                            setApproving(item)
+                                                        }
+                                                    >
+                                                        {t('payments.approve')}
+                                                    </Button>
+                                                    <Button
+                                                        variant='danger'
+                                                        appearance='outline'
+                                                        size='sm'
+                                                        onPress={() =>
+                                                            setRejecting(item)
+                                                        }
+                                                    >
+                                                        {t('payments.reject')}
+                                                    </Button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Desktop Table View */}
+                            <div className='hidden md:block'>
+                                <TableRoot
+                                    fullBleed
+                                    className='border-x-0 border-t-0'
+                                >
+                                    <TableHeader>
+                                        <TableRow>
+                                            <RowNumberHead />
+                                            <TableHead>
+                                                {t('payments.education')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('billing.tariff')}
+                                            </TableHead>
+                                            <TableHead numeric>
+                                                {t('tariffs.price')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.status')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('common.createdAt')}
+                                            </TableHead>
+                                            <TableHead className='text-right'>
+                                                {t('common.actions')}
+                                            </TableHead>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </TableRoot>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {query.data.data.map((item, index) => (
+                                            <TableRow key={item.id}>
+                                                <RowNumberCell
+                                                    index={index}
+                                                    offset={offset}
+                                                />
+                                                <TableCell>
+                                                    <Link
+                                                        href={`/educations/${item.education_id}`}
+                                                        className='text-brand-accent font-medium hover:underline'
+                                                    >
+                                                        {item.education?.name ??
+                                                            '—'}
+                                                    </Link>
+                                                    <span className='text-text-tertiary block text-xs'>
+                                                        {item.education
+                                                            ?.phone_number ??
+                                                            ''}
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell>
+                                                    {item.tariff_name}
+                                                    <span className='text-text-tertiary block text-xs'>
+                                                        {t(
+                                                            `billingPeriod.${item.period}`,
+                                                        )}{' '}
+                                                        ·{' '}
+                                                        {t(
+                                                            'tariffs.durationValue',
+                                                            {
+                                                                days: item.duration_days,
+                                                            },
+                                                        )}
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell numeric>
+                                                    {formatPrice(
+                                                        item.price,
+                                                        t('common.som'),
+                                                    )}
+                                                </TableCell>
+                                                <TableCell className='whitespace-normal'>
+                                                    <PaymentStatusBadge
+                                                        status={item.status}
+                                                    />
+                                                    {item.note && (
+                                                        <span className='text-text-tertiary block text-xs'>
+                                                            {item.note}
+                                                        </span>
+                                                    )}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {formatDateTime(
+                                                        item.created_at,
+                                                    )}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {item.status ===
+                                                        'pending' && (
+                                                        <div className='flex justify-end gap-2'>
+                                                            <Button
+                                                                variant='primary'
+                                                                appearance='fill'
+                                                                size='md'
+                                                                onPress={() =>
+                                                                    setApproving(
+                                                                        item,
+                                                                    )
+                                                                }
+                                                            >
+                                                                {t(
+                                                                    'payments.approve',
+                                                                )}
+                                                            </Button>
+                                                            <Button
+                                                                variant='danger'
+                                                                appearance='outline'
+                                                                size='md'
+                                                                onPress={() =>
+                                                                    setRejecting(
+                                                                        item,
+                                                                    )
+                                                                }
+                                                            >
+                                                                {t(
+                                                                    'payments.reject',
+                                                                )}
+                                                            </Button>
+                                                        </div>
+                                                    )}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </TableRoot>
+                            </div>
 
                             <PaginationBar
                                 count={query.data.count}

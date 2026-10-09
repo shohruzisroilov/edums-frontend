@@ -12,9 +12,9 @@ import {
 import { AccessGuard } from '@/components/ui/access-guard';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import {
+    DataListSkeleton,
     EmptyState,
     ErrorState,
-    TableSkeleton,
 } from '@/components/ui/data-state';
 import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
 import { DateRangeFilter } from '@/components/ui/date-range-filter';
@@ -22,6 +22,7 @@ import { SelectInput } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
 import { PaymentModal } from '@/components/ui/payment-modal';
+import { ReceiptModal } from '@/components/ui/receipt-modal';
 import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
 import { SearchInput } from '@/components/ui/search-input';
 import { PaymentMethodBadge } from '@/components/ui/status-badge';
@@ -44,9 +45,9 @@ import { can } from '@/utils/access';
 import { cn } from '@/utils/cn';
 import { fullName } from '@/utils/format';
 import { TONE_TEXT } from '@/utils/tone';
-import { exportToCsv } from '@/utils/export';
+import { exportToExcel } from '@/utils/export';
 import { invalidateStudyData } from '@/utils/query-cache';
-import { Download1, Plus, Trash1, Wallet2 } from '@tailgrids/icons';
+import { Download1, Plus, Printer, Trash1, Wallet2 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -87,6 +88,9 @@ function CashboxView() {
 
     const [creating, setCreating] = useState(false);
     const [deleting, setDeleting] = useState<StudentPayment | null>(null);
+    const [viewingReceipt, setViewingReceipt] = useState<StudentPayment | null>(
+        null,
+    );
 
     useOpenOnNewParam(() => setCreating(true), canCreate);
 
@@ -142,9 +146,40 @@ function CashboxView() {
                             <Button
                                 appearance='outline'
                                 size='md'
-                                onPress={() => {
-                                    exportToCsv(
+                                onPress={async () => {
+                                    const totalCount = query.data?.count ?? 0;
+                                    let list = query.data?.data ?? [];
+
+                                    if (totalCount > list.length) {
+                                        try {
+                                            const fullRes =
+                                                await listStudentPayments({
+                                                    search: search || undefined,
+                                                    method: (filters.method ||
+                                                        undefined) as
+                                                        | PaymentMethod
+                                                        | undefined,
+                                                    from:
+                                                        filters.from ||
+                                                        undefined,
+                                                    to: filters.to || undefined,
+                                                    limit: Math.min(
+                                                        totalCount,
+                                                        200,
+                                                    ),
+                                                    offset: 0,
+                                                });
+                                            if (fullRes.data?.length > 0) {
+                                                list = fullRes.data;
+                                            }
+                                        } catch {
+                                            /* fallback to current page */
+                                        }
+                                    }
+
+                                    void exportToExcel(
                                         t('cashbox.title'),
+                                        'Cashbox',
                                         [
                                             t('receipt.date'),
                                             t('common.student'),
@@ -153,7 +188,7 @@ function CashboxView() {
                                             t('cashbox.method'),
                                             t('cashbox.receivedBy'),
                                         ],
-                                        query.data.data.map((p) => [
+                                        list.map((p) => [
                                             formatDate(p.paid_at),
                                             fullName(p.student),
                                             p.group.name,
@@ -188,8 +223,8 @@ function CashboxView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
-                <div className='min-w-[220px] flex-1 lg:min-w-40'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5'>
+                <div className='min-w-0 flex-1 sm:min-w-[220px]'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
@@ -227,8 +262,8 @@ function CashboxView() {
                     </div>
                 </MobileFilterSheet>
 
-                <div className='hidden min-w-0 flex-wrap items-center gap-3 sm:flex lg:flex-nowrap'>
-                    <div className='w-40 min-w-28 shrink'>
+                <div className='hidden min-w-0 flex-wrap items-center gap-3 sm:flex'>
+                    <div className='w-full shrink-0 sm:w-44'>
                         <SelectInput
                             options={PAYMENT_METHODS.map((method) => ({
                                 value: method,
@@ -247,10 +282,10 @@ function CashboxView() {
                 </div>
             </div>
 
-            <div className='px-5'>
+            <div className='px-4 sm:px-5'>
                 <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                     {query.isPending ? (
-                        <TableSkeleton columns={6} />
+                        <DataListSkeleton rows={5} columns={6} />
                     ) : query.error ? (
                         <ErrorState error={query.error} />
                     ) : query.data.data.length === 0 ? (
@@ -300,28 +335,28 @@ function CashboxView() {
                                     >
                                         <div className='flex items-start justify-between gap-3'>
                                             <div className='min-w-0 flex-1'>
-                                                <div className='flex items-center gap-2'>
-                                                    <span className='text-text-tertiary text-xs font-semibold tabular-nums'>
+                                                <div className='flex items-start gap-2'>
+                                                    <span className='text-text-tertiary mt-0.5 shrink-0 text-xs font-semibold tabular-nums'>
                                                         #{offset + index + 1}
                                                     </span>
                                                     {canOpenStudents ? (
                                                         <Link
                                                             href={`/students/${payment.student.id}`}
-                                                            className='text-text-primary hover:text-brand-accent truncate text-sm font-semibold hover:underline'
+                                                            className='text-text-primary hover:text-brand-accent text-sm font-semibold break-words hover:underline'
                                                         >
                                                             {fullName(
                                                                 payment.student,
                                                             )}
                                                         </Link>
                                                     ) : (
-                                                        <span className='text-text-primary truncate text-sm font-semibold'>
+                                                        <span className='text-text-primary text-sm font-semibold break-words'>
                                                             {fullName(
                                                                 payment.student,
                                                             )}
                                                         </span>
                                                     )}
                                                 </div>
-                                                <p className='text-text-tertiary mt-0.5 text-xs'>
+                                                <p className='text-text-tertiary mt-0.5 text-xs break-words'>
                                                     {payment.group.name}
                                                     {payment.note &&
                                                         ` · ${payment.note}`}
@@ -355,30 +390,39 @@ function CashboxView() {
                                                 </span>
                                             </div>
 
-                                            {payment.received_by && (
-                                                <span className='text-text-tertiary max-w-[140px] truncate text-xs'>
-                                                    {fullName(
-                                                        payment.received_by,
-                                                    )}
-                                                </span>
-                                            )}
-
-                                            {canDelete && (
+                                            <div className='flex items-center gap-1.5'>
                                                 <Button
-                                                    variant='danger'
                                                     appearance='outline'
                                                     size='sm'
                                                     iconOnly
                                                     aria-label={t(
-                                                        'common.delete',
+                                                        'receipt.title',
                                                     )}
                                                     onPress={() =>
-                                                        setDeleting(payment)
+                                                        setViewingReceipt(
+                                                            payment,
+                                                        )
                                                     }
                                                 >
-                                                    <Trash1 className='size-3.5' />
+                                                    <Printer className='size-3.5' />
                                                 </Button>
-                                            )}
+                                                {canDelete && (
+                                                    <Button
+                                                        variant='danger'
+                                                        appearance='outline'
+                                                        size='sm'
+                                                        iconOnly
+                                                        aria-label={t(
+                                                            'common.delete',
+                                                        )}
+                                                        onPress={() =>
+                                                            setDeleting(payment)
+                                                        }
+                                                    >
+                                                        <Trash1 className='size-3.5' />
+                                                    </Button>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
@@ -408,11 +452,9 @@ function CashboxView() {
                                             <TableHead>
                                                 {t('cashbox.receivedBy')}
                                             </TableHead>
-                                            {canDelete && (
-                                                <TableHead className='text-right'>
-                                                    {t('common.actions')}
-                                                </TableHead>
-                                            )}
+                                            <TableHead className='text-right'>
+                                                {t('common.actions')}
+                                            </TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -475,13 +517,28 @@ function CashboxView() {
                                                               )
                                                             : '—'}
                                                     </TableCell>
-                                                    {canDelete && (
-                                                        <TableCell>
-                                                            <div className='flex justify-end'>
+                                                    <TableCell>
+                                                        <div className='flex items-center justify-end gap-1.5'>
+                                                            <Button
+                                                                appearance='outline'
+                                                                size='sm'
+                                                                iconOnly
+                                                                aria-label={t(
+                                                                    'receipt.title',
+                                                                )}
+                                                                onPress={() =>
+                                                                    setViewingReceipt(
+                                                                        payment,
+                                                                    )
+                                                                }
+                                                            >
+                                                                <Printer className='size-3.5' />
+                                                            </Button>
+                                                            {canDelete && (
                                                                 <Button
                                                                     variant='danger'
                                                                     appearance='outline'
-                                                                    size='md'
+                                                                    size='sm'
                                                                     iconOnly
                                                                     aria-label={t(
                                                                         'common.delete',
@@ -492,11 +549,11 @@ function CashboxView() {
                                                                         )
                                                                     }
                                                                 >
-                                                                    <Trash1 />
+                                                                    <Trash1 className='size-3.5' />
                                                                 </Button>
-                                                            </div>
-                                                        </TableCell>
-                                                    )}
+                                                            )}
+                                                        </div>
+                                                    </TableCell>
                                                 </TableRow>
                                             ),
                                         )}
@@ -517,6 +574,23 @@ function CashboxView() {
             </div>
 
             {creating && <PaymentModal onClose={() => setCreating(false)} />}
+
+            {viewingReceipt && (
+                <ReceiptModal
+                    open
+                    onClose={() => setViewingReceipt(null)}
+                    receiptData={{
+                        studentName: fullName(viewingReceipt.student),
+                        groupName: viewingReceipt.group.name,
+                        amount: viewingReceipt.amount,
+                        method: t(`paymentMethod.${viewingReceipt.method}`),
+                        date: viewingReceipt.paid_at,
+                        receivedBy: viewingReceipt.received_by
+                            ? fullName(viewingReceipt.received_by)
+                            : undefined,
+                    }}
+                />
+            )}
 
             <ConfirmDialog
                 open={deleting !== null}

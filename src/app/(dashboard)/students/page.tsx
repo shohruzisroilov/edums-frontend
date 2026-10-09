@@ -12,9 +12,9 @@ import {
 import { AccessGuard } from '@/components/ui/access-guard';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import {
+    DataListSkeleton,
     EmptyState,
     ErrorState,
-    TableSkeleton,
 } from '@/components/ui/data-state';
 import { SelectInput } from '@/components/ui/form-field';
 import { PageHeader } from '@/components/ui/page-header';
@@ -40,8 +40,9 @@ import { can, canAny } from '@/utils/access';
 import { cn } from '@/utils/cn';
 import { formatPhone, fullName } from '@/utils/format';
 import { balanceTone } from '@/utils/tone';
-import { exportToCsv } from '@/utils/export';
+import { exportToExcel } from '@/utils/export';
 import { StudentImportModal } from '@/components/ui/student-import-modal';
+import { BulkActionBar } from '@/components/ui/bulk-action-bar';
 import {
     Download1,
     Pencil1,
@@ -110,6 +111,18 @@ function StudentsView() {
     const [editing, setEditing] = useState<Student | null>(null);
     const [deleting, setDeleting] = useState<Student | null>(null);
     const [paying, setPaying] = useState<Student | null>(null);
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+    const [prevListKey, setPrevListKey] = useState(
+        () =>
+            `${offset}-${limit}-${search}-${filters.branch_id}-${filters.status}`,
+    );
+
+    // Sahifa, qidiruv yoki filtr o'zgarganda tanlovni darhol tozalaymiz
+    const currentListKey = `${offset}-${limit}-${search}-${filters.branch_id}-${filters.status}`;
+    if (prevListKey !== currentListKey) {
+        setPrevListKey(currentListKey);
+        setSelectedIds(new Set());
+    }
 
     useOpenOnNewParam(() => {
         setEditing(null);
@@ -193,6 +206,77 @@ function StudentsView() {
         (filters.status && filters.status !== 'active'),
     );
 
+    const allIds = query.data?.data.map((s) => s.id) ?? [];
+    const isAllSelected =
+        allIds.length > 0 && allIds.every((id) => selectedIds.has(id));
+
+    const toggleSelectAll = () => {
+        if (isAllSelected) {
+            setSelectedIds(new Set());
+        } else {
+            setSelectedIds(new Set(allIds));
+        }
+    };
+
+    const [exporting, setExporting] = useState(false);
+
+    const toggleSelect = (id: string) => {
+        setSelectedIds((prev) => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id);
+            else next.add(id);
+            return next;
+        });
+    };
+
+    const handleExportExcel = async (onlySelected = false) => {
+        try {
+            setExporting(true);
+            let list = onlySelected
+                ? (query.data?.data.filter((s) => selectedIds.has(s.id)) ?? [])
+                : (query.data?.data ?? []);
+            const total = query.data?.count ?? 0;
+            if (!onlySelected && total > list.length) {
+                const res = await listStudents({
+                    search: search || undefined,
+                    branch_id: filters.branch_id || undefined,
+                    status: (filters.status || undefined) as
+                        | StudentStatus
+                        | undefined,
+                    limit: Math.min(total, 200),
+                    offset: 0,
+                });
+                list = res.data;
+            }
+            if (list.length === 0) return;
+
+            await exportToExcel(
+                t('students.title'),
+                'Students',
+                [
+                    t('common.fullName'),
+                    t('common.phone'),
+                    t('students.parentPhone'),
+                    ...(canViewPayments
+                        ? [`${t('balance.title')} (${t('common.som')})`]
+                        : []),
+                    t('common.status'),
+                ],
+                list.map((s) => [
+                    fullName(s),
+                    s.phone_number ? formatPhone(s.phone_number) : '',
+                    s.parent_phone ? formatPhone(s.parent_phone) : '',
+                    ...(canViewPayments ? [s.balance ?? 0] : []),
+                    t(`studentStatus.${s.status}`),
+                ]),
+            );
+        } catch (err) {
+            toastError(err);
+        } finally {
+            setExporting(false);
+        }
+    };
+
     return (
         <>
             <PageHeader
@@ -205,36 +289,8 @@ function StudentsView() {
                             <Button
                                 appearance='outline'
                                 size='md'
-                                onPress={() => {
-                                    // Balans faqat to'lovlarni ko'ra oladiganlarga.
-                                    exportToCsv(
-                                        t('students.title'),
-                                        [
-                                            t('common.fullName'),
-                                            t('common.phone'),
-                                            t('students.parentPhone'),
-                                            ...(canViewPayments
-                                                ? [
-                                                      `${t('balance.title')} (${t('common.som')})`,
-                                                  ]
-                                                : []),
-                                            t('common.status'),
-                                        ],
-                                        query.data.data.map((s) => [
-                                            fullName(s),
-                                            s.phone_number
-                                                ? formatPhone(s.phone_number)
-                                                : '',
-                                            s.parent_phone
-                                                ? formatPhone(s.parent_phone)
-                                                : '',
-                                            ...(canViewPayments
-                                                ? [s.balance ?? 0]
-                                                : []),
-                                            t(`studentStatus.${s.status}`),
-                                        ]),
-                                    );
-                                }}
+                                isPending={exporting}
+                                onPress={() => void handleExportExcel(false)}
                             >
                                 <Download1 />
                                 {/* Telefonda faqat ikonka — asosiy amal bir qatorda qolsin. */}
@@ -273,8 +329,8 @@ function StudentsView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-3 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
-                <div className='min-w-[200px] flex-1 lg:min-w-40'>
+            <div className='flex flex-wrap items-center gap-3 px-4 pb-4 sm:px-5'>
+                <div className='min-w-0 flex-1 sm:min-w-[200px]'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
@@ -315,9 +371,9 @@ function StudentsView() {
                     />
                 </MobileFilterSheet>
 
-                <div className='hidden min-w-0 items-center gap-3 sm:flex'>
+                <div className='hidden min-w-0 flex-wrap items-center gap-3 sm:flex'>
                     {branches.length > 1 && (
-                        <div className='w-48 min-w-28 shrink'>
+                        <div className='w-48 shrink-0'>
                             <SelectInput
                                 options={branches.map((branch) => ({
                                     value: branch.id,
@@ -331,7 +387,7 @@ function StudentsView() {
                             />
                         </div>
                     )}
-                    <div className='w-40 min-w-28 shrink'>
+                    <div className='w-40 shrink-0'>
                         <SelectInput
                             options={STUDENT_STATUSES.map((status) => ({
                                 value: status,
@@ -348,7 +404,7 @@ function StudentsView() {
             <div className='px-4 sm:px-5'>
                 <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                     {query.isPending ? (
-                        <TableSkeleton columns={5} />
+                        <DataListSkeleton columns={showStatusColumn ? 7 : 6} />
                     ) : query.error ? (
                         <ErrorState error={query.error} />
                     ) : query.data.data.length === 0 ? (
@@ -411,23 +467,42 @@ function StudentsView() {
                                         className='hover:bg-background-gray-primary/20 flex flex-col gap-3 p-4 transition-colors'
                                     >
                                         <div className='flex items-start justify-between gap-3'>
-                                            <div className='min-w-0 flex-1'>
-                                                <div className='flex items-center gap-2'>
-                                                    <span className='text-text-tertiary text-xs font-semibold tabular-nums'>
-                                                        #{offset + index + 1}
-                                                    </span>
-                                                    <Link
-                                                        href={`/students/${student.id}`}
-                                                        className='text-text-primary hover:text-brand-accent truncate text-sm font-semibold hover:underline'
-                                                    >
-                                                        {fullName(student)}
-                                                    </Link>
+                                            <div className='flex min-w-0 flex-1 items-start gap-2.5'>
+                                                <input
+                                                    type='checkbox'
+                                                    checked={selectedIds.has(
+                                                        student.id,
+                                                    )}
+                                                    onChange={() =>
+                                                        toggleSelect(student.id)
+                                                    }
+                                                    aria-label={fullName(
+                                                        student,
+                                                    )}
+                                                    className='border-card-border text-brand-accent focus:ring-brand-accent accent-brand-accent mt-1 size-4 cursor-pointer rounded'
+                                                />
+                                                <div className='min-w-0 flex-1'>
+                                                    <div className='flex items-start gap-2'>
+                                                        <span className='text-text-tertiary mt-0.5 shrink-0 text-xs font-semibold tabular-nums'>
+                                                            #
+                                                            {offset + index + 1}
+                                                        </span>
+                                                        <Link
+                                                            href={`/students/${student.id}`}
+                                                            className='text-text-primary hover:text-brand-accent text-sm font-semibold break-words hover:underline'
+                                                        >
+                                                            {fullName(student)}
+                                                        </Link>
+                                                    </div>
+                                                    {branches.length > 1 && (
+                                                        <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
+                                                            {
+                                                                student.branch
+                                                                    .name
+                                                            }
+                                                        </p>
+                                                    )}
                                                 </div>
-                                                {branches.length > 1 && (
-                                                    <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
-                                                        {student.branch.name}
-                                                    </p>
-                                                )}
                                             </div>
                                             <StudentStatusBadge
                                                 status={student.status}
@@ -546,6 +621,15 @@ function StudentsView() {
                                 >
                                     <TableHeader>
                                         <TableRow>
+                                            <TableHead className='w-10 px-3 text-center'>
+                                                <input
+                                                    type='checkbox'
+                                                    checked={isAllSelected}
+                                                    onChange={toggleSelectAll}
+                                                    aria-label={t('common.all')}
+                                                    className='border-card-border text-brand-accent focus:ring-brand-accent accent-brand-accent size-4 cursor-pointer rounded'
+                                                />
+                                            </TableHead>
                                             <RowNumberHead />
                                             <TableHead>
                                                 {t('common.fullName')}
@@ -576,7 +660,32 @@ function StudentsView() {
                                     <TableBody>
                                         {query.data.data.map(
                                             (student, index) => (
-                                                <TableRow key={student.id}>
+                                                <TableRow
+                                                    key={student.id}
+                                                    className={cn(
+                                                        selectedIds.has(
+                                                            student.id,
+                                                        ) &&
+                                                            'bg-brand-accent/5 hover:bg-brand-accent/10',
+                                                    )}
+                                                >
+                                                    <TableCell className='w-10 px-3 text-center'>
+                                                        <input
+                                                            type='checkbox'
+                                                            checked={selectedIds.has(
+                                                                student.id,
+                                                            )}
+                                                            onChange={() =>
+                                                                toggleSelect(
+                                                                    student.id,
+                                                                )
+                                                            }
+                                                            aria-label={fullName(
+                                                                student,
+                                                            )}
+                                                            className='border-card-border text-brand-accent focus:ring-brand-accent accent-brand-accent size-4 cursor-pointer rounded'
+                                                        />
+                                                    </TableCell>
                                                     <RowNumberCell
                                                         index={index}
                                                         offset={offset}
@@ -788,6 +897,21 @@ function StudentsView() {
                 onCancel={() => setDeleting(null)}
                 onConfirm={() => deleting && removeMutation.mutate(deleting.id)}
             />
+
+            <BulkActionBar
+                selectedCount={selectedIds.size}
+                onClearSelection={() => setSelectedIds(new Set())}
+            >
+                <Button
+                    appearance='outline'
+                    size='sm'
+                    onPress={() => handleExportExcel(true)}
+                    className='gap-1.5'
+                >
+                    <Download1 className='size-3.5' />
+                    {t('common.export')}
+                </Button>
+            </BulkActionBar>
         </>
     );
 }

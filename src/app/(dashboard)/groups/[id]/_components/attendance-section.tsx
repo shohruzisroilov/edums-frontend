@@ -380,6 +380,13 @@ function MarkAttendanceModal({
         onError: (error) => toastError(error),
     });
 
+    const statsSummary = {
+        present: Object.values(statuses).filter((s) => s === 'present').length,
+        absent: Object.values(statuses).filter((s) => s === 'absent').length,
+        late: Object.values(statuses).filter((s) => s === 'late').length,
+        excused: Object.values(statuses).filter((s) => s === 'excused').length,
+    };
+
     return (
         <Modal
             open
@@ -388,35 +395,63 @@ function MarkAttendanceModal({
             size='lg'
         >
             <div className='mb-3 flex flex-wrap items-end justify-between gap-3'>
-                <div className='w-40'>
-                    <SelectInput
-                        label={t('attendance.lessonOrder')}
-                        options={LESSON_ORDERS.map((order) => ({
-                            value: String(order),
-                            label: t('attendance.lessonN', { n: order }),
-                        }))}
-                        value={String(lessonOrder)}
-                        onValueChange={(next) =>
-                            handleLessonOrderChange(Number(next))
-                        }
-                    />
+                <div className='flex flex-wrap items-end gap-3'>
+                    <div className='w-40'>
+                        <SelectInput
+                            label={t('attendance.lessonOrder')}
+                            options={LESSON_ORDERS.map((order) => ({
+                                value: String(order),
+                                label: t('attendance.lessonN', { n: order }),
+                            }))}
+                            value={String(lessonOrder)}
+                            onValueChange={(next) =>
+                                handleLessonOrderChange(Number(next))
+                            }
+                        />
+                    </div>
+                    <div className='flex items-center gap-1.5 pb-0.5'>
+                        <Button
+                            appearance='outline'
+                            size='sm'
+                            onPress={() =>
+                                setStatuses(
+                                    Object.fromEntries(
+                                        Object.keys(statuses).map((id) => [
+                                            id,
+                                            'present' as AttendanceStatus,
+                                        ]),
+                                    ),
+                                )
+                            }
+                        >
+                            {t('attendance.allPresent')}
+                        </Button>
+                    </div>
                 </div>
-                <Button
-                    appearance='outline'
-                    size='sm'
-                    onPress={() =>
-                        setStatuses(
-                            Object.fromEntries(
-                                Object.keys(statuses).map((id) => [
-                                    id,
-                                    'present' as AttendanceStatus,
-                                ]),
-                            ),
-                        )
-                    }
-                >
-                    {t('attendance.allPresent')}
-                </Button>
+
+                {/* Jonli davomat hisoblagichi */}
+                <div className='flex flex-wrap items-center gap-1.5 pb-0.5'>
+                    <span className='bg-badge-success-background text-badge-success-text rounded-md px-2 py-1 text-xs font-semibold'>
+                        {t('attendanceStatus.present')}: {statsSummary.present}
+                    </span>
+                    {statsSummary.absent > 0 && (
+                        <span className='bg-badge-error-background text-badge-error-text rounded-md px-2 py-1 text-xs font-semibold'>
+                            {t('attendanceStatus.absent')}:{' '}
+                            {statsSummary.absent}
+                        </span>
+                    )}
+                    {statsSummary.late > 0 && (
+                        <span className='bg-badge-warning-background text-badge-warning-text rounded-md px-2 py-1 text-xs font-semibold'>
+                            {t('attendanceStatus.late')}: {statsSummary.late}
+                        </span>
+                    )}
+                    {statsSummary.excused > 0 && (
+                        <span className='bg-badge-neutral-background text-badge-neutral-text rounded-md px-2 py-1 text-xs font-semibold'>
+                            {t('attendanceStatus.excused')}:{' '}
+                            {statsSummary.excused}
+                        </span>
+                    )}
+                </div>
             </div>
 
             <ul className='divide-card-border border-card-border divide-y overflow-hidden rounded-xl border'>
@@ -425,7 +460,7 @@ function MarkAttendanceModal({
                         key={row.student.id}
                         className='hover:bg-background-gray-primary/20 flex flex-col justify-between gap-2.5 p-3.5 transition-colors sm:flex-row sm:items-center sm:px-4 sm:py-3'
                     >
-                        <span className='text-text-primary truncate text-sm font-semibold'>
+                        <span className='text-text-primary min-w-0 flex-1 text-sm font-semibold break-words'>
                             {fullName(row.student)}
                         </span>
                         <div
@@ -461,9 +496,12 @@ function MarkAttendanceModal({
                                             })
                                         }
                                         className={cn(
-                                            'rounded-lg border px-2 py-2 text-center text-xs font-semibold transition active:scale-95 sm:px-2.5 sm:py-1',
+                                            'cursor-pointer rounded-lg border px-2 py-2 text-center text-xs font-semibold transition-all duration-150 active:scale-95 sm:px-2.5 sm:py-1',
                                             selected
-                                                ? activeColor
+                                                ? cn(
+                                                      activeColor,
+                                                      'font-bold shadow-xs ring-2 ring-current/25',
+                                                  )
                                                 : 'border-card-border bg-card-surface-area text-text-secondary hover:text-text-primary hover:bg-background-gray-secondary',
                                         )}
                                     >
@@ -476,7 +514,7 @@ function MarkAttendanceModal({
                 ))}
             </ul>
 
-            <div className='mt-5 flex items-center justify-end gap-2'>
+            <div className='mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end'>
                 <Button
                     appearance='outline'
                     size='md'
@@ -490,7 +528,8 @@ function MarkAttendanceModal({
                     appearance='fill'
                     size='md'
                     onPress={() => mutation.mutate()}
-                    isDisabled={mutation.isPending || rows.length === 0}
+                    isDisabled={rows.length === 0}
+                    isPending={mutation.isPending}
                 >
                     {t(mutation.isPending ? 'common.saving' : 'common.save')}
                 </Button>

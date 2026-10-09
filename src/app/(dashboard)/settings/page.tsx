@@ -42,7 +42,7 @@ function SettingsView() {
                 description={t('settings.subtitle')}
             />
 
-            <div className='flex max-w-3xl flex-col gap-5 px-5 pb-6'>
+            <div className='flex max-w-3xl flex-col gap-5 px-4 pb-6 sm:px-5'>
                 {query.isPending ? (
                     <TableSkeleton rows={3} columns={1} />
                 ) : query.error ? (

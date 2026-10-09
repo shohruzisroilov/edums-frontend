@@ -35,9 +35,11 @@ import {
     type AuditEntityType,
     type AuditLog,
 } from '@/types/api';
+import { Button } from '@/components/tailgrids/core/button';
 import { can } from '@/utils/access';
+import { exportToExcel } from '@/utils/export';
 import { formatPhone, fullName } from '@/utils/format';
-import { FileText } from '@tailgrids/icons';
+import { Download1, FileText } from '@tailgrids/icons';
 import { useQuery } from '@tanstack/react-query';
 
 export default function AuditPage() {
@@ -111,7 +113,7 @@ function AuditView() {
 
     const filterElements = (
         <>
-            <div className='w-full min-w-28 shrink sm:w-52'>
+            <div className='w-full shrink-0 sm:w-48 xl:w-52'>
                 <SelectInput
                     options={AUDIT_ENTITY_TYPES.map((type) => ({
                         value: type,
@@ -122,7 +124,7 @@ function AuditView() {
                     onValueChange={(next) => setFilter('entity_type', next)}
                 />
             </div>
-            <div className='w-full min-w-28 shrink sm:w-52'>
+            <div className='w-full shrink-0 sm:w-48 xl:w-52'>
                 <SelectInput
                     options={(usersQuery.data ?? []).map((user) => ({
                         value: user.id,
@@ -141,16 +143,51 @@ function AuditView() {
         </>
     );
 
+    const handleExportExcel = async () => {
+        const list = query.data?.data ?? [];
+        if (list.length === 0) return;
+        await exportToExcel(
+            t('audit.title'),
+            'Audit',
+            [
+                t('audit.time'),
+                t('audit.actor'),
+                t('audit.action'),
+                t('common.description'),
+            ],
+            list.map((l) => [
+                formatDateTime(l.created_at),
+                l.actor.name,
+                t(`auditAction.${l.action}`),
+                l.summary,
+            ]),
+        );
+    };
+
     return (
         <>
             <PageHeader
                 title={t('audit.title')}
                 count={query.data?.count}
                 description={t('audit.subtitle')}
+                actions={
+                    query.data?.data && query.data.data.length > 0 ? (
+                        <Button
+                            appearance='outline'
+                            size='md'
+                            onPress={handleExportExcel}
+                        >
+                            <Download1 />
+                            <span className='sr-only sm:not-sr-only'>
+                                {t('common.export')}
+                            </span>
+                        </Button>
+                    ) : undefined
+                }
             />
 
-            <div className='flex items-center gap-3 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
-                <div className='hidden min-w-0 sm:flex sm:items-center sm:gap-3'>
+            <div className='flex flex-wrap items-center gap-3 px-4 pb-4 sm:px-5'>
+                <div className='hidden w-full min-w-0 flex-wrap items-center gap-3 sm:flex'>
                     {filterElements}
                     <ClearFiltersButton
                         activeCount={activeFilterCount}
@@ -167,7 +204,7 @@ function AuditView() {
                 </div>
             </div>
 
-            <div className='px-5'>
+            <div className='px-4 sm:px-5'>
                 <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                     {query.isPending ? (
                         <TableSkeleton columns={5} />
@@ -180,59 +217,98 @@ function AuditView() {
                         />
                     ) : (
                         <>
-                            <TableRoot
-                                fullBleed
-                                className='border-x-0 border-t-0'
-                            >
-                                <TableHeader>
-                                    <TableRow>
-                                        <RowNumberHead />
-                                        <TableHead>{t('audit.time')}</TableHead>
-                                        <TableHead>
-                                            {t('audit.actor')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('audit.action')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('audit.object')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('audit.details')}
-                                        </TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {query.data.data.map((log, index) => (
-                                        <TableRow key={log.id}>
-                                            <RowNumberCell
-                                                index={index}
-                                                offset={offset}
-                                            />
-                                            <TableCell className='tabular-nums'>
+                            {/* Mobile log card list */}
+                            <div className='divide-card-border divide-y md:hidden'>
+                                {query.data.data.map((log) => (
+                                    <div key={log.id} className='space-y-2 p-4'>
+                                        <div className='flex items-start justify-between gap-2'>
+                                            <div className='min-w-0 flex-1'>
+                                                <div className='flex flex-wrap items-center gap-2'>
+                                                    <AuditActionBadge
+                                                        action={log.action}
+                                                    />
+                                                    <span className='text-text-primary text-xs font-medium break-words'>
+                                                        {log.actor.name}
+                                                    </span>
+                                                </div>
+                                                <p className='text-text-primary mt-1.5 text-sm font-medium break-words'>
+                                                    {log.summary}
+                                                </p>
+                                            </div>
+                                            <span className='text-text-tertiary shrink-0 text-xs tabular-nums'>
                                                 {formatDateTime(log.created_at)}
-                                            </TableCell>
-                                            <TableCell>
-                                                {log.actor.name}
-                                            </TableCell>
-                                            <TableCell>
-                                                <AuditActionBadge
-                                                    action={log.action}
-                                                />
-                                            </TableCell>
-                                            <TableCell
-                                                primary
-                                                className='whitespace-normal'
-                                            >
-                                                {log.summary}
-                                            </TableCell>
-                                            <TableCell className='text-text-secondary text-xs whitespace-normal'>
+                                            </span>
+                                        </div>
+
+                                        {log.details && (
+                                            <div className='bg-surface-ground text-text-secondary rounded-lg p-2.5 text-xs'>
                                                 <Details log={log} />
-                                            </TableCell>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Desktop table */}
+                            <div className='hidden md:block'>
+                                <TableRoot
+                                    fullBleed
+                                    className='border-x-0 border-t-0'
+                                >
+                                    <TableHeader>
+                                        <TableRow>
+                                            <RowNumberHead />
+                                            <TableHead>
+                                                {t('audit.time')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('audit.actor')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('audit.action')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('audit.object')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('audit.details')}
+                                            </TableHead>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </TableRoot>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {query.data.data.map((log, index) => (
+                                            <TableRow key={log.id}>
+                                                <RowNumberCell
+                                                    index={index}
+                                                    offset={offset}
+                                                />
+                                                <TableCell className='tabular-nums'>
+                                                    {formatDateTime(
+                                                        log.created_at,
+                                                    )}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {log.actor.name}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <AuditActionBadge
+                                                        action={log.action}
+                                                    />
+                                                </TableCell>
+                                                <TableCell
+                                                    primary
+                                                    className='whitespace-normal'
+                                                >
+                                                    {log.summary}
+                                                </TableCell>
+                                                <TableCell className='text-text-secondary text-xs whitespace-normal'>
+                                                    <Details log={log} />
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </TableRoot>
+                            </div>
 
                             <PaginationBar
                                 count={query.data.count}

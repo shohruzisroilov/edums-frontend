@@ -48,7 +48,7 @@ import {
 } from '@/types/api';
 import { can } from '@/utils/access';
 import { fullName, toISODate } from '@/utils/format';
-import { exportToCsv } from '@/utils/export';
+import { exportToExcel } from '@/utils/export';
 import { Download1, Plus, SackDollar, Trash1 } from '@tailgrids/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
@@ -87,6 +87,7 @@ function ExpensesView() {
 
     const [creating, setCreating] = useState(false);
     const [deleting, setDeleting] = useState<Expense | null>(null);
+    const [exporting, setExporting] = useState(false);
 
     const query = useQuery({
         queryKey: ['expenses', { ...filters, limit, offset }],
@@ -113,6 +114,49 @@ function ExpensesView() {
         onError: (error) => toastError(error),
     });
 
+    const handleExportExcel = async () => {
+        try {
+            setExporting(true);
+            let items = query.data?.data ?? [];
+            const total = query.data?.count ?? 0;
+            if (total > items.length) {
+                const res = await listExpenses({
+                    category: (filters.category || undefined) as
+                        | ExpenseCategory
+                        | undefined,
+                    from: filters.from || undefined,
+                    to: filters.to || undefined,
+                    limit: Math.min(total, 200),
+                    offset: 0,
+                });
+                items = res.data;
+            }
+            if (!items.length) return;
+            await exportToExcel(
+                t('expenses.title'),
+                'Expenses',
+                [
+                    t('expenses.date'),
+                    t('expenses.category'),
+                    `${t('cashbox.amount')} (${t('common.som')})`,
+                    t('expenses.createdBy'),
+                    t('common.note'),
+                ],
+                items.map((e) => [
+                    formatDate(e.spent_at),
+                    t(`expenseCategory.${e.category}`),
+                    e.amount,
+                    e.created_by ? fullName(e.created_by) : '',
+                    e.note || '',
+                ]),
+            );
+        } catch (err) {
+            toastError(err);
+        } finally {
+            setExporting(false);
+        }
+    };
+
     // Filtr qo'llanmagan bo'sh ro'yxat — yangi markaz: nima ekani tushuntiriladi.
     const filtered = Boolean(filters.category || filters.from || filters.to);
 
@@ -137,30 +181,11 @@ function ExpensesView() {
                             <Button
                                 appearance='outline'
                                 size='md'
-                                onPress={() => {
-                                    exportToCsv(
-                                        t('expenses.title'),
-                                        [
-                                            t('expenses.date'),
-                                            t('expenses.category'),
-                                            `${t('cashbox.amount')} (${t('common.som')})`,
-                                            t('expenses.createdBy'),
-                                            t('common.note'),
-                                        ],
-                                        query.data.data.map((e) => [
-                                            formatDate(e.spent_at),
-                                            t(`expenseCategory.${e.category}`),
-                                            e.amount,
-                                            e.created_by
-                                                ? fullName(e.created_by)
-                                                : '',
-                                            e.note || '',
-                                        ]),
-                                    );
-                                }}
+                                isPending={exporting}
+                                onPress={() => void handleExportExcel()}
                             >
                                 <Download1 />
-                                {/* Telefonda faqat ikonka — asosiy amal bir qatorda qolsin. */}
+                                {/* State: faqat ikonka mobil qurilmada */}
                                 <span className='sr-only sm:not-sr-only'>
                                     {t('common.export')}
                                 </span>
@@ -181,7 +206,7 @@ function ExpensesView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5 lg:flex-nowrap'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5'>
                 <MobileFilterSheet
                     activeCount={
                         (filters.category ? 1 : 0) +
@@ -212,8 +237,8 @@ function ExpensesView() {
                     </div>
                 </MobileFilterSheet>
 
-                <div className='hidden min-w-0 flex-wrap items-center gap-3 sm:flex lg:flex-nowrap'>
-                    <div className='w-52 min-w-28 shrink'>
+                <div className='hidden w-full min-w-0 flex-wrap items-center gap-3 sm:flex'>
+                    <div className='w-full shrink-0 sm:w-52'>
                         <SelectInput
                             options={EXPENSE_CATEGORIES.map((category) => ({
                                 value: category,
@@ -234,7 +259,7 @@ function ExpensesView() {
                 </div>
             </div>
 
-            <div className='px-5'>
+            <div className='px-4 sm:px-5'>
                 <div className='border-card-border bg-card-background overflow-hidden rounded-xl border'>
                     {query.isPending ? (
                         <TableSkeleton columns={5} />
@@ -275,52 +300,21 @@ function ExpensesView() {
                         />
                     ) : (
                         <>
-                            <TableRoot
-                                fullBleed
-                                className='border-x-0 border-t-0'
-                            >
-                                <TableHeader>
-                                    <TableRow>
-                                        <RowNumberHead />
-                                        <TableHead>
-                                            {t('expenses.date')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('expenses.category')}
-                                        </TableHead>
-                                        <TableHead numeric>
-                                            {t('cashbox.amount')}
-                                        </TableHead>
-                                        <TableHead>
-                                            {t('cashbox.receivedBy')}
-                                        </TableHead>
-                                        {canManage && (
-                                            <TableHead className='text-right'>
-                                                {t('common.actions')}
-                                            </TableHead>
-                                        )}
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {query.data.data.map((expense, index) => (
-                                        <TableRow key={expense.id}>
-                                            <RowNumberCell
-                                                index={index}
-                                                offset={offset}
-                                            />
-                                            <TableCell>
-                                                {formatDate(expense.spent_at)}
-                                            </TableCell>
-                                            <TableCell
-                                                primary
-                                                className='whitespace-normal'
-                                            >
+                            {/* Mobile Card View */}
+                            <div className='divide-card-border divide-y md:hidden'>
+                                {query.data.data.map((expense) => (
+                                    <div
+                                        key={expense.id}
+                                        className='space-y-2 p-4'
+                                    >
+                                        <div className='flex items-start justify-between gap-3'>
+                                            <div className='min-w-0'>
                                                 <ExpenseCategoryBadge
                                                     category={expense.category}
                                                 />
                                                 {(expense.note ||
                                                     expense.branch) && (
-                                                    <p className='text-text-tertiary mt-1 text-xs font-normal'>
+                                                    <p className='text-text-tertiary mt-1 text-xs break-words'>
                                                         {[
                                                             expense.note,
                                                             expense.branch
@@ -330,54 +324,177 @@ function ExpensesView() {
                                                             .join(' · ')}
                                                     </p>
                                                 )}
-                                            </TableCell>
-                                            <TableCell numeric>
-                                                {formatPrice(
-                                                    expense.amount,
-                                                    t('common.som'),
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
+                                            </div>
+                                            <div className='shrink-0 text-right'>
+                                                <div className='text-text-primary text-sm font-semibold tabular-nums'>
+                                                    {formatPrice(
+                                                        expense.amount,
+                                                        t('common.som'),
+                                                    )}
+                                                </div>
+                                                <div className='text-text-tertiary text-xs'>
+                                                    {formatDate(
+                                                        expense.spent_at,
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className='text-text-tertiary flex items-center justify-between pt-1 text-xs'>
+                                            <span className='max-w-[200px] truncate'>
                                                 {expense.created_by
                                                     ? fullName(
                                                           expense.created_by,
                                                       )
                                                     : '—'}
-                                            </TableCell>
+                                            </span>
                                             {canManage && (
-                                                <TableCell>
-                                                    <div className='flex justify-end'>
-                                                        {expense.is_salary_payout ? (
-                                                            <span className='text-text-tertiary text-xs'>
-                                                                {t(
-                                                                    'expenses.salaryLocked',
-                                                                )}
-                                                            </span>
-                                                        ) : (
-                                                            <Button
-                                                                variant='danger'
-                                                                appearance='outline'
-                                                                size='md'
-                                                                iconOnly
-                                                                aria-label={t(
-                                                                    'common.delete',
-                                                                )}
-                                                                onPress={() =>
-                                                                    setDeleting(
-                                                                        expense,
-                                                                    )
-                                                                }
-                                                            >
-                                                                <Trash1 />
-                                                            </Button>
-                                                        )}
-                                                    </div>
-                                                </TableCell>
+                                                <div className='shrink-0'>
+                                                    {expense.is_salary_payout ? (
+                                                        <span className='text-text-tertiary text-xs'>
+                                                            {t(
+                                                                'expenses.salaryLocked',
+                                                            )}
+                                                        </span>
+                                                    ) : (
+                                                        <Button
+                                                            variant='danger'
+                                                            appearance='outline'
+                                                            size='sm'
+                                                            onPress={() =>
+                                                                setDeleting(
+                                                                    expense,
+                                                                )
+                                                            }
+                                                        >
+                                                            <Trash1 className='size-3.5' />
+                                                            {t('common.delete')}
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Desktop Table View */}
+                            <div className='hidden md:block'>
+                                <TableRoot
+                                    fullBleed
+                                    className='border-x-0 border-t-0'
+                                >
+                                    <TableHeader>
+                                        <TableRow>
+                                            <RowNumberHead />
+                                            <TableHead>
+                                                {t('expenses.date')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('expenses.category')}
+                                            </TableHead>
+                                            <TableHead numeric>
+                                                {t('cashbox.amount')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('cashbox.receivedBy')}
+                                            </TableHead>
+                                            {canManage && (
+                                                <TableHead className='text-right'>
+                                                    {t('common.actions')}
+                                                </TableHead>
                                             )}
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </TableRoot>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {query.data.data.map(
+                                            (expense, index) => (
+                                                <TableRow key={expense.id}>
+                                                    <RowNumberCell
+                                                        index={index}
+                                                        offset={offset}
+                                                    />
+                                                    <TableCell>
+                                                        {formatDate(
+                                                            expense.spent_at,
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        primary
+                                                        className='whitespace-normal'
+                                                    >
+                                                        <ExpenseCategoryBadge
+                                                            category={
+                                                                expense.category
+                                                            }
+                                                        />
+                                                        {(expense.note ||
+                                                            expense.branch) && (
+                                                            <p className='text-text-tertiary mt-1 text-xs font-normal'>
+                                                                {[
+                                                                    expense.note,
+                                                                    expense
+                                                                        .branch
+                                                                        ?.name,
+                                                                ]
+                                                                    .filter(
+                                                                        Boolean,
+                                                                    )
+                                                                    .join(
+                                                                        ' · ',
+                                                                    )}
+                                                            </p>
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell numeric>
+                                                        {formatPrice(
+                                                            expense.amount,
+                                                            t('common.som'),
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {expense.created_by
+                                                            ? fullName(
+                                                                  expense.created_by,
+                                                              )
+                                                            : '—'}
+                                                    </TableCell>
+                                                    {canManage && (
+                                                        <TableCell>
+                                                            <div className='flex justify-end'>
+                                                                {expense.is_salary_payout ? (
+                                                                    <span className='text-text-tertiary text-xs'>
+                                                                        {t(
+                                                                            'expenses.salaryLocked',
+                                                                        )}
+                                                                    </span>
+                                                                ) : (
+                                                                    <Button
+                                                                        variant='danger'
+                                                                        appearance='outline'
+                                                                        size='md'
+                                                                        iconOnly
+                                                                        aria-label={t(
+                                                                            'common.delete',
+                                                                        )}
+                                                                        onPress={() =>
+                                                                            setDeleting(
+                                                                                expense,
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <Trash1 />
+                                                                    </Button>
+                                                                )}
+                                                            </div>
+                                                        </TableCell>
+                                                    )}
+                                                </TableRow>
+                                            ),
+                                        )}
+                                    </TableBody>
+                                </TableRoot>
+                            </div>
 
                             <PaginationBar
                                 count={query.data.count}
