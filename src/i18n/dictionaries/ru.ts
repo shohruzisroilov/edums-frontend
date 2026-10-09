@@ -1231,6 +1231,9 @@ export const ru: Dictionary = {
     'landing.contactSubtitle':
         'Вы можете напрямую связаться с нами для открытия счёта, консультации по тарифам или внедрению:',
     'landing.floatingContact': 'Есть вопрос? Связаться',
+    'landing.topContactPrompt': 'Для открытия счёта или вопросов:',
+    'landing.heroContactTitle': 'Есть вопросы или хотите открыть счёт?',
+    'landing.heroContactSubtitle': 'Свяжитесь напрямую со специалистом:',
     'landing.heroAccent': 'без тетрадей и Excel',
     'landing.seeFeatures': 'Посмотреть возможности',
     'landing.heroPoint.noCard': 'Банковская карта не нужна',

@@ -1232,6 +1232,9 @@ export const en: Dictionary = {
     'landing.contactSubtitle':
         'Direct contact for opening an account, tariffs, or onboarding support:',
     'landing.floatingContact': 'Questions? Contact us',
+    'landing.topContactPrompt': 'For account opening or questions:',
+    'landing.heroContactTitle': 'Have questions or want to open an account?',
+    'landing.heroContactSubtitle': 'Contact our specialist directly:',
     'landing.heroAccent': 'no notebooks, no spreadsheets',
     'landing.seeFeatures': 'See the features',
     'landing.heroPoint.noCard': 'No bank card needed',

@@ -1,7 +1,14 @@
 'use client';
 
+import {
+    GroupIcon,
+    PhoneIcon,
+    SupportHeadsetIcon,
+    TelegramIcon,
+} from '@/components/ui/support-modal';
 import { Button } from '@/components/tailgrids/core/button';
 import { useT } from '@/i18n/provider';
+import { SUPPORT_CONTACTS } from '@/utils/site';
 
 export function Hero({ onStart }: { onStart: () => void }) {
     const t = useT();
@@ -18,7 +25,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
                 <div className='bg-brand-300/10 absolute top-40 -left-20 size-72 rounded-full blur-3xl' />
             </div>
 
-            <div className='relative mx-auto max-w-5xl px-4 pt-10 pb-8 sm:pt-24 sm:pb-10'>
+            <div className='relative mx-auto max-w-5xl px-4 pt-10 pb-8 sm:pt-20 sm:pb-10'>
                 {/* Sarlavha */}
                 <h1 className='text-text-primary font-display text-center text-3xl leading-[1.15] font-bold tracking-tight text-balance sm:text-5xl lg:text-[64px]'>
                     {t('landing.heroTitle')}
@@ -55,6 +62,55 @@ export function Hero({ onStart }: { onStart: () => void }) {
                     >
                         {t('landing.seeFeatures')}
                     </Button>
+                </div>
+
+                {/* ── Ko'zga ko'rinadigan tezkor aloqa kartasi ── */}
+                <div className='border-card-border bg-card-surface-area/90 mx-auto mt-7 max-w-2xl rounded-2xl border p-3.5 shadow-sm backdrop-blur-md sm:mt-9 sm:p-4'>
+                    <div className='flex flex-col items-center justify-between gap-3 text-center sm:flex-row sm:text-left'>
+                        <div className='flex items-center gap-3'>
+                            <div className='bg-brand-500/10 text-brand-500 flex size-10 shrink-0 items-center justify-center rounded-xl'>
+                                <SupportHeadsetIcon className='size-5' />
+                            </div>
+                            <div>
+                                <p className='text-text-primary text-xs font-bold sm:text-sm'>
+                                    {t('landing.heroContactTitle')}
+                                </p>
+                                <p className='text-text-tertiary text-[11px]'>
+                                    {t('landing.heroContactSubtitle')}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className='flex flex-wrap items-center justify-center gap-2'>
+                            <a
+                                href={SUPPORT_CONTACTS.phoneTel}
+                                className='border-card-border bg-card-background text-text-primary flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold shadow-xs transition hover:border-emerald-500/50 hover:bg-emerald-500/10 hover:text-emerald-600 dark:hover:text-emerald-400'
+                            >
+                                <PhoneIcon className='size-3.5 text-emerald-500' />
+                                <span className='font-mono'>
+                                    {SUPPORT_CONTACTS.phoneFormatted}
+                                </span>
+                            </a>
+                            <a
+                                href={SUPPORT_CONTACTS.telegramPersonalUrl}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                className='border-card-border bg-card-background text-text-primary flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold shadow-xs transition hover:border-sky-500/50 hover:bg-sky-500/10 hover:text-sky-600 dark:hover:text-sky-400'
+                            >
+                                <TelegramIcon className='size-3.5 text-sky-500' />
+                                <span>{SUPPORT_CONTACTS.telegramPersonal}</span>
+                            </a>
+                            <a
+                                href={SUPPORT_CONTACTS.telegramGroupUrl}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                className='border-card-border bg-card-background text-text-primary flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold shadow-xs transition hover:border-indigo-500/50 hover:bg-indigo-500/10 hover:text-indigo-600 dark:hover:text-indigo-400'
+                            >
+                                <GroupIcon className='size-3.5 text-indigo-500' />
+                                <span>{SUPPORT_CONTACTS.telegramGroup}</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
