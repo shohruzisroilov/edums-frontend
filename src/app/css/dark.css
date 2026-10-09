@@ -2,7 +2,7 @@
   /* Native elementlar (select ro'yxati, sana tanlagich, scrollbar) uchun. */
   color-scheme: dark;
 
-  /* Primary */
+  /* Primary (Indigo / Violet) */
   --primary-50: #eef0fe;
   --primary-100: #e0e7ff;
   --primary-200: #c7d2fe;
@@ -15,38 +15,38 @@
   --primary-900: #241f70;
   --primary-950: #16133f;
 
-  --primary-text: white;
-  --neutral-brand-color: #7b7cf5;
+  --primary-text: #ffffff;
+  --neutral-brand-color: #818cf8;
 
-  /* Text Color */
-  --title-50: #e9ebf1;
-  --text-50: #9ca0b0;
-  --text-100: #9ca0b0;
-  --text-200: #7e8195;
-  --text-300: #e0e2eb;
+  /* Text Color (Slate / Crisp hierarchy) */
+  --title-50: #f8fafc;
+  --text-50: #64748b;
+  --text-100: #64748b;
+  --text-200: #475569;
+  --text-300: #e2e8f0;
 
-  /* White */
+  /* White tokens */
   --white-100: #ffffff;
-  --white-90: #e9ebf1;
-  --white-80: #e9ebf1;
-  --white-70: #ffffffb3;
-  --white-60: #ffffff99;
+  --white-90: #f8fafc;
+  --white-80: #f1f5f9;
+  --white-70: rgba(255, 255, 255, 0.7);
+  --white-60: rgba(255, 255, 255, 0.6);
 
   /* Context Color */
   --error-500: #ef4444;
   --success-500: #22c55e;
-  --warning-500: #eab308;
+  --warning-500: #f59e0b;
   --info-500: #0ea5e9;
 
-  /* Border Color */
-  --border-color-base-50: #3d3f4d;
-  --border-color-base-100: #272934;
-  --border-color-base-200: #3f4150;
-  --border-color-base-300: #3d3f4d;
+  /* Border Color (Subtle, sleek, non-intrusive) */
+  --border-color-base-50: #181c2a;
+  --border-color-base-100: #1e2333;
+  --border-color-base-200: #242a3d;
+  --border-color-base-300: #2e354c;
 
-  /* Background Color */
-  --background-50: #181921;
-  --background-100: #272934;
+  /* Background Color (Deep Obsidian / Midnight) */
+  --background-50: #0b0d13;
+  --background-100: #131722;
 
   --background-success-600: #16a34a;
 
@@ -54,251 +54,250 @@
 
   /* Button Primary Color */
   --button-primary-background: #5750f1;
-  --button-primary-hover-background: #3c35d8;
+  --button-primary-hover-background: #4a43dc;
   --button-primary-text: #ffffff;
-  --button-primary-focus-ring: rgba(87, 80, 241, 0.2);
+  --button-primary-focus-ring: rgba(129, 140, 248, 0.3);
 
   /* Outline Dark */
-  --button-outline-background: #272934;
-  --button-outline-hover-background: #272934;
-  --button-outline-border: #3d3f4d;
-  --button-outline-focus-ring: rgba(152, 162, 179, 0.14);
-  --button-outline-text: #e0e2eb;
-  --button-outline-hover-text: #f3f4f6;
-  --button-outline-disabled-background: #3d3f4d;
-  --button-outline-disabled-text: #595b6e;
-  --button-outline-disabled-border: #3d3f4d;
+  --button-outline-background: rgba(255, 255, 255, 0.03);
+  --button-outline-hover-background: rgba(255, 255, 255, 0.07);
+  --button-outline-border: #242a3d;
+  --button-outline-focus-ring: rgba(129, 140, 248, 0.25);
+  --button-outline-text: #e2e8f0;
+  --button-outline-hover-text: #ffffff;
+  --button-outline-disabled-background: #181c2a;
+  --button-outline-disabled-text: #475569;
+  --button-outline-disabled-border: #1e2333;
 
   /* Disabled */
-  --button-disabled-background: #3d3f4d;
-  --button-disabled-border: #3d3f4d;
-  --button-disabled-text: #595b6e;
+  --button-disabled-background: #181c2a;
+  --button-disabled-border: #1e2333;
+  --button-disabled-text: #475569;
 
   /* Error */
   --button-error-background: #dc2626;
   --button-error-hover-background: #b91c1c;
   --button-error-border: #ef4444;
   --button-error-text: #ffffff;
-  --button-error-focus-ring: rgba(220, 38, 38, 0.2);
+  --button-error-focus-ring: rgba(239, 68, 68, 0.25);
 
   /* Error Outline Dark */
-  --button-error-outline-background: #ef44440d;
-  --button-error-outline-border: #7f1d1d;
-  --button-error-outline-focus-border: #991b1b;
-  --button-error-outline-hover-background: #ef444426;
-  --button-error-outline-text: #ef4444;
-  --button-error-outline-hover-text: #f87171;
-  --button-error-outline-focus-ring: rgba(220, 38, 38, 0.2);
+  --button-error-outline-background: rgba(239, 68, 68, 0.08);
+  --button-error-outline-border: rgba(239, 68, 68, 0.3);
+  --button-error-outline-focus-border: #ef4444;
+  --button-error-outline-hover-background: rgba(239, 68, 68, 0.16);
+  --button-error-outline-text: #f87171;
+  --button-error-outline-hover-text: #fca5a5;
+  --button-error-outline-focus-ring: rgba(239, 68, 68, 0.25);
 
   /* Success */
   --button-success-background: #16a34a;
   --button-success-border: #22c55e;
   --button-success-hover-background: #15803d;
   --button-success-text: #ffffff;
-  --button-success-focus-ring: rgba(22, 163, 74, 0.2);
+  --button-success-focus-ring: rgba(34, 197, 94, 0.25);
 
   /* Success Outline Dark */
-  --button-success-outline-background: #22c55e0d;
-  --button-success-outline-border: #14532d;
-  --button-success-outline-focus-border: #166534;
-  --button-success-outline-hover-background: #22c55e26;
-  --button-success-outline-text: #22c55e;
-  --button-success-outline-hover-text: #4ade80;
-  --button-success-outline-focus-ring: rgba(22, 163, 74, 0.2);
+  --button-success-outline-background: rgba(34, 197, 94, 0.08);
+  --button-success-outline-border: rgba(34, 197, 94, 0.3);
+  --button-success-outline-focus-border: #22c55e;
+  --button-success-outline-hover-background: rgba(34, 197, 94, 0.16);
+  --button-success-outline-text: #4ade80;
+  --button-success-outline-hover-text: #86efac;
+  --button-success-outline-focus-ring: rgba(34, 197, 94, 0.25);
 
   /* Ghost */
-  --button-ghost-text: #7e8195;
-  --button-ghost-hover-text: #d0d2dd;
-  --button-ghost-hover-background: #272934;
+  --button-ghost-text: #94a3b8;
+  --button-ghost-hover-text: #f8fafc;
+  --button-ghost-hover-background: rgba(255, 255, 255, 0.06);
 
   /* ======== Badge Color For Dark =========*/
 
   /* Badge Neutral */
-  --badge-neutral-background: #595b6e;
-  --badge-neutral-text: #e0e2eb;
-  --badge-neutral-icon-color: #e0e2eb;
+  --badge-neutral-background: rgba(255, 255, 255, 0.08);
+  --badge-neutral-text: #e2e8f0;
+  --badge-neutral-icon-color: #94a3b8;
 
   /* Badge Primary */
-  --badge-primary-background: #5750f133;
+  --badge-primary-background: rgba(87, 80, 241, 0.2);
   --badge-primary-text: #a5b4fc;
-  --badge-primary-icon-color: #a5b4fc;
+  --badge-primary-icon-color: #818cf8;
 
   /* Badge Error */
-  --badge-error-background: #ef444426;
+  --badge-error-background: rgba(239, 68, 68, 0.16);
   --badge-error-text: #f87171;
   --badge-error-icon-color: #f87171;
 
   /* Badge Warning */
-  --badge-warning-background: #f59e0b26;
+  --badge-warning-background: rgba(245, 158, 11, 0.16);
   --badge-warning-text: #fbbf24;
   --badge-warning-icon-color: #fbbf24;
 
   /* Badge Success */
-  --badge-success-background: #22c55e26;
+  --badge-success-background: rgba(34, 197, 94, 0.16);
   --badge-success-text: #4ade80;
   --badge-success-icon-color: #4ade80;
 
   /* Badge Cyan */
-  --badge-cyan-background: #06b6d426;
+  --badge-cyan-background: rgba(6, 182, 212, 0.16);
   --badge-cyan-text: #22d3ee;
   --badge-cyan-icon-color: #22d3ee;
 
   /* Badge Sky */
-  --badge-sky-background: #0ea5e926;
+  --badge-sky-background: rgba(14, 165, 233, 0.16);
   --badge-sky-text: #38bdf8;
   --badge-sky-icon-color: #38bdf8;
 
   /* Badge Blue */
-  --badge-blue-background: #3b82f626;
+  --badge-blue-background: rgba(59, 130, 246, 0.16);
   --badge-blue-text: #60a5fa;
   --badge-blue-icon-color: #60a5fa;
 
   /* Badge Violet */
-  --badge-violet-background: #8b5cf626;
+  --badge-violet-background: rgba(139, 92, 246, 0.16);
   --badge-violet-text: #a78bfa;
   --badge-violet-icon-color: #a78bfa;
 
   /* Badge Purple */
-  --badge-purple-background: #a855f726;
+  --badge-purple-background: rgba(168, 85, 247, 0.16);
   --badge-purple-text: #c084fc;
   --badge-purple-icon-color: #c084fc;
 
   /* Badge Pink */
-  --badge-pink-background: #ec489926;
+  --badge-pink-background: rgba(236, 72, 153, 0.16);
   --badge-pink-text: #f472b6;
   --badge-pink-icon-color: #f472b6;
 
   /* Badge Rose */
-  --badge-rose-background: #f43f5e26;
+  --badge-rose-background: rgba(244, 63, 94, 0.16);
   --badge-rose-text: #fb7185;
   --badge-rose-icon-color: #fb7185;
 
   /* Badge Orange */
-  --badge-orange-background: #f9731626;
+  --badge-orange-background: rgba(249, 115, 22, 0.16);
   --badge-orange-text: #fb923c;
   --badge-orange-icon-color: #fb923c;
 
   /* ======== Alert Success Color For Dark =========*/
-  --alert-success-background: #22c55e0d;
+  --alert-success-background: rgba(34, 197, 94, 0.08);
   --alert-success-icon-background: #16a34a;
-  --alert-success-border: #14532d;
-  --alert-success-close-icon: #16a34a;
-  --alert-success-title: #16a34a;
-  --alert-success-description: #16a34a;
+  --alert-success-border: rgba(34, 197, 94, 0.25);
+  --alert-success-close-icon: #4ade80;
+  --alert-success-title: #4ade80;
+  --alert-success-description: #86efac;
   --alert-success-button-background: #22c55e;
   --alert-success-button-hover-background: #16a34a;
-  --alert-success-button-text: #22c55e;
+  --alert-success-button-text: #ffffff;
 
   /* ======== Alert Danger Color For Dark =========*/
-  --alert-danger-background: #ef44441a;
+  --alert-danger-background: rgba(239, 68, 68, 0.1);
   --alert-danger-icon-background: #dc2626;
-  --alert-danger-border: #7f1d1d;
-  --alert-danger-close-icon: #b91c1c;
+  --alert-danger-border: rgba(239, 68, 68, 0.25);
+  --alert-danger-close-icon: #f87171;
   --alert-danger-title: #fca5a5;
   --alert-danger-description: #fca5a5;
   --alert-danger-button-background: #ef4444;
   --alert-danger-button-hover-background: #dc2626;
-  --alert-danger-button-text: #ef4444;
+  --alert-danger-button-text: #ffffff;
 
   /* ======== Alert Info Color For Dark =========*/
-  --alert-info-background: #0ea5e90d;
+  --alert-info-background: rgba(14, 165, 233, 0.08);
   --alert-info-icon-background: #0284c7;
-  --alert-info-border: #0c4a6e;
-  --alert-info-close-icon: #0284c7;
-  --alert-info-title: #0ea5e9;
-  --alert-info-description: #0ea5e9;
+  --alert-info-border: rgba(14, 165, 233, 0.25);
+  --alert-info-close-icon: #38bdf8;
+  --alert-info-title: #38bdf8;
+  --alert-info-description: #7dd3fc;
   --alert-info-button-background: #0ea5e9;
   --alert-info-button-hover-background: #0284c7;
-  --alert-info-button-text: #0ea5e9;
+  --alert-info-button-text: #ffffff;
 
   /* ======== Alert Warning Color For Dark =========*/
-  --alert-warning-background: #eab3081a;
+  --alert-warning-background: rgba(245, 158, 11, 0.1);
   --alert-warning-icon-background: #ca8a04;
-  --alert-warning-border: #713f12;
-  --alert-warning-close-icon: #ca8a04;
+  --alert-warning-border: rgba(245, 158, 11, 0.25);
+  --alert-warning-close-icon: #fbbf24;
   --alert-warning-title: #fde047;
   --alert-warning-description: #fde047;
   --alert-warning-button-background: #eab308;
   --alert-warning-button-hover-background: #ca8a04;
-  --alert-warning-button-text: #eab308;
+  --alert-warning-button-text: #ffffff;
 
   /* ======== Alert Default Color For Dark =========*/
-  --alert-default-background: #6b72801a;
-  --alert-default-icon-background: #7e8195;
-  --alert-default-border: #272934;
-  --alert-default-close-icon: #595b6e;
-  --alert-default-title: #d0d2dd;
-  --alert-default-description: #9ca0b0;
-  --alert-default-button-background: #7e8195;
-  --alert-default-button-hover-background: #595b6e;
-  --alert-default-button-text: #7e8195;
+  --alert-default-background: rgba(255, 255, 255, 0.04);
+  --alert-default-icon-background: #475569;
+  --alert-default-border: #1e2333;
+  --alert-default-close-icon: #94a3b8;
+  --alert-default-title: #f8fafc;
+  --alert-default-description: #94a3b8;
+  --alert-default-button-background: #334155;
+  --alert-default-button-hover-background: #475569;
+  --alert-default-button-text: #f8fafc;
 
   /* ======== Input Color For Dark =========*/
-  --input-background: #ffffff0d;
-  --input-label-text: #9ca0b0;
-  --input-disabled-text: #ffffff26;
-  --input-disabled-background: rgba(255, 255, 255, 0.03);
-  --input-disabled-border: rgba(255, 255, 255, 0.05);
-  --input-placeholder-text: #7e8195;
-  --input-primary-focus-border: #5750f1;
-  --input-error-focus-border: #b91c1c;
-  --input-success-focus-border: #15803d;
-  --input-error: #dc2626;
-  --input-success: #16a34a;
+  --input-background: rgba(255, 255, 255, 0.035);
+  --input-label-text: #94a3b8;
+  --input-disabled-text: rgba(255, 255, 255, 0.2);
+  --input-disabled-background: rgba(255, 255, 255, 0.02);
+  --input-disabled-border: rgba(255, 255, 255, 0.06);
+  --input-placeholder-text: #64748b;
+  --input-primary-focus-border: #818cf8;
+  --input-error-focus-border: #ef4444;
+  --input-success-focus-border: #22c55e;
+  --input-error: #ef4444;
+  --input-success: #22c55e;
 
   /* ======== Scrollbar Color For Dark =========*/
-  --scrollbar-background: #3f4150;
+  --scrollbar-background: #242a3d;
 
   /* ======== Skeleton Color For Dark =========*/
-  --skeleton-gradient-50: #ffffff26;
-  --skeleton-gradient-100: #ffffff0d;
-  --skeleton-gradient-200: #ffffff26;
+  --skeleton-gradient-50: rgba(255, 255, 255, 0.08);
+  --skeleton-gradient-100: rgba(255, 255, 255, 0.03);
+  --skeleton-gradient-200: rgba(255, 255, 255, 0.08);
 
-  /* Shadows */
-  --shadow-xs: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-  --shadow-sm: 0px 1px 3px 0px rgba(16, 24, 40, 0.1);
-  --shadow-md: 0px 4px 8px -2px rgba(16, 24, 40, 0.1), 0px 2px 4px -2px rgba(16, 24, 40, 0.06);
-  --shadow-lg: 0px 12px 16px -4px rgba(16, 24, 40, 0.08), 0px 4px 6px -2px rgba(16, 24, 40, 0.03);
-  --shadow-xl: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-  --shadow-2xl: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-  --shadow-3xl: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-  --drop-shadow-theme-3xl: 0 32px 64px rgba(16, 24, 40, 0.14);
-  --popover-shadow: 0px 5px 5px -2px rgba(16, 24, 40, 0.04);
-  --shadow-hero: 0px -14px 100px 0px rgba(0, 0, 0, 0.05);
+  /* Shadows (Natural ambient depth in dark mode) */
+  --shadow-xs: 0px 1px 2px 0px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0px 2px 4px 0px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0px 4px 12px -2px rgba(0, 0, 0, 0.5), 0px 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0px 12px 24px -4px rgba(0, 0, 0, 0.6), 0px 4px 8px -2px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0px 20px 32px -8px rgba(0, 0, 0, 0.7);
+  --shadow-2xl: 0px 24px 48px -12px rgba(0, 0, 0, 0.8);
+  --shadow-3xl: 0px 32px 64px -16px rgba(0, 0, 0, 0.85);
+  --drop-shadow-theme-3xl: 0 32px 64px rgba(0, 0, 0, 0.85);
+  --popover-shadow: 0px 10px 25px -5px rgba(0, 0, 0, 0.75), 0px 8px 10px -6px rgba(0, 0, 0, 0.7);
+  --shadow-hero: 0px -14px 100px 0px rgba(87, 80, 241, 0.12);
 
   --animate-pulse-custom: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 
-  /* ======================= Next Admin Dashboard  ======================= */
-  /* background */
-  --background-gray-secondary_alt_2: #181921;
-  --background-gray-secondary_alt: #3d3f4d;
-  --background-gray-primary: #2f303d;
-  --background-gray-secondary: #2f303d;
-  --background-gray-tertiary: #3d3f4d;
-  --dropdowns-background: #3d3f4d;
-  --input-background: rgba(255, 255, 255, 0.05);
-  --card-background: #272934;
-  --background-white-secondary: #2f303d;
-  --card-surface-area: #1e2029;
+  /* ======================= Next Admin Dashboard ======================= */
+  /* Backgrounds: Deep Obsidian / Midnight */
+  --background-gray-secondary_alt_2: #0b0d13;
+  --background-gray-secondary_alt: #181c2a;
+  --background-gray-primary: #141724;
+  --background-gray-secondary: #181c2a;
+  --background-gray-tertiary: #1e2333;
+  --dropdowns-background: #141826;
+  --input-background: rgba(255, 255, 255, 0.035);
+  --card-background: #131722;
+  --background-white-secondary: #131722;
+  --card-surface-area: #0f121c;
   --sidebar-navigation-nav-item-nav-hover-background: rgba(255, 255, 255, 0.05);
-  --button-primary-outline-background: rgba(255, 255, 255, 0.05);
-  --button-primary-outline-hover-background: #2f303d;
-  --background-white-primary: #181921;
-  --tooltip-background: #3d3f4d;
-  --button-error-outline-background: rgba(239, 68, 68, 0.05);
-  --badge-gray-background: #73768c;
-  --badge-gray-icon: #e4e4e7;
-  --background-gray-quaternary: #5b5e71;
+  --button-primary-outline-background: rgba(255, 255, 255, 0.03);
+  --button-primary-outline-hover-background: rgba(255, 255, 255, 0.08);
+  --background-white-primary: #0b0d13;
+  --tooltip-background: #1a1e2c;
+  --button-error-outline-background: rgba(239, 68, 68, 0.08);
+  --badge-gray-background: #1e2333;
+  --badge-gray-icon: #94a3b8;
+  --background-gray-quaternary: #282e42;
 
-  /* general color */
+  /* General color & Brand */
   --brand-100: #e0e7ff;
   --brand-200: #c7d2fe;
   --brand-300: #a5b4fc;
   --brand-400: #818cf8;
   --brand-500: #5750f1;
-  /* Qorong'i fonda #5750f1 juda xira ko'rinadi (kontrast 2.4–3.2), shuning
-     uchun aksent yorug'roq: barcha yuzalarda 3.0 dan yuqori. */
-  --brand-accent: #7b7cf5;
+  /* Yorqin, toza indigo aksent: qora fonda nafis porlaydi */
+  --brand-accent: #818cf8;
 
   --brand-600: #3c35d8;
   --base-white: #ffffff;
@@ -309,36 +308,35 @@
   --blue-200: #bfdbfe;
   --blue-300: #93c5fd;
   --blue-900: #1e3a8a;
-  --blue-900: #1e3a8a;
   --violet-300: #c4b5fd;
   --pink-200: #fbcfe8;
 
-  /* text */
-  --text-tertiary: #9ca0b0;
-  --text-secondary: #acb0be;
-  --text-primary: #e9ebf1;
-  --input-placeholder-text-color: #7e8395;
-  --button-primary-outline-text: #e4e4e7;
+  /* Text hierarchy: Crisp Slate */
+  --text-tertiary: #64748b;
+  --text-secondary: #94a3b8;
+  --text-primary: #f8fafc;
+  --input-placeholder-text-color: #64748b;
+  --button-primary-outline-text: #e2e8f0;
   --logo-text: #ffffff;
-  --button-error-outline-text: #b91c1c;
-  --input-label-text-color: #acb0be;
-  --text-disable: #7e8395;
+  --button-error-outline-text: #f87171;
+  --input-label-text-color: #94a3b8;
+  --text-disable: #475569;
 
-  /* icons */
-  --icon-tertiary: #acb0be;
-  --icon-secondary: #acb0be;
-  --icon-primary: #ffffff;
+  /* Icons */
+  --icon-tertiary: #64748b;
+  --icon-secondary: #94a3b8;
+  --icon-primary: #f8fafc;
 
-  /* borders */
-  --input-border: #575a6d;
-  --card-border: #464859;
-  --card-surface-border: #383a47;
-  --border-secondary-alt: #5b5e71;
-  --border-primary: #3d3f4d;
-  --border-secondary: #2f303d;
-  --button-primary-outline-stroke: #3d3f4d;
-  --button-error-outline-stroke: #ef4444;
+  /* Borders: Subtle, modern & sleek (No more harsh 31% borders) */
+  --input-border: #242a3d;
+  --card-border: #1e2333;
+  --card-surface-border: #1a1e2c;
+  --border-secondary-alt: #242a3d;
+  --border-primary: #1e2333;
+  --border-secondary: #181c2a;
+  --button-primary-outline-stroke: #242a3d;
+  --button-error-outline-stroke: rgba(239, 68, 68, 0.4);
 
-  --shadow-xs: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
-  --shadow-3xl: 0 32px 64px -12px rgba(16, 24, 40, 0.14);
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-3xl: 0 32px 64px -12px rgba(0, 0, 0, 0.85);
 }
