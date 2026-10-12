@@ -212,7 +212,7 @@ function DebtorsView() {
                 )}
 
                 {query.data && query.data.total_debt > 0 && (
-                    <div className='border-badge-error-border/40 bg-badge-error-background/20 text-badge-error-text flex w-full items-center justify-between rounded-xl border px-3.5 py-2.5 text-xs font-semibold tabular-nums sm:w-auto sm:border-0 sm:bg-transparent sm:p-0 sm:text-sm sm:ml-auto'>
+                    <div className='border-badge-error-border/40 bg-badge-error-background/20 text-badge-error-text flex w-full items-center justify-between rounded-xl border px-3.5 py-2.5 text-xs font-semibold tabular-nums sm:ml-auto sm:w-auto sm:border-0 sm:bg-transparent sm:p-0 sm:text-sm'>
                         <span className='text-text-secondary font-medium sm:hidden'>
                             {t('debtors.debt')}:
                         </span>

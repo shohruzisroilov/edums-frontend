@@ -63,7 +63,7 @@ export function PageHeader({
         >
             <div className='min-w-0 flex-1'>
                 <div className='flex items-start justify-between gap-3'>
-                    <div className='flex items-center gap-2.5 min-w-0'>
+                    <div className='flex min-w-0 items-center gap-2.5'>
                         <h1 className='text-text-primary font-display text-xl leading-tight font-semibold tracking-[-0.015em] sm:text-2xl'>
                             {title}
                         </h1>
@@ -76,7 +76,7 @@ export function PageHeader({
                     {actions && mobileActionsPosition === 'top' && (
                         <div
                             className={cn(
-                                'flex items-center gap-2 shrink-0',
+                                'flex shrink-0 items-center gap-2',
                                 hideOnDesktopClass[breakpoint],
                             )}
                         >
