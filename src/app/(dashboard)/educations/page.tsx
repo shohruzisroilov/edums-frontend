@@ -146,11 +146,13 @@ function EducationsView() {
             />
 
             <div className='flex flex-wrap items-center gap-2 px-4 pb-4 sm:px-5'>
-                <SearchInput
-                    value={search}
-                    onChange={setSearch}
-                    placeholder={t('educations.search')}
-                />
+                <div className='min-w-0 flex-1 sm:max-w-64'>
+                    <SearchInput
+                        value={search}
+                        onChange={setSearch}
+                        placeholder={t('educations.search')}
+                    />
+                </div>
                 <div className='hidden shrink-0 sm:block sm:w-44'>
                     <SelectInput
                         options={EDUCATION_STATUSES.map((status) => ({

@@ -15,6 +15,20 @@ const actionsBreakpoint: Record<'sm' | 'md' | 'lg' | 'xl', string> = {
     xl: 'xl:w-auto xl:shrink-0',
 };
 
+const hideOnDesktopClass: Record<'sm' | 'md' | 'lg' | 'xl', string> = {
+    sm: 'sm:hidden',
+    md: 'md:hidden',
+    lg: 'lg:hidden',
+    xl: 'xl:hidden',
+};
+
+const hideOnMobileClass: Record<'sm' | 'md' | 'lg' | 'xl', string> = {
+    sm: 'hidden sm:flex',
+    md: 'hidden md:flex',
+    lg: 'hidden lg:flex',
+    xl: 'hidden xl:flex',
+};
+
 /**
  * Sahifa sarlavhasi. Yozuvlar soni sarlavha yonidagi belgida turadi —
  * "nechta yozuv bor" degan savol ro'yxat sahifasida birinchi bo'lib
@@ -27,6 +41,7 @@ export function PageHeader({
     actions,
     className,
     breakpoint = 'lg',
+    mobileActionsPosition = 'bottom',
 }: {
     title: string;
     /** Matn yoki qisqa qator (masalan, filial · holat belgisi). */
@@ -35,6 +50,8 @@ export function PageHeader({
     actions?: ReactNode;
     className?: string;
     breakpoint?: 'sm' | 'md' | 'lg' | 'xl';
+    /** Telefonda amallar sarlavha qatorida ('top') yoki tavsif ostida ('bottom') turishi */
+    mobileActionsPosition?: 'bottom' | 'top';
 }) {
     return (
         <div
@@ -45,14 +62,26 @@ export function PageHeader({
             )}
         >
             <div className='min-w-0 flex-1'>
-                <div className='flex items-center gap-2.5'>
-                    <h1 className='text-text-primary font-display text-xl leading-tight font-semibold tracking-[-0.015em] sm:text-2xl'>
-                        {title}
-                    </h1>
-                    {count !== undefined && (
-                        <span className='border-card-border bg-background-gray-primary text-text-tertiary shrink-0 rounded-full border px-2 py-0.5 text-xs font-semibold tabular-nums'>
-                            {count}
-                        </span>
+                <div className='flex items-start justify-between gap-3'>
+                    <div className='flex items-center gap-2.5 min-w-0'>
+                        <h1 className='text-text-primary font-display text-xl leading-tight font-semibold tracking-[-0.015em] sm:text-2xl'>
+                            {title}
+                        </h1>
+                        {count !== undefined && (
+                            <span className='border-card-border bg-background-gray-primary text-text-tertiary shrink-0 rounded-full border px-2 py-0.5 text-xs font-semibold tabular-nums'>
+                                {count}
+                            </span>
+                        )}
+                    </div>
+                    {actions && mobileActionsPosition === 'top' && (
+                        <div
+                            className={cn(
+                                'flex items-center gap-2 shrink-0',
+                                hideOnDesktopClass[breakpoint],
+                            )}
+                        >
+                            {actions}
+                        </div>
                     )}
                 </div>
                 {description && (
@@ -64,7 +93,10 @@ export function PageHeader({
             {actions && (
                 <div
                     className={cn(
-                        'flex w-full flex-wrap items-center gap-2',
+                        'w-full flex-wrap items-center gap-2',
+                        mobileActionsPosition === 'top'
+                            ? hideOnMobileClass[breakpoint]
+                            : 'flex',
                         actionsBreakpoint[breakpoint],
                     )}
                 >

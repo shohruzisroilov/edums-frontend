@@ -170,37 +170,40 @@ function AuditView() {
                 title={t('audit.title')}
                 count={query.data?.count}
                 description={t('audit.subtitle')}
+                breakpoint='sm'
                 actions={
-                    query.data?.data && query.data.data.length > 0 ? (
-                        <Button
-                            appearance='outline'
-                            size='md'
-                            onPress={handleExportExcel}
-                        >
-                            <Download1 />
-                            <span className='sr-only sm:not-sr-only'>
-                                {t('common.export')}
-                            </span>
-                        </Button>
-                    ) : undefined
+                    <div className='flex items-center gap-2'>
+                        <div className='sm:hidden'>
+                            <MobileFilterSheet
+                                activeCount={activeFilterCount}
+                                onClear={clearFilters}
+                            >
+                                {filterElements}
+                            </MobileFilterSheet>
+                        </div>
+                        {query.data?.data && query.data.data.length > 0 && (
+                            <Button
+                                appearance='outline'
+                                size='md'
+                                onPress={handleExportExcel}
+                            >
+                                <Download1 />
+                                <span className='sr-only sm:not-sr-only'>
+                                    {t('common.export')}
+                                </span>
+                            </Button>
+                        )}
+                    </div>
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-3 px-4 pb-4 sm:px-5'>
-                <div className='hidden w-full min-w-0 flex-wrap items-center gap-3 sm:flex'>
+            <div className='hidden px-4 pb-4 sm:block sm:px-5'>
+                <div className='flex w-full min-w-0 flex-wrap items-center gap-3'>
                     {filterElements}
                     <ClearFiltersButton
                         activeCount={activeFilterCount}
                         onClear={clearFilters}
                     />
-                </div>
-                <div className='flex w-full items-center justify-end sm:hidden'>
-                    <MobileFilterSheet
-                        activeCount={activeFilterCount}
-                        onClear={clearFilters}
-                    >
-                        {filterElements}
-                    </MobileFilterSheet>
                 </div>
             </div>
 
