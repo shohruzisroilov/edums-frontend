@@ -16,7 +16,10 @@ import {
     ErrorState,
     TableSkeleton,
 } from '@/components/ui/data-state';
-import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
+import {
+    ClearFiltersButton,
+    MobileFilterSheet,
+} from '@/components/ui/mobile-filter-sheet';
 import { DateRangeFilter } from '@/components/ui/date-range-filter';
 import {
     SelectInput,
@@ -159,6 +162,8 @@ function ExpensesView() {
 
     // Filtr qo'llanmagan bo'sh ro'yxat — yangi markaz: nima ekani tushuntiriladi.
     const filtered = Boolean(filters.category || filters.from || filters.to);
+    const activeFilterCount =
+        (filters.category ? 1 : 0) + (filters.from || filters.to ? 1 : 0);
 
     return (
         <>
@@ -175,8 +180,45 @@ function ExpensesView() {
                           })
                         : t('expenses.subtitle')
                 }
+                breakpoint='sm'
                 actions={
                     <div className='flex flex-wrap items-center gap-2'>
+                        <div className='sm:hidden'>
+                            <MobileFilterSheet
+                                activeCount={activeFilterCount}
+                                onClear={() => {
+                                    setFilter('category', '');
+                                    setFilter('from', '');
+                                    setFilter('to', '');
+                                }}
+                            >
+                                <SelectInput
+                                    label={t('expenses.allCategories')}
+                                    options={EXPENSE_CATEGORIES.map(
+                                        (category) => ({
+                                            value: category,
+                                            label: t(
+                                                `expenseCategory.${category}`,
+                                            ),
+                                        }),
+                                    )}
+                                    placeholder={t('expenses.allCategories')}
+                                    value={filters.category}
+                                    onValueChange={(next) =>
+                                        setFilter('category', next)
+                                    }
+                                />
+                                <div className='mt-1'>
+                                    <DateRangeFilter
+                                        from={filters.from}
+                                        to={filters.to}
+                                        onDateChange={(range) =>
+                                            setFilters(range)
+                                        }
+                                    />
+                                </div>
+                            </MobileFilterSheet>
+                        </div>
                         {query.data?.data && query.data.data.length > 0 && (
                             <Button
                                 appearance='outline'
@@ -206,38 +248,8 @@ function ExpensesView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5'>
-                <MobileFilterSheet
-                    activeCount={
-                        (filters.category ? 1 : 0) +
-                        (filters.from || filters.to ? 1 : 0)
-                    }
-                    onClear={() => {
-                        setFilter('category', '');
-                        setFilter('from', '');
-                        setFilter('to', '');
-                    }}
-                >
-                    <SelectInput
-                        label={t('expenses.allCategories')}
-                        options={EXPENSE_CATEGORIES.map((category) => ({
-                            value: category,
-                            label: t(`expenseCategory.${category}`),
-                        }))}
-                        placeholder={t('expenses.allCategories')}
-                        value={filters.category}
-                        onValueChange={(next) => setFilter('category', next)}
-                    />
-                    <div className='mt-1'>
-                        <DateRangeFilter
-                            from={filters.from}
-                            to={filters.to}
-                            onDateChange={(range) => setFilters(range)}
-                        />
-                    </div>
-                </MobileFilterSheet>
-
-                <div className='hidden w-full min-w-0 flex-wrap items-center gap-3 sm:flex'>
+            <div className='hidden px-4 pb-4 sm:block sm:px-5'>
+                <div className='flex w-full min-w-0 flex-wrap items-center gap-3'>
                     <div className='w-full shrink-0 sm:w-52'>
                         <SelectInput
                             options={EXPENSE_CATEGORIES.map((category) => ({
@@ -255,6 +267,14 @@ function ExpensesView() {
                         from={filters.from}
                         to={filters.to}
                         onDateChange={(range) => setFilters(range)}
+                    />
+                    <ClearFiltersButton
+                        activeCount={activeFilterCount}
+                        onClear={() => {
+                            setFilter('category', '');
+                            setFilter('from', '');
+                            setFilter('to', '');
+                        }}
                     />
                 </div>
             </div>

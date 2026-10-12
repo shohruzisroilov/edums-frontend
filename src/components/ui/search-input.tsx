@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/utils/cn';
 import { useT } from '@/i18n/provider';
 import { Search1 } from '@tailgrids/icons';
 import { useEffect, useRef, useState } from 'react';
@@ -9,10 +10,12 @@ export function SearchInput({
     value,
     onChange,
     placeholder,
+    className,
 }: {
     value: string;
     onChange: (value: string) => void;
     placeholder?: string;
+    className?: string;
 }) {
     const t = useT();
     // Maydon o'z holatini yuritadi, ota komponentga esa debounce bilan uzatiladi.
@@ -40,7 +43,7 @@ export function SearchInput({
     const label = placeholder ?? t('common.search');
 
     return (
-        <div className='relative w-full min-w-40 sm:max-w-64'>
+        <div className={cn('relative w-full min-w-0 sm:max-w-64', className)}>
             <Search1
                 aria-hidden='true'
                 className='text-text-tertiary pointer-events-none absolute top-1/2 left-3 size-4.5 -translate-y-1/2'

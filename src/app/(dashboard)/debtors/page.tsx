@@ -144,8 +144,10 @@ function DebtorsView() {
                 title={t('debtors.title')}
                 count={query.data?.count}
                 description={t('debtors.subtitle')}
+                breakpoint='sm'
+                mobileActionsPosition='top'
                 actions={
-                    <div className='flex flex-wrap items-center gap-2'>
+                    <div className='flex items-center gap-2'>
                         {allDebtors.length > 0 && (
                             <Button
                                 appearance='outline'
@@ -164,8 +166,8 @@ function DebtorsView() {
                 }
             />
 
-            <div className='flex flex-wrap items-center gap-3 px-4 pb-4 sm:px-5'>
-                <div className='min-w-0 flex-1 sm:min-w-[200px]'>
+            <div className='flex flex-wrap items-center gap-2.5 px-4 pb-4 sm:px-5'>
+                <div className='min-w-0 flex-1 sm:max-w-64'>
                     <SearchInput
                         value={search}
                         onChange={setSearch}
@@ -210,11 +212,24 @@ function DebtorsView() {
                 )}
 
                 {query.data && query.data.total_debt > 0 && (
-                    <p className='text-badge-error-text ml-auto text-xs font-semibold tabular-nums sm:text-sm'>
-                        {t('debtors.total', {
-                            amount: formatPrice(query.data.total_debt, som),
-                        })}
-                    </p>
+                    <div className='border-badge-error-border/40 bg-badge-error-background/20 text-badge-error-text flex w-full items-center justify-between rounded-xl border px-3.5 py-2.5 text-xs font-semibold tabular-nums sm:w-auto sm:border-0 sm:bg-transparent sm:p-0 sm:text-sm sm:ml-auto'>
+                        <span className='text-text-secondary font-medium sm:hidden'>
+                            {t('debtors.debt')}:
+                        </span>
+                        <span className='font-bold sm:font-semibold'>
+                            <span className='hidden sm:inline'>
+                                {t('debtors.total', {
+                                    amount: formatPrice(
+                                        query.data.total_debt,
+                                        som,
+                                    ),
+                                })}
+                            </span>
+                            <span className='sm:hidden'>
+                                {formatPrice(query.data.total_debt, som)}
+                            </span>
+                        </span>
+                    </div>
                 )}
             </div>
 
