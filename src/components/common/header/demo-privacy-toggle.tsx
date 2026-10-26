@@ -3,7 +3,9 @@
 import { Button } from '@/components/tailgrids/core/button';
 import { useDemoPrivacy } from '@/hooks/use-demo-privacy';
 import { Eye, EyeDisabled } from '@tailgrids/icons';
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
+
+const emptySubscribe = () => () => {};
 
 /**
  * YouTube videolari olish yoki taqdimotlar paytida shaxsiy telefon raqamlarni
@@ -11,13 +13,13 @@ import { useEffect, useState } from 'react';
  */
 export default function DemoPrivacyToggle() {
     const { isPrivacyOn, toggle } = useDemoPrivacy();
-    const [mounted, setMounted] = useState(false);
+    const isMounted = useSyncExternalStore(
+        emptySubscribe,
+        () => true,
+        () => false,
+    );
 
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    if (!mounted) {
+    if (!isMounted) {
         return <span className='size-10' />;
     }
 
