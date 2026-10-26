@@ -1,6 +1,5 @@
 'use client';
 
-import { useDemoPrivacy } from '@/hooks/use-demo-privacy';
 import { cn } from '@/utils/cn';
 import { formatPhone } from '@/utils/format';
 
@@ -11,29 +10,19 @@ export function PhoneLink({
     phone: string | null | undefined;
     className?: string;
 }) {
-    const { isPrivacyOn } = useDemoPrivacy();
     if (!phone) return <span>—</span>;
-    const formatted = formatPhone(phone, { mask: isPrivacyOn });
+    const formatted = formatPhone(phone);
     const cleanPhone = phone.replace(/[^\d+]/g, '');
 
     return (
         <a
-            href={isPrivacyOn ? undefined : `tel:${cleanPhone}`}
+            href={`tel:${cleanPhone}`}
             className={cn(
                 // Raqam hech qachon ikki qatorga bo'linmaydi.
-                'whitespace-nowrap tabular-nums',
-                isPrivacyOn
-                    ? 'text-text-secondary cursor-default select-none'
-                    : 'hover:text-brand-accent hover:underline',
+                'hover:text-brand-accent whitespace-nowrap tabular-nums hover:underline',
                 className,
             )}
-            onClick={(e) => {
-                if (isPrivacyOn) e.preventDefault();
-                e.stopPropagation();
-            }}
-            title={
-                isPrivacyOn ? 'Maxfiylik rejimi: raqam yashirilgan' : undefined
-            }
+            onClick={(e) => e.stopPropagation()}
         >
             {formatted}
         </a>
