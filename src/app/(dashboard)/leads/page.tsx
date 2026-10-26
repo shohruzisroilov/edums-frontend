@@ -27,6 +27,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
 import { PhoneLink } from '@/components/ui/phone-link';
 import { RowNumberCell, RowNumberHead } from '@/components/ui/row-number';
+import { SortableHead } from '@/components/ui/sortable-head';
 import { SearchInput } from '@/components/ui/search-input';
 import {
     LeadSourceBadge,
@@ -115,6 +116,9 @@ function LeadsView() {
         setLimit,
         offset,
         setOffset,
+        sortBy,
+        sortOrder,
+        toggleSort,
     } = useListQuery({
         status: '',
         source: '',
@@ -170,6 +174,8 @@ function LeadsView() {
                 ...filters,
                 limit: kanban ? 1 : limit,
                 offset: kanban ? 0 : offset,
+                sortBy,
+                sortOrder,
             },
         ],
         queryFn: () =>
@@ -181,6 +187,8 @@ function LeadsView() {
                 branch_id: filters.branch_id || undefined,
                 limit: kanban ? 1 : limit,
                 offset: kanban ? 0 : offset,
+                sort_by: sortBy || undefined,
+                order: sortOrder || undefined,
             }),
     });
     useOffsetInRange(query.data?.count, offset, limit, setOffset);
@@ -294,6 +302,8 @@ function LeadsView() {
                     branch_id: filters.branch_id || undefined,
                     limit: Math.min(total, 200),
                     offset: 0,
+                    sort_by: sortBy || undefined,
+                    order: sortOrder || undefined,
                 });
                 let fetched = res.data;
                 if (filters.call_filter === 'today') {
@@ -933,21 +943,37 @@ function LeadsView() {
                                                 />
                                             </TableHead>
                                             <RowNumberHead />
-                                            <TableHead>
+                                            <SortableHead
+                                                field='name'
+                                                currentSort={sortBy}
+                                                currentOrder={sortOrder}
+                                                onSort={toggleSort}
+                                            >
                                                 {t('common.fullName')}
-                                            </TableHead>
+                                            </SortableHead>
                                             <TableHead>
                                                 {t('leads.source')}
                                             </TableHead>
                                             <TableHead>
                                                 {t('leads.interest')}
                                             </TableHead>
-                                            <TableHead>
+                                            <SortableHead
+                                                field='status'
+                                                currentSort={sortBy}
+                                                currentOrder={sortOrder}
+                                                onSort={toggleSort}
+                                            >
                                                 {t('common.status')}
-                                            </TableHead>
-                                            <TableHead>
+                                            </SortableHead>
+                                            <SortableHead
+                                                field='created_at'
+                                                defaultOrder='desc'
+                                                currentSort={sortBy}
+                                                currentOrder={sortOrder}
+                                                onSort={toggleSort}
+                                            >
                                                 {t('common.createdAt')}
-                                            </TableHead>
+                                            </SortableHead>
                                             <TableHead className='text-right'>
                                                 {t('common.actions')}
                                             </TableHead>

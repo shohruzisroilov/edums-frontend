@@ -40,6 +40,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
+import { SortableHead } from '@/components/ui/sortable-head';
 import { UserFormModal } from './_components/user-form';
 
 export default function UsersPage() {
@@ -71,6 +72,9 @@ function UsersView() {
         setLimit,
         offset,
         setOffset,
+        sortBy,
+        sortOrder,
+        toggleSort,
     } = useListQuery({ role_id: '', is_active: '' });
 
     const [formOpen, setFormOpen] = useState(false);
@@ -86,7 +90,10 @@ function UsersView() {
     const queryClient = useQueryClient();
 
     const query = useQuery({
-        queryKey: ['users', { search, ...filters, limit, offset }],
+        queryKey: [
+            'users',
+            { search, ...filters, limit, offset, sortBy, sortOrder },
+        ],
         queryFn: () =>
             listUsers({
                 search: search || undefined,
@@ -97,6 +104,8 @@ function UsersView() {
                         : filters.is_active === 'true',
                 limit,
                 offset,
+                sort_by: sortBy || undefined,
+                order: sortOrder || undefined,
             }),
     });
     useOffsetInRange(query.data?.count, offset, limit, setOffset);
@@ -126,7 +135,27 @@ function UsersView() {
         (filters.role_id ? 1 : 0) + (filters.is_active !== '' ? 1 : 0);
 
     const handleExportExcel = async () => {
-        const list = query.data?.data ?? [];
+        let list = query.data?.data ?? [];
+        const total = query.data?.count ?? 0;
+        if (total > list.length) {
+            try {
+                const res = await listUsers({
+                    search: search || undefined,
+                    role_id: filters.role_id || undefined,
+                    is_active:
+                        filters.is_active === ''
+                            ? undefined
+                            : filters.is_active === 'true',
+                    limit: Math.min(total, 200),
+                    offset: 0,
+                    sort_by: sortBy || undefined,
+                    order: sortOrder || undefined,
+                });
+                list = res.data;
+            } catch {
+                /* fallback to current list */
+            }
+        }
         if (list.length === 0) return;
         await exportToExcel(
             t('users.title'),
@@ -412,21 +441,37 @@ function UsersView() {
                                     <TableHeader>
                                         <TableRow>
                                             <RowNumberHead />
-                                            <TableHead>
+                                            <SortableHead
+                                                field='name'
+                                                currentSort={sortBy}
+                                                currentOrder={sortOrder}
+                                                onSort={toggleSort}
+                                            >
                                                 {t('common.fullName')}
-                                            </TableHead>
+                                            </SortableHead>
                                             <TableHead>
                                                 {t('common.phone')}
                                             </TableHead>
                                             <TableHead>
                                                 {t('users.roles')}
                                             </TableHead>
-                                            <TableHead>
+                                            <SortableHead
+                                                field='status'
+                                                currentSort={sortBy}
+                                                currentOrder={sortOrder}
+                                                onSort={toggleSort}
+                                            >
                                                 {t('common.status')}
-                                            </TableHead>
-                                            <TableHead>
+                                            </SortableHead>
+                                            <SortableHead
+                                                field='created_at'
+                                                defaultOrder='desc'
+                                                currentSort={sortBy}
+                                                currentOrder={sortOrder}
+                                                onSort={toggleSort}
+                                            >
                                                 {t('common.createdAt')}
-                                            </TableHead>
+                                            </SortableHead>
                                             <TableHead className='text-right'>
                                                 {t('common.actions')}
                                             </TableHead>

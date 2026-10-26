@@ -19,6 +19,7 @@ import {
 import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
 import { DateRangeFilter } from '@/components/ui/date-range-filter';
 import { SelectInput } from '@/components/ui/form-field';
+import { SortableHead } from '@/components/ui/sortable-head';
 import { PageHeader } from '@/components/ui/page-header';
 import { PaginationBar } from '@/components/ui/pagination-bar';
 import { PaymentModal } from '@/components/ui/payment-modal';
@@ -84,6 +85,9 @@ function CashboxView() {
         setLimit,
         offset,
         setOffset,
+        sortBy,
+        sortOrder,
+        toggleSort,
     } = useListQuery({ method: '', from: '', to: '' });
 
     const [creating, setCreating] = useState(false);
@@ -95,7 +99,10 @@ function CashboxView() {
     useOpenOnNewParam(() => setCreating(true), canCreate);
 
     const query = useQuery({
-        queryKey: ['student-payments', { search, ...filters, limit, offset }],
+        queryKey: [
+            'student-payments',
+            { search, ...filters, limit, offset, sortBy, sortOrder },
+        ],
         queryFn: () =>
             listStudentPayments({
                 search: search || undefined,
@@ -106,6 +113,8 @@ function CashboxView() {
                 to: filters.to || undefined,
                 limit,
                 offset,
+                sort_by: sortBy || undefined,
+                order: sortOrder || undefined,
             }),
     });
     useOffsetInRange(query.data?.count, offset, limit, setOffset);
@@ -168,6 +177,10 @@ function CashboxView() {
                                                         200,
                                                     ),
                                                     offset: 0,
+                                                    sort_by:
+                                                        sortBy || undefined,
+                                                    order:
+                                                        sortOrder || undefined,
                                                 });
                                             if (fullRes.data?.length > 0) {
                                                 list = fullRes.data;
@@ -437,15 +450,28 @@ function CashboxView() {
                                     <TableHeader>
                                         <TableRow>
                                             <RowNumberHead />
-                                            <TableHead>
+                                            <SortableHead
+                                                field='paid_at'
+                                                defaultOrder='desc'
+                                                currentSort={sortBy}
+                                                currentOrder={sortOrder}
+                                                onSort={toggleSort}
+                                            >
                                                 {t('cashbox.paidAt')}
-                                            </TableHead>
+                                            </SortableHead>
                                             <TableHead>
                                                 {t('common.student')}
                                             </TableHead>
-                                            <TableHead numeric>
+                                            <SortableHead
+                                                field='amount'
+                                                numeric
+                                                defaultOrder='desc'
+                                                currentSort={sortBy}
+                                                currentOrder={sortOrder}
+                                                onSort={toggleSort}
+                                            >
                                                 {t('cashbox.amount')}
-                                            </TableHead>
+                                            </SortableHead>
                                             <TableHead>
                                                 {t('cashbox.method')}
                                             </TableHead>

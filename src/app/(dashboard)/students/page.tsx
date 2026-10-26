@@ -65,6 +65,7 @@ import { toast } from 'sonner';
 import { StudentFormModal } from './_components/student-form';
 
 import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
+import { SortableHead } from '@/components/ui/sortable-head';
 
 export default function StudentsPage() {
     return (
@@ -104,6 +105,9 @@ function StudentsView() {
         setLimit,
         offset,
         setOffset,
+        sortBy,
+        sortOrder,
+        toggleSort,
     } = useListQuery({ branch_id: '', status: 'active' });
 
     const [formOpen, setFormOpen] = useState(false);
@@ -114,11 +118,11 @@ function StudentsView() {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [prevListKey, setPrevListKey] = useState(
         () =>
-            `${offset}-${limit}-${search}-${filters.branch_id}-${filters.status}`,
+            `${offset}-${limit}-${search}-${filters.branch_id}-${filters.status}-${sortBy}-${sortOrder}`,
     );
 
     // Sahifa, qidiruv yoki filtr o'zgarganda tanlovni darhol tozalaymiz
-    const currentListKey = `${offset}-${limit}-${search}-${filters.branch_id}-${filters.status}`;
+    const currentListKey = `${offset}-${limit}-${search}-${filters.branch_id}-${filters.status}-${sortBy}-${sortOrder}`;
     if (prevListKey !== currentListKey) {
         setPrevListKey(currentListKey);
         setSelectedIds(new Set());
@@ -130,7 +134,10 @@ function StudentsView() {
     }, canCreate);
 
     const query = useQuery({
-        queryKey: ['students', { search, ...filters, limit, offset }],
+        queryKey: [
+            'students',
+            { search, ...filters, limit, offset, sortBy, sortOrder },
+        ],
         queryFn: () =>
             listStudents({
                 search: search || undefined,
@@ -140,6 +147,8 @@ function StudentsView() {
                     | undefined,
                 limit,
                 offset,
+                sort_by: sortBy || undefined,
+                order: sortOrder || undefined,
             }),
     });
     useOffsetInRange(query.data?.count, offset, limit, setOffset);
@@ -631,9 +640,14 @@ function StudentsView() {
                                                 />
                                             </TableHead>
                                             <RowNumberHead />
-                                            <TableHead>
+                                            <SortableHead
+                                                field='name'
+                                                currentSort={sortBy}
+                                                currentOrder={sortOrder}
+                                                onSort={toggleSort}
+                                            >
                                                 {t('common.fullName')}
-                                            </TableHead>
+                                            </SortableHead>
                                             <TableHead>
                                                 {t('common.phone')}
                                             </TableHead>
@@ -641,9 +655,14 @@ function StudentsView() {
                                                 {t('students.groups')}
                                             </TableHead>
                                             {showStatusColumn && (
-                                                <TableHead>
+                                                <SortableHead
+                                                    field='status'
+                                                    currentSort={sortBy}
+                                                    currentOrder={sortOrder}
+                                                    onSort={toggleSort}
+                                                >
                                                     {t('common.status')}
-                                                </TableHead>
+                                                </SortableHead>
                                             )}
                                             {canViewPayments && (
                                                 <TableHead numeric>
