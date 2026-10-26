@@ -8,6 +8,7 @@ import type {
     MessageResponse,
     PaginatedResponse,
     Subscription,
+    UpdateEducationOwnerPayload,
     UpdateEducationPayload,
     User,
 } from '@/types/api';
@@ -75,6 +76,24 @@ export async function resetEducationOwnerPassword(
         { method: 'PATCH', body: { password } },
     );
     return res.data;
+}
+
+export async function updateEducationOwner(
+    id: string,
+    userId: string,
+    payload: UpdateEducationOwnerPayload,
+) {
+    const res = await request<DataResponse<User>>(
+        `${BASE}/${id}/owners/${userId}`,
+        { method: 'PATCH', body: payload },
+    );
+    return res.data;
+}
+
+export function deleteEducationOwner(id: string, userId: string) {
+    return request<MessageResponse>(`${BASE}/${id}/owners/${userId}`, {
+        method: 'DELETE',
+    });
 }
 
 /** Sinov va pulli davrlar, yangisi birinchi. */

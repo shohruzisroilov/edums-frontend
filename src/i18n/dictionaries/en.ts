@@ -152,6 +152,15 @@ export const en: Dictionary = {
     'educations.ownerPhoneHint': 'This number is used as the login',
     'educations.ownerCreated': 'Owner added',
     'educations.noOwners': 'This center has no owner yet',
+    'educations.editOwner': 'Edit owner',
+    'educations.editOwnerTitle': 'Edit owner details',
+    'educations.editOwnerHint': "Update owner's information and status",
+    'educations.ownerUpdated': 'Owner updated',
+    'educations.deleteOwner': 'Delete owner',
+    'educations.deleteOwnerTitle': 'Delete owner',
+    'educations.deleteOwnerMessage':
+        'Are you sure you want to delete owner "{name}"? The center must retain at least one active owner.',
+    'educations.ownerDeleted': 'Owner deleted',
 
     /* ── Roles ───────────────────────────────────────────────────────── */
     'roles.title': 'Roles',

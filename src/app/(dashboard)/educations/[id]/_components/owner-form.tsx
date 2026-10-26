@@ -1,13 +1,17 @@
 'use client';
 
 import { Button } from '@/components/tailgrids/core/button';
-import { TextInput } from '@/components/ui/form-field';
+import { CheckboxInput, TextInput } from '@/components/ui/form-field';
 import { PasswordInput } from '@/components/ui/password-input';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { Modal } from '@/components/ui/modal';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useT } from '@/i18n/provider';
-import { createEducationOwner } from '@/services/api/educations';
+import {
+    createEducationOwner,
+    updateEducationOwner,
+} from '@/services/api/educations';
+import type { User } from '@/types/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
@@ -17,28 +21,61 @@ const EMPTY = {
     last_name: '',
     phone_number: '',
     password: '',
+    is_active: true,
 };
 
-/** Faqat ochilganda mount qilinadi — har safar bo'sh forma bilan boshlanadi. */
+/** Faqat ochilganda mount qilinadi — tahrirlashda owner ma'lumotlari bilan boshlanadi. */
 export function OwnerFormModal({
     educationId,
+    owner,
     onClose,
 }: {
     educationId: string;
+    owner?: User | null;
     onClose: () => void;
 }) {
-    const [form, setForm] = useState(EMPTY);
+    const isEdit = Boolean(owner);
+    const [form, setForm] = useState(() =>
+        owner
+            ? {
+                  first_name: owner.first_name,
+                  last_name: owner.last_name,
+                  phone_number: owner.phone_number,
+                  password: '',
+                  is_active: owner.is_active,
+              }
+            : EMPTY,
+    );
     const queryClient = useQueryClient();
     const t = useT();
     const toastError = useApiErrorToast();
 
     const mutation = useMutation({
-        mutationFn: () => createEducationOwner(educationId, form),
+        mutationFn: () => {
+            if (owner) {
+                return updateEducationOwner(educationId, owner.id, {
+                    first_name: form.first_name.trim(),
+                    last_name: form.last_name.trim(),
+                    phone_number: form.phone_number.trim(),
+                    is_active: form.is_active,
+                });
+            }
+            return createEducationOwner(educationId, {
+                first_name: form.first_name.trim(),
+                last_name: form.last_name.trim(),
+                phone_number: form.phone_number.trim(),
+                password: form.password,
+            });
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ['education-owners', educationId],
             });
-            toast.success(t('educations.ownerCreated'));
+            toast.success(
+                isEdit
+                    ? t('educations.ownerUpdated')
+                    : t('educations.ownerCreated'),
+            );
             onClose();
         },
         onError: (error) => toastError(error),
@@ -53,8 +90,16 @@ export function OwnerFormModal({
         <Modal
             open
             onClose={onClose}
-            title={t('educations.addOwnerTitle')}
-            description={t('educations.addOwnerHint')}
+            title={
+                isEdit
+                    ? t('educations.editOwnerTitle')
+                    : t('educations.addOwnerTitle')
+            }
+            description={
+                isEdit
+                    ? t('educations.editOwnerHint')
+                    : t('educations.addOwnerHint')
+            }
         >
             <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
                 <div className='grid gap-4 sm:grid-cols-2'>
@@ -88,17 +133,29 @@ export function OwnerFormModal({
                     }
                 />
 
-                <PasswordInput
-                    label={t('common.password')}
-                    required
-                    minLength={8}
-                    maxLength={72}
-                    hint={t('users.passwordHint')}
-                    value={form.password}
-                    onChange={(e) =>
-                        setForm({ ...form, password: e.target.value })
-                    }
-                />
+                {!isEdit && (
+                    <PasswordInput
+                        label={t('common.password')}
+                        required
+                        minLength={8}
+                        maxLength={72}
+                        hint={t('users.passwordHint')}
+                        value={form.password}
+                        onChange={(e) =>
+                            setForm({ ...form, password: e.target.value })
+                        }
+                    />
+                )}
+
+                {isEdit && (
+                    <CheckboxInput
+                        label={t('users.activeLabel')}
+                        checked={form.is_active}
+                        onChange={(e) =>
+                            setForm({ ...form, is_active: e.target.checked })
+                        }
+                    />
+                )}
 
                 <div className='mt-2 flex items-center justify-end gap-2'>
                     <Button
@@ -118,7 +175,9 @@ export function OwnerFormModal({
                     >
                         {mutation.isPending
                             ? t('common.saving')
-                            : t('common.add')}
+                            : isEdit
+                              ? t('common.save')
+                              : t('common.add')}
                     </Button>
                 </div>
             </form>

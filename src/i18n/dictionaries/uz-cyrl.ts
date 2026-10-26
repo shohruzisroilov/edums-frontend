@@ -152,6 +152,16 @@ export const uzCyrl: Dictionary = {
     'educations.ownerPhoneHint': 'Бу рақам логин сифатида ишлатилади',
     'educations.ownerCreated': 'Owner қўшилди',
     'educations.noOwners': 'Бу марказда ҳали owner йўқ',
+    'educations.editOwner': 'Ownerни таҳрирлаш',
+    'educations.editOwnerTitle': 'Owner маълумотларини таҳрирлаш',
+    'educations.editOwnerHint':
+        'Owner маълумотлари ва фаоллик ҳолатини янгилаш',
+    'educations.ownerUpdated': 'Owner янгиланди',
+    'educations.deleteOwner': 'Ownerни ўчириш',
+    'educations.deleteOwnerTitle': 'Ownerни ўчириш',
+    'educations.deleteOwnerMessage':
+        '«{name}» ownerини ўчиришни тасдиқлайсизми? Марказда камида битта фаол owner қолиши шарт.',
+    'educations.ownerDeleted': 'Owner ўчирилди',
 
     /* ── Роллар ──────────────────────────────────────────────────────── */
     'roles.title': 'Роллар',
