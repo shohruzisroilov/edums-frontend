@@ -15,6 +15,7 @@ import { useState } from 'react';
 export const LANDING_NAV: { href: string; label: TranslationKey }[] = [
     { href: '#features', label: 'landing.navFeatures' },
     { href: '#how', label: 'landing.navHow' },
+    { href: '#security', label: 'landing.navSecurity' },
     { href: '#tariffs', label: 'landing.navTariffs' },
     { href: '#faq', label: 'landing.navFaq' },
 ];

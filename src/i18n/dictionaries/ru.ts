@@ -1224,6 +1224,7 @@ export const ru: Dictionary = {
     'landing.navLabel': 'Разделы страницы',
     'landing.navFeatures': 'Возможности',
     'landing.navHow': 'Как начать',
+    'landing.navSecurity': 'Гарантия безопасности',
     'landing.navFaq': 'Вопросы',
     'landing.navContact': 'Контакты',
     'landing.contactEyebrow': 'Связь и консультация',
@@ -1320,6 +1321,43 @@ export const ru: Dictionary = {
     'landing.featureAuditText':
         'Кто и когда принял или удалил оплату — всё записывается.',
     'landing.stepsText': 'Три шага — и ваш центр в системе.',
+
+    /* ── Раздел безопасности ── */
+    'landing.securityEyebrow': 'БЕЗОПАСНОСТЬ И ЗАЩИТА ДАННЫХ',
+    'landing.securityTitle':
+        'Ваши данные на 100% защищены и принадлежат только вам',
+    'landing.securitySubtitle':
+        'Главное опасение руководителей учебных центров — потеря базы или утечка к конкурентам. В EDUMS безопасность — это не просто слова, а технологическая и юридическая гарантия.',
+    'landing.securityBackupTitle': 'Ежедневный автобэкап (Cloud Backup)',
+    'landing.securityBackupBadge': 'Каждые 24 часа автоматически',
+    'landing.securityBackupText':
+        'Вся база данных каждую ночь автоматически копируется на изолированные облачные серверы в зашифрованном виде. При любых сбоях данные восстанавливаются за 30 минут.',
+    'landing.securityOwnershipTitle':
+        'Экспорт в 1 клик (Данные принадлежат вам)',
+    'landing.securityOwnershipBadge': '100% Ваша собственность',
+    'landing.securityOwnershipText':
+        'Вы никогда не останетесь заложником платформы. В любой момент вы можете выгрузить список учеников, оплат и задолженностей в Excel (XLSX/CSV) на свой компьютер.',
+    'landing.securityEncryptionTitle': 'Банковское шифрование (SSL/TLS)',
+    'landing.securityEncryptionBadge': '256-битное шифрование',
+    'landing.securityEncryptionText':
+        'Все соединения между пользователем и сервером защищены протоколами уровня интернет-банкинга. Пароли хешируются невскрываемым алгоритмом bcrypt.',
+    'landing.securityLegalTitle': 'Официальный договор и NDA',
+    'landing.securityLegalBadge': 'Юридическая гарантия',
+    'landing.securityLegalText':
+        'В договоре четко прописывается соглашение о конфиденциальности (NDA) и SLA 99.5%. Ваши данные никогда и ни при каких условиях не передаются третьим лицам.',
+    'landing.securityStatusTitle': 'Щит безопасности EDUMS',
+    'landing.securityStatusSubtitle': 'Активная система защиты',
+    'landing.securityStatusUptime': '99.9% Uptime гарантия (SLA)',
+    'landing.securityStatusBackup': 'Ежедневное резервное копирование',
+    'landing.securityStatusBackupSub': 'В изолированном зашифрованном облаке',
+    'landing.securityStatusExport': 'Экспорт в Excel / CSV',
+    'landing.securityStatusExportSub': 'Доступен в любое время',
+    'landing.securityStatusContract': 'Юридический договор',
+    'landing.securityStatusContractSub': 'Материальная ответственность & NDA',
+    'landing.securityBannerText':
+        'Есть вопросы по безопасности данных вашего центра? До заключения договора мы предоставим все пункты о защите данных и SLA соглашение.',
+    'landing.securityBannerAction': 'Связаться по безопасности',
+
     'landing.faqTitle': 'Частые вопросы',
     'landing.faq.trialQ': 'Что будет после {days} бесплатных дней?',
     'landing.faq.trialA':
@@ -1334,9 +1372,10 @@ export const ru: Dictionary = {
         'Сколько филиалов, сотрудников и учеников можно добавить?',
     'landing.faq.limitsA':
         'Филиалы, кабинеты и сотрудники не ограничены. Число активных учеников зависит от тарифа — лимит каждого указан в разделе «Тарифы».',
-    'landing.faq.securityQ': 'Мои данные в безопасности?',
+    'landing.faq.securityQ':
+        'Мои данные в безопасности, какую гарантию вы даете от их потери?',
     'landing.faq.securityA':
-        'Данные каждого центра хранятся отдельно, пароли — в зашифрованном виде. Сотрудник видит только разрешённые разделы, а каждое действие остаётся в истории.',
+        'Да, на 100%. Каждую ночь создается автоматическая резервная копия (backup) на изолированном сервере. Все соединения защищены SSL/TLS, данные изолированы. В любой момент вы можете выгрузить всю базу учеников и оплат в Excel. Все гарантии сохранности данных фиксируются в официальном договоре.',
     'landing.faq.websiteQ': 'Можно подключить форму на моём сайте?',
     'landing.faq.websiteA':
         'Да. В настройках берёте готовый код и вставляете на сайт или подключаете вебхук Tilda — заявки сами попадают в лиды.',

@@ -1234,6 +1234,7 @@ export const uz = {
     'landing.navLabel': "Sahifa bo'limlari",
     'landing.navFeatures': 'Imkoniyatlar',
     'landing.navHow': 'Qanday boshlanadi',
+    'landing.navSecurity': 'Xavfsizlik kafolati',
     'landing.navFaq': 'Savollar',
     'landing.navContact': "Bog'lanish",
     'landing.contactEyebrow': 'Aloqa va konsultatsiya',
@@ -1334,6 +1335,43 @@ export const uz = {
     'landing.featureAuditText':
         "Kim qachon to'lov qabul qildi yoki o'chirdi — hammasi yozib boriladi.",
     'landing.stepsText': 'Uch qadam — va markazingiz tizimda.',
+
+    /* ── Xavfsizlik bo'limi ── */
+    'landing.securityEyebrow': "MA'LUMOTLAR XAVFSIZLIGI VA DAXLSIZLIGI",
+    'landing.securityTitle':
+        "Ma'lumotlaringiz 100% xavfsiz va faqat sizning mulkingiz",
+    'landing.securitySubtitle':
+        "O'quv markaz rahbarlarining eng katta xavotiri — ma'lumotlar yo'qolishi yoki begona qo'llarga tushishi. EDUMS tizimida xavfsizlik shunchaki va'da emas, balki texnologik va yuridik kafolatdir.",
+    'landing.securityBackupTitle': 'Kunlik avtomatik zaxira (Cloud Backup)',
+    'landing.securityBackupBadge': 'Har 24 soatda avtomatik',
+    'landing.securityBackupText':
+        "Barcha bazangiz har kecha avtomatik ravishda alohida xavfsiz bulutli serverlarga shifrlangan holatda nusxalanadi. Kutilmagan har qanday nosozlikda ma'lumotlar 30 daqiqada qayta tiklanadi.",
+    'landing.securityOwnershipTitle':
+        "1-tugma bilan to'liq eksport (Mustaqillik)",
+    'landing.securityOwnershipBadge': '100% Sizning mulkingiz',
+    'landing.securityOwnershipText':
+        "Siz tizimga asir bo'lib qolmaysiz. Istalgan vaqtda barcha talabalar ro'yxati, to'lovlar va qarzdorliklar tarixini Excel (XLSX/CSV) formatida shaxsiy kompyuteringizga yuklab olishingiz mumkin.",
+    'landing.securityEncryptionTitle': 'Bank darajasidagi shifrlash (SSL/TLS)',
+    'landing.securityEncryptionBadge': '256-bit shifrlash',
+    'landing.securityEncryptionText':
+        "Foydalanuvchi va server o'rtasidagi barcha ulanishlar bank darajasidagi shifrlangan protokollar orqali uzatiladi. Parollar qaytarib bo'lmas bcrypt algoritmlari bilan saqlanadi.",
+    'landing.securityLegalTitle': 'Rasmiy shartnoma va NDA kafolati',
+    'landing.securityLegalBadge': 'Yuridik kafolat',
+    'landing.securityLegalText':
+        "Shartnomamizda ma'lumotlar maxfiyligi (NDA), daxlsizligi hamda 99.5% uzluksiz ishlash (SLA) bo'yicha qat'iy yuridik majburiyat olinadi. Ma'lumotlaringiz begona shaxslarga berilmaydi.",
+    'landing.securityStatusTitle': 'EDUMS Xavfsizlik Qalqoni',
+    'landing.securityStatusSubtitle': 'Faol himoya tizimi',
+    'landing.securityStatusUptime': '99.9% Uptime kafolati (SLA)',
+    'landing.securityStatusBackup': 'Kunlik zaxira nusxalash',
+    'landing.securityStatusBackupSub': 'Alohida bulutda shifrlangan',
+    'landing.securityStatusExport': 'Excel / CSV eksport',
+    'landing.securityStatusExportSub': 'Istalgan vaqtda yuklab olish',
+    'landing.securityStatusContract': 'Yuridik shartnoma',
+    'landing.securityStatusContractSub': 'Moddiy javobgarlik & NDA',
+    'landing.securityBannerText':
+        "O'quv markazingiz ma'lumotlari xavfsizligiga oid savollaringiz bormi? Shartnoma imzolashdan oldin barcha xavfsizlik va SLA bandlarini taqdim etamiz.",
+    'landing.securityBannerAction': "Xavfsizlik bo'yicha bog'lanish",
+
     'landing.faqTitle': "Ko'p so'raladigan savollar",
     'landing.faq.trialQ': "{days} kunlik bepul sinovdan keyin nima bo'ladi?",
     'landing.faq.trialA':
@@ -1347,9 +1385,10 @@ export const uz = {
     'landing.faq.limitsQ': "Nechta filial, xodim va o'quvchi qo'shsa bo'ladi?",
     'landing.faq.limitsA':
         "Filiallar, xonalar va xodimlar soni cheklanmagan. Faol o'quvchilar soni tanlangan tarifga bog'liq — har bir tarifning limiti «Tariflar» bo'limida ko'rsatilgan.",
-    'landing.faq.securityQ': "Ma'lumotlarim xavfsizmi?",
+    'landing.faq.securityQ':
+        "Ma'lumotlarim xavfsizmi, yo'qolib ketmasligiga qanday kafolat berasiz?",
     'landing.faq.securityA':
-        "Har bir markazning ma'lumotlari alohida saqlanadi, parollar shifrlangan holda. Xodim faqat ruxsat berilgan bo'limlarni ko'radi, har bir harakat tarixda qoladi.",
+        "Ha, 100% xavfsiz. Har kecha barcha ma'lumotlar alohida bulutga avtomatik zaxiralanadi (backup). Barcha ulanishlar bank darajasida shifrlangan (SSL/TLS), har bir markaz ma'lumotlari alohida izolyatsiyalangan. Istalgan paytda barcha o'quvchilar va to'lovlar tarixini bir tugma orqali Excel formatida yuklab olishingiz mumkin. Bularning barchasi rasmiy shartnomada yuridik jihatdan kafolatlanadi.",
     'landing.faq.websiteQ': "Saytimdagi formani ulasa bo'ladimi?",
     'landing.faq.websiteA':
         "Ha. Sozlamalardan tayyor kodni olib saytga qo'yasiz yoki Tilda webhook'ini ulaysiz — arizalar lidlarga o'zi tushadi.",
