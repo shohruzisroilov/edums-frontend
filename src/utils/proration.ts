@@ -24,7 +24,12 @@ export function calculateLessonProration(
     lessonDays: Weekday[] | undefined,
     monthlyPrice: number,
 ): ProrationResult | null {
-    if (!joinedAt || !lessonDays || lessonDays.length === 0 || monthlyPrice <= 0) {
+    if (
+        !joinedAt ||
+        !lessonDays ||
+        lessonDays.length === 0 ||
+        monthlyPrice <= 0
+    ) {
         return null;
     }
 

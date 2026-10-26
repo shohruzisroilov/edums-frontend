@@ -1,7 +1,11 @@
 'use client';
 
 import { Button } from '@/components/tailgrids/core/button';
-import { CheckboxInput, SelectInput, TextInput } from '@/components/ui/form-field';
+import {
+    CheckboxInput,
+    SelectInput,
+    TextInput,
+} from '@/components/ui/form-field';
 import { Modal } from '@/components/ui/modal';
 import { MoneyInput } from '@/components/ui/number-input';
 import { SearchInput } from '@/components/ui/search-input';
@@ -185,8 +189,7 @@ function EnrollFields({
     const { formatNumber, formatPrice } = useFormat();
 
     const basePrice = placeholderPrice ?? 0;
-    const effectiveMonthlyPrice =
-        price === '' ? basePrice : Number(price || 0);
+    const effectiveMonthlyPrice = price === '' ? basePrice : Number(price || 0);
 
     const proration = calculateLessonProration(
         joinedAt,
@@ -221,7 +224,7 @@ function EnrollFields({
                             }
                             className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all ${
                                 isStandard && !isGrant && !isHalf
-                                    ? 'border-brand-accent bg-brand-accent/10 text-brand-accent font-semibold ring-1 ring-brand-accent/30'
+                                    ? 'border-brand-accent bg-brand-accent/10 text-brand-accent ring-brand-accent/30 font-semibold ring-1'
                                     : 'border-card-border bg-card-background text-text-secondary hover:bg-background-gray-secondary'
                             }`}
                         >
@@ -240,7 +243,7 @@ function EnrollFields({
                             }
                             className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all ${
                                 isGrant
-                                    ? 'border-emerald-500 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-semibold ring-1 ring-emerald-500/30'
+                                    ? 'border-emerald-500 bg-emerald-500/15 font-semibold text-emerald-600 ring-1 ring-emerald-500/30 dark:text-emerald-400'
                                     : 'border-card-border bg-card-background text-text-secondary hover:bg-background-gray-secondary'
                             }`}
                         >
@@ -259,7 +262,7 @@ function EnrollFields({
                             }
                             className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all ${
                                 isHalf
-                                    ? 'border-indigo-500 bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 font-semibold ring-1 ring-indigo-500/30'
+                                    ? 'border-indigo-500 bg-indigo-500/15 font-semibold text-indigo-600 ring-1 ring-indigo-500/30 dark:text-indigo-400'
                                     : 'border-card-border bg-card-background text-text-secondary hover:bg-background-gray-secondary'
                             }`}
                         >
@@ -312,15 +315,17 @@ function EnrollFields({
             {isGrant && (
                 <div className='flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-700 dark:text-emerald-400'>
                     <span>✓</span>
-                    <span className='font-medium'>{t('students.grantHint')}</span>
+                    <span className='font-medium'>
+                        {t('students.grantHint')}
+                    </span>
                 </div>
             )}
 
             {/* Oyni yarmidan kelgan bo'lsa darsbay hisob bloki */}
             {proration?.isMidMonth && !isGrant && (
-                <div className='flex flex-col gap-2.5 rounded-xl border border-brand-accent/30 bg-brand-accent/5 p-3.5'>
+                <div className='border-brand-accent/30 bg-brand-accent/5 flex flex-col gap-2.5 rounded-xl border p-3.5'>
                     <div className='flex items-center justify-between text-xs'>
-                        <span className='font-semibold text-text-primary flex items-center gap-1.5'>
+                        <span className='text-text-primary flex items-center gap-1.5 font-semibold'>
                             📅 {t('students.midMonthTitle')}
                         </span>
                         <span className='text-text-tertiary text-[11px]'>
@@ -346,7 +351,9 @@ function EnrollFields({
                                     isProrated: checked,
                                     firstMonthPrice: checked
                                         ? firstMonthPrice ||
-                                          String(proration.suggestedFirstMonthPrice)
+                                          String(
+                                              proration.suggestedFirstMonthPrice,
+                                          )
                                         : '',
                                 });
                             }}
