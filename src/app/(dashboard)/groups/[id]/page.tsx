@@ -305,9 +305,13 @@ function GroupDetailView() {
                                         </div>
                                         <div className='shrink-0 text-right'>
                                             <span className='text-text-primary block text-sm font-semibold tabular-nums'>
-                                                {enrollment.monthly_price === 0 ? (
-                                                    <span className='text-emerald-600 dark:text-emerald-400 font-medium'>
-                                                        🎁 {t('students.grantBadge')}
+                                                {enrollment.monthly_price ===
+                                                0 ? (
+                                                    <span className='font-medium text-emerald-600 dark:text-emerald-400'>
+                                                        🎁{' '}
+                                                        {t(
+                                                            'students.grantBadge',
+                                                        )}
                                                     </span>
                                                 ) : (
                                                     formatPrice(
@@ -316,14 +320,18 @@ function GroupDetailView() {
                                                     )
                                                 )}
                                             </span>
-                                            {enrollment.first_month_price != null && (
+                                            {enrollment.first_month_price !=
+                                                null && (
                                                 <span className='text-text-tertiary block text-[11px] tabular-nums'>
-                                                    {t('students.firstMonthBadge', {
-                                                        price: formatPrice(
-                                                            enrollment.first_month_price,
-                                                            t('common.som'),
-                                                        ),
-                                                    })}
+                                                    {t(
+                                                        'students.firstMonthBadge',
+                                                        {
+                                                            price: formatPrice(
+                                                                enrollment.first_month_price,
+                                                                t('common.som'),
+                                                            ),
+                                                        },
+                                                    )}
                                                 </span>
                                             )}
                                             <span className='text-text-tertiary text-xs'>
@@ -453,25 +461,40 @@ function GroupDetailView() {
                                                 <TableCell numeric>
                                                     <div className='flex flex-col items-end'>
                                                         <span className='font-medium'>
-                                                            {enrollment.monthly_price === 0 ? (
-                                                                <Badge size='sm' color='success'>
-                                                                    🎁 {t('students.grantBadge')}
+                                                            {enrollment.monthly_price ===
+                                                            0 ? (
+                                                                <Badge
+                                                                    size='sm'
+                                                                    color='success'
+                                                                >
+                                                                    🎁{' '}
+                                                                    {t(
+                                                                        'students.grantBadge',
+                                                                    )}
                                                                 </Badge>
                                                             ) : (
                                                                 formatPrice(
                                                                     enrollment.monthly_price,
-                                                                    t('common.som'),
+                                                                    t(
+                                                                        'common.som',
+                                                                    ),
                                                                 )
                                                             )}
                                                         </span>
-                                                        {enrollment.first_month_price != null && (
+                                                        {enrollment.first_month_price !=
+                                                            null && (
                                                             <span className='text-text-tertiary text-[11px] tabular-nums'>
-                                                                {t('students.firstMonthBadge', {
-                                                                    price: formatPrice(
-                                                                        enrollment.first_month_price,
-                                                                        t('common.som'),
-                                                                    ),
-                                                                })}
+                                                                {t(
+                                                                    'students.firstMonthBadge',
+                                                                    {
+                                                                        price: formatPrice(
+                                                                            enrollment.first_month_price,
+                                                                            t(
+                                                                                'common.som',
+                                                                            ),
+                                                                        ),
+                                                                    },
+                                                                )}
                                                             </span>
                                                         )}
                                                     </div>

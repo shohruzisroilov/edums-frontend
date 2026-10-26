@@ -23,7 +23,7 @@ export function PhoneLink({
                 // Raqam hech qachon ikki qatorga bo'linmaydi.
                 'whitespace-nowrap tabular-nums',
                 isPrivacyOn
-                    ? 'cursor-default text-text-secondary select-none'
+                    ? 'text-text-secondary cursor-default select-none'
                     : 'hover:text-brand-accent hover:underline',
                 className,
             )}
@@ -31,7 +31,9 @@ export function PhoneLink({
                 if (isPrivacyOn) e.preventDefault();
                 e.stopPropagation();
             }}
-            title={isPrivacyOn ? 'Maxfiylik rejimi: raqam yashirilgan' : undefined}
+            title={
+                isPrivacyOn ? 'Maxfiylik rejimi: raqam yashirilgan' : undefined
+            }
         >
             {formatted}
         </a>

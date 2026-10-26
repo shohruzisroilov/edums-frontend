@@ -1,7 +1,11 @@
 'use client';
 
 import { Button } from '@/components/tailgrids/core/button';
-import { CheckboxInput, SelectInput, TextInput } from '@/components/ui/form-field';
+import {
+    CheckboxInput,
+    SelectInput,
+    TextInput,
+} from '@/components/ui/form-field';
 import { Modal } from '@/components/ui/modal';
 import { MoneyInput } from '@/components/ui/number-input';
 import { PhoneInput } from '@/components/ui/phone-input';
@@ -96,7 +100,9 @@ export function ConvertLeadModal({
                         ? Number(form.monthly_price)
                         : undefined,
                 first_month_price:
-                    form.group_id && form.is_prorated && form.first_month_price !== ''
+                    form.group_id &&
+                    form.is_prorated &&
+                    form.first_month_price !== ''
                         ? Number(form.first_month_price)
                         : undefined,
             }),
@@ -244,11 +250,11 @@ export function ConvertLeadModal({
                                                         onClick={() =>
                                                             setForm({
                                                                 ...form,
-                                                                monthly_price: '',
+                                                                monthly_price:
+                                                                    '',
                                                                 first_month_price:
                                                                     '',
-                                                                is_prorated:
-                                                                    false,
+                                                                is_prorated: false,
                                                             })
                                                         }
                                                         className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all ${
@@ -273,13 +279,12 @@ export function ConvertLeadModal({
                                                                     '0',
                                                                 first_month_price:
                                                                     '0',
-                                                                is_prorated:
-                                                                    false,
+                                                                is_prorated: false,
                                                             })
                                                         }
                                                         className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all ${
                                                             isGrant
-                                                                ? 'border-emerald-500 bg-emerald-500/15 text-emerald-600 ring-emerald-500/30 font-semibold ring-1 dark:text-emerald-400'
+                                                                ? 'border-emerald-500 bg-emerald-500/15 font-semibold text-emerald-600 ring-1 ring-emerald-500/30 dark:text-emerald-400'
                                                                 : 'border-card-border bg-card-background text-text-secondary hover:bg-background-gray-secondary'
                                                         }`}
                                                     >
@@ -303,18 +308,19 @@ export function ConvertLeadModal({
                                                                     ),
                                                                 first_month_price:
                                                                     '',
-                                                                is_prorated:
-                                                                    false,
+                                                                is_prorated: false,
                                                             })
                                                         }
                                                         className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all ${
                                                             isHalf
-                                                                ? 'border-indigo-500 bg-indigo-500/15 text-indigo-600 ring-indigo-500/30 font-semibold ring-1 dark:text-indigo-400'
+                                                                ? 'border-indigo-500 bg-indigo-500/15 font-semibold text-indigo-600 ring-1 ring-indigo-500/30 dark:text-indigo-400'
                                                                 : 'border-card-border bg-card-background text-text-secondary hover:bg-background-gray-secondary'
                                                         }`}
                                                     >
                                                         🏷️{' '}
-                                                        {t('students.halfPrice')}
+                                                        {t(
+                                                            'students.halfPrice',
+                                                        )}
                                                     </button>
                                                 </div>
                                             </div>
@@ -423,8 +429,7 @@ export function ConvertLeadModal({
                                                             ) =>
                                                                 setForm({
                                                                     ...form,
-                                                                    is_prorated:
-                                                                        true,
+                                                                    is_prorated: true,
                                                                     first_month_price,
                                                                 })
                                                             }

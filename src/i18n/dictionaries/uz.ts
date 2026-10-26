@@ -674,8 +674,7 @@ export const uz = {
     'students.joinedAt': "Qo'shilgan sana",
     'students.leftAt': 'Chiqqan sana',
     'students.monthlyPrice': 'Oylik narx',
-    'students.monthlyPriceHint':
-        "Bo'sh — guruh narxi. 0 — tekin (grant)",
+    'students.monthlyPriceHint': "Bo'sh — guruh narxi. 0 — tekin (grant)",
     'students.discountType': "To'lov / Imtiyoz turi",
     'students.standardPrice': "Standart (To'liq)",
     'students.grantFree': 'Grant (100% Bepul)',

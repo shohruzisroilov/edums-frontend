@@ -38,9 +38,9 @@ export default function DemoPrivacyToggle() {
                         : 'YouTube / Demo maxfiylik rejimini yoqish (Raqamlarni yashirish)'
                 }
                 onPress={() => toggle()}
-                className={`size-10 rounded-lg border shadow-xs outline-none transition-all focus-visible:ring-4 ${
+                className={`size-10 rounded-lg border shadow-xs transition-all outline-none focus-visible:ring-4 ${
                     isPrivacyOn
-                        ? 'border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400 focus-visible:ring-amber-500/30 ring-2 ring-amber-500/20'
+                        ? 'border-amber-500/50 bg-amber-500/10 text-amber-600 ring-2 ring-amber-500/20 focus-visible:ring-amber-500/30 dark:text-amber-400'
                         : 'border-card-border bg-card-background text-icon-primary hover:bg-background-gray-secondary focus-visible:border-input-primary-focus-border focus-visible:ring-input-primary-focus-border/20'
                 }`}
             >
