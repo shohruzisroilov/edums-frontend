@@ -1222,6 +1222,7 @@ export const uzCyrl: Dictionary = {
     'landing.navLabel': 'Саҳифа бўлимлари',
     'landing.navFeatures': 'Имкониятлар',
     'landing.navHow': 'Қандай бошланади',
+    'landing.navSecurity': 'Хавфсизлик кафолати',
     'landing.navFaq': 'Саволлар',
     'landing.navContact': 'Боғланиш',
     'landing.contactEyebrow': 'Алоқа ва консультация',
@@ -1321,6 +1322,43 @@ export const uzCyrl: Dictionary = {
     'landing.featureAuditText':
         'Ким қачон тўлов қабул қилди ёки ўчирди — ҳаммаси ёзиб борилади.',
     'landing.stepsText': 'Уч қадам — ва марказингиз тизимда.',
+
+    /* ── Хавфсизлик бўлими ── */
+    'landing.securityEyebrow': 'МАЪЛУМОТЛАР ХАВФСИЗЛИГИ ВА ДАХЛСИЗЛИГИ',
+    'landing.securityTitle':
+        'Маълумотларингиз 100% хавфсиз ва фақат сизнинг мулкингиз',
+    'landing.securitySubtitle':
+        'Ўқув марказ раҳбарларининг энг катта хавотири — маълумотлар йўқолиши ёки бегона қўлларга тушиши. EDUMS тизимида хавфсизлик шунчаки ваъда эмас, балки технологик ва юридик кафолатдир.',
+    'landing.securityBackupTitle': 'Кунлик автоматик захира (Cloud Backup)',
+    'landing.securityBackupBadge': 'Ҳар 24 соатда автоматик',
+    'landing.securityBackupText':
+        'Барча базангиз ҳар кеча автоматик равишда алоҳида хавфсиз булутли серверларга шифрланган ҳолатда захираланади. Кутилмаган ҳар қандай ҳолатда маълумотлар 30 дақиқада тўлиқ қайта тикланади.',
+    'landing.securityOwnershipTitle':
+        '1-тугма билан тўлиқ экспорт (Мустақиллик)',
+    'landing.securityOwnershipBadge': '100% Сизнинг мулкингиз',
+    'landing.securityOwnershipText':
+        'Сиз тизимга асир бўлиб қолмайсиз. Исталган вақтда барча талабалар рўйхати, тўловлар ва қарздорликлар тарихини Excel (XLSX/CSV) форматида шахсий компьютерингизга юклаб олишингиз мумкин.',
+    'landing.securityEncryptionTitle': 'Банк даражасидаги шифрлаш (SSL/TLS)',
+    'landing.securityEncryptionBadge': '256-бит шифрлаш',
+    'landing.securityEncryptionText':
+        'Фойдаланувчи ва сервер ўртасидаги барча алоқалар банк даражасидаги шифрланган протоколлар орқали узатилади. Пароллар қайтариб бўлмас bcrypt алгоритмлари билан сақланади.',
+    'landing.securityLegalTitle': 'Расмий шартнома ва NDA кафолати',
+    'landing.securityLegalBadge': 'Юридик кафолат',
+    'landing.securityLegalText':
+        'Шартномамизда маълумотлар махфийлиги (NDA), дахлсизлиги ҳамда 99.5% узлуксиз ишлаш (SLA) бўйича қатъий юридик мажбурият олинади. Маълумотларингиз бегона шахсларга берилмайди.',
+    'landing.securityStatusTitle': 'EDUMS Хавфсизлик Қалқони',
+    'landing.securityStatusSubtitle': 'Фаол ҳимоя тизими',
+    'landing.securityStatusUptime': '99.9% Uptime кафолати (SLA)',
+    'landing.securityStatusBackup': 'Кунлик захира нусхалаш',
+    'landing.securityStatusBackupSub': 'Алоҳида булутда шифрланган',
+    'landing.securityStatusExport': 'Excel / CSV экспорт',
+    'landing.securityStatusExportSub': 'Исталган вақтда юклаб олиш',
+    'landing.securityStatusContract': 'Юридик шартнома',
+    'landing.securityStatusContractSub': 'Моддий жавобгарлик & NDA',
+    'landing.securityBannerText':
+        'Ўқув марказингиз маълумотлари хавфсизлигига оид саволларингиз борми? Шартнома имзолашдан олдин барча хавфсизлик ва SLA бандларини тақдим этамиз.',
+    'landing.securityBannerAction': 'Хавфсизлик бўйича боғланиш',
+
     'landing.faqTitle': 'Кўп сўраладиган саволлар',
     'landing.faq.trialQ': '{days} кунлик бепул синовдан кейин нима бўлади?',
     'landing.faq.trialA':
@@ -1334,9 +1372,10 @@ export const uzCyrl: Dictionary = {
     'landing.faq.limitsQ': 'Нечта филиал, ходим ва ўқувчи қўшса бўлади?',
     'landing.faq.limitsA':
         'Филиаллар, хоналар ва ходимлар сони чекланмаган. Фаол ўқувчилар сони танланган тарифга боғлиқ — ҳар бир тариф лимити «Тарифлар» бўлимида кўрсатилган.',
-    'landing.faq.securityQ': 'Маълумотларим хавфсизми?',
+    'landing.faq.securityQ':
+        'Маълумотларим хавфсизми, йўқолиб кетмаслигига қандай кафолат берасиз?',
     'landing.faq.securityA':
-        'Ҳар бир марказнинг маълумотлари алоҳида сақланади, пароллар шифрланган ҳолда. Ходим фақат рухсат берилган бўлимларни кўради, ҳар бир ҳаракат тарихда қолади.',
+        'Ҳа, 100% хавфсиз. Ҳар кеча базанинг тўлиқ нусхаси алоҳида булутга автоматик захираланади (backup). Барча уланишлар банк даражасида шифрланган (SSL/TLS), ҳар бир марказ маълумотлари алоҳида изоляцияланган. Исталган пайтда барча ўқувчилар ва тўловлар тарихини бир тугма орқали Excel форматида юклаб олишингиз мумкин. Буларнинг барчаси расмий шартномада юридик жиҳатдан кафолатланади.',
     'landing.faq.websiteQ': 'Сайтимдаги формани уласа бўладими?',
     'landing.faq.websiteA':
         "Ҳа. Созламалардан тайёр кодни олиб сайтга қўясиз ёки Tilda webhook'ини улайсиз — аризалар лидларга ўзи тушади.",

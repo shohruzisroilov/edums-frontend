@@ -10,6 +10,7 @@ import { LandingFooter } from '@/components/landing/landing-footer';
 import { LandingHeader } from '@/components/landing/landing-header';
 import { PainPoints } from '@/components/landing/pain-points';
 import { SectionHeading } from '@/components/landing/section-heading';
+import { SecuritySection } from '@/components/landing/security-section';
 import { Showcases } from '@/components/landing/showcases';
 import { Button } from '@/components/tailgrids/core/button';
 import { BillingPeriodSwitch } from '@/components/ui/billing-period-switch';
@@ -49,6 +50,7 @@ export default function LandingPage() {
                 <Showcases />
                 <FeatureGrid />
                 <HowItWorks trialDays={trialDays} />
+                <SecuritySection onStart={start} />
                 <Tariffs trialDays={trialDays} onStart={start} />
                 <Faq trialDays={trialDays} />
                 <FinalCta trialDays={trialDays} onStart={start} />

@@ -1225,6 +1225,7 @@ export const en: Dictionary = {
     'landing.navLabel': 'Page sections',
     'landing.navFeatures': 'Features',
     'landing.navHow': 'Get started',
+    'landing.navSecurity': 'Security guarantee',
     'landing.navFaq': 'FAQ',
     'landing.navContact': 'Contact',
     'landing.contactEyebrow': 'Contact & consultation',
@@ -1319,6 +1320,42 @@ export const en: Dictionary = {
     'landing.featureAuditText':
         'Who took or deleted a payment and when — everything is recorded.',
     'landing.stepsText': 'Three steps and your centre is up and running.',
+
+    /* ── Security section ── */
+    'landing.securityEyebrow': 'DATA PROTECTION & SECURITY GUARANTEE',
+    'landing.securityTitle':
+        'Your data is 100% secure and strictly your property',
+    'landing.securitySubtitle':
+        'The primary concern of learning center directors is data loss or leaks to third parties. In EDUMS, data security is an ironclad technological and legal guarantee.',
+    'landing.securityBackupTitle': 'Daily Automated Cloud Backup',
+    'landing.securityBackupBadge': 'Every 24h automated',
+    'landing.securityBackupText':
+        'Your entire database is automatically backed up nightly into isolated, encrypted cloud storage. In any emergency, records can be restored within 30 minutes.',
+    'landing.securityOwnershipTitle': '1-Click Full Export (No Vendor Lock-in)',
+    'landing.securityOwnershipBadge': '100% Your property',
+    'landing.securityOwnershipText':
+        'You never become trapped in the platform. At any point, export all students, groups, invoices, and debt histories in Excel (XLSX/CSV) to your own computer.',
+    'landing.securityEncryptionTitle': 'Bank-Grade Encryption (SSL/TLS)',
+    'landing.securityEncryptionBadge': '256-bit encryption',
+    'landing.securityEncryptionText':
+        'All client-server communications travel across enterprise-grade encrypted channels. Passwords and credentials are saved using non-reversible bcrypt algorithms.',
+    'landing.securityLegalTitle': 'Official Contract & NDA Guarantee',
+    'landing.securityLegalBadge': 'Legally binding',
+    'landing.securityLegalText':
+        'Our official contract includes stringent confidentiality terms (NDA), data integrity safeguards, and a 99.5% uptime SLA. Your records are never disclosed to third parties.',
+    'landing.securityStatusTitle': 'EDUMS Security Shield',
+    'landing.securityStatusSubtitle': 'Active protection active',
+    'landing.securityStatusUptime': '99.9% Uptime Guarantee (SLA)',
+    'landing.securityStatusBackup': 'Daily Cloud Backups',
+    'landing.securityStatusBackupSub': 'Encrypted in isolated cloud',
+    'landing.securityStatusExport': 'Excel / CSV Data Export',
+    'landing.securityStatusExportSub': 'Available on demand',
+    'landing.securityStatusContract': 'Legal Service Contract',
+    'landing.securityStatusContractSub': 'Financial liability & NDA',
+    'landing.securityBannerText':
+        'Have specific questions or requirements regarding data protection? We provide all security & SLA contractual terms before signing.',
+    'landing.securityBannerAction': 'Contact regarding security',
+
     'landing.faqTitle': 'Frequently asked questions',
     'landing.faq.trialQ': 'What happens after the {days}-day free trial?',
     'landing.faq.trialA':
@@ -1332,9 +1369,10 @@ export const en: Dictionary = {
     'landing.faq.limitsQ': 'How many branches, staff and students can I add?',
     'landing.faq.limitsA':
         'Branches, rooms and staff are unlimited. The number of active students depends on your plan — each plan’s limit is shown under Pricing.',
-    'landing.faq.securityQ': 'Is my data safe?',
+    'landing.faq.securityQ':
+        'Is my data safe, and what guarantee do you provide against data loss?',
     'landing.faq.securityA':
-        "Each centre's data is kept separately and passwords are stored encrypted. Staff only see the sections they're allowed to, and every action stays in the history.",
+        'Yes, 100% safe. Automated nightly backups are stored in isolated cloud storage. All traffic is bank-grade encrypted (SSL/TLS), and tenant data is strictly isolated. You can export your full student and payment data to Excel at any time, and these guarantees are legally binding in our contract.',
     'landing.faq.websiteQ': 'Can I connect the form on my website?',
     'landing.faq.websiteA':
         'Yes. Take the ready-made code from Settings and paste it on your site, or connect a Tilda webhook — requests land in Leads automatically.',
