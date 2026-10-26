@@ -9,6 +9,7 @@ import {
     SheetTitle,
 } from '@/components/tailgrids/core/sheet';
 import { SubscriptionBanner } from '@/components/common/subscription-banner';
+import { useDemoPrivacy } from '@/hooks/use-demo-privacy';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import {
@@ -37,6 +38,7 @@ const TABLET_MAX_WIDTH = 1440;
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
     const { session, loading, signIn } = useSession();
+    const { isPrivacyOn } = useDemoPrivacy();
     const router = useRouter();
     const pathname = usePathname();
     const t = useT();
@@ -174,7 +176,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 <div className='border-card-surface-border bg-card-surface-area flex h-full flex-col overflow-hidden border-[0.5px] lg:rounded-2xl lg:shadow-[0_3px_6px_-2px_rgba(0,0,0,0.02),0_1px_1px_0_rgba(0,0,0,0.04)]'>
                     <Header onMenuClick={() => setIsMobileSheetOpen(true)} />
 
-                    <main className='min-h-0 flex-1 scrollbar-thin overflow-x-hidden overflow-y-auto'>
+                    <main
+                        key={isPrivacyOn ? 'privacy-on' : 'privacy-off'}
+                        className='min-h-0 flex-1 scrollbar-thin overflow-x-hidden overflow-y-auto'
+                    >
                         <div className='mx-auto w-full max-w-384 min-w-0 pb-20 md:pb-6'>
                             <SubscriptionBanner />
                             {/* Sahifalar manzildagi parametrlarni o'qiydi

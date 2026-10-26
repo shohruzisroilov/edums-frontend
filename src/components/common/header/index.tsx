@@ -3,6 +3,7 @@
 import { AppLogo } from '@/components/common/app-logo';
 import { GlobalSearchModal } from '@/components/common/header/global-search-modal';
 import { MenuIcon } from '@/components/common/header/icons';
+import DemoPrivacyToggle from '@/components/common/header/demo-privacy-toggle';
 import ThemeToggle from '@/components/common/header/theme-toggle';
 import { UserProfileButton } from '@/components/common/header/user-profile';
 import { LocaleSwitcher } from '@/components/common/locale-switcher';
@@ -124,6 +125,7 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                     </button>
 
                     <div className='hidden items-center gap-1.5 sm:flex'>
+                        <DemoPrivacyToggle />
                         <LocaleSwitcher />
                         <ThemeToggle />
                     </div>
