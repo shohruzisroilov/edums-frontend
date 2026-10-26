@@ -92,10 +92,12 @@ export function FinanceSection({ student }: { student: PersonRef }) {
                                                 <p className='text-text-tertiary mt-0.5 text-xs font-normal'>
                                                     {t('students.monthlyPrice')}
                                                     :{' '}
-                                                    {formatPrice(
-                                                        item.monthly_price,
-                                                        som,
-                                                    )}
+                                                    {item.monthly_price === 0
+                                                        ? `🎁 ${t('students.grantBadge')}`
+                                                        : formatPrice(
+                                                              item.monthly_price,
+                                                              som,
+                                                          )}
                                                 </p>
                                             )}
                                         </div>
@@ -216,10 +218,13 @@ export function FinanceSection({ student }: { student: PersonRef }) {
                                                                 'students.monthlyPrice',
                                                             )}
                                                             :{' '}
-                                                            {formatPrice(
-                                                                item.monthly_price,
-                                                                som,
-                                                            )}
+                                                            {item.monthly_price ===
+                                                            0
+                                                                ? `🎁 ${t('students.grantBadge')}`
+                                                                : formatPrice(
+                                                                      item.monthly_price,
+                                                                      som,
+                                                                  )}
                                                         </p>
                                                     )}
                                                 </TableCell>

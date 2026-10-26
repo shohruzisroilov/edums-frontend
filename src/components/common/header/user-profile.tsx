@@ -13,9 +13,12 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/tailgrids/core/dropdown';
+import { useDemoPrivacy } from '@/hooks/use-demo-privacy';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
 import { fileUrl } from '@/services/api/client';
+import { formatPhone } from '@/utils/format';
+import { Eye, EyeDisabled } from '@tailgrids/icons';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { LogoutIcon, UserCircleIcon } from './icons';
@@ -26,6 +29,7 @@ import {
 
 export function UserProfileButton() {
     const { session, signOut } = useSession();
+    const { isPrivacyOn, toggle: togglePrivacy } = useDemoPrivacy();
     const router = useRouter();
     const t = useT();
     const [supportOpen, setSupportOpen] = useState(false);
@@ -69,13 +73,15 @@ export function UserProfileButton() {
                     </span>
                 </DropdownMenuTrigger>
 
-                <DropdownMenuContent className='min-w-56'>
+                <DropdownMenuContent className='min-w-60'>
                     <DropdownMenuLabel>
                         <p className='text-text-primary text-sm font-medium'>
                             {displayName}
                         </p>
                         <p className='text-text-tertiary text-xs'>
-                            {session.phone_number}
+                            {formatPhone(session.phone_number, {
+                                mask: isPrivacyOn,
+                            })}
                         </p>
                     </DropdownMenuLabel>
 
@@ -85,6 +91,28 @@ export function UserProfileButton() {
                         <span className='flex items-center gap-2.5 px-1.5 py-1'>
                             <UserCircleIcon />
                             {t('nav.profile')}
+                        </span>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem onAction={() => togglePrivacy()}>
+                        <span className='flex items-center gap-2.5 px-1.5 py-1'>
+                            {isPrivacyOn ? (
+                                <EyeDisabled className='size-4.5 text-amber-500' />
+                            ) : (
+                                <Eye className='text-icon-secondary size-4.5' />
+                            )}
+                            <span className='flex flex-col text-left'>
+                                <span className='text-xs font-medium'>
+                                    {isPrivacyOn
+                                        ? "🎥 YouTube rejimi: O'chirish"
+                                        : '🎥 YouTube / Maxfiylik rejimi'}
+                                </span>
+                                <span className='text-text-tertiary text-[10px]'>
+                                    {isPrivacyOn
+                                        ? 'Raqamlar yashirilgan'
+                                        : 'Raqamlarni yashirish'}
+                                </span>
+                            </span>
                         </span>
                     </DropdownMenuItem>
 
