@@ -675,7 +675,21 @@ export const uz = {
     'students.leftAt': 'Chiqqan sana',
     'students.monthlyPrice': 'Oylik narx',
     'students.monthlyPriceHint':
-        "Bo'sh — guruh narxi. Kamroq qo'yilsa — chegirma",
+        "Bo'sh — guruh narxi. 0 — tekin (grant)",
+    'students.discountType': "To'lov / Imtiyoz turi",
+    'students.standardPrice': "Standart (To'liq)",
+    'students.grantFree': 'Grant (100% Bepul)',
+    'students.halfPrice': "Yarim to'lov (50%)",
+    'students.grantBadge': 'Grant (Bepul)',
+    'students.grantHint': "100% Grant — qarzdorlar ro'yxatiga tushmaydi",
+    'students.firstMonthProrated': 'Birinchi oy uchun darsbay hisoblansin',
+    'students.firstMonthPrice': "Birinchi oy to'lovi",
+    'students.firstMonthBadge': '1-oy: {price}',
+    'students.firstMonthHint':
+        "Faqat 1-oy uchun olinadi, keyingi oydan avtomatik doimiy narxga o'tadi",
+    'students.midMonthTitle': "Oyni yarmidan qo'shilmoqda",
+    'students.midMonthDesc':
+        "Guruh jadvali bo'yicha bu oyda {remaining} ta dars qolgan ({passed} ta dars o'tgan)",
     'students.enrolled': "O'quvchi guruhga qo'shildi",
     'students.leave': 'Guruhdan chiqarish',
     'students.leaveTitle': 'Guruhdan chiqarish — {name}',

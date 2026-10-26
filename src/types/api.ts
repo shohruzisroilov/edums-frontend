@@ -580,18 +580,22 @@ export interface Enrollment {
     left_at: string | null;
     /** Shu o'quvchi uchun oylik narx (chegirma bilan). */
     monthly_price: number;
+    /** Birinchi oy uchun maxsus / darsbay mutanosib narx */
+    first_month_price?: number | null;
 }
 
 export interface EnrollPayload {
     student_id: string;
     joined_at?: string;
     monthly_price?: number;
+    first_month_price?: number | null;
 }
 
 export interface UpdateEnrollmentPayload {
     joined_at?: string;
     left_at?: string;
     monthly_price?: number;
+    first_month_price?: number | null;
 }
 
 /* ── Lidlar ───────────────────────────────────────────────────────────── */
@@ -676,6 +680,7 @@ export interface ConvertLeadPayload {
     /** Darhol shu guruhga (students.update ruxsati kerak). */
     group_id?: string;
     monthly_price?: number;
+    first_month_price?: number | null;
 }
 
 /* ── O'quvchi to'lovlari va balans ────────────────────────────────────── */

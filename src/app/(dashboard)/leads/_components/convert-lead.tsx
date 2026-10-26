@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/tailgrids/core/button';
-import { SelectInput, TextInput } from '@/components/ui/form-field';
+import { CheckboxInput, SelectInput, TextInput } from '@/components/ui/form-field';
 import { Modal } from '@/components/ui/modal';
 import { MoneyInput } from '@/components/ui/number-input';
 import { PhoneInput } from '@/components/ui/phone-input';
@@ -14,6 +14,8 @@ import { listGroups } from '@/services/api/groups';
 import { convertLead } from '@/services/api/leads';
 import type { Lead } from '@/types/api';
 import { can } from '@/utils/access';
+import { toISODate } from '@/utils/format';
+import { calculateLessonProration } from '@/utils/proration';
 import { invalidateStudyData } from '@/utils/query-cache';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -35,7 +37,7 @@ export function ConvertLeadModal({
     const t = useT();
     const router = useRouter();
     const { session } = useSession();
-    const { formatNumber } = useFormat();
+    const { formatNumber, formatPrice } = useFormat();
     const toastError = useApiErrorToast();
     const queryClient = useQueryClient();
 
@@ -65,6 +67,8 @@ export function ConvertLeadModal({
         parent_phone: '',
         group_id: '',
         monthly_price: '',
+        first_month_price: '',
+        is_prorated: false,
     });
 
     const branchId =
@@ -90,6 +94,10 @@ export function ConvertLeadModal({
                 monthly_price:
                     form.group_id && form.monthly_price !== ''
                         ? Number(form.monthly_price)
+                        : undefined,
+                first_month_price:
+                    form.group_id && form.is_prorated && form.first_month_price !== ''
+                        ? Number(form.first_month_price)
                         : undefined,
             }),
         onSuccess: (converted) => {
@@ -198,22 +206,239 @@ export function ConvertLeadModal({
                                 setForm({ ...form, group_id })
                             }
                         />
-                        {form.group_id && (
-                            <MoneyInput
-                                label={t('students.monthlyPrice')}
-                                currency={t('common.som')}
-                                placeholder={
-                                    selectedGroup
-                                        ? formatNumber(selectedGroup.price)
-                                        : undefined
-                                }
-                                hint={t('students.monthlyPriceHint')}
-                                value={form.monthly_price}
-                                onValueChange={(monthly_price) =>
-                                    setForm({ ...form, monthly_price })
-                                }
-                            />
-                        )}
+                        {form.group_id &&
+                            selectedGroup &&
+                            (() => {
+                                const basePrice = selectedGroup.price;
+                                const effectivePrice =
+                                    form.monthly_price === ''
+                                        ? basePrice
+                                        : Number(form.monthly_price || 0);
+                                const todayIso = toISODate(new Date());
+                                const proration = calculateLessonProration(
+                                    todayIso,
+                                    selectedGroup.lesson_days,
+                                    effectivePrice,
+                                );
+                                const isGrant = form.monthly_price === '0';
+                                const isHalf =
+                                    basePrice > 0 &&
+                                    Number(form.monthly_price) ===
+                                        Math.round(basePrice * 0.5);
+                                const isStandard =
+                                    form.monthly_price === '' ||
+                                    (basePrice > 0 &&
+                                        Number(form.monthly_price) ===
+                                            basePrice);
+
+                                return (
+                                    <div className='flex flex-col gap-3'>
+                                        {basePrice > 0 && (
+                                            <div className='flex flex-col gap-1.5'>
+                                                <label className='text-text-secondary text-xs font-medium'>
+                                                    {t('students.discountType')}
+                                                </label>
+                                                <div className='flex flex-wrap gap-2'>
+                                                    <button
+                                                        type='button'
+                                                        onClick={() =>
+                                                            setForm({
+                                                                ...form,
+                                                                monthly_price: '',
+                                                                first_month_price:
+                                                                    '',
+                                                                is_prorated:
+                                                                    false,
+                                                            })
+                                                        }
+                                                        className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all ${
+                                                            isStandard &&
+                                                            !isGrant &&
+                                                            !isHalf
+                                                                ? 'border-brand-accent bg-brand-accent/10 text-brand-accent ring-brand-accent/30 font-semibold ring-1'
+                                                                : 'border-card-border bg-card-background text-text-secondary hover:bg-background-gray-secondary'
+                                                        }`}
+                                                    >
+                                                        {t(
+                                                            'students.standardPrice',
+                                                        )}
+                                                    </button>
+
+                                                    <button
+                                                        type='button'
+                                                        onClick={() =>
+                                                            setForm({
+                                                                ...form,
+                                                                monthly_price:
+                                                                    '0',
+                                                                first_month_price:
+                                                                    '0',
+                                                                is_prorated:
+                                                                    false,
+                                                            })
+                                                        }
+                                                        className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all ${
+                                                            isGrant
+                                                                ? 'border-emerald-500 bg-emerald-500/15 text-emerald-600 ring-emerald-500/30 font-semibold ring-1 dark:text-emerald-400'
+                                                                : 'border-card-border bg-card-background text-text-secondary hover:bg-background-gray-secondary'
+                                                        }`}
+                                                    >
+                                                        🎁{' '}
+                                                        {t(
+                                                            'students.grantFree',
+                                                        )}
+                                                    </button>
+
+                                                    <button
+                                                        type='button'
+                                                        onClick={() =>
+                                                            setForm({
+                                                                ...form,
+                                                                monthly_price:
+                                                                    String(
+                                                                        Math.round(
+                                                                            basePrice *
+                                                                                0.5,
+                                                                        ),
+                                                                    ),
+                                                                first_month_price:
+                                                                    '',
+                                                                is_prorated:
+                                                                    false,
+                                                            })
+                                                        }
+                                                        className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all ${
+                                                            isHalf
+                                                                ? 'border-indigo-500 bg-indigo-500/15 text-indigo-600 ring-indigo-500/30 font-semibold ring-1 dark:text-indigo-400'
+                                                                : 'border-card-border bg-card-background text-text-secondary hover:bg-background-gray-secondary'
+                                                        }`}
+                                                    >
+                                                        🏷️{' '}
+                                                        {t('students.halfPrice')}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <MoneyInput
+                                            label={t('students.monthlyPrice')}
+                                            currency={t('common.som')}
+                                            placeholder={formatNumber(
+                                                selectedGroup.price,
+                                            )}
+                                            hint={
+                                                isGrant
+                                                    ? t('students.grantHint')
+                                                    : t(
+                                                          'students.monthlyPriceHint',
+                                                      )
+                                            }
+                                            value={form.monthly_price}
+                                            onValueChange={(monthly_price) =>
+                                                setForm({
+                                                    ...form,
+                                                    monthly_price,
+                                                })
+                                            }
+                                        />
+
+                                        {isGrant && (
+                                            <div className='flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-700 dark:text-emerald-400'>
+                                                <span>✓</span>
+                                                <span className='font-medium'>
+                                                    {t('students.grantHint')}
+                                                </span>
+                                            </div>
+                                        )}
+
+                                        {proration?.isMidMonth && !isGrant && (
+                                            <div className='border-brand-accent/30 bg-brand-accent/5 flex flex-col gap-2.5 rounded-xl border p-3.5'>
+                                                <div className='flex items-center justify-between text-xs'>
+                                                    <span className='text-text-primary flex items-center gap-1.5 font-semibold'>
+                                                        📅{' '}
+                                                        {t(
+                                                            'students.midMonthTitle',
+                                                        )}
+                                                    </span>
+                                                    <span className='text-text-tertiary text-[11px]'>
+                                                        {t(
+                                                            'students.midMonthDesc',
+                                                            {
+                                                                remaining:
+                                                                    proration.remainingLessons,
+                                                                passed: proration.passedLessons,
+                                                            },
+                                                        )}
+                                                    </span>
+                                                </div>
+
+                                                <div className='pt-1'>
+                                                    <CheckboxInput
+                                                        label={`${t(
+                                                            'students.firstMonthProrated',
+                                                        )} (${formatPrice(
+                                                            proration.suggestedFirstMonthPrice,
+                                                            t('common.som'),
+                                                        )})`}
+                                                        checked={
+                                                            form.is_prorated
+                                                        }
+                                                        onChange={(e) => {
+                                                            const checked =
+                                                                e.target
+                                                                    .checked;
+                                                            setForm({
+                                                                ...form,
+                                                                is_prorated:
+                                                                    checked,
+                                                                first_month_price:
+                                                                    checked
+                                                                        ? form.first_month_price ||
+                                                                          String(
+                                                                              proration.suggestedFirstMonthPrice,
+                                                                          )
+                                                                        : '',
+                                                            });
+                                                        }}
+                                                    />
+                                                </div>
+
+                                                {form.is_prorated && (
+                                                    <div className='pt-1'>
+                                                        <MoneyInput
+                                                            label={t(
+                                                                'students.firstMonthPrice',
+                                                            )}
+                                                            currency={t(
+                                                                'common.som',
+                                                            )}
+                                                            value={
+                                                                form.first_month_price ||
+                                                                String(
+                                                                    proration.suggestedFirstMonthPrice,
+                                                                )
+                                                            }
+                                                            onValueChange={(
+                                                                first_month_price,
+                                                            ) =>
+                                                                setForm({
+                                                                    ...form,
+                                                                    is_prorated:
+                                                                        true,
+                                                                    first_month_price,
+                                                                })
+                                                            }
+                                                            hint={t(
+                                                                'students.firstMonthHint',
+                                                            )}
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })()}
                     </div>
                 )}
 
