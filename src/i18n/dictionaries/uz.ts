@@ -156,6 +156,16 @@ export const uz = {
     'educations.ownerPhoneHint': 'Bu raqam login sifatida ishlatiladi',
     'educations.ownerCreated': "Owner qo'shildi",
     'educations.noOwners': "Bu markazda hali owner yo'q",
+    'educations.editOwner': 'Ownerni tahrirlash',
+    'educations.editOwnerTitle': "Owner ma'lumotlarini tahrirlash",
+    'educations.editOwnerHint':
+        "Owner ma'lumotlari va faollik holatini yangilash",
+    'educations.ownerUpdated': 'Owner yangilandi',
+    'educations.deleteOwner': "Ownerni o'chirish",
+    'educations.deleteOwnerTitle': "Ownerni o'chirish",
+    'educations.deleteOwnerMessage':
+        '"{name}" ownerini o\'chirishni tasdiqlaysizmi? Markazda kamida bitta faol owner qolishi shart.',
+    'educations.ownerDeleted': "Owner o'chirildi",
 
     /* ── Rollar ──────────────────────────────────────────────────────── */
     'roles.title': 'Rollar',

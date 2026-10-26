@@ -152,6 +152,15 @@ export const ru: Dictionary = {
     'educations.ownerPhoneHint': 'Этот номер используется как логин',
     'educations.ownerCreated': 'Владелец добавлен',
     'educations.noOwners': 'У этого центра пока нет владельца',
+    'educations.editOwner': 'Редактировать владельца',
+    'educations.editOwnerTitle': 'Редактирование данных владельца',
+    'educations.editOwnerHint': 'Обновление данных и статуса владельца',
+    'educations.ownerUpdated': 'Владелец обновлён',
+    'educations.deleteOwner': 'Удалить владельца',
+    'educations.deleteOwnerTitle': 'Удаление владельца',
+    'educations.deleteOwnerMessage':
+        'Вы уверены, что хотите удалить владельца «{name}»? В центре должен оставаться хотя бы один активный владелец.',
+    'educations.ownerDeleted': 'Владелец удалён',
 
     /* ── Роли ────────────────────────────────────────────────────────── */
     'roles.title': 'Роли',

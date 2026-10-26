@@ -377,6 +377,13 @@ export interface CreateEducationOwnerPayload {
     password: string;
 }
 
+export interface UpdateEducationOwnerPayload {
+    first_name?: string;
+    last_name?: string;
+    phone_number?: string;
+    is_active?: boolean;
+}
+
 /* ── Filiallar ────────────────────────────────────────────────────────── */
 
 export interface Branch {

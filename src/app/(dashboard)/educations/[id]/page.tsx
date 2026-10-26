@@ -10,6 +10,7 @@ import {
     TableRow,
 } from '@/components/tailgrids/core/table';
 import { AccessGuard } from '@/components/ui/access-guard';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import {
     EmptyState,
     ErrorState,
@@ -24,9 +25,11 @@ import {
     EducationStatusBadge,
     SubscriptionBadge,
 } from '@/components/ui/status-badge';
+import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useFormat } from '@/hooks/use-format';
 import { useT } from '@/i18n/provider';
 import {
+    deleteEducationOwner,
     getEducation,
     listEducationOwners,
     listEducationSubscriptions,
@@ -35,10 +38,11 @@ import {
 import type { User } from '@/types/api';
 import { isSuperAdmin } from '@/utils/access';
 import { fullName } from '@/utils/format';
-import { Plus } from '@tailgrids/icons';
-import { useQuery } from '@tanstack/react-query';
+import { Pencil1, Plus, Trash1 } from '@tailgrids/icons';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { OwnerFormModal } from './_components/owner-form';
 
 export default function EducationDetailPage() {
@@ -54,9 +58,26 @@ function EducationDetailView() {
     const { formatDate, formatDateTime, formatPrice } = useFormat();
     const params = useParams<{ id: string }>();
     const educationId = params.id;
+    const queryClient = useQueryClient();
+    const toastError = useApiErrorToast();
 
     const [ownerOpen, setOwnerOpen] = useState(false);
+    const [editingOwner, setEditingOwner] = useState<User | null>(null);
+    const [deletingOwner, setDeletingOwner] = useState<User | null>(null);
     const [resetting, setResetting] = useState<User | null>(null);
+
+    const deleteMutation = useMutation({
+        mutationFn: (userId: string) =>
+            deleteEducationOwner(educationId, userId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['education-owners', educationId],
+            });
+            toast.success(t('educations.ownerDeleted'));
+            setDeletingOwner(null);
+        },
+        onError: (error) => toastError(error),
+    });
 
     const educationQuery = useQuery({
         queryKey: ['education', educationId],
@@ -157,7 +178,18 @@ function EducationDetailView() {
                                         {formatDate(owner.created_at)}
                                     </TableCell>
                                     <TableCell>
-                                        <div className='flex justify-end'>
+                                        <div className='flex items-center justify-end gap-1.5'>
+                                            <Button
+                                                appearance='outline'
+                                                size='md'
+                                                iconOnly
+                                                aria-label={t('common.edit')}
+                                                onPress={() =>
+                                                    setEditingOwner(owner)
+                                                }
+                                            >
+                                                <Pencil1 />
+                                            </Button>
                                             <Button
                                                 appearance='outline'
                                                 size='md'
@@ -166,6 +198,18 @@ function EducationDetailView() {
                                                 }
                                             >
                                                 {t('users.resetPassword')}
+                                            </Button>
+                                            <Button
+                                                variant='danger'
+                                                appearance='outline'
+                                                size='md'
+                                                iconOnly
+                                                aria-label={t('common.delete')}
+                                                onPress={() =>
+                                                    setDeletingOwner(owner)
+                                                }
+                                            >
+                                                <Trash1 />
                                             </Button>
                                         </div>
                                     </TableCell>
@@ -221,10 +265,14 @@ function EducationDetailView() {
                 )}
             </DetailSection>
 
-            {ownerOpen && (
+            {(ownerOpen || editingOwner) && (
                 <OwnerFormModal
                     educationId={educationId}
-                    onClose={() => setOwnerOpen(false)}
+                    owner={editingOwner}
+                    onClose={() => {
+                        setOwnerOpen(false);
+                        setEditingOwner(null);
+                    }}
                 />
             )}
 
@@ -241,6 +289,19 @@ function EducationDetailView() {
                     onClose={() => setResetting(null)}
                 />
             )}
+
+            <ConfirmDialog
+                open={deletingOwner !== null}
+                title={t('educations.deleteOwnerTitle')}
+                message={t('educations.deleteOwnerMessage', {
+                    name: deletingOwner ? fullName(deletingOwner) : '',
+                })}
+                pending={deleteMutation.isPending}
+                onCancel={() => setDeletingOwner(null)}
+                onConfirm={() =>
+                    deletingOwner && deleteMutation.mutate(deletingOwner.id)
+                }
+            />
         </>
     );
 }
