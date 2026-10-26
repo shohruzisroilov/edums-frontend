@@ -7,20 +7,21 @@ const DEFAULT_LIMIT = 20;
 /** Backend `PaginationDto` chegarasi — qo'lda yozilgan manzil 400 bermasin. */
 const MAX_LIMIT = 200;
 
-/** Manzildagi nomlar: `?q=ali&status=active&page=3&limit=50`. */
+/** Manzildagi nomlar: `?q=ali&status=active&page=3&limit=50&sort_by=name&order=asc`. */
 const SEARCH_PARAM = 'q';
 const PAGE_PARAM = 'page';
 const LIMIT_PARAM = 'limit';
+const SORT_BY_PARAM = 'sort_by';
+const ORDER_PARAM = 'order';
 
 /**
- * Ro'yxat sahifalari uchun umumiy holat: qidiruv, filtrlar va limit/offset.
+ * Ro'yxat sahifalari uchun umumiy holat: qidiruv, filtrlar, saralash va limit/offset.
  * Hammasi manzilda saqlanadi (`useUrlParams`): o'quvchini ochib "orqaga"
- * qaytilsa, qidiruv, filtr va sahifa joyida qoladi.
+ * qaytilsa, qidiruv, filtr, saralash va sahifa joyida qoladi.
  *
- * Filtr yoki qidiruv o'zgarganda sahifa birinchisiga qaytadi — aks holda
- * foydalanuvchi bo'sh sahifada qolib ketardi. Standart qiymatlar manzilga
- * yozilmaydi; standartdan farqli bo'sh qiymat ("barcha holatlar") esa
- * `status=` ko'rinishida yoziladi.
+ * Filtr, qidiruv yoki saralash o'zgarganda sahifa birinchisiga qaytadi.
+ * Standart qiymatlar manzilga yozilmaydi; standartdan farqli bo'sh qiymat
+ * ("barcha holatlar") esa `status=` ko'rinishida yoziladi.
  */
 export function useListQuery<TFilters extends Record<string, string>>(
     initialFilters: TFilters,
@@ -36,6 +37,11 @@ export function useListQuery<TFilters extends Record<string, string>>(
     );
     const page = positiveInt(params.get(PAGE_PARAM)) ?? 1;
     const offset = (page - 1) * limit;
+
+    const sortBy = params.get(SORT_BY_PARAM) ?? null;
+    const rawOrder = params.get(ORDER_PARAM)?.toLowerCase();
+    const sortOrder: 'asc' | 'desc' | null =
+        rawOrder === 'asc' || rawOrder === 'desc' ? rawOrder : null;
 
     const query = params.toString();
     const filters = useMemo(() => {
@@ -96,6 +102,38 @@ export function useListQuery<TFilters extends Record<string, string>>(
         [update, limit],
     );
 
+    const setSorting = useCallback(
+        (field: string | null, order?: 'asc' | 'desc' | null) => {
+            if (!field) {
+                update({
+                    [SORT_BY_PARAM]: null,
+                    [ORDER_PARAM]: null,
+                    [PAGE_PARAM]: null,
+                });
+                return;
+            }
+            update({
+                [SORT_BY_PARAM]: field,
+                [ORDER_PARAM]: order ?? 'asc',
+                [PAGE_PARAM]: null,
+            });
+        },
+        [update],
+    );
+
+    const toggleSort = useCallback(
+        (field: string, defaultOrder: 'asc' | 'desc' = 'asc') => {
+            if (sortBy !== field) {
+                setSorting(field, defaultOrder);
+            } else if (sortOrder === defaultOrder) {
+                setSorting(field, defaultOrder === 'asc' ? 'desc' : 'asc');
+            } else {
+                setSorting(null);
+            }
+        },
+        [sortBy, sortOrder, setSorting],
+    );
+
     return {
         search,
         setSearch,
@@ -106,6 +144,10 @@ export function useListQuery<TFilters extends Record<string, string>>(
         setLimit,
         offset,
         setOffset,
+        sortBy,
+        sortOrder,
+        setSorting,
+        toggleSort,
     };
 }
 

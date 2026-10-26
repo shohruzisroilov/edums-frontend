@@ -37,6 +37,9 @@ export interface ErrorResponse {
 interface PaginationQuery {
     limit?: number;
     offset?: number;
+    sort_by?: string;
+    order?: 'asc' | 'desc';
+    sort_order?: 'asc' | 'desc';
 }
 
 /* ── Ruxsatlar ────────────────────────────────────────────────────────── */

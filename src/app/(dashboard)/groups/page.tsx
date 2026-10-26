@@ -59,6 +59,7 @@ import {
 
 import { LinkButton } from '@/components/ui/link-button';
 import { MobileFilterSheet } from '@/components/ui/mobile-filter-sheet';
+import { SortableHead } from '@/components/ui/sortable-head';
 
 export default function GroupsPage() {
     return (
@@ -92,6 +93,9 @@ function GroupsView() {
         setLimit,
         offset,
         setOffset,
+        sortBy,
+        sortOrder,
+        toggleSort,
     } = useListQuery({
         branch_id: '',
         course_id: '',
@@ -109,7 +113,10 @@ function GroupsView() {
     }, canCreate);
 
     const query = useQuery({
-        queryKey: ['groups', { search, ...filters, limit, offset }],
+        queryKey: [
+            'groups',
+            { search, ...filters, limit, offset, sortBy, sortOrder },
+        ],
         queryFn: () =>
             listGroups({
                 search: search || undefined,
@@ -121,6 +128,8 @@ function GroupsView() {
                     | undefined,
                 limit,
                 offset,
+                sort_by: sortBy || undefined,
+                order: sortOrder || undefined,
             }),
     });
     useOffsetInRange(query.data?.count, offset, limit, setOffset);
@@ -241,6 +250,8 @@ function GroupsView() {
                         | undefined,
                     limit: Math.min(total, 200),
                     offset: 0,
+                    sort_by: sortBy || undefined,
+                    order: sortOrder || undefined,
                 });
                 items = res.data;
             }
@@ -625,28 +636,50 @@ function GroupsView() {
                                     <TableHeader>
                                         <TableRow>
                                             <RowNumberHead />
-                                            <TableHead>
+                                            <SortableHead
+                                                field='name'
+                                                currentSort={sortBy}
+                                                currentOrder={sortOrder}
+                                                onSort={toggleSort}
+                                            >
                                                 {t('common.name')}
-                                            </TableHead>
+                                            </SortableHead>
                                             <TableHead>
                                                 {t('groups.teacher')}
                                             </TableHead>
-                                            <TableHead>
+                                            <SortableHead
+                                                field='lesson_start'
+                                                currentSort={sortBy}
+                                                currentOrder={sortOrder}
+                                                onSort={toggleSort}
+                                            >
                                                 {t('groups.lessons')}
-                                            </TableHead>
+                                            </SortableHead>
                                             <TableHead>
                                                 {t('groups.room')}
                                             </TableHead>
                                             <TableHead numeric>
                                                 {t('groups.students')}
                                             </TableHead>
-                                            <TableHead numeric>
+                                            <SortableHead
+                                                field='price'
+                                                numeric
+                                                defaultOrder='desc'
+                                                currentSort={sortBy}
+                                                currentOrder={sortOrder}
+                                                onSort={toggleSort}
+                                            >
                                                 {t('groups.price')}
-                                            </TableHead>
+                                            </SortableHead>
                                             {showStatusColumn && (
-                                                <TableHead>
+                                                <SortableHead
+                                                    field='status'
+                                                    currentSort={sortBy}
+                                                    currentOrder={sortOrder}
+                                                    onSort={toggleSort}
+                                                >
                                                     {t('common.status')}
-                                                </TableHead>
+                                                </SortableHead>
                                             )}
                                             <TableHead className='text-right'>
                                                 {t('common.actions')}

@@ -20,6 +20,7 @@ import {
     ClearFiltersButton,
     MobileFilterSheet,
 } from '@/components/ui/mobile-filter-sheet';
+import { SortableHead } from '@/components/ui/sortable-head';
 import { DateRangeFilter } from '@/components/ui/date-range-filter';
 import {
     SelectInput,
@@ -86,6 +87,9 @@ function ExpensesView() {
         setLimit,
         offset,
         setOffset,
+        sortBy,
+        sortOrder,
+        toggleSort,
     } = useListQuery({ category: '', from: '', to: '' });
 
     const [creating, setCreating] = useState(false);
@@ -93,7 +97,10 @@ function ExpensesView() {
     const [exporting, setExporting] = useState(false);
 
     const query = useQuery({
-        queryKey: ['expenses', { ...filters, limit, offset }],
+        queryKey: [
+            'expenses',
+            { ...filters, limit, offset, sortBy, sortOrder },
+        ],
         queryFn: () =>
             listExpenses({
                 category: (filters.category || undefined) as
@@ -103,6 +110,8 @@ function ExpensesView() {
                 to: filters.to || undefined,
                 limit,
                 offset,
+                sort_by: sortBy || undefined,
+                order: sortOrder || undefined,
             }),
     });
     useOffsetInRange(query.data?.count, offset, limit, setOffset);
@@ -131,6 +140,8 @@ function ExpensesView() {
                     to: filters.to || undefined,
                     limit: Math.min(total, 200),
                     offset: 0,
+                    sort_by: sortBy || undefined,
+                    order: sortOrder || undefined,
                 });
                 items = res.data;
             }
@@ -407,15 +418,33 @@ function ExpensesView() {
                                     <TableHeader>
                                         <TableRow>
                                             <RowNumberHead />
-                                            <TableHead>
+                                            <SortableHead
+                                                field='spent_at'
+                                                defaultOrder='desc'
+                                                currentSort={sortBy}
+                                                currentOrder={sortOrder}
+                                                onSort={toggleSort}
+                                            >
                                                 {t('expenses.date')}
-                                            </TableHead>
-                                            <TableHead>
+                                            </SortableHead>
+                                            <SortableHead
+                                                field='category'
+                                                currentSort={sortBy}
+                                                currentOrder={sortOrder}
+                                                onSort={toggleSort}
+                                            >
                                                 {t('expenses.category')}
-                                            </TableHead>
-                                            <TableHead numeric>
+                                            </SortableHead>
+                                            <SortableHead
+                                                field='amount'
+                                                numeric
+                                                defaultOrder='desc'
+                                                currentSort={sortBy}
+                                                currentOrder={sortOrder}
+                                                onSort={toggleSort}
+                                            >
                                                 {t('cashbox.amount')}
-                                            </TableHead>
+                                            </SortableHead>
                                             <TableHead>
                                                 {t('cashbox.receivedBy')}
                                             </TableHead>
