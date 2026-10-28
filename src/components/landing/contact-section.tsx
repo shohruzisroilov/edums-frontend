@@ -194,7 +194,7 @@ export function ContactSection() {
                         <span className='text-badge-success-text font-bold'>
                             ✓
                         </span>
-                        <span>Hisob ochish bepul va tezkor</span>
+                        <span>Hisob ochish tezkor va oson</span>
                     </div>
                     <div className='flex items-center gap-2'>
                         <span className='text-badge-success-text font-bold'>

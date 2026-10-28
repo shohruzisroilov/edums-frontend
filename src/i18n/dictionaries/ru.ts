@@ -350,7 +350,7 @@ export const ru: Dictionary = {
     'payments.rejected': 'Заявка отклонена',
 
     /* ── Регистрация ─────────────────────────────────────────────────── */
-    'register.title': 'Пробный период — {days} дн. бесплатно',
+    'register.title': 'Пробный период — {days} дней',
     'register.subtitle': 'Зарегистрируйте свой учебный центр — карта не нужна',
     'register.educationName': 'Название учебного центра',
     'register.educationPlaceholder': 'Например, EDU Group',
@@ -1562,7 +1562,7 @@ export const ru: Dictionary = {
     'register.step2': 'Подтвердите SMS-код',
     'register.step3': 'Управляйте центром',
     'register.hero.line1': 'Начните сегодня —',
-    'register.hero.line2': 'регистрация бесплатна',
+    'register.hero.line2': 'быстрая регистрация',
     'register.hero.text':
         'Банковская карта не нужна. Тариф выбирается после пробного периода.',
     'register.codeTitle': 'Введите SMS-код',

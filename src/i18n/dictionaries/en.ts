@@ -351,7 +351,7 @@ export const en: Dictionary = {
     'payments.rejected': 'Request rejected',
 
     /* ── Sign up ─────────────────────────────────────────────────────── */
-    'register.title': 'Try it free for {days} days',
+    'register.title': 'Try it for {days} days',
     'register.subtitle': 'Register your education center — no card required',
     'register.educationName': 'Education center name',
     'register.educationPlaceholder': 'For example, EDU Group',
@@ -1560,7 +1560,7 @@ export const en: Dictionary = {
     'register.step2': 'Confirm the SMS code',
     'register.step3': 'Run your centre',
     'register.hero.line1': 'Start today —',
-    'register.hero.line2': 'signing up is free',
+    'register.hero.line2': 'quick and easy setup',
     'register.hero.text':
         'No card needed. You choose a plan when the trial ends.',
     'register.codeTitle': 'Enter the SMS code',

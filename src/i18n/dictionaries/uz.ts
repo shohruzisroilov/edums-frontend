@@ -355,7 +355,7 @@ export const uz = {
     'payments.rejected': "So'rov rad etildi",
 
     /* ── Ro'yxatdan o'tish ───────────────────────────────────────────── */
-    'register.title': "{days} kun bepul sinab ko'ring",
+    'register.title': "{days} kun sinab ko'ring",
     'register.subtitle':
         "O'quv markazingizni ro'yxatdan o'tkazing — karta talab qilinmaydi",
     'register.educationName': "O'quv markaz nomi",
@@ -1575,7 +1575,7 @@ export const uz = {
     'register.step2': 'SMS kodni tasdiqlang',
     'register.step3': 'Markazingizni boshqaring',
     'register.hero.line1': 'Bugun boshlang —',
-    'register.hero.line2': 'hisob ochish bepul',
+    'register.hero.line2': 'hisob ochish tez va oson',
     'register.hero.text':
         'Kredit karta talab qilinmaydi. Sinov muddati tugagach tarif tanlaysiz.',
     'register.codeTitle': 'SMS kodni kiriting',

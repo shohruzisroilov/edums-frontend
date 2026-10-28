@@ -351,7 +351,7 @@ export const uzCyrl: Dictionary = {
     'payments.rejected': 'Сўров рад этилди',
 
     /* ── Рўйхатдан ўтиш ──────────────────────────────────────────────── */
-    'register.title': '{days} кун бепул синаб кўринг',
+    'register.title': '{days} кун синаб кўринг',
     'register.subtitle':
         'Ўқув марказингизни рўйхатдан ўтказинг — карта талаб қилинмайди',
     'register.educationName': 'Ўқув марказ номи',
@@ -1563,7 +1563,7 @@ export const uzCyrl: Dictionary = {
     'register.step2': 'SMS кодни тасдиқланг',
     'register.step3': 'Марказингизни бошқаринг',
     'register.hero.line1': 'Бугун бошланг —',
-    'register.hero.line2': 'ҳисоб очиш бепул',
+    'register.hero.line2': 'ҳисоб очиш тез ва осон',
     'register.hero.text':
         'Кредит карта талаб қилинмайди. Синов муддати тугагач тариф танлайсиз.',
     'register.codeTitle': 'SMS кодни киритинг',
