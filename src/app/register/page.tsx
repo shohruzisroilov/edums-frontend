@@ -8,6 +8,7 @@ import { FormError } from '@/components/ui/form-error';
 import { TextInput } from '@/components/ui/form-field';
 import { PasswordInput } from '@/components/ui/password-input';
 import { PhoneInput } from '@/components/ui/phone-input';
+import { CodeChannelPicker } from '@/components/telegram/code-channel-picker';
 import { apiErrorMessage } from '@/hooks/use-api-error';
 import { useSession } from '@/hooks/use-session';
 import { useTrialDays } from '@/hooks/use-trial-days';
@@ -68,6 +69,8 @@ export default function RegisterPage() {
 
     const [form, setForm] = useState<FormState>(EMPTY);
     const [step, setStep] = useState<'details' | 'code'>('details');
+    const [channel, setChannel] = useState<'sms' | 'telegram'>('sms');
+    const [sentChannel, setSentChannel] = useState<'sms' | 'telegram'>('sms');
     const [code, setCode] = useState('');
     const [codeLength, setCodeLength] = useState(4);
     const [resendIn, setResendIn] = useState(0);
@@ -92,13 +95,15 @@ export default function RegisterPage() {
         );
     }
 
-    async function sendCode() {
+    async function sendCode(targetChannel?: 'sms' | 'telegram') {
+        const ch = targetChannel || channel;
         setError(null);
         setPending(true);
         try {
-            const res = await sendRegistrationCode(form.phone_number);
+            const res = await sendRegistrationCode(form.phone_number, ch);
             setResendIn(res.resend_in);
             setCodeLength(res.code_length);
+            setSentChannel(res.channel || ch);
             setStep('code');
         } catch (err) {
             showError(err);
@@ -333,6 +338,15 @@ export default function RegisterPage() {
                                     }
                                 />
 
+                                <CodeChannelPicker
+                                    phone={form.phone_number}
+                                    channel={channel}
+                                    onChannelChange={setChannel}
+                                    isValidPhone={isValidUzbekMobile(
+                                        form.phone_number,
+                                    )}
+                                />
+
                                 {error && <FormError message={error} />}
 
                                 <Button
@@ -356,6 +370,19 @@ export default function RegisterPage() {
                                 onSubmit={handleCode}
                                 className='flex flex-col gap-5'
                             >
+                                {/* Kod qayerga ketgani */}
+                                <div className='border-border bg-background-secondary text-text-secondary rounded-xl border p-3 text-center text-xs'>
+                                    {sentChannel === 'telegram' ? (
+                                        <span className='font-medium text-sky-600 dark:text-sky-400'>
+                                            🤖 Kod Telegram bot orqali yuborildi
+                                        </span>
+                                    ) : (
+                                        <span className='font-medium'>
+                                            📩 Kod SMS orqali yuborildi
+                                        </span>
+                                    )}
+                                </div>
+
                                 {/* Kod inputi */}
                                 <div className='border-brand-500/20 bg-brand-500/5 rounded-2xl border p-6 text-center'>
                                     <TextInput
@@ -409,18 +436,42 @@ export default function RegisterPage() {
                                     >
                                         {t('register.changeDetails')}
                                     </button>
-                                    <button
-                                        type='button'
-                                        disabled={resendIn > 0 || pending}
-                                        className='text-brand-accent disabled:text-text-tertiary font-medium transition'
-                                        onClick={() => void sendCode()}
-                                    >
-                                        {resendIn > 0
-                                            ? t('register.resendIn', {
-                                                  seconds: resendIn,
-                                              })
-                                            : t('register.resend')}
-                                    </button>
+                                    <div className='flex items-center gap-2'>
+                                        <button
+                                            type='button'
+                                            disabled={resendIn > 0 || pending}
+                                            className='text-brand-accent disabled:text-text-tertiary font-medium transition'
+                                            onClick={() =>
+                                                void sendCode(sentChannel)
+                                            }
+                                        >
+                                            {resendIn > 0
+                                                ? t('register.resendIn', {
+                                                      seconds: resendIn,
+                                                  })
+                                                : t('register.resend')}
+                                        </button>
+                                        {resendIn <= 0 && (
+                                            <button
+                                                type='button'
+                                                disabled={pending}
+                                                className='text-xs text-sky-600 hover:underline dark:text-sky-400'
+                                                onClick={() =>
+                                                    void sendCode(
+                                                        sentChannel === 'sms'
+                                                            ? 'telegram'
+                                                            : 'sms',
+                                                    )
+                                                }
+                                            >
+                                                (
+                                                {sentChannel === 'sms'
+                                                    ? 'Telegramda olish'
+                                                    : 'SMS da olish'}
+                                                )
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </form>
                         )}

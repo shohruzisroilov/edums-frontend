@@ -23,10 +23,13 @@ export function loginUser(payload: { phone_number: string; password: string }) {
 }
 
 /** POST /api/auth/register/send-code — telefonga kod (uzunligi javobdagi `code_length`). */
-export function sendRegistrationCode(phone_number: string) {
+export function sendRegistrationCode(
+    phone_number: string,
+    channel: 'sms' | 'telegram' = 'sms',
+) {
     return request<SendCodeResponse>('/auth/register/send-code', {
         method: 'POST',
-        body: { phone_number },
+        body: { phone_number, channel },
         skipAuth: true,
     });
 }
@@ -41,10 +44,13 @@ export function register(payload: RegisterPayload) {
 }
 
 /** POST /api/auth/password/send-code — "parolni unutdim": login telefoniga kod. */
-export function sendPasswordResetCode(phone_number: string) {
+export function sendPasswordResetCode(
+    phone_number: string,
+    channel: 'sms' | 'telegram' = 'sms',
+) {
     return request<SendCodeResponse>('/auth/password/send-code', {
         method: 'POST',
-        body: { phone_number },
+        body: { phone_number, channel },
         skipAuth: true,
     });
 }

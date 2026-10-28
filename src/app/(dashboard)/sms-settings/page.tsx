@@ -22,6 +22,7 @@ import {
 } from '@/services/api/sms-settings';
 import type { SmsDriver, SmsSettings } from '@/types/api';
 import { isSuperAdmin } from '@/utils/access';
+import { TelegramSettingsCard } from '@/components/telegram/telegram-settings-card';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
@@ -65,6 +66,11 @@ function SmsSettingsView() {
                             settings={query.data}
                         />
                         <TestSmsCard />
+                        <div className='lg:col-span-2'>
+                            <TelegramSettingsCard
+                                initialSettings={query.data}
+                            />
+                        </div>
                         <div className='lg:col-span-2'>
                             <NotificationsForm
                                 key={query.data.updated_at}

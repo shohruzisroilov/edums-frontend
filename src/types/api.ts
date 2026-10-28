@@ -236,6 +236,11 @@ export interface BillingOverview {
 /* ── SMS sozlamalari ──────────────────────────────────────────────────── */
 
 export type SmsDriver = 'eskiz' | 'devsms' | 'console';
+export type NotificationChannel =
+    | 'telegram_first'
+    | 'sms_first'
+    | 'telegram_only'
+    | 'sms_only';
 
 /** GET /sms-settings — parol va tokenlarning o'zi hech qachon kelmaydi. */
 export interface SmsSettings {
@@ -245,6 +250,10 @@ export interface SmsSettings {
     eskiz_from: string;
     has_devsms_token: boolean;
     devsms_from: string;
+    has_telegram_bot_token: boolean;
+    telegram_bot_username: string | null;
+    telegram_enabled: boolean;
+    notification_channel: NotificationChannel;
     template: string;
     /** Avtomatik xabarlarning umumiy kaliti (eslatmalar, kelmaganlik). */
     notifications_enabled: boolean;
@@ -266,11 +275,26 @@ export interface SmsSettingsPayload {
     /** Bo'sh yoki yo'q bo'lsa — saqlangan DevSMS token o'zgarmaydi. */
     devsms_token?: string;
     devsms_from?: string;
+    /** Bo'sh yoki yo'q bo'lsa — saqlangan Telegram bot token o'zgarmaydi. */
+    telegram_bot_token?: string;
+    telegram_enabled?: boolean;
+    notification_channel?: NotificationChannel;
     template: string;
     notifications_enabled?: boolean;
     subscription_template?: string;
     debt_template?: string;
     absence_template?: string;
+}
+
+export interface TelegramBotInfo {
+    username: string | null;
+    is_active: boolean;
+}
+
+export interface TelegramPhoneStatus {
+    phone_number: string;
+    is_linked: boolean;
+    bot_username: string | null;
 }
 
 /* ── Markaz sozlamalari ───────────────────────────────────────────────── */
@@ -1195,8 +1219,11 @@ export interface SendCodeResponse {
     expires_in: number;
     /** Qayta yuborish uchun kutish (soniya). */
     resend_in: number;
-    /** Kod uzunligi (hozir doim 6). */
+    /** Kod uzunligi (hozir doim 4). */
     code_length: number;
+    channel?: 'sms' | 'telegram';
+    is_telegram_linked?: boolean;
+    bot_username?: string | null;
 }
 
 export interface ResetForgottenPasswordPayload {
