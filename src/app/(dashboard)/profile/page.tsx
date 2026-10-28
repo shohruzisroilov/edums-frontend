@@ -13,6 +13,7 @@ import { ImageUploadField } from '@/components/ui/image-upload';
 import { PageHeader } from '@/components/ui/page-header';
 import { RoleBadge } from '@/components/ui/status-badge';
 import { SupportContactCard } from '@/components/ui/support-modal';
+import { TelegramSettingsCard } from '@/components/telegram/telegram-settings-card';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
@@ -62,14 +63,17 @@ export default function ProfilePage() {
 
             <div className='flex flex-col gap-5 px-4 pb-8 sm:px-5'>
                 {isSuperAdmin ? (
-                    <Card>
-                        <ProfileHeading
-                            name={t('profile.superAdmin')}
-                            initials='SA'
-                            avatarUrl={null}
-                            subtitle={session.phone_number}
-                        />
-                    </Card>
+                    <>
+                        <Card>
+                            <ProfileHeading
+                                name={t('profile.superAdmin')}
+                                initials='SA'
+                                avatarUrl={null}
+                                subtitle={session.phone_number}
+                            />
+                        </Card>
+                        <TelegramSettingsCard />
+                    </>
                 ) : meQuery.isPending ? (
                     <TableSkeleton rows={4} columns={2} />
                 ) : meQuery.error ? (

@@ -8,6 +8,7 @@ import { FormError } from '@/components/ui/form-error';
 import { TextInput } from '@/components/ui/form-field';
 import { PasswordInput } from '@/components/ui/password-input';
 import { PhoneInput } from '@/components/ui/phone-input';
+import { CodeChannelPicker } from '@/components/telegram/code-channel-picker';
 import { apiErrorMessage } from '@/hooks/use-api-error';
 import { useSession } from '@/hooks/use-session';
 import { useT } from '@/i18n/provider';
@@ -32,6 +33,8 @@ export default function ForgotPasswordPage() {
 
     const [phone, setPhone] = useState('');
     const [step, setStep] = useState<'phone' | 'code'>('phone');
+    const [channel, setChannel] = useState<'sms' | 'telegram'>('sms');
+    const [sentChannel, setSentChannel] = useState<'sms' | 'telegram'>('sms');
     const [code, setCode] = useState('');
     const [codeLength, setCodeLength] = useState(4);
     const [password, setPassword] = useState('');
@@ -59,13 +62,15 @@ export default function ForgotPasswordPage() {
         );
     }
 
-    async function sendCode() {
+    async function sendCode(targetChannel?: 'sms' | 'telegram') {
+        const ch = targetChannel || channel;
         setError(null);
         setPending(true);
         try {
-            const res = await sendPasswordResetCode(phone);
+            const res = await sendPasswordResetCode(phone, ch);
             setResendIn(res.resend_in);
             setCodeLength(res.code_length);
+            setSentChannel(res.channel || ch);
             setStep('code');
         } catch (err) {
             showError(err);
@@ -248,6 +253,13 @@ export default function ForgotPasswordPage() {
                                     onValueChange={setPhone}
                                 />
 
+                                <CodeChannelPicker
+                                    phone={phone}
+                                    channel={channel}
+                                    onChannelChange={setChannel}
+                                    isValidPhone={isValidUzbekMobile(phone)}
+                                />
+
                                 {error && <FormError message={error} />}
 
                                 <Button
@@ -270,6 +282,18 @@ export default function ForgotPasswordPage() {
                                 onSubmit={handleReset}
                                 className='flex flex-col gap-4'
                             >
+                                <div className='border-border bg-background-secondary text-text-secondary rounded-xl border p-3 text-center text-xs'>
+                                    {sentChannel === 'telegram' ? (
+                                        <span className='font-medium text-sky-600 dark:text-sky-400'>
+                                            🤖 Kod Telegram bot orqali yuborildi
+                                        </span>
+                                    ) : (
+                                        <span className='font-medium'>
+                                            📩 Kod SMS orqali yuborildi
+                                        </span>
+                                    )}
+                                </div>
+
                                 <TextInput
                                     label={t('register.code')}
                                     required
@@ -338,18 +362,42 @@ export default function ForgotPasswordPage() {
                                     >
                                         {t('forgot.changePhone')}
                                     </button>
-                                    <button
-                                        type='button'
-                                        disabled={resendIn > 0 || pending}
-                                        className='text-brand-accent disabled:text-text-tertiary font-medium transition-colors hover:underline'
-                                        onClick={() => void sendCode()}
-                                    >
-                                        {resendIn > 0
-                                            ? t('register.resendIn', {
-                                                  seconds: resendIn,
-                                              })
-                                            : t('register.resend')}
-                                    </button>
+                                    <div className='flex items-center gap-2'>
+                                        <button
+                                            type='button'
+                                            disabled={resendIn > 0 || pending}
+                                            className='text-brand-accent disabled:text-text-tertiary font-medium transition-colors hover:underline'
+                                            onClick={() =>
+                                                void sendCode(sentChannel)
+                                            }
+                                        >
+                                            {resendIn > 0
+                                                ? t('register.resendIn', {
+                                                      seconds: resendIn,
+                                                  })
+                                                : t('register.resend')}
+                                        </button>
+                                        {resendIn <= 0 && (
+                                            <button
+                                                type='button'
+                                                disabled={pending}
+                                                className='text-xs text-sky-600 hover:underline dark:text-sky-400'
+                                                onClick={() =>
+                                                    void sendCode(
+                                                        sentChannel === 'sms'
+                                                            ? 'telegram'
+                                                            : 'sms',
+                                                    )
+                                                }
+                                            >
+                                                (
+                                                {sentChannel === 'sms'
+                                                    ? 'Telegramda olish'
+                                                    : 'SMS da olish'}
+                                                )
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </form>
                         )}
