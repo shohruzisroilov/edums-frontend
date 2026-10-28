@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/form-field';
 import { PasswordInput } from '@/components/ui/password-input';
 import { SectionCard } from '@/components/ui/section-card';
+import { TelegramIcon } from '@/components/ui/support-modal';
 import { useApiErrorToast } from '@/hooks/use-api-error';
 import { getSmsSettings, updateSmsSettings } from '@/services/api/sms-settings';
 import { sendTelegramTestMessage } from '@/services/api/telegram';
@@ -81,12 +82,13 @@ export function TelegramSettingsCard({
     }
 
     return (
-        <SectionCard title='Telegram Bot Integratsiyasi (Bepul xabarlar va kodlar)'>
+        <SectionCard title='Telegram Bot Integratsiyasi'>
             <div className='flex flex-col gap-5'>
                 {/* Status bar */}
                 <div className='bg-primary-50/50 dark:bg-primary-950/20 border-primary-100 dark:border-primary-900/50 flex flex-col justify-between gap-3 rounded-lg border p-4 sm:flex-row sm:items-center'>
                     <div>
                         <div className='text-text-primary flex items-center gap-2 text-sm font-semibold'>
+                            <TelegramIcon className='size-4 text-[#229ED9]' />
                             <span>Bot holati:</span>
                             {settings.has_telegram_bot_token &&
                             settings.telegram_bot_username ? (
@@ -106,7 +108,7 @@ export function TelegramSettingsCard({
                         </div>
                         <p className='text-text-tertiary mt-1 text-xs'>
                             Foydalanuvchilar va ota-onalar ushbu bot orqali
-                            tasdiqlash kodlari va xabarlarni tekinga qabul
+                            tasdiqlash kodlari va xabarnomalarni qabul
                             qilishadi.
                         </p>
                     </div>
@@ -159,7 +161,7 @@ export function TelegramSettingsCard({
                         options={[
                             {
                                 value: 'telegram_first',
-                                label: "Telegram birinchi (Tavsiya etiladi — botda bo'lsa tekin Telegram, ulanmagan bo'lsa SMS)",
+                                label: "Telegram birinchi (Tavsiya etiladi — botda bo'lsa Telegram, ulanmagan bo'lsa SMS)",
                             },
                             {
                                 value: 'sms_first',
@@ -167,7 +169,7 @@ export function TelegramSettingsCard({
                             },
                             {
                                 value: 'telegram_only',
-                                label: 'Faqat Telegram (Mutlaqo bepul — faqat botga ulanganlarga boradi)',
+                                label: 'Faqat Telegram (Faqat botga ulanganlarga yuboriladi)',
                             },
                             {
                                 value: 'sms_only',

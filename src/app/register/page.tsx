@@ -9,6 +9,7 @@ import { TextInput } from '@/components/ui/form-field';
 import { PasswordInput } from '@/components/ui/password-input';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { CodeChannelPicker } from '@/components/telegram/code-channel-picker';
+import { TelegramIcon } from '@/components/ui/support-modal';
 import { apiErrorMessage } from '@/hooks/use-api-error';
 import { useSession } from '@/hooks/use-session';
 import { useTrialDays } from '@/hooks/use-trial-days';
@@ -371,14 +372,21 @@ export default function RegisterPage() {
                                 className='flex flex-col gap-5'
                             >
                                 {/* Kod qayerga ketgani */}
-                                <div className='border-border bg-background-secondary text-text-secondary rounded-xl border p-3 text-center text-xs'>
+                                <div className='border-border bg-background-secondary text-text-secondary flex items-center justify-center rounded-xl border p-3 text-center text-xs'>
                                     {sentChannel === 'telegram' ? (
-                                        <span className='font-medium text-sky-600 dark:text-sky-400'>
-                                            🤖 Kod Telegram bot orqali yuborildi
+                                        <span className='inline-flex items-center gap-1.5 font-medium text-sky-600 dark:text-sky-400'>
+                                            <TelegramIcon className='size-4 text-[#229ED9]' />
+                                            <span>
+                                                Kod Telegram bot orqali
+                                                yuborildi
+                                            </span>
                                         </span>
                                     ) : (
-                                        <span className='font-medium'>
-                                            📩 Kod SMS orqali yuborildi
+                                        <span className='inline-flex items-center gap-1.5 font-medium'>
+                                            <Message1 className='text-text-secondary size-4' />
+                                            <span>
+                                                Kod SMS orqali yuborildi
+                                            </span>
                                         </span>
                                     )}
                                 </div>
